@@ -1,6 +1,7 @@
 /// <reference types='vitest' />
-import { defineConfig } from 'vite';
+import { defaultClientConditions, defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
@@ -13,7 +14,14 @@ export default defineConfig(() => ({
     port: 4300,
     host: 'localhost',
   },
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    // Resolve the in-repo libraries from source, as tsc does through
+    // tsconfig.base.json's customConditions, so neither Vitest nor `vite build`
+    // needs the libraries' dist. Setting this replaces Vite's default
+    // conditions, so they are listed again.
+    conditions: ['@hos-frontend/source', ...defaultClientConditions],
+  },
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [],

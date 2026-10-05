@@ -1,5 +1,9 @@
 {
   "name": "@hos-frontend/web",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "@hos/hos-utility": "workspace:*",
+    "@hos/nova-ui": "workspace:*"
+  }
 }

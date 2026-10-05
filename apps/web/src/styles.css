@@ -1,1 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+/* In-repo path while nova-ui is a folder; becomes '@hos/nova-ui/theme.css' once it is its own package. */
+@import '../../../packages/nova-ui/src/styles/theme.css';
+@source '../../../packages/nova-ui/src';
+
+body {
+  background-color: var(--nova-color-bg);
+  color: var(--nova-color-ink);
+  font-family: var(--nova-font-body);
+}

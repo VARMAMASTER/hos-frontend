@@ -1,16 +1,19 @@
 import { StrictMode } from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import * as ReactDOM from 'react-dom/client';
-import App from './app/app';
+import { createRoot } from 'react-dom/client';
+import { createApiClient, createLogger } from '@hos/hos-utility';
+import { App } from './app/app';
+import './styles.css';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement,
-);
+const api = createApiClient({
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000/api/v1',
+  logger: createLogger({ level: import.meta.env.DEV ? 'debug' : 'warn' }),
+});
 
-root.render(
+const root = document.getElementById('root');
+if (!root) throw new Error('index.html is missing <div id="root">');
+
+createRoot(root).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <App api={api} />
   </StrictMode>,
 );
