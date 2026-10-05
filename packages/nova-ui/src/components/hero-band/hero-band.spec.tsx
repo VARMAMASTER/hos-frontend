@@ -58,10 +58,18 @@ describe('HeroBand', () => {
     expect(root.id).toBe('today');
   });
 
-  it('dims the description to white on the brand gradient rather than an ink token', () => {
+  // Only full-strength white clears 4.5:1 across the whole brand gradient: a 70% white measured
+  // 3.2–3.7:1 at the gradient's light end, on glass and on solid. Hierarchy comes from size and
+  // weight instead of opacity.
+  it('keeps the description full-strength white on the brand gradient, never dimmed, never an ink token', () => {
     render(<HeroBand title="Today" description="Admissions and discharges" />);
     const description = screen.getByText('Admissions and discharges');
-    expect(description.classList.contains('text-on-primary/70')).toBe(true);
+    expect(description.classList.contains('text-on-primary')).toBe(true);
+    expect(
+      Array.from(description.classList).some((name) =>
+        name.startsWith('text-on-primary/'),
+      ),
+    ).toBe(false);
     expect(
       Array.from(description.classList).some((name) =>
         name.startsWith('text-ink'),

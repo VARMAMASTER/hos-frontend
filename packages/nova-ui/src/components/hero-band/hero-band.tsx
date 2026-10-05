@@ -9,8 +9,9 @@ export interface HeroBandProps
   headingLevel?: 1 | 2;
 }
 
-// The page-top band. Its text is white on the brand gradient (nova-hero), so the description is a
-// dimmed white rather than an ink token, which would sit dark on the brand.
+// The page-top band. Its text is white on the brand gradient (nova-hero). The description stays
+// full-strength white — a dimmed white fails 4.5:1 at the gradient's light end — and takes its
+// lower rank from size and weight instead. An ink token would sit dark on the brand.
 export function HeroBand({
   title,
   description,
@@ -32,7 +33,9 @@ export function HeroBand({
         <div className="min-w-0">
           <Heading className="text-2xl font-semibold">{title}</Heading>
           {description ? (
-            <p className="mt-2 text-sm text-on-primary/70">{description}</p>
+            <p className="mt-2 text-sm font-normal text-on-primary">
+              {description}
+            </p>
           ) : null}
         </div>
         {actions ? (
