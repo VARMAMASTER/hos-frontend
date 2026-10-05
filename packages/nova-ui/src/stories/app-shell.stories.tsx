@@ -4,6 +4,8 @@ import { AppShell } from '../components/app-shell/app-shell';
 import { Button } from '../components/button/button';
 import { Card, CardBody, CardHeader } from '../components/card/card';
 import { Chip } from '../components/chip/chip';
+import { HeroBand } from '../components/hero-band/hero-band';
+import { KpiTile } from '../components/kpi-tile/kpi-tile';
 import { SearchField } from '../components/search-field/search-field';
 import { NavItem } from '../components/sidebar/nav-item';
 import { Sidebar } from '../components/sidebar/sidebar';
@@ -98,52 +100,40 @@ function Brand() {
   );
 }
 
-// Stand-ins for the page-top band and the headline-number tiles. They use the same nova-hero and
-// nova-data utilities those components are built on.
-function Hero() {
-  return (
-    <section className="nova-hero rounded-lg p-6 md:p-8">
-      <h1 className="text-2xl font-semibold">Good morning, Dr. Rao</h1>
-      <p className="mt-1 text-on-primary/70">
-        14 admissions are waiting for review and 3 claims need a reply today.
-      </p>
-    </section>
-  );
-}
-
-function Kpi({
-  label,
-  value,
-  note,
-}: {
-  label: string;
-  value: string;
-  note: string;
-}) {
-  return (
-    <div className="nova-data rounded-lg p-4">
-      <p className="text-sm text-ink-3">{label}</p>
-      <p className="mt-1 font-mono text-2xl font-semibold text-ink">{value}</p>
-      <p className="mt-2 text-xs text-ink-2">{note}</p>
-    </div>
-  );
-}
-
 function Overview() {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Kpi
+        <KpiTile
           label="Bed occupancy"
           value="82%"
-          note="Up 3 points on last week"
+          delta="3 points on last week"
+          trend="up"
         />
-        <Kpi label="Claims in flight" value="128" note="9 awaiting a reply" />
-        <Kpi label="Average stay" value="3.4 days" note="Down 0.2 days" />
-        <Kpi label="Denial rate" value="3.1%" note="Within target" />
+        <KpiTile
+          label="Claims in flight"
+          value="128"
+          delta="9 awaiting a reply"
+          trend="flat"
+          tone="warn"
+        />
+        <KpiTile
+          label="Average stay"
+          value="3.4 days"
+          delta="0.2 days shorter"
+          trend="down"
+          tone="good"
+        />
+        <KpiTile
+          label="Denial rate"
+          value="3.1%"
+          delta="Within target"
+          trend="flat"
+          tone="good"
+        />
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card>
+        <Card variant="data">
           <CardHeader
             title="Claims in flight"
             description="Every scheme's own clock, in one place"
@@ -227,7 +217,10 @@ function ShellPage() {
         }
       />
       <div className="flex flex-col gap-6 p-6">
-        <Hero />
+        <HeroBand
+          title="Good morning, Dr. Rao"
+          description="14 admissions are waiting for review and 3 claims need a reply today."
+        />
         <Tabs value={tab} onValueChange={setTab}>
           <TabList aria-label="Ward overview">
             <Tab value="overview">Overview</Tab>
