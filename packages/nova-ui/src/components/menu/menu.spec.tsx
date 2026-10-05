@@ -7,7 +7,7 @@ import {
   render,
   screen,
 } from '@testing-library/react';
-import { Menu, MenuItem } from './menu';
+import { Menu, MenuGroup, MenuItem, MenuItemRadio } from './menu';
 
 afterEach(() => cleanup());
 
@@ -122,7 +122,9 @@ describe('Menu semantics', () => {
         <MenuItem>Edit</MenuItem>
       </Menu>,
     );
-    expect(screen.getByRole('menu').classList).toContain('nova-overlay');
+    expect(
+      screen.getByRole('menu').closest('[data-surface="overlay"]')?.classList,
+    ).toContain('nova-overlay');
     expect(container.querySelector('.ml-2')).not.toBeNull();
   });
 
@@ -232,17 +234,43 @@ describe('Menu opening', () => {
 });
 
 describe('Menu keyboard', () => {
-  it('moves focus with ArrowDown and ArrowUp, skipping disabled items and wrapping', () => {
+  // WAI-ARIA menus keep a disabled item focusable, so it can be discovered and is announced as
+  // unavailable; it just cannot be chosen.
+  it('moves focus with ArrowDown and ArrowUp, through disabled items too, and wraps', () => {
     render(<Harness />);
     expect(document.activeElement).toBe(item('Edit'));
     press('ArrowDown');
+    expect(document.activeElement).toBe(item('Transfer'));
+    press('ArrowDown');
     expect(document.activeElement).toBe(item('Archive'));
     press('ArrowDown');
     expect(document.activeElement).toBe(item('Edit'));
     press('ArrowUp');
     expect(document.activeElement).toBe(item('Archive'));
-    press('ArrowUp');
-    expect(document.activeElement).toBe(item('Edit'));
+  });
+
+  it('activates the focused item with Enter or Space, once', () => {
+    const onEdit = vi.fn();
+    const onArchive = vi.fn();
+    render(<Harness onEdit={onEdit} onArchive={onArchive} />);
+    expect(press('Enter')).toBe(false);
+    expect(onEdit).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('menu')).toBeNull();
+    cleanup();
+    render(<Harness onEdit={onEdit} onArchive={onArchive} />);
+    press('End');
+    expect(press(' ')).toBe(false);
+    expect(onArchive).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not activate a disabled item from the keyboard', () => {
+    const onTransfer = vi.fn();
+    render(<Harness onTransfer={onTransfer} />);
+    press('ArrowDown');
+    press('Enter');
+    press(' ');
+    expect(onTransfer).not.toHaveBeenCalled();
+    expect(screen.getByRole('menu')).toBeTruthy();
   });
 
   it('jumps to the first and last item with Home and End', () => {
@@ -342,7 +370,7 @@ describe('Menu items', () => {
     const onTransfer = vi.fn();
     const onOpenChange = vi.fn();
     render(<Harness onTransfer={onTransfer} onOpenChange={onOpenChange} />);
-    expect(item('Transfer').hasAttribute('disabled')).toBe(true);
+    expect(item('Transfer').getAttribute('aria-disabled')).toBe('true');
     fireEvent.click(item('Transfer'));
     expect(onTransfer).not.toHaveBeenCalled();
     expect(onOpenChange).not.toHaveBeenCalled();
@@ -433,5 +461,84 @@ describe('Menu dismissal', () => {
     act(() => trigger().focus());
     act(() => item('Archive').focus());
     expect(onOpenChange).not.toHaveBeenCalled();
+  });
+});
+
+describe('Menu radio items and groups', () => {
+  function Wards({
+    onPick = () => undefined,
+  }: {
+    onPick?: (id: string) => void;
+  }) {
+    return (
+      <Menu
+        trigger={<button type="button">Ward</button>}
+        header="Switch ward"
+        defaultOpen
+      >
+        <MenuGroup label="Medical">
+          <MenuItemRadio checked={false} onClick={() => onPick('a')}>
+            Ward A
+          </MenuItemRadio>
+          <MenuItemRadio
+            checked
+            description="Current"
+            onClick={() => onPick('b')}
+          >
+            Ward B
+          </MenuItemRadio>
+        </MenuGroup>
+        <MenuGroup label="Surgical">
+          <MenuItemRadio checked={false} disabled>
+            Ward C
+          </MenuItemRadio>
+        </MenuGroup>
+      </Menu>
+    );
+  }
+  const radio = (name: RegExp) => screen.getByRole('menuitemradio', { name });
+
+  it('opens on the checked item, so the current choice is announced first', () => {
+    render(<Wards />);
+    expect(document.activeElement).toBe(radio(/Ward B/));
+  });
+
+  it('marks the checked item with aria-checked, a tick and weight, not colour alone', () => {
+    render(<Wards />);
+    expect(radio(/Ward B/).getAttribute('aria-checked')).toBe('true');
+    expect(radio(/Ward A/).getAttribute('aria-checked')).toBe('false');
+    expect(radio(/Ward B/).querySelector('[data-tick]')).not.toBeNull();
+    expect(radio(/Ward A/).querySelector('[data-tick]')).toBeNull();
+    expect(radio(/Ward B/).classList.contains('font-semibold')).toBe(true);
+  });
+
+  it('shows a description line under the name', () => {
+    render(<Wards />);
+    expect(radio(/Ward B/).textContent).toContain('Current');
+  });
+
+  it('groups items under a visible label that names the group', () => {
+    render(<Wards />);
+    const medical = screen.getByRole('group', { name: 'Medical' });
+    expect(medical.querySelectorAll('[role="menuitemradio"]')).toHaveLength(2);
+  });
+
+  it('describes the menu with its header, outside the menu itself', () => {
+    render(<Wards />);
+    const menu = screen.getByRole('menu');
+    const header = screen.getByText('Switch ward');
+    expect(menu.contains(header)).toBe(false);
+    expect(menu.getAttribute('aria-describedby')).toBe(header.id);
+  });
+
+  it('navigates radio items with the same keys as plain items', () => {
+    const onPick = vi.fn();
+    render(<Wards onPick={onPick} />);
+    press('ArrowDown');
+    expect(document.activeElement).toBe(radio(/Ward C/));
+    press('Home');
+    press('Enter');
+    expect(onPick).toHaveBeenCalledWith('a');
+    expect(screen.queryByRole('menu')).toBeNull();
   });
 });

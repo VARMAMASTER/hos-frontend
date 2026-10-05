@@ -83,6 +83,8 @@ describe('@hos/nova-ui public API', () => {
     'Dialog',
     'Menu',
     'MenuItem',
+    'MenuItemRadio',
+    'MenuGroup',
     'Radio',
     'Select',
     'Switch',
