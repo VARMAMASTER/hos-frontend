@@ -70,8 +70,8 @@ describe('AppShell', () => {
       'grid',
       'min-h-screen',
       'grid-cols-1',
-      // The sidebar width is a variable that falls back to 248px, so a tenant can override it.
-      'md:grid-cols-[var(--nova-sidebar-w,248px)_1fr]',
+      // The sidebar width is the --nova-sidebar-w token (248px by default), so a tenant can override it.
+      'md:grid-cols-[var(--nova-sidebar-w)_1fr]',
     ]) {
       expect(root.classList.contains(name), name).toBe(true);
     }

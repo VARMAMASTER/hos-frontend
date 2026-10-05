@@ -33,6 +33,7 @@ export const NOVA_DEFAULTS = {
   '--nova-radius-sm': '8px',
   '--nova-radius-md': '12px',
   '--nova-radius-lg': '18px',
+  '--nova-sidebar-w': '248px',
   '--nova-font-body':
     '"Google Sans Flex", system-ui, -apple-system, sans-serif',
   '--nova-font-mono':
