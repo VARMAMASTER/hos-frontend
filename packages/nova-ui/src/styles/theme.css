@@ -170,6 +170,22 @@
   }
 }
 
+/* Continuous corners. corner-shape reshapes the curve that border-radius already draws: a squircle
+   eases the curvature in instead of starting abruptly the way a circular arc does, which is what
+   separates premium software from a default-looking UI. It is set here once, on every element and
+   pseudo-element (the property is not inherited), so every rounded-* utility and every surface
+   utility picks it up with no edit of its own, and a radius still means exactly what it says.
+   It is a progressive enhancement: a browser without corner-shape ignores the declaration and draws
+   the ordinary rounded corner, so do not delete this rule as dead weight. A true circle or capsule
+   opts out with corner-shape: round (Tailwind: [corner-shape:round]). */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    corner-shape: squircle;
+  }
+}
+
 /* The canvas glass frosts: brand-tinted aurora on glass, flat background on solid (--nova-glass
    scales every tint to zero). Brand-dependent styles live in utilities so they resolve where they
    are used and pick up a subtree's hospital theme. */

@@ -61,13 +61,17 @@ function parse(body: string): Rule {
   return rule;
 }
 
-function utility(name: string): Rule {
+// The rule that follows an at-rule header such as `@utility nova-hero` or `@layer base`.
+function block(header: string): Rule {
   const source = css.replace(/\/\*[\s\S]*?\*\//g, '');
-  const header = new RegExp(`@utility ${name}\\s*\\{`).exec(source);
-  if (!header) throw new Error(`theme.css declares no @utility ${name}`);
-  const open = header.index + header[0].length - 1;
+  const escaped = header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = new RegExp(`${escaped}\\s*\\{`).exec(source);
+  if (!match) throw new Error(`theme.css declares no "${header}" block`);
+  const open = match.index + match[0].length - 1;
   return parse(source.slice(open + 1, closingBrace(source, open)));
 }
+
+const utility = (name: string): Rule => block(`@utility ${name}`);
 
 const percent = (share: number) => `${Math.round(share * 100)}%`;
 
@@ -202,6 +206,16 @@ describe('theme.css utilities', () => {
           'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
         );
       }
+    });
+  });
+});
+
+describe('theme.css base rules', () => {
+  // corner-shape is not inherited, so the rule has to reach every box. Browsers without it ignore the
+  // declaration and draw plain rounded corners, which is why a refactor must not drop it as dead weight.
+  it('gives every element and pseudo-element continuous (squircle) corners, so each rounded-* and surface utility inherits the shape', () => {
+    expect(block('@layer base').nested['*, ::before, ::after']).toMatchObject({
+      declarations: { 'corner-shape': 'squircle' },
     });
   });
 });
