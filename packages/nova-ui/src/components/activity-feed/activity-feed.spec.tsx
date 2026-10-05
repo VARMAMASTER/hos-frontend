@@ -82,7 +82,7 @@ describe('ActivityFeed', () => {
     ['warn', 'bg-warn'],
     ['crit', 'bg-crit'],
     ['info', 'bg-info'],
-    ['ai', 'bg-ai'],
+    ['ai', 'text-ai'],
   ] as const)('maps the %s tone to the %s marker', (tone, marker) => {
     render(
       <ActivityFeed items={[{ id: 'x', time: 'now', title: 't', tone }]} />,
@@ -130,6 +130,15 @@ describe('ActivityFeed', () => {
     expect(warn).not.toContain('rounded-full');
     expect(crit).not.toContain('rounded-full');
     expect(warn).not.toBe(crit);
+  });
+
+  it('marks AI with the spark, a shape no status marker has', () => {
+    render(
+      <ActivityFeed items={[{ id: 'a', time: 't', title: 'x', tone: 'ai' }]} />,
+    );
+    const marker = markerOf(screen.getByRole('listitem'));
+    expect(marker.textContent).toBe('✦');
+    expect(marker.className).not.toContain('rounded-full');
   });
 
   it('sits on the opaque data surface, because events are clinical records', () => {

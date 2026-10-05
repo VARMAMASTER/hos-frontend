@@ -17,7 +17,7 @@ const history: TimelineItem[] = [
 ];
 
 function markers(container: HTMLElement) {
-  return Array.from(container.querySelectorAll<HTMLElement>('[data-tone]'));
+  return Array.from(container.querySelectorAll<HTMLElement>('[data-marker]'));
 }
 
 describe('Timeline', () => {
@@ -111,7 +111,7 @@ describe('Timeline', () => {
     );
   });
 
-  it('never marks an AI event by colour alone: a visible spark and a text label', () => {
+  it('never marks an AI event by colour alone: a spark marker and the visible AI badge', () => {
     const { container } = render(
       <Timeline
         items={[
@@ -134,8 +134,12 @@ describe('Timeline', () => {
     expect(ai?.textContent).toBe('✦');
     expect(plain?.textContent).toBe('');
     const items = screen.getAllByRole('listitem');
-    expect(items[0]?.textContent).toContain('AI: Triage note drafted');
+    expect(items[0]?.textContent).toContain('✦AITriage note drafted');
+    expect(
+      items[0]?.querySelector('[data-badge][data-tone="ai"]'),
+    ).not.toBeNull();
     expect(items[1]?.textContent).not.toContain('AI');
+    expect(items[1]?.textContent).toContain('GoodVitals recorded');
   });
 
   it('passes list attributes through', () => {

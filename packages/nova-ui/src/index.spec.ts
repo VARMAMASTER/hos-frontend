@@ -42,6 +42,8 @@ describe('@hos/nova-ui public API', () => {
     'BrandMark',
     'Button',
     'Chip',
+    'ToneLabel',
+    'TONE_WORDS',
     'Card',
     'CardHeader',
     'CardBody',

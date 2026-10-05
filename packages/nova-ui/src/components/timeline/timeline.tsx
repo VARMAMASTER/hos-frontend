@@ -1,7 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
-import { VisuallyHidden } from '../../primitives/visually-hidden';
 import type { ChipTone } from '../chip/chip';
+import { ToneLabel } from '../chip/tone-label';
 
 export interface TimelineItem {
   id: string;
@@ -46,6 +46,7 @@ export function Timeline({ items, ...rest }: TimelineProps) {
               {/* h-4 is the height of the time line, so the marker centres on it. */}
               <span className="flex h-4 items-center">
                 <span
+                  data-marker=""
                   data-tone={tone}
                   className={cx(
                     'flex shrink-0 items-center justify-center rounded-full [corner-shape:round]',
@@ -68,8 +69,10 @@ export function Timeline({ items, ...rest }: TimelineProps) {
             </div>
             <div className={last ? 'min-w-0 flex-1' : 'min-w-0 flex-1 pb-6'}>
               <div className="text-xs text-ink-3">{item.time}</div>
-              <div className="text-sm font-medium text-ink">
-                {tone === 'ai' ? <VisuallyHidden>AI: </VisuallyHidden> : null}
+              {/* The tone is a visible word (or the AI badge) before the title, so a critical event
+                  and a good one differ in greyscale and are announced differently. */}
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium text-ink">
+                <ToneLabel tone={tone} />
                 {item.title}
               </div>
               {item.description ? (

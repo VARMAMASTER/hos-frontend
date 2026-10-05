@@ -12,7 +12,7 @@ export interface AiBadgeProps
 // not a status colour: it stays distinct from good, warn, crit and info in every hospital theme.
 export function AiBadge({ label = 'AI draft', ...rest }: AiBadgeProps) {
   return (
-    <Chip tone="ai" {...rest}>
+    <Chip tone="ai" data-badge="" {...rest}>
       <span aria-hidden="true">✦</span>
       {label}
     </Chip>

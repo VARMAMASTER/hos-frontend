@@ -3,6 +3,17 @@ import { cx } from '../../primitives/cx';
 
 export type ChipTone = 'neutral' | 'good' | 'warn' | 'crit' | 'info' | 'ai';
 
+// The word every tone is shown with, wherever a tone appears (a timeline event, a feed row, a KPI's
+// sentiment). Severity is never carried by colour alone; neutral says nothing.
+export const TONE_WORDS: Readonly<Record<ChipTone, string | null>> = {
+  neutral: null,
+  good: 'Good',
+  warn: 'Warning',
+  crit: 'Critical',
+  info: 'Info',
+  ai: 'AI',
+};
+
 export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
   tone?: ChipTone;
 }

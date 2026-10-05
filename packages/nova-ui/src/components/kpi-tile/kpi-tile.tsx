@@ -2,6 +2,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
 import { Surface } from '../../primitives/surface';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
+import { TONE_WORDS } from '../chip/chip';
 
 export type KpiTrend = 'up' | 'down' | 'flat';
 export type KpiTone = 'default' | 'good' | 'warn' | 'crit';
@@ -80,6 +81,13 @@ export function KpiTile({
             </>
           ) : null}
           {delta}
+          {/* The sentiment as a word, not only the pill's colour: "up" is not good or bad news on
+              its own, and a colour-blind reader or a greyscale print must still be told which. */}
+          {tone === 'default' ? null : (
+            <span data-sentiment="" className="ml-1 font-semibold">
+              {TONE_WORDS[tone]}
+            </span>
+          )}
         </div>
       ) : null}
     </Surface>

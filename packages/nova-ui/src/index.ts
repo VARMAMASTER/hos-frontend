@@ -19,6 +19,7 @@ export * from './components/chart/palette';
 export * from './components/chart/sparkline';
 export * from './components/checkbox/checkbox';
 export * from './components/chip/chip';
+export * from './components/chip/tone-label';
 export * from './components/dialog/dialog';
 export * from './components/divider/divider';
 export * from './components/empty-state/empty-state';
