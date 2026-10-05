@@ -133,6 +133,18 @@ describe('theme.css utilities', () => {
     });
   });
 
+  // The ring is a custom property, so it inherits. The chrome and the hero turn it white for their
+  // own dark controls; a light surface nested inside them (a menu anchored in the sidebar, a card in
+  // the hero) must turn it back, or its focused items draw a white ring on white.
+  it.each(['nova-surface', 'nova-overlay', 'nova-field', 'nova-data'])(
+    '%s resets the keyboard focus ring to the brand primary, so a light surface nested in the chrome or the hero never inherits a white ring',
+    (name) => {
+      expect(utility(name).declarations['--nova-focus-ring']).toBe(
+        'var(--nova-color-primary)',
+      );
+    },
+  );
+
   it('nova-canvas paints the aurora token over the flat background', () => {
     expect(utility('nova-canvas').declarations).toMatchObject({
       'background-color': 'var(--nova-color-bg)',

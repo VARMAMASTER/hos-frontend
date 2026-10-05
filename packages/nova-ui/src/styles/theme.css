@@ -236,10 +236,16 @@
 /* Surfaces. Each utility below reads material tokens and never names a material, so one rule serves
    glass and solid: data-nova-material (or the OS asking for less transparency) swaps the token
    values and nothing else. The translucent fills are the ones the legibility proof in
-   material.spec.ts covers; utilities.spec.ts pins this wiring. */
+   material.spec.ts covers; utilities.spec.ts pins this wiring.
+
+   Every light surface (surface, overlay, field, data) also sets the keyboard focus ring back to the
+   brand primary. The ring is an inherited custom property: the chrome and the hero turn it white for
+   their own controls, and without the reset a menu anchored in the sidebar, or a card inside the
+   hero, would draw a white ring on white. material.spec.ts proves the primary ring at 3:1 there. */
 
 /* The default panel. */
 @utility nova-surface {
+  --nova-focus-ring: var(--nova-color-primary);
   background-color: var(--nova-surface-fill);
   -webkit-backdrop-filter: var(--nova-surface-filter);
   backdrop-filter: var(--nova-surface-filter);
@@ -249,6 +255,7 @@
 
 /* Floating layers: menus, dialogs, tooltips, popovers. */
 @utility nova-overlay {
+  --nova-focus-ring: var(--nova-color-primary);
   background-color: var(--nova-overlay-fill);
   -webkit-backdrop-filter: var(--nova-overlay-filter);
   backdrop-filter: var(--nova-overlay-filter);
@@ -259,6 +266,7 @@
 /* Form controls. The border is the strong token on both materials, so a control keeps a clear
    edge even where the glass behind it is busy. */
 @utility nova-field {
+  --nova-focus-ring: var(--nova-color-primary);
   background-color: var(--nova-field-fill);
   -webkit-backdrop-filter: var(--nova-field-filter);
   backdrop-filter: var(--nova-field-filter);
@@ -320,6 +328,7 @@
    edge paints. */
 /* prettier-ignore */
 @utility nova-data {
+  --nova-focus-ring: var(--nova-color-primary);
   position: relative;
   background-color: var(--nova-color-surface);
 

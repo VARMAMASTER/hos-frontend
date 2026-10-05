@@ -115,6 +115,41 @@ describe('glass legibility holds for every possible hospital brand', () => {
   });
 });
 
+describe('the keyboard focus ring on light surfaces holds 3:1 for every hospital brand', () => {
+  // Every light surface resets the ring to the brand primary (utilities.spec.ts). The theme gate
+  // needs white on the primary at 4.5:1, which caps its luminance: #767676 is the lightest primary
+  // that passes, so it is the worst case for a ring on a light fill.
+  const lightestPrimary = '#767676';
+  const darkestCanvas = mixColours('#000000', GLASS.canvasTint, bg);
+  // The darkest the chrome can be: a black brand mixed into the base, over the darkest canvas.
+  const darkestChrome = mixColours(
+    mixColours('#000000', GLASS.chromeBrandShare, GLASS.chromeBase),
+    GLASS.chromeOpacity,
+    darkestCanvas,
+  );
+
+  it('the lightest primary the gate allows is the one this proof uses', () => {
+    expect(contrastRatio(white, lightestPrimary)).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(white, '#777777')).toBeLessThan(4.5);
+  });
+
+  it.each([
+    ['a panel over the canvas', GLASS.surfaceAlpha, darkestCanvas],
+    ['a field over the canvas', GLASS.fieldAlpha, darkestCanvas],
+    ['an overlay over the canvas', GLASS.overlayAlpha, darkestCanvas],
+    [
+      'an overlay anchored in the dark chrome',
+      GLASS.overlayAlpha,
+      darkestChrome,
+    ],
+    ['an opaque data surface', 1, darkestCanvas],
+  ])('on %s', (_, alpha, backdrop) => {
+    expect(
+      contrastRatio(lightestPrimary, mixColours(white, alpha, backdrop)),
+    ).toBeGreaterThanOrEqual(3);
+  });
+});
+
 describe('theme.css material blocks', () => {
   it('declares the glass tokens on :root (the product default) and on [data-nova-material=glass]', () => {
     expect(blocksFor(":root, [data-nova-material='glass']")).toEqual([
