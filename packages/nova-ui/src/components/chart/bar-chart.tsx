@@ -62,7 +62,6 @@ export function BarChart({
       valueFormatter={valueFormatter}
     >
       <RechartsBarChart
-        accessibilityLayer
         data={frame.data as Array<Record<string, unknown>>}
         layout={horizontal ? 'vertical' : 'horizontal'}
         barGap={2}

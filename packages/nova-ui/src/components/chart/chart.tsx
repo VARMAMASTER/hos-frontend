@@ -1,5 +1,7 @@
 import {
+  cloneElement,
   createContext,
+  isValidElement,
   useContext,
   useId,
   useMemo,
@@ -27,8 +29,9 @@ import {
 
 // The primitives follow shadcn/ui's chart API (ChartContainer, ChartTooltip, ChartTooltipContent,
 // ChartLegend, ChartLegendContent, ChartConfig), so anyone who knows shadcn charts can use them.
-// They are adapted to Nova: series colours come from the fixed data palette instead of theme
-// variables, the surface is opaque nova-data, and every chart is a labelled figure.
+// They are adapted to Nova: series colours come from the fixed --nova-chart-* tokens instead of
+// tenant theme variables, the surface is opaque nova-data, and every chart is a labelled figure that
+// is not itself a tab stop.
 export {
   chartColorVar,
   chartVarName,
@@ -77,6 +80,19 @@ export interface ChartContainerProps
   initialDimension?: { width: number; height: number };
 }
 
+// Recharts' accessibility layer makes the plot an unnamed role="application" tab stop whose arrow
+// keys move a tooltip nothing announces: eight of them on a dashboard, each switching a screen
+// reader into application mode with nothing to say. The named figure and its data table are the
+// accessible chart, so the layer is switched off here, once, for every chart, and a chart is never
+// a tab stop.
+function withoutAccessibilityLayer(
+  chart: ChartContainerProps['children'],
+): ChartContainerProps['children'] {
+  return isValidElement<{ accessibilityLayer?: boolean }>(chart)
+    ? cloneElement(chart, { accessibilityLayer: false })
+    : chart;
+}
+
 export function ChartContainer({
   config,
   ariaLabel,
@@ -115,7 +131,7 @@ export function ChartContainer({
             height="100%"
             initialDimension={initialDimension}
           >
-            {children}
+            {withoutAccessibilityLayer(children)}
           </ResponsiveContainer>
           {overlay ? (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">

@@ -32,6 +32,18 @@ export const NOVA_DEFAULTS = {
   '--nova-color-info': p.blue[700],
   '--nova-color-info-soft': p.blue[100],
   '--nova-color-info-deep': p.blue[800],
+  // The data palette: six series colours, fixed for every hospital like status and AI, so the same
+  // chart reads the same everywhere (never in the theme allow-list). Built with the dataviz method
+  // (OKLab/OKLCH, Machado 2009 colour-vision simulation): neighbouring slots at least 12.8 apart
+  // under protanopia and deuteranopia and 23 apart with full colour vision; at least 3:1 against
+  // white; and at least 11 (OKLab x 100) from every status colour, its deep ink, the brand violet and
+  // the AI cyan, so a series never reads as a judgement. palette.spec.ts checks these.
+  '--nova-chart-1': p.data.sky,
+  '--nova-chart-2': p.data.gold,
+  '--nova-chart-3': p.data.rose,
+  '--nova-chart-4': p.data.olive,
+  '--nova-chart-5': p.data.lavender,
+  '--nova-chart-6': p.data.plum,
   '--nova-radius-sm': '8px',
   '--nova-radius-md': '12px',
   '--nova-radius-lg': '18px',

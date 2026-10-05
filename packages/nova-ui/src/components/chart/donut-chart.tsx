@@ -95,7 +95,7 @@ export function DonutChart({
       valueFormatter={valueFormatter}
       total={{ label: totalLabel, values: [shown] }}
     >
-      <PieChart accessibilityLayer>
+      <PieChart>
         <ChartTooltip
           content={
             <ChartTooltipContent

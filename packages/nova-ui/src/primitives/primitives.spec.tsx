@@ -47,6 +47,13 @@ describe('VisuallyHidden', () => {
     expect(node.tagName).toBe('SPAN');
     expect(node.classList.contains('sr-only')).toBe(true);
   });
+
+  it('renders as another element when asked, so it can hold block content such as a table', () => {
+    render(<VisuallyHidden as="div">Table</VisuallyHidden>);
+    const node = screen.getByText('Table');
+    expect(node.tagName).toBe('DIV');
+    expect(node.classList.contains('sr-only')).toBe(true);
+  });
 });
 
 describe('Surface', () => {

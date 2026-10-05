@@ -27,6 +27,14 @@ export function Sparkline({
 }: SparklineProps) {
   const [key] = seriesKeys;
   const last = frame.data.length - 1;
+  // No series: the labelled figure (and its empty table) still stands, with nothing plotted.
+  if (key === undefined) {
+    return (
+      <ChartFrame {...frame} height={height} bare={bare} seriesKeys={[]}>
+        <LineChart data={frame.data as Array<Record<string, unknown>>} />
+      </ChartFrame>
+    );
+  }
   return (
     <ChartFrame
       {...frame}
@@ -36,7 +44,6 @@ export function Sparkline({
       valueFormatter={valueFormatter}
     >
       <LineChart
-        accessibilityLayer
         data={frame.data as Array<Record<string, unknown>>}
         margin={{ top: 6, right: 6, bottom: 6, left: 6 }}
       >

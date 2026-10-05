@@ -82,7 +82,7 @@ describe('ChartContainer', () => {
     );
   });
 
-  it('turns the chart into a keyboard-reachable region through the accessibility layer', () => {
+  it('keeps the plot out of the Tab order even when a chart asks for the accessibility layer', () => {
     const { container } = render(
       <ChartContainer config={config} ariaLabel="Revenue by month">
         <BarChart data={data} accessibilityLayer>
@@ -91,8 +91,9 @@ describe('ChartContainer', () => {
       </ChartContainer>,
     );
     const surface = container.querySelector('svg.recharts-surface');
-    expect(surface?.getAttribute('tabindex')).toBe('0');
-    expect(surface?.getAttribute('role')).toBe('application');
+    expect(surface).not.toBeNull();
+    expect(surface?.hasAttribute('tabindex')).toBe(false);
+    expect(surface?.getAttribute('role')).not.toBe('application');
   });
 
   it('describes the figure with the description when there is one', () => {
@@ -436,7 +437,8 @@ describe('ChartDataTable', () => {
   it('is a real table with a caption, read by screen readers and not drawn', () => {
     renderTable();
     const table = screen.getByRole('table', { name: 'Revenue by month' });
-    expect(table.closest('.sr-only')).toBeTruthy();
+    // A table inside a span is invalid markup: the hidden wrapper is a div.
+    expect(table.closest('.sr-only')?.tagName).toBe('DIV');
   });
 
   it('has the category and series labels as column headers', () => {

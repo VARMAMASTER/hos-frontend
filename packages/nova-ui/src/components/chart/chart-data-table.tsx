@@ -20,8 +20,8 @@ export interface ChartDataTableProps {
 }
 
 // The data-table alternative every chart carries: the same values as the plot, as a real table.
-// It is wrapped in VisuallyHidden, so screen readers read it and the eye does not, so a clinical or financial figure never
-// depends on sight. A missing value says "No data" instead of leaving a silent gap.
+// It is wrapped in a visually hidden div (a table may not sit in a span), so screen readers read it
+// and the eye does not, and a clinical or financial figure never depends on sight. A missing value says "No data" instead of leaving a silent gap.
 export function ChartDataTable({
   caption,
   data,
@@ -37,7 +37,7 @@ export function ChartDataTable({
       ? formatValue(value)
       : formatChartValue(value);
   return (
-    <VisuallyHidden>
+    <VisuallyHidden as="div">
       <table className={className}>
         <caption>{caption}</caption>
         <thead>

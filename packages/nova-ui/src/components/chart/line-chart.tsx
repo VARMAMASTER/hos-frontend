@@ -36,7 +36,6 @@ export function LineChart({
       valueFormatter={valueFormatter}
     >
       <RechartsLineChart
-        accessibilityLayer
         data={frame.data as Array<Record<string, unknown>>}
         margin={{ top: 8, right: 8, bottom: 0, left: 0 }}
       >

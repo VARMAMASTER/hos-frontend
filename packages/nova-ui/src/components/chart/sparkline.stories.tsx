@@ -29,24 +29,19 @@ const args = {
 
 export const Inline: Story = { args: { ...args, className: 'w-40' } };
 
-// A KpiTile has no slot for a chart, so the sparkline is laid over the tile's free corner. The tile
-// is already an opaque data surface; the sparkline brings none of its own.
+// In the KpiTile's visual slot. The tile is already an opaque data surface; the sparkline brings
+// none of its own.
 export const BesideAKpiValue: Story = {
   args,
   render: (props) => (
-    <div className="relative max-w-xs">
-      <KpiTile
-        label="Collections today"
-        value="₹4.2L"
-        delta="12% vs last week"
-        trend="up"
-        tone="good"
-      />
-      <Sparkline
-        {...props}
-        className="absolute right-4 bottom-4 w-28"
-        height={44}
-      />
-    </div>
+    <KpiTile
+      className="max-w-xs"
+      label="Collections today"
+      value="₹4.2L"
+      delta="12% vs last week"
+      trend="up"
+      tone="good"
+      visual={<Sparkline {...props} height={44} />}
+    />
   ),
 };

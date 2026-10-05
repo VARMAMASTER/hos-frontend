@@ -110,18 +110,20 @@ export const Dashboard: StoryObj = {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map(({ tile, key, values, label }) => (
-          <div key={key} className="relative">
-            <KpiTile {...tile} />
-            <Sparkline
-              ariaLabel={`${label}, last 7 days`}
-              data={days.map((day, index) => ({ day, [key]: values[index] }))}
-              config={{ [key]: { label, color: 'chart-1' } }}
-              categoryKey="day"
-              seriesKeys={[key]}
-              className="absolute top-5 right-5 w-24"
-              height={40}
-            />
-          </div>
+          <KpiTile
+            key={key}
+            {...tile}
+            visual={
+              <Sparkline
+                ariaLabel={`${label}, last 7 days`}
+                data={days.map((day, index) => ({ day, [key]: values[index] }))}
+                config={{ [key]: { label, color: 'chart-1' } }}
+                categoryKey="day"
+                seriesKeys={[key]}
+                height={40}
+              />
+            }
+          />
         ))}
       </div>
 

@@ -54,7 +54,8 @@ describe('KpiTile', () => {
 
   it('draws no delta when it has neither a delta nor a trend', () => {
     render(<KpiTile label="Beds free" value="14" data-testid="tile" />);
-    expect(screen.getByTestId('tile').children).toHaveLength(2);
+    expect(screen.getByTestId('tile').querySelector('[data-delta]')).toBeNull();
+    expect(screen.getByTestId('tile').textContent).toBe('Beds free14');
   });
 
   it('renders a delta of zero rather than dropping it', () => {
@@ -163,5 +164,30 @@ describe('KpiTile trend', () => {
     const delta = classesOf(screen.getByText('12%'));
     expect(delta).toContain('bg-surface-2');
     expect(delta.some((name) => name.includes('good'))).toBe(false);
+  });
+});
+
+describe('KpiTile visual slot', () => {
+  it('lays a trailing visual (a sparkline) beside the figures, inside the tile', () => {
+    render(
+      <KpiTile
+        label="Collections"
+        value="₹4.2L"
+        visual={<svg data-testid="spark" />}
+        data-testid="tile"
+      />,
+    );
+    const tile = screen.getByTestId('tile');
+    const slot = screen.getByTestId('spark').closest('[data-visual]');
+    expect(slot).not.toBeNull();
+    expect(tile.contains(slot)).toBe(true);
+    expect(slot?.contains(screen.getByText('₹4.2L'))).toBe(false);
+  });
+
+  it('draws no slot without a visual', () => {
+    render(<KpiTile label="Beds" value="14" data-testid="tile" />);
+    expect(
+      screen.getByTestId('tile').querySelector('[data-visual]'),
+    ).toBeNull();
   });
 });

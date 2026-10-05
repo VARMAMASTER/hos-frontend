@@ -1,11 +1,22 @@
 import { describe, expect, it } from 'vitest';
 import { contrastRatio } from '../../theme/contrast';
+import {
+  createNovaTheme,
+  NOVA_THEME_VARIABLES,
+} from '../../theme/create-theme';
 import { NOVA_DEFAULTS } from '../../tokens/semantic';
 import {
   NOVA_CHART_PALETTE,
   NOVA_CHART_SLOTS,
   resolveChartColor,
 } from './palette';
+
+// The data palette lives in the token layer (--nova-chart-1..6 in semantic.ts and theme.css, kept
+// in step by semantic.spec.ts). These are its colours, as declared there.
+const CHART_TOKENS = NOVA_CHART_SLOTS.map((slot) => `--nova-${slot}` as const);
+const COLOURS = CHART_TOKENS.map(
+  (name) => (NOVA_DEFAULTS as Record<string, string>)[name] ?? '',
+);
 
 // Euclidean distance in OKLab, times 100: the metric the dataviz validator uses.
 function oklab(hex: string): [number, number, number] {
@@ -36,9 +47,8 @@ const RESERVED = Object.entries(NOVA_DEFAULTS).filter(([name]) =>
   /^--nova-color-(good|warn|crit|info|primary|ai)(-strong|-deep)?$/.test(name),
 );
 
-describe('NOVA_CHART_PALETTE', () => {
-  it('has six series colours, one per slot', () => {
-    expect(NOVA_CHART_PALETTE).toHaveLength(6);
+describe('the chart palette tokens', () => {
+  it('has six series colours, one per slot, each a --nova-chart token', () => {
     expect(NOVA_CHART_SLOTS).toEqual([
       'chart-1',
       'chart-2',
@@ -47,25 +57,26 @@ describe('NOVA_CHART_PALETTE', () => {
       'chart-5',
       'chart-6',
     ]);
+    expect(CHART_TOKENS.every((name) => name in NOVA_DEFAULTS)).toBe(true);
   });
 
   it('is six distinct 6-digit hex colours', () => {
-    for (const colour of NOVA_CHART_PALETTE) {
+    for (const colour of COLOURS) {
       expect(colour).toMatch(/^#[0-9A-F]{6}$/);
     }
-    expect(new Set(NOVA_CHART_PALETTE).size).toBe(6);
+    expect(new Set(COLOURS).size).toBe(6);
   });
 
   it('never equals a status, brand or AI colour', () => {
     expect(RESERVED.length).toBeGreaterThanOrEqual(12);
     const reserved = RESERVED.map(([, value]) => String(value).toUpperCase());
-    for (const colour of NOVA_CHART_PALETTE) {
+    for (const colour of COLOURS) {
       expect(reserved).not.toContain(colour);
     }
   });
 
   it('keeps a visible distance from every status, brand and AI colour, not only a different hex', () => {
-    for (const colour of NOVA_CHART_PALETTE) {
+    for (const colour of COLOURS) {
       for (const [name, value] of RESERVED) {
         expect(
           deltaE(colour, String(value)),
@@ -75,8 +86,8 @@ describe('NOVA_CHART_PALETTE', () => {
     }
   });
 
-  it('clears 3:1 against white, so a thin line or a small mark stays legible', () => {
-    for (const colour of NOVA_CHART_PALETTE) {
+  it('clears 3:1 against the surface, so a thin line or a small mark stays legible', () => {
+    for (const colour of COLOURS) {
       expect(
         contrastRatio(colour, NOVA_DEFAULTS['--nova-color-surface']),
         colour,
@@ -85,25 +96,36 @@ describe('NOVA_CHART_PALETTE', () => {
   });
 
   it('keeps neighbouring slots easy to tell apart', () => {
-    for (let i = 0; i < NOVA_CHART_PALETTE.length - 1; i += 1) {
-      expect(
-        deltaE(NOVA_CHART_PALETTE[i], NOVA_CHART_PALETTE[i + 1]),
-      ).toBeGreaterThanOrEqual(15);
+    for (let i = 0; i < COLOURS.length - 1; i += 1) {
+      expect(deltaE(COLOURS[i], COLOURS[i + 1])).toBeGreaterThanOrEqual(15);
     }
   });
 
-  it('is fixed: frozen, and not one of the tokens a hospital theme can override', () => {
+  // Like status and AI: the same chart reads the same in every hospital.
+  it('is not tenant-overridable: no hospital theme can set a chart colour', () => {
+    for (const name of CHART_TOKENS) {
+      expect(NOVA_THEME_VARIABLES).not.toContain(name);
+    }
+    const row = JSON.parse(
+      JSON.stringify({ name: 'Sneaky', brand: { chart1: '#00FF00' } }),
+    );
+    expect(Object.keys(createNovaTheme(row).cssVariables)).toEqual([]);
+  });
+});
+
+describe('NOVA_CHART_PALETTE', () => {
+  it('is the six tokens, read by chart code as CSS variables, in slot order', () => {
+    expect(NOVA_CHART_PALETTE).toEqual(
+      CHART_TOKENS.map((name) => `var(${name})`),
+    );
     expect(Object.isFrozen(NOVA_CHART_PALETTE)).toBe(true);
-    expect(
-      Object.keys(NOVA_DEFAULTS).filter((name) => /chart/.test(name)),
-    ).toEqual([]);
   });
 });
 
 describe('resolveChartColor', () => {
-  it('resolves a palette slot to its colour', () => {
-    expect(resolveChartColor('chart-1', 0)).toBe(NOVA_CHART_PALETTE[0]);
-    expect(resolveChartColor('chart-6', 0)).toBe(NOVA_CHART_PALETTE[5]);
+  it('resolves a palette slot to its token', () => {
+    expect(resolveChartColor('chart-1', 0)).toBe('var(--nova-chart-1)');
+    expect(resolveChartColor('chart-6', 0)).toBe('var(--nova-chart-6)');
   });
 
   it('passes any other colour through untouched', () => {

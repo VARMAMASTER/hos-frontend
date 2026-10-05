@@ -17,6 +17,9 @@ export interface KpiTileProps
   // Whether that movement is good news. Separate from `trend` because direction is not sentiment:
   // rising claim rejections are up and critical, rising free beds are up and good.
   tone?: KpiTone;
+  // A small trailing visual beside the figures, such as a Sparkline (which brings no surface of its
+  // own, since the tile is already opaque). The slot is 8rem wide and sits at the tile's bottom edge.
+  visual?: ReactNode;
 }
 
 const trends: Record<KpiTrend, { glyph: string; label: string }> = {
@@ -51,6 +54,7 @@ export function KpiTile({
   delta,
   trend,
   tone = 'default',
+  visual,
   className,
   ...rest
 }: KpiTileProps) {
@@ -62,34 +66,44 @@ export function KpiTile({
       className={cx('p-5', className)}
       {...rest}
     >
-      <div className="text-sm text-ink-3">{label}</div>
-      <div className="mt-1 font-mono text-3xl font-semibold text-ink">
-        {value}
-      </div>
-      {marker || hasContent(delta) ? (
-        <div
-          data-trend={trend}
-          className={cx(
-            'mt-3 flex w-fit items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium',
-            deltaTones[tone],
-          )}
-        >
-          {marker ? (
-            <>
-              <span aria-hidden="true">{marker.glyph}</span>
-              <VisuallyHidden>{marker.label}</VisuallyHidden>
-            </>
+      <div className="flex items-end gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="text-sm text-ink-3">{label}</div>
+          <div className="mt-1 font-mono text-3xl font-semibold text-ink">
+            {value}
+          </div>
+          {marker || hasContent(delta) ? (
+            <div
+              data-delta=""
+              data-trend={trend}
+              className={cx(
+                'mt-3 flex w-fit items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium',
+                deltaTones[tone],
+              )}
+            >
+              {marker ? (
+                <>
+                  <span aria-hidden="true">{marker.glyph}</span>
+                  <VisuallyHidden>{marker.label}</VisuallyHidden>
+                </>
+              ) : null}
+              {delta}
+              {/* The sentiment as a word, not only the pill's colour: "up" is not good or bad news on
+                  its own, and a colour-blind reader or a greyscale print must still be told which. */}
+              {tone === 'default' ? null : (
+                <span data-sentiment="" className="ml-1 font-semibold">
+                  {TONE_WORDS[tone]}
+                </span>
+              )}
+            </div>
           ) : null}
-          {delta}
-          {/* The sentiment as a word, not only the pill's colour: "up" is not good or bad news on
-              its own, and a colour-blind reader or a greyscale print must still be told which. */}
-          {tone === 'default' ? null : (
-            <span data-sentiment="" className="ml-1 font-semibold">
-              {TONE_WORDS[tone]}
-            </span>
-          )}
         </div>
-      ) : null}
+        {visual ? (
+          <div data-visual="" className="w-32 shrink-0">
+            {visual}
+          </div>
+        ) : null}
+      </div>
     </Surface>
   );
 }

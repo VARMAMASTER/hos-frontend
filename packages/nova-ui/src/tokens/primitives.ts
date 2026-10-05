@@ -12,4 +12,13 @@ export const primitives = {
   amber: { 100: '#FBEEDD', 700: '#B45309', 800: '#8A3E06' },
   red: { 100: '#F9E7E5', 700: '#B3261E', 800: '#8E1D16' },
   blue: { 100: '#E7EFF8', 700: '#2563A8', 800: '#1A4C85' },
+  // The data palette (see --nova-chart-* in semantic.ts): sky, gold, rose, olive, lavender, plum.
+  data: {
+    sky: '#248FCC',
+    gold: '#B38A00',
+    rose: '#E75594',
+    olive: '#6C6610',
+    lavender: '#A779FD',
+    plum: '#9C1B80',
+  },
 } as const;

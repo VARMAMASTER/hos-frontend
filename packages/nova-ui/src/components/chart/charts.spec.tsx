@@ -87,13 +87,16 @@ describe.each([
     expect(container.querySelectorAll(mark)).toHaveLength(markCount);
   });
 
-  it('turns on the accessibility layer, so the plot can be reached by keyboard', () => {
+  // The named figure and its data table are the accessible chart. Recharts' accessibility layer
+  // would add an unnamed role="application" tab stop per chart, eight on a dashboard.
+  it('adds no tab stop and no unnamed application region', () => {
     const { container } = render(
       <Chart {...cartesian} ariaLabel="Daily movement" />,
     );
-    expect(
-      container.querySelector('svg.recharts-surface')?.getAttribute('tabindex'),
-    ).toBe('0');
+    const svg = container.querySelector('svg.recharts-surface');
+    expect(svg).not.toBeNull();
+    expect(svg?.hasAttribute('tabindex')).toBe(false);
+    expect(svg?.getAttribute('role')).not.toBe('application');
   });
 
   it('carries a data table alternative with every value', () => {
@@ -294,6 +297,13 @@ describe('DonutChart', () => {
     ariaLabel: 'Payer mix',
   };
 
+  it('adds no tab stop', () => {
+    const { container } = render(<DonutChart {...props} />);
+    expect(
+      container.querySelector('svg.recharts-surface')?.hasAttribute('tabindex'),
+    ).toBe(false);
+  });
+
   it('is a figure with the accessible name it is given', () => {
     render(<DonutChart {...props} />);
     expect(screen.getByRole('figure', { name: 'Payer mix' })).toBeTruthy();
@@ -389,6 +399,20 @@ describe('Sparkline', () => {
 
   it('is a figure with the accessible name it is given', () => {
     render(<Sparkline {...props} />);
+    expect(
+      screen.getByRole('figure', { name: 'Admissions this week' }),
+    ).toBeTruthy();
+  });
+
+  it('is never a tab stop', () => {
+    const { container } = render(<Sparkline {...props} />);
+    expect(
+      container.querySelector('svg.recharts-surface')?.hasAttribute('tabindex'),
+    ).toBe(false);
+  });
+
+  it('renders an empty figure rather than throwing when it is given no series', () => {
+    render(<Sparkline {...props} seriesKeys={[]} />);
     expect(
       screen.getByRole('figure', { name: 'Admissions this week' }),
     ).toBeTruthy();
