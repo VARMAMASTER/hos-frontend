@@ -2,6 +2,11 @@
   "name": "@hos-frontend/web",
   "version": "0.0.1",
   "private": true,
+  "nx": {
+    "tags": [
+      "type:app"
+    ]
+  },
   "dependencies": {
     "@hos/hos-utility": "workspace:*",
     "@hos/nova-ui": "workspace:*"

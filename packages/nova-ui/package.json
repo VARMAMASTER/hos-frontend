@@ -19,6 +19,9 @@
     "!**/*.tsbuildinfo"
   ],
   "nx": {
-    "name": "nova-ui"
+    "name": "nova-ui",
+    "tags": [
+      "type:ui"
+    ]
   }
 }
