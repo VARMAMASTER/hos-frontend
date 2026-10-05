@@ -1,12 +1,24 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
-export function Card({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
+// panel is the default surface and takes the product material (glass or solid). data is for dense
+// data (tables, figures): it stays opaque under either material and carries its richness in a rim.
+export type CardVariant = 'panel' | 'data';
+
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: CardVariant;
+}
+
+// Whole class names, so Tailwind's scanner finds each utility.
+const variants: Record<CardVariant, string> = {
+  panel: 'nova-surface',
+  data: 'nova-data',
+};
+
+export function Card({ variant = 'panel', className, ...rest }: CardProps) {
   return (
     <div
-      className={[
-        'rounded-lg border border-border bg-surface shadow-sm',
-        className,
-      ]
+      data-variant={variant}
+      className={['rounded-lg', variants[variant], className]
         .filter(Boolean)
         .join(' ')}
       {...rest}
