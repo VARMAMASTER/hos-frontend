@@ -1,6 +1,10 @@
 import type { CSSProperties, ReactNode } from 'react';
 import type { NovaMaterial } from '../tokens/material';
-import type { NovaTheme } from './create-theme';
+import {
+  NOVA_THEME_VARIABLES,
+  themeVariables,
+  type NovaTheme,
+} from './create-theme';
 
 export interface NovaThemeProviderProps {
   theme?: NovaTheme;
@@ -23,7 +27,8 @@ export function NovaThemeProvider({
       data-nova-theme={theme?.name ?? 'default'}
       data-nova-material={theme?.material ?? material}
       className={className}
-      style={theme?.cssVariables as CSSProperties | undefined}
+      // Through the allow-list: a theme that skipped createNovaTheme still sets no status or AI token.
+      style={themeVariables(theme) as CSSProperties}
     >
       {children}
     </div>
@@ -34,11 +39,15 @@ export function applyNovaTheme(
   theme: NovaTheme,
   element: HTMLElement = document.documentElement,
 ): () => void {
+  // Every allow-listed key is written or cleared, so a theme applied over another (a tenant switch
+  // without the first cleanup) keeps nothing of the first, and nothing outside the list is touched.
+  const variables = themeVariables(theme);
   const previous = new Map<string, string>();
-  for (const [name, value] of Object.entries(theme.cssVariables)) {
-    if (value === undefined) continue;
+  for (const name of NOVA_THEME_VARIABLES) {
     previous.set(name, element.style.getPropertyValue(name));
-    element.style.setProperty(name, value);
+    const value = variables[name];
+    if (value === undefined) element.style.removeProperty(name);
+    else element.style.setProperty(name, value);
   }
   const previousName = element.dataset['novaTheme'];
   element.dataset['novaTheme'] = theme.name;

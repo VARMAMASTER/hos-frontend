@@ -32,6 +32,29 @@ const BRAND_COLOURS = {
   primarySoft: '--nova-color-primary-soft',
 } as const;
 
+const FONT_BODY = '--nova-font-body';
+
+// The only variables a hospital theme may set: the brand colours and the body font. Status, AI,
+// chart and ink tokens are never tenant-overridable. createNovaTheme produces nothing else, and
+// applyNovaTheme and NovaThemeProvider write nothing else, so a theme that skipped createNovaTheme
+// (a database row cast to NovaTheme) still cannot recolour critical or AI.
+export const NOVA_THEME_VARIABLES: readonly NovaVariable[] = Object.freeze([
+  ...Object.values(BRAND_COLOURS),
+  FONT_BODY,
+]);
+
+// A theme's variables, keeping only the allow-listed ones.
+export function themeVariables(
+  theme: Pick<NovaTheme, 'cssVariables'> | undefined,
+): Partial<Record<NovaVariable, string>> {
+  const allowed: Partial<Record<NovaVariable, string>> = {};
+  for (const name of NOVA_THEME_VARIABLES) {
+    const value = theme?.cssVariables[name];
+    if (typeof value === 'string') allowed[name] = value;
+  }
+  return allowed;
+}
+
 // Every text-on-background pairing a Nova component draws with brand tokens.
 // A component that introduces a new brand pairing adds a row here.
 const CONTRAST_PAIRS: ReadonlyArray<
@@ -162,10 +185,11 @@ export function createNovaTheme(input: NovaThemeInput): NovaTheme {
         `Theme "${name}": brand.fontBody must be a plain font stack like "Inter", sans-serif.`,
       );
     }
-    cssVariables['--nova-font-body'] = brand.fontBody;
+    cssVariables[FONT_BODY] = brand.fontBody;
   }
 
+  const allowed = themeVariables({ cssVariables });
   return material === undefined
-    ? { name, cssVariables }
-    : { name, cssVariables, material };
+    ? { name, cssVariables: allowed }
+    : { name, cssVariables: allowed, material };
 }

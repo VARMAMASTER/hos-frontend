@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
-import { createNovaTheme } from './create-theme';
+import {
+  createNovaTheme,
+  NOVA_THEME_VARIABLES,
+  type NovaTheme,
+} from './create-theme';
 import {
   applyNovaMaterial,
   applyNovaTheme,
@@ -58,6 +62,84 @@ describe('applyNovaTheme', () => {
       document.documentElement.style.getPropertyValue('--nova-color-primary'),
     ).toBe('');
     expect(document.documentElement.dataset['novaTheme']).toBeUndefined();
+  });
+});
+
+describe('the allow-list a theme is applied through', () => {
+  // What a database row deserialised straight into NovaTheme could look like: it never went
+  // through createNovaTheme, so nothing gated it.
+  const forged = {
+    name: 'Forged',
+    cssVariables: {
+      '--nova-color-primary': '#0F766E',
+      '--nova-color-crit': '#00FF00',
+      '--nova-color-ai': '#6D4FE0',
+      '--nova-color-ai-deep': '#000000',
+      '--nova-gradient-ai': 'none',
+    },
+  } as NovaTheme;
+
+  it('is the brand colours and the body font, shared with createNovaTheme', () => {
+    expect([...NOVA_THEME_VARIABLES].sort()).toEqual([
+      '--nova-color-primary',
+      '--nova-color-primary-soft',
+      '--nova-color-primary-strong',
+      '--nova-font-body',
+    ]);
+  });
+
+  it('NovaThemeProvider writes only allow-listed variables, so a forged theme cannot recolour status or AI', () => {
+    render(
+      <NovaThemeProvider theme={forged}>
+        <p>forged</p>
+      </NovaThemeProvider>,
+    );
+    const wrapper = screen.getByText('forged').parentElement as HTMLElement;
+    expect(wrapper.style.getPropertyValue('--nova-color-primary')).toBe(
+      '#0F766E',
+    );
+    for (const name of [
+      '--nova-color-crit',
+      '--nova-color-ai',
+      '--nova-color-ai-deep',
+      '--nova-gradient-ai',
+    ]) {
+      expect(wrapper.style.getPropertyValue(name), name).toBe('');
+    }
+  });
+
+  it('applyNovaTheme writes only allow-listed variables too', () => {
+    const restore = applyNovaTheme(forged);
+    try {
+      const style = document.documentElement.style;
+      expect(style.getPropertyValue('--nova-color-primary')).toBe('#0F766E');
+      expect(style.getPropertyValue('--nova-color-crit')).toBe('');
+      expect(style.getPropertyValue('--nova-color-ai')).toBe('');
+      expect(style.getPropertyValue('--nova-gradient-ai')).toBe('');
+    } finally {
+      restore();
+    }
+  });
+
+  it("clears the previous theme's keys, so switching tenant leaves none of the old one behind", () => {
+    const withFont = createNovaTheme({
+      name: 'A',
+      brand: { fontBody: '"Inter", sans-serif' },
+    });
+    const style = document.documentElement.style;
+    const restoreA = applyNovaTheme(withFont);
+    const restoreB = applyNovaTheme(teal);
+    try {
+      expect(style.getPropertyValue('--nova-font-body')).toBe('');
+      expect(style.getPropertyValue('--nova-color-primary')).toBe('#0F766E');
+    } finally {
+      restoreB();
+      expect(style.getPropertyValue('--nova-font-body')).toBe(
+        '"Inter", sans-serif',
+      );
+      restoreA();
+      expect(style.getPropertyValue('--nova-font-body')).toBe('');
+    }
   });
 });
 
