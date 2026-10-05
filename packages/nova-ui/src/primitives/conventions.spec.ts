@@ -52,6 +52,28 @@ describe('component conventions', () => {
     ).toEqual([]);
   });
 
+  it('never writes a raw colour as a Tailwind arbitrary value or an inline style either', () => {
+    expect(
+      offenders(
+        /\[(?:color:)?(?:#[0-9a-fA-F]{3,8}|(?:rgb|hsl|oklch)a?\()|style=\{\{[^}]*['"`](?:#[0-9a-fA-F]{3,8}|(?:rgb|hsl|oklch)a?\()/,
+      ),
+    ).toEqual([]);
+  });
+
+  // Surface is the one way to a material role, so a role's tokens and wiring change in one place.
+  // nova-field is the exception: it is applied to the form control element itself.
+  it('reaches the surface materials only through Surface, never by writing the utility class', () => {
+    const material =
+      /(?<=['"`\s])nova-(?:surface|overlay|chrome|hero|data)(?=['"`\s])/;
+    const code = (text: string) =>
+      text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+    expect(
+      files
+        .filter((file) => material.test(code(file.text)))
+        .map((file) => file.path),
+    ).toEqual([]);
+  });
+
   it('never forces a border colour with an important modifier — a control sets --nova-field-edge instead', () => {
     expect(offenders(/\bborder-[\w-]+!/)).toEqual([]);
   });
