@@ -1,0 +1,184 @@
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
+import { getTabbables, trapTab } from './focus';
+import { inertOutside } from './inert';
+
+export interface DialogProps {
+  open: boolean;
+  // Called for Escape and for the close button. The parent decides what closing means, which for a
+  // form is the place to ask about unsaved changes.
+  onClose: () => void;
+  title: ReactNode;
+  description?: ReactNode;
+  footer?: ReactNode;
+  children?: ReactNode;
+  // Styles the dialog panel (its width, for instance), not the scrim around it.
+  className?: string;
+  // The close button's accessible name. Translate it, or make it specific.
+  closeLabel?: string;
+}
+
+// The open dialogs, bottom to top. Only the top one answers the keyboard, so Escape closes one
+// dialog at a time and a confirmation over a form does not take the form with it.
+const openDialogs: object[] = [];
+
+// A modal dialog. It is portalled to <body>; it is labelled by its title; the page behind it is made
+// inert; Tab cycles inside it; Escape closes it; and focus goes back to whatever opened it.
+//
+// A portal escapes a subtree-scoped NovaThemeProvider (see theme-provider.tsx), so under such a
+// provider the dialog shows the default theme. A product that themes the whole app with
+// applyNovaTheme is unaffected.
+export function Dialog({ open, ...rest }: DialogProps) {
+  if (!open || typeof document === 'undefined') return null;
+  return createPortal(<DialogLayer {...rest} />, document.body);
+}
+
+function DialogLayer({
+  onClose,
+  title,
+  description,
+  footer,
+  children,
+  className,
+  closeLabel = 'Close',
+}: Omit<DialogProps, 'open'>) {
+  const titleId = useId();
+  const descriptionId = useId();
+  const layerRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  // Read while rendering, which is before anything inside can take focus (an autoFocus input does
+  // at commit). It is where focus returns to.
+  const [opener] = useState(() => document.activeElement);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+
+  useEffect(() => {
+    const layer = layerRef.current;
+    const panel = panelRef.current;
+    if (!layer || !panel) return undefined;
+
+    const token = {};
+    openDialogs.push(token);
+    const releaseInert = inertOutside(layer);
+
+    // Something inside may have taken focus already (autoFocus); otherwise start on the first
+    // control of the content. The close button is chrome and is skipped, so a form opens on its
+    // first field, and a confirmation on its first button.
+    if (!panel.contains(document.activeElement)) {
+      const [first] = getTabbables(panel).filter(
+        (element) => element !== closeRef.current,
+      );
+      (first ?? panel).focus();
+    }
+
+    // On the document, not the panel: after a click on the scrim focus may be on <body>, and Escape
+    // and Tab must still be answered.
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (openDialogs[openDialogs.length - 1] !== token) return;
+      if (event.key === 'Escape') {
+        // Something inside (an open menu, a combobox) may have used this Escape already.
+        if (event.defaultPrevented || event.isComposing) return;
+        event.preventDefault();
+        onCloseRef.current();
+      } else if (event.key === 'Tab') {
+        trapTab(event, panel);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      const index = openDialogs.indexOf(token);
+      if (index !== -1) openDialogs.splice(index, 1);
+      // Before restoring focus: the opener sits under the inert marks, and an inert element cannot
+      // take focus.
+      releaseInert();
+      // If the app has put focus somewhere deliberate in the meantime, leave it there. Focus sitting
+      // on <body> (the dialog's own focus was removed with it) or still inside the dialog is the case
+      // to repair.
+      const current = document.activeElement;
+      const lost =
+        current === null || current === document.body || layer.contains(current);
+      if (lost && opener instanceof HTMLElement && opener.isConnected) {
+        opener.focus();
+      }
+    };
+  }, [opener]);
+
+  return (
+    // The layer carries the typography itself, because a portal escapes the text styles of the app
+    // root. data-nova-layer tells inertOutside this is a dialog layer that may stack.
+    <div
+      ref={layerRef}
+      data-nova-layer=""
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 font-sans text-ink"
+    >
+      {/* Cancelling mousedown stops a press on the scrim from moving focus to <body>. A click on it
+          does not close the dialog: a stray click should not throw away what a clinician typed. */}
+      <div
+        aria-hidden="true"
+        onMouseDown={(event) => event.preventDefault()}
+        className="absolute inset-0 bg-ink/40"
+      />
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={description ? descriptionId : undefined}
+        tabIndex={-1}
+        className={[
+          'nova-overlay relative flex max-h-full w-full max-w-lg flex-col rounded-lg outline-none',
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        <div className="flex items-start justify-between gap-4 px-6 pt-5">
+          <div className="min-w-0">
+            <h2 id={titleId} className="text-lg font-semibold text-ink">
+              {title}
+            </h2>
+            {description ? (
+              <p id={descriptionId} className="mt-1 text-sm text-ink-2">
+                {description}
+              </p>
+            ) : null}
+          </div>
+          <button
+            ref={closeRef}
+            type="button"
+            aria-label={closeLabel}
+            onClick={() => onClose()}
+            className="-mr-2 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            <svg
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              aria-hidden="true"
+              focusable="false"
+              className="h-4 w-4"
+            >
+              <path d="M5 5l10 10M15 5L5 15" />
+            </svg>
+          </button>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4 text-sm text-ink">
+          {children}
+        </div>
+        {footer ? (
+          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border px-6 py-4">
+            {footer}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}

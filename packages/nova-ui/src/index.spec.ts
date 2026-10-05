@@ -11,6 +11,17 @@ describe('@hos/nova-ui public API', () => {
     'CardBody',
     'HeroBand',
     'KpiTile',
+    'Banner',
+    'Checkbox',
+    'Dialog',
+    'Menu',
+    'MenuItem',
+    'Radio',
+    'Select',
+    'Switch',
+    'TextField',
+    'Textarea',
+    'Tooltip',
     'NovaThemeProvider',
     'applyNovaTheme',
     'createNovaTheme',
@@ -44,4 +55,11 @@ describe('@hos/nova-ui public API', () => {
     };
     expect([card, hero, kpi]).toHaveLength(3);
   });
+
+  it.each(['FieldShell', 'getTabbables', 'trapTab', 'inertOutside'])(
+    'keeps the internal helper %s out of the barrel',
+    (name) => {
+      expect(nova).not.toHaveProperty(name);
+    },
+  );
 });
