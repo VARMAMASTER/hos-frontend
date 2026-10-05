@@ -8,6 +8,9 @@
     },
     {
       "path": "./packages/nova-ui"
+    },
+    {
+      "path": "./packages/hos-utility"
     }
   ]
 }
