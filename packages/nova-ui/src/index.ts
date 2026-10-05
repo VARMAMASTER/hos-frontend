@@ -1,5 +1,32 @@
 export * from './components/button/button';
 export * from './components/card/card';
+export * from './components/chart/area-chart';
+export * from './components/chart/bar-chart';
+export {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+  chartColorVar,
+  chartVarName,
+  formatChartValue,
+  type ChartConfig,
+  type ChartConfigEntry,
+  type ChartContainerProps,
+  type ChartLegendContentProps,
+  type ChartTooltipContentProps,
+} from './components/chart/chart';
+export * from './components/chart/chart-data-table';
+export type {
+  CartesianChartProps,
+  ChartBaseProps,
+  ChartDatum,
+} from './components/chart/chart-shared';
+export * from './components/chart/donut-chart';
+export * from './components/chart/line-chart';
+export * from './components/chart/palette';
+export * from './components/chart/sparkline';
 export * from './components/chip/chip';
 export * from './components/hero-band/hero-band';
 export * from './components/kpi-tile/kpi-tile';
