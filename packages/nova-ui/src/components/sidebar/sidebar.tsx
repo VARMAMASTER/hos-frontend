@@ -1,4 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { Surface } from '../../primitives/surface';
 
 export interface SidebarProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -10,10 +12,10 @@ export interface SidebarProps
   children: ReactNode;
 }
 
-// Stacked above the page below md, so it is only pinned to the viewport (and scrolls on its own)
-// once it sits beside the content.
+// A frame, not a card, so its corners are straight. Stacked above the page below md, it is only
+// pinned to the viewport (and scrolls on its own) once it sits beside the content.
 const frame =
-  'nova-chrome flex flex-col gap-6 p-4 md:sticky md:top-0 md:h-screen md:overflow-y-auto';
+  'rounded-none flex flex-col gap-6 p-4 md:sticky md:top-0 md:h-screen md:overflow-y-auto';
 
 export function Sidebar({
   brand,
@@ -24,7 +26,7 @@ export function Sidebar({
   ...rest
 }: SidebarProps) {
   return (
-    <div className={[frame, className].filter(Boolean).join(' ')} {...rest}>
+    <Surface material="chrome" className={cx(frame, className)} {...rest}>
       {brand ? <div className="px-2 pt-1">{brand}</div> : null}
       <nav aria-label={navLabel} className="flex flex-col gap-1">
         {children}
@@ -34,6 +36,6 @@ export function Sidebar({
           {footer}
         </div>
       ) : null}
-    </div>
+    </Surface>
   );
 }

@@ -14,7 +14,16 @@ describe('TopBar', () => {
   it('is the dark app chrome, pinned above the page as it scrolls', () => {
     const { container } = render(<TopBar />);
     const root = container.firstElementChild as HTMLElement;
-    for (const name of ['nova-chrome', 'sticky', 'top-0', 'z-20', 'flex']) {
+    expect(root.dataset['surface']).toBe('chrome');
+    expect(root.tagName).toBe('HEADER');
+    for (const name of [
+      'nova-chrome',
+      'rounded-none',
+      'sticky',
+      'top-0',
+      'z-20',
+      'flex',
+    ]) {
       expect(root.classList.contains(name), name).toBe(true);
     }
   });

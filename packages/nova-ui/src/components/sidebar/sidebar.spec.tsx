@@ -13,6 +13,9 @@ describe('Sidebar', () => {
     );
     const root = container.firstElementChild as HTMLElement;
     expect(root.classList.contains('nova-chrome')).toBe(true);
+    expect(root.dataset['surface']).toBe('chrome');
+    // A frame, not a card: its edges are straight.
+    expect(root.classList.contains('rounded-none')).toBe(true);
     expect(root.classList.contains('flex')).toBe(true);
     expect(root.classList.contains('flex-col')).toBe(true);
   });

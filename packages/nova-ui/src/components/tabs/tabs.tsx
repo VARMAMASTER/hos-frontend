@@ -7,6 +7,10 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
+import { Surface } from '../../primitives/surface';
+import { useControllableState } from '../../primitives/use-controllable-state';
 
 interface TabsContextValue {
   value: string;
@@ -35,22 +39,32 @@ function panelId(baseId: string, value: string): string {
   return `${baseId}-panel-${encodeURIComponent(value)}`;
 }
 
-function join(...classes: Array<string | undefined>): string {
-  return classes.filter(Boolean).join(' ');
-}
-
 export interface TabsProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
-  // The selected tab. Tabs is controlled: it never changes the selection itself.
-  value: string;
-  onValueChange: (value: string) => void;
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'defaultValue'> {
+  // Controlled when given: Tabs reports changes through onValueChange and shows `value`.
+  value?: string;
+  // Uncontrolled otherwise: Tabs keeps the selection itself, starting here. With neither, no tab is
+  // selected until one is chosen.
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
   children: ReactNode;
 }
 
-export function Tabs({ value, onValueChange, children, ...rest }: TabsProps) {
+export function Tabs({
+  value,
+  defaultValue = '',
+  onValueChange,
+  children,
+  ...rest
+}: TabsProps) {
   const baseId = useId();
+  const [selected, select] = useControllableState({
+    value,
+    defaultValue,
+    onChange: onValueChange,
+  });
   return (
-    <TabsContext value={{ value, onValueChange, baseId }}>
+    <TabsContext value={{ value: selected, onValueChange: select, baseId }}>
       <div {...rest}>{children}</div>
     </TabsContext>
   );
@@ -65,7 +79,7 @@ export function TabList({ className, ...rest }: TabListProps) {
     <div
       {...rest}
       role="tablist"
-      className={join(
+      className={cx(
         'inline-flex max-w-full items-center gap-1 overflow-x-auto rounded-lg border border-border bg-primary/10 p-1',
         className,
       )}
@@ -78,14 +92,9 @@ export interface TabProps
   value: string;
 }
 
+// `isolate` keeps the selected chip (a Surface behind the label) inside the tab.
 const tab =
-  'inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ' +
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ' +
-  'disabled:pointer-events-none disabled:opacity-50';
-// nova-surface draws its own border, so the resting tab reserves the same one, invisibly, and the
-// row does not shift when the selection moves.
-const tabSelected = 'nova-surface text-ink';
-const tabResting = 'border-transparent text-ink-2 hover:text-ink';
+  'relative isolate inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50';
 
 const NAVIGATION_KEYS = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
 
@@ -105,6 +114,7 @@ function nextIndex(key: string, current: number, last: number): number {
 export function Tab({
   value,
   className,
+  children,
   onClick,
   onKeyDown,
   ...rest
@@ -141,13 +151,30 @@ export function Tab({
       aria-selected={selected}
       aria-controls={panelId(baseId, value)}
       tabIndex={selected ? 0 : -1}
-      className={join(tab, selected ? tabSelected : tabResting, className)}
+      className={cx(
+        tab,
+        focusRing,
+        selected ? 'text-ink' : 'text-ink-2 hover:text-ink',
+        className,
+      )}
       onClick={(event) => {
         onClick?.(event);
         onValueChange(value);
       }}
       onKeyDown={handleKeyDown}
-    />
+    >
+      {/* Behind the label, not around it: the tab stays one stable element, so keyboard focus
+          survives the selection moving. */}
+      {selected ? (
+        <Surface
+          material="surface"
+          radius="md"
+          aria-hidden="true"
+          className="absolute inset-0 -z-10"
+        />
+      ) : null}
+      {children}
+    </button>
   );
 }
 
@@ -166,10 +193,7 @@ export function TabPanel({ value, className, ...rest }: TabPanelProps) {
       aria-labelledby={tabId(baseId, value)}
       // A panel with no focusable content would otherwise be unreachable from the keyboard.
       tabIndex={0}
-      className={join(
-        'rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
-        className,
-      )}
+      className={cx('rounded-md', focusRing, className)}
     />
   );
 }

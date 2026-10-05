@@ -5,10 +5,13 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
+import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export interface SearchFieldProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
-  // The accessible name. Rendered as a visually hidden <label>; a placeholder is not a name.
+  // The accessible name. Rendered as visually hidden <label> text; a placeholder is not a name.
   label: string;
   icon?: ReactNode;
   shortcutHint?: ReactNode;
@@ -17,12 +20,11 @@ export interface SearchFieldProps
 
 // The field sits on the dark chrome, so it is a translucent white fill with a white rim rather than
 // nova-field (the light-canvas material). White is `on-primary`: the stock `white` is removed from
-// the theme. The focus ring is the brand's; the white rim it turns solid keeps it visible on the dark
-// chrome, where the brand alone would not be.
+// the theme. The shared focus ring is the brand's; the white rim turning solid keeps focus visible
+// on the dark chrome, where the brand alone would not be.
 const field =
   'h-10 w-full rounded-md border border-on-primary/25 bg-on-primary/12 text-sm text-on-primary [color-scheme:dark] ' +
-  'placeholder:text-[color:var(--nova-chrome-ink-2)] ' +
-  'focus-visible:border-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ' +
+  'placeholder:text-[color:var(--nova-chrome-ink-2)] focus-visible:border-on-primary ' +
   'disabled:pointer-events-none disabled:opacity-50';
 
 const adornment =
@@ -52,11 +54,11 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
 
     return (
       <div className="relative">
-        <label htmlFor={inputId} className="sr-only">
-          {label}
+        <label htmlFor={inputId}>
+          <VisuallyHidden>{label}</VisuallyHidden>
         </label>
         {icon ? (
-          <span aria-hidden="true" className={`${adornment} left-3`}>
+          <span aria-hidden="true" className={cx(adornment, 'left-3')}>
             {icon}
           </span>
         ) : null}
@@ -66,17 +68,16 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
           id={inputId}
           type="search"
           onChange={handleChange}
-          className={[
+          className={cx(
             field,
+            focusRing,
             icon ? 'pl-10' : 'pl-3',
             shortcutHint ? 'pr-14' : 'pr-3',
             className,
-          ]
-            .filter(Boolean)
-            .join(' ')}
+          )}
         />
         {shortcutHint ? (
-          <span aria-hidden="true" className={`${adornment} right-3 text-xs`}>
+          <span aria-hidden="true" className={cx(adornment, 'right-3 text-xs')}>
             {shortcutHint}
           </span>
         ) : null}

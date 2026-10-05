@@ -16,12 +16,15 @@ describe('SearchField', () => {
 
   it('ties a visually hidden <label> to the input by id', () => {
     render(<SearchField label="Search patients" />);
-    const input = screen.getByRole('searchbox');
-    const label = screen.getByText('Search patients');
+    const input = screen.getByRole('searchbox') as HTMLInputElement;
+    const label = input.labels?.[0] as HTMLLabelElement;
     expect(label.tagName).toBe('LABEL');
     expect(label.getAttribute('for')).toBe(input.id);
     expect(input.id).not.toBe('');
-    expect(label.classList.contains('sr-only')).toBe(true);
+    // The text is VisuallyHidden: present for assistive tech, not drawn.
+    expect(
+      screen.getByText('Search patients').classList.contains('sr-only'),
+    ).toBe(true);
   });
 
   it('can receive focus, which the prototype search box could not', () => {
@@ -65,7 +68,7 @@ describe('SearchField', () => {
     render(<SearchField label="Search patients" id="global-search" />);
     const input = screen.getByRole('searchbox');
     expect(input.id).toBe('global-search');
-    expect(screen.getByText('Search patients').getAttribute('for')).toBe(
+    expect((input as HTMLInputElement).labels?.[0]?.getAttribute('for')).toBe(
       'global-search',
     );
   });

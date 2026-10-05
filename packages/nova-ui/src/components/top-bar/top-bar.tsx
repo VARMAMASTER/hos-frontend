@@ -1,4 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { Surface } from '../../primitives/surface';
 
 export interface TopBarProps extends HTMLAttributes<HTMLElement> {
   // Usually a SearchField. It is wrapped in a search landmark, so assistive tech can jump to it.
@@ -9,7 +11,8 @@ export interface TopBarProps extends HTMLAttributes<HTMLElement> {
   children?: ReactNode;
 }
 
-const bar = 'nova-chrome sticky top-0 z-20 flex items-center gap-4 px-6 py-3';
+// A frame, not a card, so its corners are straight.
+const bar = 'rounded-none sticky top-0 z-20 flex items-center gap-4 px-6 py-3';
 
 export function TopBar({
   search,
@@ -19,7 +22,12 @@ export function TopBar({
   ...rest
 }: TopBarProps) {
   return (
-    <header className={[bar, className].filter(Boolean).join(' ')} {...rest}>
+    <Surface
+      as="header"
+      material="chrome"
+      className={cx(bar, className)}
+      {...rest}
+    >
       {search ? (
         <div role="search" className="min-w-0 max-w-lg flex-1">
           {search}
@@ -31,6 +39,6 @@ export function TopBar({
           {actions}
         </div>
       ) : null}
-    </header>
+    </Surface>
   );
 }

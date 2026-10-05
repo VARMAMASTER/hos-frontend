@@ -3,6 +3,8 @@ import type {
   ButtonHTMLAttributes,
   ReactNode,
 } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
 
 interface NavItemOwnProps {
   icon?: ReactNode;
@@ -22,16 +24,13 @@ export type NavItemProps = NavItemAnchorProps | NavItemButtonProps;
 // White on the chrome is `on-primary` (the stock `white` is removed from the theme). Resting text
 // reads the chrome's secondary ink, which material.spec.ts proves is 4.5:1 for every brand.
 const base =
-  'flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ' +
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-primary';
+  'flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors';
 const resting =
   'text-[color:var(--nova-chrome-ink-2)] hover:bg-on-primary/10 hover:text-on-primary';
 const current = 'bg-primary/40 text-on-primary';
 
 function classes(active: boolean, className: string | undefined): string {
-  return [base, active ? current : resting, className]
-    .filter(Boolean)
-    .join(' ');
+  return cx(base, focusRing, active ? current : resting, className);
 }
 
 function Content({ icon, children }: { icon: ReactNode; children: ReactNode }) {

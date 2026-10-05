@@ -185,6 +185,80 @@ describe('Tabs', () => {
     });
   });
 
+  describe('uncontrolled', () => {
+    function Uncontrolled({
+      onValueChange,
+    }: {
+      onValueChange?: (value: string) => void;
+    }) {
+      return (
+        <Tabs defaultValue="claims" onValueChange={onValueChange}>
+          <TabList>
+            <Tab value="overview">Overview</Tab>
+            <Tab value="claims">Claims</Tab>
+            <Tab value="notes">Notes</Tab>
+          </TabList>
+          <TabPanel value="overview">Overview panel</TabPanel>
+          <TabPanel value="claims">Claims panel</TabPanel>
+          <TabPanel value="notes">Notes panel</TabPanel>
+        </Tabs>
+      );
+    }
+
+    it('starts on defaultValue', () => {
+      render(<Uncontrolled />);
+      expect(screen.getByText('Claims panel')).toBeTruthy();
+      expect(tab('Claims').getAttribute('aria-selected')).toBe('true');
+    });
+
+    it('keeps its own selection when clicked, and still reports it', () => {
+      const onValueChange = vi.fn();
+      render(<Uncontrolled onValueChange={onValueChange} />);
+      fireEvent.click(tab('Notes'));
+      expect(screen.getByText('Notes panel')).toBeTruthy();
+      expect(screen.queryByText('Claims panel')).toBeNull();
+      expect(tab('Notes').tabIndex).toBe(0);
+      expect(onValueChange).toHaveBeenCalledWith('notes');
+    });
+
+    it('follows the keyboard without a parent holding the state', () => {
+      render(<Uncontrolled />);
+      tab('Claims').focus();
+      fireEvent.keyDown(tab('Claims'), { key: 'ArrowRight' });
+      expect(document.activeElement).toBe(tab('Notes'));
+      expect(screen.getByText('Notes panel')).toBeTruthy();
+    });
+
+    it('lets a given value win over defaultValue', () => {
+      render(
+        <Tabs value="overview" defaultValue="notes">
+          <TabList>
+            <Tab value="overview">Overview</Tab>
+            <Tab value="notes">Notes</Tab>
+          </TabList>
+          <TabPanel value="overview">Overview panel</TabPanel>
+          <TabPanel value="notes">Notes panel</TabPanel>
+        </Tabs>,
+      );
+      expect(screen.getByText('Overview panel')).toBeTruthy();
+    });
+
+    it('stays put when controlled without an onValueChange', () => {
+      render(
+        <Tabs value="overview">
+          <TabList>
+            <Tab value="overview">Overview</Tab>
+            <Tab value="notes">Notes</Tab>
+          </TabList>
+          <TabPanel value="overview">Overview panel</TabPanel>
+          <TabPanel value="notes">Notes panel</TabPanel>
+        </Tabs>,
+      );
+      fireEvent.click(tab('Notes'));
+      expect(screen.getByText('Overview panel')).toBeTruthy();
+    });
+  });
+
   describe('roving tabindex', () => {
     it('lets only the selected tab be tabbed to', () => {
       render(<Harness initial="claims" />);
@@ -339,11 +413,13 @@ describe('Tabs', () => {
 
     it('gives the selected tab a surface chip and the strong ink, and the others the secondary ink', () => {
       render(<Harness initial="claims" />);
-      const selected = tab('Claims');
-      expect(selected.classList.contains('nova-surface')).toBe(true);
-      expect(selected.classList.contains('text-ink')).toBe(true);
+      // The chip is a Surface behind the label, so the tab itself keeps its identity (and its
+      // focus) when the selection moves.
+      const chip = (name: string) => tab(name).querySelector('[data-surface]');
+      expect(chip('Claims')?.getAttribute('data-surface')).toBe('surface');
+      expect(tab('Claims').classList.contains('text-ink')).toBe(true);
       for (const name of ['Overview', 'Notes']) {
-        expect(tab(name).classList.contains('nova-surface')).toBe(false);
+        expect(chip(name)).toBeNull();
         expect(tab(name).classList.contains('text-ink-2')).toBe(true);
       }
     });
