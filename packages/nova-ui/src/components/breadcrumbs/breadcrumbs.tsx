@@ -1,4 +1,6 @@
 import type { HTMLAttributes } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
 
 export interface BreadcrumbItem {
   label: string;
@@ -23,7 +25,10 @@ function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
   return (
     <a
       href={item.href}
-      className="rounded-sm text-primary-strong underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      className={cx(
+        'rounded-sm text-primary-strong underline-offset-4 hover:underline',
+        focusRing,
+      )}
     >
       {item.label}
     </a>

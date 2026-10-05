@@ -5,6 +5,10 @@ import {
   type TdHTMLAttributes,
   type ThHTMLAttributes,
 } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
+import { Surface } from '../../primitives/surface';
+import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export type TableAlign = 'left' | 'center' | 'right';
 
@@ -13,37 +17,34 @@ export interface TableProps extends HTMLAttributes<HTMLTableElement> {
   caption: ReactNode;
 }
 
-// The frame is `nova-data`: opaque under both materials, with its richness in a 1px edge. Glass
-// behind a column of numbers costs legibility, so never swap it for a translucent surface.
-// className styles the scroll container (placement, spacing); every other attribute describes the
-// <table> itself (id, aria-describedby, ...) and lands on it.
+// The frame is the data material: opaque under both materials, with its richness in a 1px rim.
+// Glass behind a column of numbers costs legibility, so never swap it for a translucent surface.
+// The rim is painted on the frame, so the frame itself must not scroll; the scroller sits inside it.
+// className styles the frame (placement, spacing); every other attribute describes the <table>
+// itself (id, aria-describedby, ...) and lands on it.
 export function Table({ caption, className, children, ...rest }: TableProps) {
   const captionId = useId();
   return (
-    // A scroll container needs a tab stop, or keyboard users cannot scroll a wide table; naming it
-    // makes that stop announce as the table it scrolls.
-    <div
-      role="region"
-      aria-labelledby={captionId}
-      tabIndex={0}
-      className={[
-        'nova-data overflow-x-auto rounded-lg',
-        'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary',
-        className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
-    >
-      <table
-        className="w-full border-collapse text-left text-sm text-ink"
-        {...rest}
+    <Surface material="data" className={className}>
+      {/* A scroll container needs a tab stop, or keyboard users cannot scroll a wide table; naming
+          it makes that stop announce as the table it scrolls. */}
+      <div
+        role="region"
+        aria-labelledby={captionId}
+        tabIndex={0}
+        className={cx('overflow-x-auto rounded-[inherit]', focusRing)}
       >
-        <caption id={captionId} className="sr-only">
-          {caption}
-        </caption>
-        {children}
-      </table>
-    </div>
+        <table
+          className="w-full border-collapse text-left text-sm text-ink"
+          {...rest}
+        >
+          <caption id={captionId}>
+            <VisuallyHidden>{caption}</VisuallyHidden>
+          </caption>
+          {children}
+        </table>
+      </div>
+    </Surface>
   );
 }
 
@@ -53,12 +54,10 @@ export function TableHead({
 }: HTMLAttributes<HTMLTableSectionElement>) {
   return (
     <thead
-      className={[
+      className={cx(
         'border-b border-border-strong bg-surface-2 text-ink-2',
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
       {...rest}
     />
   );
@@ -69,12 +68,7 @@ export function TableBody({
   ...rest
 }: HTMLAttributes<HTMLTableSectionElement>) {
   return (
-    <tbody
-      className={['divide-y divide-border', className]
-        .filter(Boolean)
-        .join(' ')}
-      {...rest}
-    />
+    <tbody className={cx('divide-y divide-border', className)} {...rest} />
   );
 }
 
@@ -82,12 +76,7 @@ export function TableRow({
   className,
   ...rest
 }: HTMLAttributes<HTMLTableRowElement>) {
-  return (
-    <tr
-      className={['hover:bg-surface-2', className].filter(Boolean).join(' ')}
-      {...rest}
-    />
-  );
+  return <tr className={cx('hover:bg-surface-2', className)} {...rest} />;
 }
 
 const alignments: Record<TableAlign, string> = {
@@ -99,10 +88,10 @@ const alignments: Record<TableAlign, string> = {
 // Digits only line up when they are monospaced and share an edge, so a numeric column gets both.
 // An explicit align still wins over the numeric default.
 function columnClasses(align: TableAlign | undefined, numeric: boolean) {
-  return [
+  return cx(
     alignments[align ?? (numeric ? 'right' : 'left')],
-    numeric ? 'font-mono' : undefined,
-  ];
+    numeric && 'font-mono',
+  );
 }
 
 export interface TableHeaderCellProps
@@ -124,15 +113,13 @@ export function TableHeaderCell({
   return (
     <th
       scope={scope}
-      className={[
+      className={cx(
         'px-4 py-2.5',
         // A row header is body text that labels its row; a column header is a small caption.
         scope === 'row' ? 'font-medium' : 'text-xs font-semibold',
-        ...columnClasses(align, numeric),
+        columnClasses(align, numeric),
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
       {...rest}
     />
   );
@@ -154,9 +141,7 @@ export function TableCell({
 }: TableCellProps) {
   return (
     <td
-      className={['px-4 py-2.5', ...columnClasses(align, numeric), className]
-        .filter(Boolean)
-        .join(' ')}
+      className={cx('px-4 py-2.5', columnClasses(align, numeric), className)}
       {...rest}
     />
   );

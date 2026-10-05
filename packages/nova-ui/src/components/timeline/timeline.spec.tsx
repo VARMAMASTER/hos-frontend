@@ -81,6 +81,13 @@ describe('Timeline', () => {
     },
   );
 
+  it('keeps every marker a true circle despite the global squircle corners', () => {
+    const { container } = render(<Timeline items={history} />);
+    for (const marker of markers(container)) {
+      expect(marker.classList.contains('[corner-shape:round]')).toBe(true);
+    }
+  });
+
   it('defaults an item to the neutral tone', () => {
     const { container } = render(<Timeline items={history} />);
     expect(markers(container).map((marker) => marker.dataset['tone'])).toEqual([

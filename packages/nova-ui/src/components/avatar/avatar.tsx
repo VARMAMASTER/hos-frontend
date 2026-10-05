@@ -1,4 +1,5 @@
 import { useState, type HTMLAttributes } from 'react';
+import { cx } from '../../primitives/cx';
 
 export type AvatarSize = 'sm' | 'md';
 
@@ -44,13 +45,11 @@ export function Avatar({
   return (
     <span
       data-size={size}
-      className={[
-        'inline-flex shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-primary-soft font-medium text-primary-strong',
+      className={cx(
+        'inline-flex shrink-0 select-none items-center justify-center overflow-hidden rounded-full [corner-shape:round] bg-primary-soft font-medium text-primary-strong',
         sizes[size],
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
       {...rest}
     >
       {showImage ? (

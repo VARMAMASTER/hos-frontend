@@ -8,6 +8,8 @@ import { Button } from '../components/button/button';
 import { Card, CardBody, CardHeader } from '../components/card/card';
 import { Chip, type ChipTone } from '../components/chip/chip';
 import { EmptyState } from '../components/empty-state/empty-state';
+import { HeroBand } from '../components/hero-band/hero-band';
+import { KpiTile } from '../components/kpi-tile/kpi-tile';
 import { Pagination } from '../components/pagination/pagination';
 import { StatusDot } from '../components/status-dot/status-dot';
 import {
@@ -187,14 +189,33 @@ function PatientRecord() {
         ]}
       />
 
-      <div className="flex flex-wrap items-center gap-4">
-        <Avatar name="Asha Rao" />
-        <div>
-          <h1 className="text-xl font-semibold text-ink">Asha Rao</h1>
-          <p className="text-sm text-ink-3">
-            58 years · Female · UHID HOS-004217
-          </p>
-        </div>
+      <HeroBand
+        title="Asha Rao"
+        description="58 years · Female · UHID HOS-004217 · Ward 4B, bed 12"
+        actions={<Button variant="secondary">Print summary</Button>}
+      />
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiTile label="Length of stay" value="3 days" />
+        <KpiTile
+          label="Potassium"
+          value="6.1"
+          delta="+1.2 mmol/L"
+          trend="up"
+          tone="crit"
+        />
+        <KpiTile
+          label="C-reactive protein"
+          value="48"
+          delta="-22 mg/L"
+          trend="down"
+          tone="good"
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <Avatar name="Meera Iyer" size="sm" />
+        <span className="text-sm text-ink-2">Attending: Dr. Meera Iyer</span>
         <StatusDot tone="warn" label="Under observation" className="ml-auto" />
       </div>
 

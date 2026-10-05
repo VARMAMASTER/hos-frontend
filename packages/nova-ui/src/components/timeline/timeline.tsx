@@ -1,4 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { VisuallyHidden } from '../../primitives/visually-hidden';
 import type { ChipTone } from '../chip/chip';
 
 export interface TimelineItem {
@@ -45,14 +47,14 @@ export function Timeline({ items, ...rest }: TimelineProps) {
               <span className="flex h-4 items-center">
                 <span
                   data-tone={tone}
-                  className={[
-                    'flex shrink-0 items-center justify-center rounded-full',
+                  className={cx(
+                    'flex shrink-0 items-center justify-center rounded-full [corner-shape:round]',
                     // AI is never marked by colour alone: its marker carries the spark too.
                     tone === 'ai'
                       ? 'size-5 text-xs leading-none text-on-primary'
                       : 'size-3',
                     markers[tone],
-                  ].join(' ')}
+                  )}
                 >
                   {tone === 'ai' ? '✦' : null}
                 </span>
@@ -67,7 +69,7 @@ export function Timeline({ items, ...rest }: TimelineProps) {
             <div className={last ? 'min-w-0 flex-1' : 'min-w-0 flex-1 pb-6'}>
               <div className="text-xs text-ink-3">{item.time}</div>
               <div className="text-sm font-medium text-ink">
-                {tone === 'ai' ? <span className="sr-only">AI: </span> : null}
+                {tone === 'ai' ? <VisuallyHidden>AI: </VisuallyHidden> : null}
                 {item.title}
               </div>
               {item.description ? (

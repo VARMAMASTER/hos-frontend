@@ -1,4 +1,6 @@
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { Surface } from '../../primitives/surface';
 import { AiBadge } from '../ai-badge/ai-badge';
 import { Chip } from '../chip/chip';
 
@@ -15,12 +17,6 @@ export interface AiPanelProps
   headingLevel?: 2 | 3 | 4;
 }
 
-// The ai rail is the draft styling. An approved panel drops it, and says so in words.
-const rails: Record<AiPanelState, string> = {
-  draft: 'bg-ai',
-  approved: 'bg-border-strong',
-};
-
 export function AiPanel({
   title,
   children,
@@ -33,22 +29,20 @@ export function AiPanel({
   const titleId = useId();
   const Heading = `h${headingLevel}` as const;
   return (
-    // A group, not a <section>: a landmark per AI panel would crowd the landmark list.
-    <div
+    // A group, not a <section>: a landmark per AI panel would crowd the landmark list. The ai rail is
+    // the draft styling: an approved panel drops it, and says so in words.
+    <Surface
+      material="surface"
       role="group"
       aria-labelledby={titleId}
       data-state={state}
-      className={['nova-surface relative overflow-hidden rounded-lg', className]
-        .filter(Boolean)
-        .join(' ')}
+      className={cx(
+        'overflow-hidden',
+        state === 'draft' && 'nova-ai-rail',
+        className,
+      )}
       {...rest}
     >
-      {/* A rail element rather than a border, so it cannot fight the material's own border. */}
-      <span
-        aria-hidden="true"
-        data-rail=""
-        className={['absolute inset-y-0 left-0 w-1', rails[state]].join(' ')}
-      />
       <div className="flex items-start justify-between gap-4 px-6 py-4">
         <Heading id={titleId} className="text-base font-semibold text-ink">
           {title}
@@ -63,6 +57,6 @@ export function AiPanel({
       {footer ? (
         <div className="border-t border-border px-6 py-3">{footer}</div>
       ) : null}
-    </div>
+    </Surface>
   );
 }

@@ -32,6 +32,13 @@ describe('StatusDot', () => {
     expect(screen.getByText(tone).dataset['tone']).toBe(tone);
   });
 
+  it('keeps its dot a true circle despite the global squircle corners', () => {
+    render(<StatusDot tone="good" label="Stable" />);
+    expect(dotOf('Stable')?.classList.contains('[corner-shape:round]')).toBe(
+      true,
+    );
+  });
+
   it('requires a label, and has no AI tone', () => {
     // @ts-expect-error a bare coloured dot is colour-only signalling, so label is mandatory
     render(<StatusDot tone="good" />);

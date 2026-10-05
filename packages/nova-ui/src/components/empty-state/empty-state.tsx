@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
 import { Card } from '../card/card';
 
 export interface EmptyStateProps
@@ -25,12 +26,10 @@ export function EmptyState({
   const Heading = `h${headingLevel}` as const;
   return (
     <Card
-      className={[
-        'flex flex-col items-center gap-3 border-dashed px-6 py-10 text-center',
+      className={cx(
+        'flex flex-col items-center gap-3 px-6 py-10 text-center',
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
       {...rest}
     >
       {icon ? (

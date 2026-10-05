@@ -9,10 +9,6 @@ function panel(name = 'Discharge summary') {
   return screen.getByRole('group', { name });
 }
 
-function rail(root: HTMLElement) {
-  return root.querySelector<HTMLElement>('[data-rail]');
-}
-
 describe('AiPanel', () => {
   it('shows its title as a heading, with its content and footer', () => {
     render(
@@ -48,10 +44,11 @@ describe('AiPanel', () => {
     ).toBeTruthy();
   });
 
-  it('uses the nova-surface material and sits on an ai-toned rail in draft', () => {
+  it('is a surface of the panel material, with the AI rail in draft', () => {
     render(<AiPanel title="Discharge summary">Body</AiPanel>);
     expect(panel().classList.contains('nova-surface')).toBe(true);
-    expect(rail(panel())?.classList.contains('bg-ai')).toBe(true);
+    expect(panel().dataset['surface']).toBe('surface');
+    expect(panel().classList.contains('nova-ai-rail')).toBe(true);
   });
 
   it('shows the AI badge in draft: a spark and the text "AI draft"', () => {
@@ -79,7 +76,7 @@ describe('AiPanel', () => {
       </AiPanel>,
     );
     expect(screen.queryByText('AI draft')).toBeNull();
-    expect(rail(panel())?.classList.contains('bg-ai')).toBe(false);
+    expect(panel().classList.contains('nova-ai-rail')).toBe(false);
     expect(panel().classList.contains('nova-surface')).toBe(true);
   });
 

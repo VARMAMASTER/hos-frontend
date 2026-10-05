@@ -67,6 +67,12 @@ describe('Avatar', () => {
     );
   });
 
+  it('stays a true circle despite the global squircle corners', () => {
+    const { container } = render(<Avatar name="Asha Rao" />);
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.classList.contains('[corner-shape:round]')).toBe(true);
+  });
+
   it('defaults to md and exposes the size it was given', () => {
     const { container, rerender } = render(<Avatar name="Asha Rao" />);
     const root = container.firstElementChild as HTMLElement;

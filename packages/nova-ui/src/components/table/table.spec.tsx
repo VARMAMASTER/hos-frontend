@@ -145,10 +145,18 @@ describe('Table', () => {
 
   it('keeps wide tables inside a horizontal scroll container', () => {
     const { container } = renderResults();
-    const root = container.firstElementChild as HTMLElement;
-    expect(root.classList.contains('overflow-x-auto')).toBe(true);
-    expect(root.classList.contains('rounded-lg')).toBe(true);
-    expect(root.firstElementChild?.tagName).toBe('TABLE');
+    const frame = container.firstElementChild as HTMLElement;
+    const scroller = frame.firstElementChild as HTMLElement;
+    expect(scroller.classList.contains('overflow-x-auto')).toBe(true);
+    expect(scroller.firstElementChild?.tagName).toBe('TABLE');
+    expect(frame.classList.contains('rounded-lg')).toBe(true);
+  });
+
+  it('does not scroll the frame itself, so the data material rim stays put', () => {
+    const { container } = renderResults();
+    const frame = container.firstElementChild as HTMLElement;
+    expect(frame.className).not.toMatch(/overflow-/);
+    expect(frame.dataset['surface']).toBe('data');
   });
 
   it('makes the scroll container keyboard-reachable and named by the caption', () => {
@@ -169,7 +177,7 @@ describe('Table', () => {
     );
   });
 
-  it('puts className on the scroll container and other attributes on the <table>', () => {
+  it('puts className on the frame and other attributes on the <table>', () => {
     const { container } = render(
       <Table
         caption="Attributes"
