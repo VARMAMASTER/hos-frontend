@@ -64,6 +64,20 @@ export const Surfaces: StoryObj = {
         </Card>
       </div>
 
+      {/* The AI rail and the brand gradient text, until components use them. */}
+      <div className="grid items-center gap-4 md:grid-cols-2">
+        <Card className="nova-ai-rail">
+          <CardHeader
+            title="AI draft"
+            description="The rail marks an AI surface in the fixed AI gradient"
+            actions={<Chip tone="ai">AI</Chip>}
+          />
+        </Card>
+        <h2 className="nova-gradient-text w-fit text-3xl font-semibold">
+          Brand gradient text
+        </h2>
+      </div>
+
       {/* The remaining surface utilities, until components use them. */}
       <div className="grid gap-4 md:grid-cols-3">
         <div className="nova-chrome rounded-lg p-4">

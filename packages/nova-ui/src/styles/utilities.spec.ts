@@ -3,12 +3,16 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { GLASS } from '../tokens/material';
+import { createNovaTheme, type NovaTheme } from '../theme/create-theme';
+import { GLASS, MATERIAL_TOKENS } from '../tokens/material';
+import { primitives } from '../tokens/primitives';
+import { NOVA_DEFAULTS } from '../tokens/semantic';
 
 const css = readFileSync(
   fileURLToPath(new URL('./theme.css', import.meta.url)),
   'utf8',
 );
+const source = css.replace(/\/\*[\s\S]*?\*\//g, '');
 
 interface Rule {
   declarations: Record<string, string>;
@@ -63,7 +67,6 @@ function parse(body: string): Rule {
 
 // The rule that follows an at-rule header such as `@utility nova-hero` or `@layer base`.
 function block(header: string): Rule {
-  const source = css.replace(/\/\*[\s\S]*?\*\//g, '');
   const escaped = header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const match = new RegExp(`${escaped}\\s*\\{`).exec(source);
   if (!match) throw new Error(`theme.css declares no "${header}" block`);
@@ -73,7 +76,22 @@ function block(header: string): Rule {
 
 const utility = (name: string): Rule => block(`@utility ${name}`);
 
+// Every top-level rule whose selector list is exactly `selector`, in file order.
+function rulesFor(selector: string): Rule[] {
+  const found: Rule[] = [];
+  let rest = source;
+  for (let brace = rest.indexOf('{'); brace !== -1; brace = rest.indexOf('{')) {
+    const close = closingBrace(rest, brace);
+    if (squash(rest.slice(0, brace)) === selector) {
+      found.push(parse(rest.slice(brace + 1, close)));
+    }
+    rest = rest.slice(close + 1);
+  }
+  return found;
+}
+
 const percent = (share: number) => `${Math.round(share * 100)}%`;
+const BRAND_SCOPES = ':root, [data-nova-theme], [data-nova-material]';
 
 describe('theme.css utilities', () => {
   it.each([
@@ -84,6 +102,8 @@ describe('theme.css utilities', () => {
     'nova-chrome',
     'nova-hero',
     'nova-data',
+    'nova-gradient-text',
+    'nova-ai-rail',
   ])('declares @utility %s', (name) => {
     expect(Object.keys(utility(name).declarations).length).toBeGreaterThan(0);
   });
@@ -113,58 +133,79 @@ describe('theme.css utilities', () => {
     });
   });
 
+  it('nova-canvas paints the aurora token over the flat background', () => {
+    expect(utility('nova-canvas').declarations).toMatchObject({
+      'background-color': 'var(--nova-color-bg)',
+      'background-image': 'var(--nova-gradient-aurora)',
+    });
+  });
+
   // Each block looks its utility up inside the test, so a missing or renamed utility fails its own
   // tests by name instead of failing the whole file while it is being collected.
   describe('nova-chrome', () => {
-    const chrome = () => utility('nova-chrome').declarations;
+    const chrome = () => utility('nova-chrome');
 
-    it('mixes the brand into the chrome base at the share the legibility proof assumes, then composites it at the chrome opacity', () => {
-      const base = `color-mix(in srgb, var(--nova-color-primary-strong) ${percent(GLASS.chromeBrandShare)}, ${GLASS.chromeBase})`;
-      expect(chrome()['background-color']?.toLowerCase()).toBe(
-        `color-mix(in srgb, ${base} calc(var(--nova-chrome-opacity) * 100%), transparent)`.toLowerCase(),
+    it('paints the chrome gradient token', () => {
+      expect(chrome().declarations['background-image']).toBe(
+        'var(--nova-gradient-chrome)',
       );
     });
 
     it('sets white text, and hands children their secondary ink at the alpha the proof assumes', () => {
-      expect(chrome()['color']).toBe('#fff');
-      expect(chrome()['--nova-chrome-ink-2']).toBe(
+      expect(chrome().declarations['color']).toBe('#fff');
+      expect(chrome().declarations['--nova-chrome-ink-2']).toBe(
         `rgb(255 255 255 / ${GLASS.chromeInk2Alpha})`,
       );
     });
 
     it('frosts with the chrome filter and rims the bottom and the side with a 1px hairline', () => {
-      expect(chrome()).toMatchObject({
+      expect(chrome().declarations).toMatchObject({
         'backdrop-filter': 'var(--nova-chrome-filter)',
         '-webkit-backdrop-filter': 'var(--nova-chrome-filter)',
         'border-bottom': '1px solid rgb(255 255 255 / 0.12)',
         'border-right': '1px solid rgb(255 255 255 / 0.12)',
       });
     });
+
+    it('falls back to a solid brand fill where color-mix is missing, so white text never lands on nothing', () => {
+      expect(
+        chrome().nested[
+          '@supports not (color: color-mix(in srgb, red 50%, transparent))'
+        ]?.declarations,
+      ).toEqual({ 'background-color': 'var(--nova-color-primary-strong)' });
+    });
   });
 
   describe('nova-hero', () => {
-    const hero = () => utility('nova-hero').declarations;
-
-    it('runs the brand gradient at 120deg from primary-strong to primary, each stop at the hero opacity', () => {
-      const stop = (colour: string) =>
-        `color-mix(in srgb, var(--nova-color-${colour}) calc(var(--nova-hero-opacity) * 100%), transparent)`;
-      expect(hero()['background-image']).toBe(
-        `linear-gradient(120deg, ${stop('primary-strong')}, ${stop('primary')})`,
-      );
-    });
-
-    it('uses only the two brand tokens createNovaTheme gates white text against', () => {
-      expect(hero()['background-image']?.match(/--nova-color-[\w-]+/g)).toEqual(
-        ['--nova-color-primary-strong', '--nova-color-primary'],
-      );
-    });
+    const hero = () => utility('nova-hero');
 
     it('sets the on-primary text colour and frosts with the hero filter', () => {
-      expect(hero()).toMatchObject({
+      expect(hero().declarations).toMatchObject({
         color: 'var(--nova-color-on-primary)',
         'backdrop-filter': 'var(--nova-hero-filter)',
         '-webkit-backdrop-filter': 'var(--nova-hero-filter)',
       });
+    });
+
+    it('paints the brand gradient token on a layer behind its content, at the hero opacity', () => {
+      expect(hero().declarations).toMatchObject({
+        position: 'relative',
+        isolation: 'isolate',
+      });
+      expect(hero().nested['&::before']?.declarations).toMatchObject({
+        content: "''",
+        position: 'absolute',
+        inset: '0',
+        'z-index': '-1',
+        'border-radius': 'inherit',
+        'background-image': 'var(--nova-gradient-brand)',
+        opacity: 'var(--nova-hero-opacity)',
+        'pointer-events': 'none',
+      });
+    });
+
+    it('does not repeat the gradient stops, so the token stays the one definition', () => {
+      expect(JSON.stringify(hero())).not.toMatch(/--nova-color-primary/);
     });
   });
 
@@ -196,8 +237,7 @@ describe('theme.css utilities', () => {
         padding: '1px',
         'border-radius': 'inherit',
         'pointer-events': 'none',
-        background:
-          'linear-gradient(135deg, color-mix(in srgb, var(--nova-color-primary) 55%, transparent), rgb(34 211 238 / 0.26), transparent)',
+        background: 'var(--nova-gradient-edge)',
         'mask-composite': 'exclude',
         '-webkit-mask-composite': 'xor',
       });
@@ -205,6 +245,187 @@ describe('theme.css utilities', () => {
         expect(rim?.declarations[mask]).toBe(
           'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
         );
+      }
+    });
+  });
+
+  describe('nova-gradient-text', () => {
+    const text = () => utility('nova-gradient-text');
+    const clip =
+      '@supports (-webkit-background-clip: text) or (background-clip: text)';
+
+    it('sets a real brand colour first, so the text is never invisible where the clip is unsupported', () => {
+      expect(Object.keys(text().declarations)[0]).toBe('color');
+      expect(text().declarations['color']).toBe(
+        'var(--nova-color-primary-strong)',
+      );
+    });
+
+    it('only turns the text transparent inside a background-clip support query', () => {
+      expect(text().declarations).not.toHaveProperty('background-image');
+      expect(text().declarations['color']).not.toBe('transparent');
+      expect(text().nested[clip]?.declarations).toEqual({
+        'background-image': 'var(--nova-gradient-brand)',
+        '-webkit-background-clip': 'text',
+        'background-clip': 'text',
+        color: 'transparent',
+      });
+    });
+  });
+
+  it('nova-ai-rail paints a 3px rail down the left edge with the AI gradient, flush with the border and clipped by the radius', () => {
+    expect(utility('nova-ai-rail').declarations).toEqual({
+      'background-image': 'var(--nova-gradient-ai)',
+      'background-repeat': 'no-repeat',
+      'background-origin': 'border-box',
+      'background-position': 'left top',
+      'background-size': '3px 100%',
+    });
+  });
+});
+
+describe('theme.css named gradients', () => {
+  // A var() inside a custom property is resolved where the property is declared and inherited as a
+  // finished value. Declared on :root alone, a brand-derived gradient would stay HOS violet inside a
+  // NovaThemeProvider subtree, so those tokens are declared on every scope a theme or material can set.
+  const scoped = () => rulesFor(BRAND_SCOPES)[0]?.declarations ?? {};
+  const fixed = () => rulesFor(':root').map((rule) => rule.declarations);
+
+  it.each([
+    '--nova-gradient-brand',
+    '--nova-gradient-chrome',
+    '--nova-gradient-aurora',
+    '--nova-gradient-edge',
+  ])(
+    'declares %s on every theme and material scope, so a subtree re-resolves it',
+    (name) => {
+      expect(rulesFor(BRAND_SCOPES)).toHaveLength(1);
+      expect(scoped()[name]).toBeDefined();
+    },
+  );
+
+  it('declares --nova-gradient-ai on :root alone, so no theme or material scope can re-resolve it', () => {
+    expect(fixed().filter((d) => '--nova-gradient-ai' in d)).toHaveLength(1);
+    expect(scoped()).not.toHaveProperty('--nova-gradient-ai');
+  });
+
+  it('--nova-gradient-brand runs 120deg from primary-strong to primary, the two stops the hero contrast gate checks', () => {
+    expect(scoped()['--nova-gradient-brand']).toBe(
+      'linear-gradient(120deg, var(--nova-color-primary-strong), var(--nova-color-primary))',
+    );
+  });
+
+  it('--nova-gradient-chrome deepens downward from the proof’s brand mix to the bare base, both at the chrome opacity', () => {
+    const at = (colour: string) =>
+      `color-mix(in srgb, ${colour} calc(var(--nova-chrome-opacity) * 100%), transparent)`;
+    const lifted = `color-mix(in srgb, var(--nova-color-primary-strong) ${percent(GLASS.chromeBrandShare)}, ${GLASS.chromeBase})`;
+    expect(scoped()['--nova-gradient-chrome']?.toLowerCase()).toBe(
+      `linear-gradient(180deg, ${at(lifted)}, ${at(GLASS.chromeBase)})`.toLowerCase(),
+    );
+  });
+
+  it('--nova-gradient-aurora is the four-blob mesh, tinted by the brand at the strength the proof assumes', () => {
+    const aurora = scoped()['--nova-gradient-aurora'] ?? '';
+    expect(aurora.match(/radial-gradient\(/g)).toHaveLength(4);
+    expect(aurora).toContain(
+      `color-mix(in srgb, var(--nova-color-primary) calc(${percent(GLASS.canvasTint)} * var(--nova-glass)), transparent)`,
+    );
+  });
+
+  it('--nova-gradient-edge is the 135deg brand-to-cyan rim that fades out', () => {
+    expect(scoped()['--nova-gradient-edge']).toBe(
+      'linear-gradient(135deg, color-mix(in srgb, var(--nova-color-primary) 55%, transparent), rgb(34 211 238 / 0.26), transparent)',
+    );
+  });
+
+  describe('--nova-gradient-ai', () => {
+    const ai = () =>
+      fixed().find((d) => '--nova-gradient-ai' in d)?.['--nova-gradient-ai'] ??
+      '';
+
+    it('runs 135deg from the bright cyan through the AI cyan into the fixed violet primitive', () => {
+      expect(ai().toLowerCase()).toBe(
+        `linear-gradient(135deg, #22d3ee, var(--nova-color-ai), ${primitives.violet[600]})`.toLowerCase(),
+      );
+    });
+
+    it('never references the brand, so no hospital can recolour the mark that says a machine wrote this', () => {
+      expect(ai()).not.toBe('');
+      expect(ai()).not.toMatch(/--nova-color-primary/);
+    });
+  });
+
+  describe('across hospital themes', () => {
+    // What a surface sees at the scope where a theme is applied: the defaults, the material, the
+    // gradient tokens, then the theme's own variables.
+    const declared: Record<string, string> = {
+      ...NOVA_DEFAULTS,
+      ...MATERIAL_TOKENS.glass,
+      ...scoped(),
+      ...Object.assign({}, ...fixed()),
+    };
+    const resolve = (name: string, theme?: NovaTheme): string => {
+      const vars: Record<string, string> = {
+        ...declared,
+        ...theme?.cssVariables,
+      };
+      let value = vars[name] ?? '';
+      for (let pass = 0; pass < 8 && value.includes('var('); pass++) {
+        value = value.replace(/var\((--[\w-]+)\)/g, (_, ref: string) => {
+          const resolved = vars[ref];
+          if (resolved === undefined) throw new Error(`${ref} is undeclared`);
+          return resolved;
+        });
+      }
+      return value;
+    };
+
+    const rose = createNovaTheme({
+      name: 'Rose',
+      brand: {
+        primary: '#9D174D',
+        primaryStrong: '#831843',
+        primarySoft: '#FCE7F3',
+      },
+    });
+    const teal = createNovaTheme({
+      name: 'Teal Care',
+      brand: {
+        primary: '#0F766E',
+        primaryStrong: '#115E59',
+        primarySoft: '#CCFBF1',
+      },
+    });
+
+    it('a wildly different brand leaves --nova-gradient-ai exactly as it was', () => {
+      const original = resolve('--nova-gradient-ai');
+      expect(original).toContain('#22D3EE');
+      expect(resolve('--nova-gradient-ai', rose)).toBe(original);
+      expect(resolve('--nova-gradient-ai', teal)).toBe(original);
+    });
+
+    it('while --nova-gradient-brand follows the brand', () => {
+      expect(resolve('--nova-gradient-brand')).toBe(
+        `linear-gradient(120deg, ${NOVA_DEFAULTS['--nova-color-primary-strong']}, ${NOVA_DEFAULTS['--nova-color-primary']})`,
+      );
+      expect(resolve('--nova-gradient-brand', rose)).toBe(
+        'linear-gradient(120deg, #831843, #9D174D)',
+      );
+      expect(resolve('--nova-gradient-brand', teal)).toBe(
+        'linear-gradient(120deg, #115E59, #0F766E)',
+      );
+    });
+
+    it('and so do the other brand-derived gradients, with none of the default violet left in them', () => {
+      for (const name of [
+        '--nova-gradient-chrome',
+        '--nova-gradient-aurora',
+        '--nova-gradient-edge',
+      ]) {
+        const themed = resolve(name, rose);
+        expect(themed, name).not.toBe(resolve(name));
+        expect(themed.toUpperCase(), name).toMatch(/#(?:9D174D|831843)/);
+        expect(themed.toUpperCase(), name).not.toMatch(/#(?:6D4FE0|5636B8)/);
       }
     });
   });

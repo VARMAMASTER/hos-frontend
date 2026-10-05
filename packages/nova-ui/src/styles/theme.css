@@ -186,17 +186,50 @@
   }
 }
 
-/* The canvas glass frosts: brand-tinted aurora on glass, flat background on solid (--nova-glass
-   scales every tint to zero). Brand-dependent styles live in utilities so they resolve where they
-   are used and pick up a subtree's hospital theme. */
+/* Named gradients, so components, stories and future work reuse one definition of each.
+
+   Brand-derived ones (brand, chrome, aurora, edge) are built from the hospital's own colour tokens,
+   so every hospital theme gets its own gradient with no extra work. A var() inside a custom
+   property is resolved where the property is declared and then inherited as a finished value, so
+   declared on the root alone these would stay HOS violet inside a NovaThemeProvider subtree. They are
+   therefore declared on the root and on every element that can change an input: data-nova-theme
+   carries the brand colours, data-nova-material the glass switch and the opacities.
+
+   Chrome and aurora are material-aware (they use the chrome opacity and --nova-glass), so they are
+   ready to paint as they are. Brand stays a plain gradient: the hero lays it down at the hero
+   opacity itself, and the brand text utility paints it opaque.
+
+   Chrome deepens downward from the brand mix the legibility proof assumes (GLASS.chromeBrandShare
+   of primary-strong into GLASS.chromeBase) to the bare base. The lightest point is therefore the
+   one material.spec.ts proves, and lightening toward the bottom would read as washed out. */
 /* prettier-ignore */
-@utility nova-canvas {
-  background-color: var(--nova-color-bg);
-  background-image:
+:root,
+[data-nova-theme],
+[data-nova-material] {
+  --nova-gradient-brand: linear-gradient(120deg, var(--nova-color-primary-strong), var(--nova-color-primary));
+  --nova-gradient-chrome: linear-gradient(180deg, color-mix(in srgb, color-mix(in srgb, var(--nova-color-primary-strong) 30%, #120C26) calc(var(--nova-chrome-opacity) * 100%), transparent), color-mix(in srgb, #120C26 calc(var(--nova-chrome-opacity) * 100%), transparent));
+  --nova-gradient-aurora:
     radial-gradient(680px 520px at 8% -6%, color-mix(in srgb, var(--nova-color-primary) calc(26% * var(--nova-glass)), transparent), transparent 62%),
     radial-gradient(720px 560px at 96% 4%, rgb(96 165 250 / calc(0.22 * var(--nova-glass))), transparent 60%),
     radial-gradient(760px 620px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-strong) calc(20% * var(--nova-glass)), transparent), transparent 60%),
     radial-gradient(620px 520px at 18% 104%, rgb(34 211 238 / calc(0.1 * var(--nova-glass))), transparent 58%);
+  --nova-gradient-edge: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-primary) 55%, transparent), rgb(34 211 238 / 0.26), transparent);
+}
+
+/* The AI signature: bright cyan, through the AI cyan, into a fixed violet primitive (primitives.violet
+   600, copied here, never read from a theme token). It never references --nova-color-primary and is
+   declared on the root alone, so no hospital's branding can recolour the mark that tells a clinician a
+   machine wrote this. Every other gradient above follows the brand; this one must not. */
+/* prettier-ignore */
+:root {
+  --nova-gradient-ai: linear-gradient(135deg, #22D3EE, var(--nova-color-ai), #6D4FE0);
+}
+
+/* The canvas glass frosts: the brand-tinted aurora on glass, flat background on solid (--nova-glass
+   scales every tint to zero). */
+@utility nova-canvas {
+  background-color: var(--nova-color-bg);
+  background-image: var(--nova-gradient-aurora);
 }
 
 /* Surfaces. Each utility below reads material tokens and never names a material, so one rule serves
@@ -231,31 +264,50 @@
   border: 1px solid var(--nova-color-border-strong);
 }
 
-/* The dark app frame (sidebar, top bar). The base is the brand mixed into GLASS.chromeBase at
-   GLASS.chromeBrandShare (30%), composited at the chrome opacity; material.spec.ts proves white
-   text and the secondary ink below stay at 4.5:1 over exactly this. Children take their secondary
-   ink from --nova-chrome-ink-2 (GLASS.chromeInk2Alpha). The rim marks the bottom and side edges,
-   so one utility frames either a top bar or a sidebar. */
+/* The dark app frame (sidebar, top bar), painted with the chrome gradient; material.spec.ts proves
+   white text and the secondary ink below stay at 4.5:1 over its lightest point. Children take their
+   secondary ink from --nova-chrome-ink-2 (GLASS.chromeInk2Alpha). The rim marks the bottom and
+   side edges, so one utility frames either a top bar or a sidebar. Where color-mix is missing the
+   gradient token is invalid, so the frame falls back to a solid brand fill rather than to nothing
+   under white text. */
 /* prettier-ignore */
 @utility nova-chrome {
   --nova-chrome-ink-2: rgb(255 255 255 / 0.74);
-  background-color: color-mix(in srgb, color-mix(in srgb, var(--nova-color-primary-strong) 30%, #120C26) calc(var(--nova-chrome-opacity) * 100%), transparent);
+  background-image: var(--nova-gradient-chrome);
   color: #fff;
   border-bottom: 1px solid rgb(255 255 255 / 0.12);
   border-right: 1px solid rgb(255 255 255 / 0.12);
   -webkit-backdrop-filter: var(--nova-chrome-filter);
   backdrop-filter: var(--nova-chrome-filter);
+
+  @supports not (color: color-mix(in srgb, red 50%, transparent)) {
+    background-color: var(--nova-color-primary-strong);
+  }
 }
 
-/* The page-top emphasis band: the brand gradient, each stop composited at the hero opacity.
-   createNovaTheme gates white text against exactly these two stops at the glass hero opacity, so
-   the gradient may use no other colour. */
+/* The page-top emphasis band. The brand gradient sits on a layer behind the content, at the hero
+   opacity, so the token stays the one plain definition of the gradient. The layer composites exactly
+   as per-stop alpha would: createNovaTheme gates white text against the token's two stops at that
+   opacity over the lightest canvas, so the gradient may use no other colour. The isolation keeps the
+   layer behind the content under either material. */
 /* prettier-ignore */
 @utility nova-hero {
-  background-image: linear-gradient(120deg, color-mix(in srgb, var(--nova-color-primary-strong) calc(var(--nova-hero-opacity) * 100%), transparent), color-mix(in srgb, var(--nova-color-primary) calc(var(--nova-hero-opacity) * 100%), transparent));
+  position: relative;
+  isolation: isolate;
   color: var(--nova-color-on-primary);
   -webkit-backdrop-filter: var(--nova-hero-filter);
   backdrop-filter: var(--nova-hero-filter);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-image: var(--nova-gradient-brand);
+    opacity: var(--nova-hero-opacity);
+    pointer-events: none;
+  }
 }
 
 /* Containers for dense data (tables, KPI tiles, financial figures). Never translucent, under either
@@ -274,11 +326,37 @@
     inset: 0;
     padding: 1px;
     border-radius: inherit;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-primary) 55%, transparent), rgb(34 211 238 / 0.26), transparent);
+    background: var(--nova-gradient-edge);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     mask-composite: exclude;
     pointer-events: none;
   }
+}
+
+/* Text painted with the brand gradient. The real brand colour comes first and the clip, which turns
+   the glyphs transparent, applies only where background-clip: text is supported, so the text is
+   never invisible. The gradient spans the element's own box, so use it on an inline or w-fit
+   element. */
+@utility nova-gradient-text {
+  color: var(--nova-color-primary-strong);
+
+  @supports (-webkit-background-clip: text) or (background-clip: text) {
+    background-image: var(--nova-gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* The rail that marks an AI surface: a 3px strip down the left edge in the AI gradient. It is a
+   background layer, so it needs no positioning, follows the surface's rounded corners, sits flush
+   with the border, and combines with nova-surface, nova-overlay or nova-data. */
+@utility nova-ai-rail {
+  background-image: var(--nova-gradient-ai);
+  background-repeat: no-repeat;
+  background-origin: border-box;
+  background-position: left top;
+  background-size: 3px 100%;
 }
