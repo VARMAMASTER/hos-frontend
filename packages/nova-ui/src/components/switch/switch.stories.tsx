@@ -22,7 +22,11 @@ function ControlledSwitch() {
   const [on, setOn] = useState(false);
   return (
     <div className="flex flex-col gap-2">
-      <Switch label="Isolation precautions" checked={on} onCheckedChange={setOn} />
+      <Switch
+        label="Isolation precautions"
+        checked={on}
+        onCheckedChange={setOn}
+      />
       <p className="text-sm text-ink-2" aria-live="polite">
         {on ? 'Staff will be told to gown up.' : 'Standard precautions.'}
       </p>

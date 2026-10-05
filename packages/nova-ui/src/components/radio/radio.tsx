@@ -4,11 +4,14 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
 
-export interface RadioProps extends Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'type' | 'children' | 'name'
-> {
+export interface RadioProps
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    'type' | 'children' | 'name'
+  > {
   label: ReactNode;
   // Radios with the same name form one group: one choice, arrow keys move within it.
   name: string;
@@ -25,13 +28,11 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   const id = idProp ?? generatedId;
   return (
     <div
-      className={[
+      className={cx(
         'inline-flex items-start gap-3',
-        disabled ? 'opacity-50' : '',
+        disabled && 'opacity-50',
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
     >
       <span className="relative flex h-5 w-5 shrink-0">
         <input
@@ -43,12 +44,12 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
           // synthetic events as well.
           onChange={disabled ? undefined : onChange}
           // ink-3 edge for 3:1 against the surface (WCAG 1.4.11); checked fills with primary.
-          className={
-            'nova-field peer h-5 w-5 appearance-none rounded-full border border-ink-3 ' +
-            'checked:border-primary checked:bg-primary ' +
-            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ' +
-            'disabled:cursor-not-allowed'
-          }
+          className={cx(
+            'nova-field peer h-5 w-5 appearance-none rounded-full border-ink-3!',
+            'checked:border-primary! checked:bg-primary',
+            focusRing,
+            'disabled:cursor-not-allowed',
+          )}
           {...rest}
         />
         {/* The dot is a shape, so "selected" never depends on colour alone. */}
@@ -64,10 +65,10 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
       </span>
       <label
         htmlFor={id}
-        className={[
+        className={cx(
           'text-sm text-ink',
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
-        ].join(' ')}
+        )}
       >
         {label}
       </label>

@@ -1,16 +1,19 @@
 import {
   forwardRef,
   useId,
-  useState,
   type ButtonHTMLAttributes,
   type MouseEvent,
   type ReactNode,
 } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
+import { useControllableState } from '../../primitives/use-controllable-state';
 
-export interface SwitchProps extends Omit<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  'type' | 'role' | 'children' | 'onChange' | 'defaultChecked'
-> {
+export interface SwitchProps
+  extends Omit<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    'type' | 'role' | 'children' | 'onChange' | 'defaultChecked'
+  > {
   label: ReactNode;
   // Controlled when given; the switch then only asks, and the parent decides.
   checked?: boolean;
@@ -38,28 +41,26 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
   ) {
     const generatedId = useId();
     const id = idProp ?? generatedId;
-    const [uncontrolled, setUncontrolled] = useState(defaultChecked);
-    const isControlled = checked !== undefined;
-    const isOn = isControlled ? checked : uncontrolled;
+    const [isOn, setOn] = useControllableState({
+      value: checked,
+      defaultValue: defaultChecked,
+      onChange: onCheckedChange,
+    });
 
     function handleClick(event: MouseEvent<HTMLButtonElement>) {
       onClick?.(event);
       // A disabled <button> never reaches here: React drops its clicks.
       if (event.defaultPrevented) return;
-      const next = !isOn;
-      if (!isControlled) setUncontrolled(next);
-      onCheckedChange?.(next);
+      setOn(!isOn);
     }
 
     return (
       <div
-        className={[
+        className={cx(
           'inline-flex items-center gap-3',
-          disabled ? 'opacity-50' : '',
+          disabled && 'opacity-50',
           className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
+        )}
       >
         <button
           ref={ref}
@@ -69,12 +70,12 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
           aria-checked={isOn}
           disabled={disabled}
           // ink-3 edge for 3:1 against the surface (WCAG 1.4.11); on fills with primary.
-          className={
-            'nova-field group relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border border-ink-3 ' +
-            'transition-colors motion-reduce:transition-none aria-checked:border-primary aria-checked:bg-primary ' +
-            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ' +
-            'disabled:cursor-not-allowed'
-          }
+          className={cx(
+            'nova-field group relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border-ink-3!',
+            'transition-colors motion-reduce:transition-none aria-checked:border-primary! aria-checked:bg-primary',
+            focusRing,
+            'disabled:cursor-not-allowed',
+          )}
           {...rest}
           onClick={handleClick}
         >
@@ -90,10 +91,10 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         </button>
         <label
           htmlFor={id}
-          className={[
+          className={cx(
             'text-sm text-ink',
             disabled ? 'cursor-not-allowed' : 'cursor-pointer',
-          ].join(' ')}
+          )}
         >
           {label}
         </label>

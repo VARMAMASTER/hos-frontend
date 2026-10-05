@@ -236,7 +236,11 @@ export function AdmissionForm() {
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={() => setDraft(INITIAL)}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setDraft(INITIAL)}
+            >
               Cancel
             </Button>
             <Button type="submit">Admit patient</Button>

@@ -136,7 +136,14 @@ describe('Dialog semantics', () => {
   });
 
   it('draws the panel on nova-overlay over a dimmed scrim, carrying its own typography', () => {
-    render(<Dialog open onClose={() => undefined} title="Hi" className="max-w-2xl" />);
+    render(
+      <Dialog
+        open
+        onClose={() => undefined}
+        title="Hi"
+        className="max-w-2xl"
+      />,
+    );
     expect(dialog().classList).toContain('nova-overlay');
     expect(dialog().classList).toContain('max-w-2xl');
     const layer = dialog().parentElement as HTMLElement;
@@ -148,6 +155,22 @@ describe('Dialog semantics', () => {
   });
 });
 
+describe('Dialog uncontrolled', () => {
+  it('closes itself on Escape when no open prop is given, and still reports it', () => {
+    const onClose = vi.fn();
+    render(<Dialog defaultOpen onClose={onClose} title="Hi" />);
+    expect(screen.queryByRole('dialog')).not.toBeNull();
+    press('Escape');
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('is closed unless told otherwise', () => {
+    render(<Dialog title="Hi" />);
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+});
+
 describe('Dialog close controls', () => {
   it('has a real close button with an accessible name', () => {
     const onClose = vi.fn();
@@ -155,14 +178,21 @@ describe('Dialog close controls', () => {
     const close = screen.getByRole('button', { name: 'Close' });
     expect(close.tagName).toBe('BUTTON');
     expect(close.getAttribute('type')).toBe('button');
-    expect(close.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+    expect(close.querySelector('svg')?.getAttribute('aria-hidden')).toBe(
+      'true',
+    );
     fireEvent.click(close);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it('lets the close label be localised', () => {
     render(
-      <Dialog open onClose={() => undefined} title="Hi" closeLabel="Close dialog" />,
+      <Dialog
+        open
+        onClose={() => undefined}
+        title="Hi"
+        closeLabel="Close dialog"
+      />,
     );
     expect(screen.getByRole('button', { name: 'Close dialog' })).toBeTruthy();
   });

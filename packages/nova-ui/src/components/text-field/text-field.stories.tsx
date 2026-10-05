@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { TextField } from './text-field';
 
 function SearchIcon() {
@@ -18,17 +18,17 @@ function SearchIcon() {
   );
 }
 
+const narrow: Decorator = (Story) => (
+  <div className="max-w-sm">
+    <Story />
+  </div>
+);
+
 const meta = {
   title: 'Components/TextField',
   component: TextField,
   args: { label: 'Patient name' },
-  decorators: [
-    (Story) => (
-      <div className="max-w-sm">
-        <Story />
-      </div>
-    ),
-  ],
+  decorators: [narrow],
 } satisfies Meta<typeof TextField>;
 
 export default meta;

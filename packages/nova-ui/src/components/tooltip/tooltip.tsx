@@ -6,6 +6,8 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
+import { cx } from '../../primitives/cx';
+import { Surface } from '../../primitives/surface';
 
 export type TooltipPlacement = 'top' | 'bottom';
 
@@ -52,17 +54,14 @@ export function Tooltip({
   }, [visible]);
 
   const ownDescription = children.props['aria-describedby'];
-  const describedBy =
-    [ownDescription, visible ? tooltipId : undefined]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const describedBy = cx(ownDescription, visible && tooltipId) || undefined;
 
   // The handlers sit on the wrapper, which contains the tooltip too. Moving the pointer from the
   // trigger onto the tooltip therefore never leaves the wrapper, and focus events from the
   // trigger bubble up to it.
   return (
     <span
-      className={['relative inline-flex', className].filter(Boolean).join(' ')}
+      className={cx('relative inline-flex', className)}
       onMouseEnter={() => {
         setHovered(true);
         setDismissed(false);
@@ -82,14 +81,19 @@ export function Tooltip({
           id={tooltipId}
           role="tooltip"
           data-placement={placement}
-          className={[
+          className={cx(
             'absolute left-1/2 z-50 -translate-x-1/2',
             placement === 'top' ? 'bottom-full pb-2' : 'top-full pt-2',
-          ].join(' ')}
+          )}
         >
-          <span className="nova-overlay block w-max max-w-xs rounded-md px-3 py-1.5 text-sm text-ink">
+          <Surface
+            as="span"
+            material="overlay"
+            radius="md"
+            className="block w-max max-w-xs px-3 py-1.5 text-sm text-ink"
+          >
             {content}
-          </span>
+          </Surface>
         </span>
       ) : null}
     </span>

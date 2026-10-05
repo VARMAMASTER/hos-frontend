@@ -1,11 +1,11 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
 
 export type BannerTone = 'info' | 'good' | 'warn' | 'crit';
 
-export interface BannerProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  'title' | 'role'
-> {
+export interface BannerProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'role'> {
   // Required, because it also decides how urgently the message is announced (see `roles`).
   tone: BannerTone;
   title: ReactNode;
@@ -50,13 +50,11 @@ export function Banner({
     <div
       role={roles[tone]}
       data-tone={tone}
-      className={[
+      className={cx(
         'flex items-start gap-3 rounded-lg px-4 py-3',
         tones[tone],
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
       {...rest}
     >
       <ToneIcon tone={tone} />
@@ -70,7 +68,10 @@ export function Banner({
           type="button"
           aria-label={dismissLabel}
           onClick={() => onDismiss()}
-          className="-mr-1 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-surface/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          className={cx(
+            '-mr-1 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-surface/60',
+            focusRing,
+          )}
         >
           <svg
             viewBox="0 0 20 20"

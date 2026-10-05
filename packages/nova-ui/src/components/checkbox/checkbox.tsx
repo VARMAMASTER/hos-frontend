@@ -1,35 +1,58 @@
 import {
   forwardRef,
   useId,
+  type ChangeEvent,
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
+import { useControllableState } from '../../primitives/use-controllable-state';
 
-export interface CheckboxProps extends Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'type' | 'children'
-> {
+export interface CheckboxProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'children'> {
   label: ReactNode;
 }
 
-// A real <input type="checkbox">, so toggling, Space, form submission and `required` all come from
-// the platform; the box and tick are drawn on top. `className` styles the wrapper.
+// A real <input type="checkbox">, so Space, form submission and `required` come from the platform;
+// the box and tick are drawn on top. Its checked state goes through useControllableState like every
+// other Nova control. `className` styles the wrapper.
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   function Checkbox(
-    { id: idProp, label, className, disabled, onChange, ...rest },
+    {
+      id: idProp,
+      label,
+      className,
+      disabled,
+      checked,
+      defaultChecked = false,
+      onChange,
+      ...rest
+    },
     ref,
   ) {
     const generatedId = useId();
     const id = idProp ?? generatedId;
+    const [isChecked, setChecked] = useControllableState({
+      value: checked,
+      defaultValue: defaultChecked,
+    });
+
+    function handleChange(event: ChangeEvent<HTMLInputElement>) {
+      // Browsers never report a change on a disabled control; this keeps that true for synthetic
+      // events as well.
+      if (disabled) return;
+      setChecked(event.target.checked);
+      onChange?.(event);
+    }
+
     return (
       <div
-        className={[
+        className={cx(
           'inline-flex items-start gap-3',
-          disabled ? 'opacity-50' : '',
+          disabled && 'opacity-50',
           className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
+        )}
       >
         <span className="relative flex h-5 w-5 shrink-0">
           <input
@@ -37,16 +60,15 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             type="checkbox"
             id={id}
             disabled={disabled}
-            // Browsers never report a change on a disabled control; this keeps that true for
-            // synthetic events as well.
-            onChange={disabled ? undefined : onChange}
+            checked={isChecked}
+            onChange={handleChange}
             // ink-3 edge for 3:1 against the surface (WCAG 1.4.11); checked fills with primary.
-            className={
-              'nova-field peer h-5 w-5 appearance-none rounded-sm border border-ink-3 ' +
-              'checked:border-primary checked:bg-primary ' +
-              'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ' +
-              'disabled:cursor-not-allowed'
-            }
+            className={cx(
+              'nova-field peer h-5 w-5 appearance-none rounded-sm border-ink-3!',
+              'checked:border-primary! checked:bg-primary',
+              focusRing,
+              'disabled:cursor-not-allowed',
+            )}
             {...rest}
           />
           {/* The tick is a shape, so "checked" never depends on colour alone. */}
@@ -66,10 +88,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         </span>
         <label
           htmlFor={id}
-          className={[
+          className={cx(
             'text-sm text-ink',
             disabled ? 'cursor-not-allowed' : 'cursor-pointer',
-          ].join(' ')}
+          )}
         >
           {label}
         </label>

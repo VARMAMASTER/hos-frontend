@@ -1,8 +1,6 @@
-import {
-  forwardRef,
-  type ReactNode,
-  type SelectHTMLAttributes,
-} from 'react';
+import { forwardRef, type ReactNode, type SelectHTMLAttributes } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
 import { FieldShell } from '../text-field/field-shell';
 
 export interface SelectOption {
@@ -13,10 +11,11 @@ export interface SelectOption {
 
 // A native <select>: keyboard handling, typeahead and screen-reader behaviour come from the
 // platform. `multiple` and `size` are left out because the styling is for a single choice.
-export interface SelectProps extends Omit<
-  SelectHTMLAttributes<HTMLSelectElement>,
-  'children' | 'multiple' | 'size'
-> {
+export interface SelectProps
+  extends Omit<
+    SelectHTMLAttributes<HTMLSelectElement>,
+    'children' | 'multiple' | 'size'
+  > {
   label: ReactNode;
   hint?: ReactNode;
   // Setting it marks the field invalid and announces the message; clear it to clear the state.
@@ -27,14 +26,15 @@ export interface SelectProps extends Omit<
   placeholder?: string;
 }
 
-const base =
-  'nova-field peer block h-10 w-full appearance-none rounded-md border pl-3 pr-10 text-sm text-ink ' +
-  'transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 ' +
-  'disabled:cursor-not-allowed disabled:opacity-50';
+const base = cx(
+  'nova-field peer block h-10 w-full appearance-none rounded-md pl-3 pr-10 text-sm text-ink transition-colors',
+  focusRing,
+  'disabled:cursor-not-allowed disabled:opacity-50',
+);
 
 // ink-3 rather than border-strong for the same reason as TextField: the edge must reach 3:1.
-const valid = 'border-ink-3 hover:border-ink-2 focus-visible:outline-primary';
-const invalid = 'border-crit focus-visible:outline-crit';
+const valid = 'border-ink-3! hover:border-ink-2!';
+const invalid = 'border-crit!';
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   function Select(
@@ -77,9 +77,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               ref={ref}
               required={required}
               data-invalid={field['aria-invalid'] ? 'true' : undefined}
-              className={[base, field['aria-invalid'] ? invalid : valid].join(
-                ' ',
-              )}
+              className={cx(base, field['aria-invalid'] ? invalid : valid)}
               {...selection}
               {...rest}
               {...field}

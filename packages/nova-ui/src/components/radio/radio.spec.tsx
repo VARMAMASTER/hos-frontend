@@ -36,7 +36,9 @@ describe('Radio', () => {
   it('selects when its label text is clicked', () => {
     render(<Radio name="sex" value="f" label="Female" />);
     fireEvent.click(screen.getByText('Female'));
-    expect(screen.getByLabelText<HTMLInputElement>('Female').checked).toBe(true);
+    expect(screen.getByLabelText<HTMLInputElement>('Female').checked).toBe(
+      true,
+    );
   });
 
   it('keeps a group to one choice by name', () => {
@@ -60,7 +62,9 @@ describe('Radio', () => {
 
   it('honours defaultChecked', () => {
     render(<Radio name="sex" value="f" label="Female" defaultChecked />);
-    expect(screen.getByLabelText<HTMLInputElement>('Female').checked).toBe(true);
+    expect(screen.getByLabelText<HTMLInputElement>('Female').checked).toBe(
+      true,
+    );
   });
 
   it('honours a controlled group', () => {
@@ -87,14 +91,22 @@ describe('Radio', () => {
     render(<Group />);
     expect(screen.getByLabelText<HTMLInputElement>('Male').checked).toBe(true);
     fireEvent.click(screen.getByLabelText('Female'));
-    expect(screen.getByLabelText<HTMLInputElement>('Female').checked).toBe(true);
+    expect(screen.getByLabelText<HTMLInputElement>('Female').checked).toBe(
+      true,
+    );
     expect(screen.getByLabelText<HTMLInputElement>('Male').checked).toBe(false);
   });
 
   it('blocks the handler while disabled', () => {
     const onChange = vi.fn();
     render(
-      <Radio name="sex" value="f" label="Female" disabled onChange={onChange} />,
+      <Radio
+        name="sex"
+        value="f"
+        label="Female"
+        disabled
+        onChange={onChange}
+      />,
     );
     const radio = screen.getByLabelText<HTMLInputElement>('Female');
     expect(radio.disabled).toBe(true);

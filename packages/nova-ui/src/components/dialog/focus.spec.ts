@@ -69,7 +69,8 @@ describe('getTabbables', () => {
   });
 
   it('counts only the root descendants, not the root itself', () => {
-    document.body.innerHTML = '<div id="root" tabindex="0"><button id="b">b</button></div>';
+    document.body.innerHTML =
+      '<div id="root" tabindex="0"><button id="b">b</button></div>';
     const root = document.getElementById('root') as HTMLElement;
     expect(ids(getTabbables(root))).toEqual(['b']);
   });
@@ -137,7 +138,9 @@ describe('trapTab', () => {
   };
 
   it('wraps Tab from the last element to the first', () => {
-    const panel = panelWith('<button id="a">a</button><button id="b">b</button>');
+    const panel = panelWith(
+      '<button id="a">a</button><button id="b">b</button>',
+    );
     document.getElementById('b')?.focus();
     const event = tab();
     trapTab(event, panel);
@@ -146,7 +149,9 @@ describe('trapTab', () => {
   });
 
   it('wraps Shift+Tab from the first element to the last', () => {
-    const panel = panelWith('<button id="a">a</button><button id="b">b</button>');
+    const panel = panelWith(
+      '<button id="a">a</button><button id="b">b</button>',
+    );
     document.getElementById('a')?.focus();
     const event = tab(true);
     trapTab(event, panel);
@@ -155,7 +160,9 @@ describe('trapTab', () => {
   });
 
   it('wraps Shift+Tab from the panel itself to the last element', () => {
-    const panel = panelWith('<button id="a">a</button><button id="b">b</button>');
+    const panel = panelWith(
+      '<button id="a">a</button><button id="b">b</button>',
+    );
     panel.focus();
     const event = tab(true);
     trapTab(event, panel);

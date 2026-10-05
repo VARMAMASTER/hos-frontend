@@ -54,8 +54,10 @@ function Harness({
 
 const trigger = () => screen.getByRole('button', { name: 'Actions' });
 const item = (name: string) => screen.getByRole('menuitem', { name });
-const press = (key: string, target: Element = document.activeElement ?? document.body) =>
-  fireEvent.keyDown(target, { key });
+const press = (
+  key: string,
+  target: Element = document.activeElement ?? document.body,
+) => fireEvent.keyDown(target, { key });
 
 describe('Menu semantics', () => {
   it('is closed by default: no menu, and the trigger says it opens one', () => {
@@ -129,6 +131,36 @@ describe('Menu semantics', () => {
     render(<Harness stubborn onOpenChange={onOpenChange} />);
     press('Escape');
     expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(screen.queryByRole('menu')).not.toBeNull();
+  });
+});
+
+describe('Menu uncontrolled', () => {
+  it('keeps its own state when no open prop is given', () => {
+    const onOpenChange = vi.fn();
+    render(
+      <Menu
+        trigger={<button type="button">Actions</button>}
+        onOpenChange={onOpenChange}
+      >
+        <MenuItem>Edit</MenuItem>
+      </Menu>,
+    );
+    expect(screen.queryByRole('menu')).toBeNull();
+    fireEvent.click(trigger());
+    expect(screen.queryByRole('menu')).not.toBeNull();
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+    press('Escape');
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+  });
+
+  it('starts open with defaultOpen', () => {
+    render(
+      <Menu trigger={<button type="button">Actions</button>} defaultOpen>
+        <MenuItem>Edit</MenuItem>
+      </Menu>,
+    );
     expect(screen.queryByRole('menu')).not.toBeNull();
   });
 });

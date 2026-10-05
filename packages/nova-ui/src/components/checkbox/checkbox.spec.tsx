@@ -45,17 +45,17 @@ describe('Checkbox', () => {
     const onChange = vi.fn();
     render(<Checkbox label="Consent given" onChange={onChange} />);
     fireEvent.click(screen.getByText('Consent given'));
-    expect(screen.getByLabelText<HTMLInputElement>('Consent given').checked).toBe(
-      true,
-    );
+    expect(
+      screen.getByLabelText<HTMLInputElement>('Consent given').checked,
+    ).toBe(true);
     expect(onChange).toHaveBeenCalledTimes(1);
   });
 
   it('honours defaultChecked', () => {
     render(<Checkbox label="Consent given" defaultChecked />);
-    expect(screen.getByLabelText<HTMLInputElement>('Consent given').checked).toBe(
-      true,
-    );
+    expect(
+      screen.getByLabelText<HTMLInputElement>('Consent given').checked,
+    ).toBe(true);
   });
 
   it('honours a controlled checked value', () => {
@@ -88,9 +88,9 @@ describe('Checkbox', () => {
 
   it('uses the native required attribute', () => {
     render(<Checkbox label="Consent given" required />);
-    expect(screen.getByLabelText<HTMLInputElement>('Consent given').required).toBe(
-      true,
-    );
+    expect(
+      screen.getByLabelText<HTMLInputElement>('Consent given').required,
+    ).toBe(true);
   });
 
   it('shows its checked state with a shape, not colour alone', () => {

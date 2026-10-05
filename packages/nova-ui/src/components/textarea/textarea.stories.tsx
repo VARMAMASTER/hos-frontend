@@ -1,17 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { Textarea } from './textarea';
+
+const narrow: Decorator = (Story) => (
+  <div className="max-w-md">
+    <Story />
+  </div>
+);
 
 const meta = {
   title: 'Components/Textarea',
   component: Textarea,
   args: { label: 'Presenting complaint' },
-  decorators: [
-    (Story) => (
-      <div className="max-w-md">
-        <Story />
-      </div>
-    ),
-  ],
+  decorators: [narrow],
 } satisfies Meta<typeof Textarea>;
 
 export default meta;

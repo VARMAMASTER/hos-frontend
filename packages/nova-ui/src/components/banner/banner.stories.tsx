@@ -1,19 +1,19 @@
 import { useState } from 'react';
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from '../button/button';
 import { Banner } from './banner';
+
+const narrow: Decorator = (Story) => (
+  <div className="max-w-2xl">
+    <Story />
+  </div>
+);
 
 const meta = {
   title: 'Components/Banner',
   component: Banner,
   args: { tone: 'info', title: 'Ward round at 4 pm' },
-  decorators: [
-    (Story) => (
-      <div className="max-w-2xl">
-        <Story />
-      </div>
-    ),
-  ],
+  decorators: [narrow],
 } satisfies Meta<typeof Banner>;
 
 export default meta;

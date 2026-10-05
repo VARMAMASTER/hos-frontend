@@ -141,7 +141,9 @@ describe('TextField hint', () => {
   });
 
   it('describes by the hint first, then the error', () => {
-    render(<TextField label="MRN" hint="Printed on the wristband" error="Bad" />);
+    render(
+      <TextField label="MRN" hint="Printed on the wristband" error="Bad" />,
+    );
     expect(describedByIds(screen.getByLabelText('MRN'))).toEqual([
       screen.getByText('Printed on the wristband').id,
       screen.getByText('Bad').id,
@@ -257,11 +259,7 @@ describe('TextField icons', () => {
     expect([...plain]).toEqual(expect.arrayContaining(['pl-3', 'pr-3']));
     expect(plain).not.toContain('pl-10');
     rerender(
-      <TextField
-        label="Search"
-        leadingIcon={<svg />}
-        trailingIcon={<svg />}
-      />,
+      <TextField label="Search" leadingIcon={<svg />} trailingIcon={<svg />} />,
     );
     const withIcons = screen.getByLabelText('Search').classList;
     expect([...withIcons]).toEqual(expect.arrayContaining(['pl-10', 'pr-10']));

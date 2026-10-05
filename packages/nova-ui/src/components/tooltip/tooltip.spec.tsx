@@ -234,9 +234,9 @@ describe('Tooltip placement and material', () => {
     );
     const trigger = screen.getByRole('button', { name: 'Hold' });
     fireEvent.mouseEnter(trigger);
-    expect(screen.getByRole('tooltip').querySelector('strong')?.textContent).toBe(
-      'Critical',
-    );
+    expect(
+      screen.getByRole('tooltip').querySelector('strong')?.textContent,
+    ).toBe('Critical');
     expect(trigger.closest('.ml-2')).not.toBeNull();
   });
 });

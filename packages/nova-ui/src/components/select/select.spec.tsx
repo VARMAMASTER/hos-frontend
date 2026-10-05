@@ -113,7 +113,12 @@ describe('Select placeholder', () => {
 
   it('is not selectable when the field is required, so it cannot satisfy the requirement', () => {
     render(
-      <Select label="Ward" options={wards} placeholder="Choose a ward" required />,
+      <Select
+        label="Ward"
+        options={wards}
+        placeholder="Choose a ward"
+        required
+      />,
     );
     const select = screen.getByLabelText<HTMLSelectElement>('Ward');
     expect(select.required).toBe(true);
@@ -122,9 +127,9 @@ describe('Select placeholder', () => {
 
   it('stays selectable on an optional field so the choice can be cleared', () => {
     render(<Select label="Ward" options={wards} placeholder="No preference" />);
-    expect(screen.getByLabelText<HTMLSelectElement>('Ward').options[0]?.disabled).toBe(
-      false,
-    );
+    expect(
+      screen.getByLabelText<HTMLSelectElement>('Ward').options[0]?.disabled,
+    ).toBe(false);
   });
 
   it('renders no extra option without a placeholder', () => {
@@ -145,7 +150,12 @@ describe('Select error', () => {
 
   it('describes by the hint first, then the error', () => {
     render(
-      <Select label="Ward" options={wards} hint="Where now" error="Pick a ward" />,
+      <Select
+        label="Ward"
+        options={wards}
+        hint="Where now"
+        error="Pick a ward"
+      />,
     );
     expect(describedByIds(screen.getByLabelText('Ward'))).toEqual([
       screen.getByText('Where now').id,
@@ -178,7 +188,9 @@ describe('Select element', () => {
   });
 
   it('passes disabled through and puts className on the wrapper', () => {
-    render(<Select label="Ward" options={wards} disabled className="max-w-xs" />);
+    render(
+      <Select label="Ward" options={wards} disabled className="max-w-xs" />,
+    );
     const select = screen.getByLabelText<HTMLSelectElement>('Ward');
     expect(select.disabled).toBe(true);
     expect(select.className).not.toContain('max-w-xs');

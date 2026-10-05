@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { Select } from './select';
 
 const WARDS = [
@@ -8,17 +8,17 @@ const WARDS = [
   { value: 'isolation', label: 'Isolation (no free beds)', disabled: true },
 ];
 
+const narrow: Decorator = (Story) => (
+  <div className="max-w-sm">
+    <Story />
+  </div>
+);
+
 const meta = {
   title: 'Components/Select',
   component: Select,
   args: { label: 'Ward', options: WARDS },
-  decorators: [
-    (Story) => (
-      <div className="max-w-sm">
-        <Story />
-      </div>
-    ),
-  ],
+  decorators: [narrow],
 } satisfies Meta<typeof Select>;
 
 export default meta;

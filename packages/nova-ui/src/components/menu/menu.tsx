@@ -10,6 +10,10 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
+import { Surface } from '../../primitives/surface';
+import { useControllableState } from '../../primitives/use-controllable-state';
 
 // What Menu adds to the trigger element. The trigger must be a single focusable element that
 // accepts these (a Button, a native <button>); its own onClick and onKeyDown still run.
@@ -26,9 +30,11 @@ export interface MenuProps {
   trigger: ReactElement<MenuTriggerProps>;
   // The items: MenuItem elements.
   children: ReactNode;
-  // Controlled: the menu asks through onOpenChange and the parent decides.
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  // Controlled when `open` is given: the menu asks through onOpenChange and the parent decides.
+  // Without it the menu keeps its own state, starting at `defaultOpen`.
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   // Styles the wrapper around the trigger and the menu.
   className?: string;
 }
@@ -52,15 +58,21 @@ function focusEdge(menu: HTMLElement | null, edge: 'first' | 'last') {
 export function Menu({
   trigger,
   children,
-  open,
+  open: openProp,
+  defaultOpen = false,
   onOpenChange,
   className,
 }: MenuProps) {
+  const [open, setOpen] = useControllableState({
+    value: openProp,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const menuId = useId();
   const generatedTriggerId = useId();
   const triggerId = trigger.props.id ?? generatedTriggerId;
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
   // Which end of the menu to land on when it opens: ArrowUp from the trigger starts at the last.
   const entryRef = useRef<'first' | 'last'>('first');
 
@@ -71,7 +83,7 @@ export function Menu({
   // Closing from inside the menu hands focus back first, so it is never left on a removed element.
   function closeAndReturnFocus() {
     focusTrigger();
-    onOpenChange(false);
+    setOpen(false);
   }
 
   useEffect(() => {
@@ -89,12 +101,12 @@ export function Menu({
       ) {
         return;
       }
-      onOpenChange(false);
+      setOpen(false);
     };
     document.addEventListener('pointerdown', closeOnOutsidePress);
     return () =>
       document.removeEventListener('pointerdown', closeOnOutsidePress);
-  }, [open, onOpenChange]);
+  }, [open, setOpen]);
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (!open) return;
@@ -161,9 +173,7 @@ export function Menu({
   return (
     <div
       ref={wrapperRef}
-      className={['relative inline-block', className]
-        .filter(Boolean)
-        .join(' ')}
+      className={cx('relative inline-block', className)}
       onKeyDown={handleKeyDown}
       onBlur={(event) => {
         // Focus moving to another control closes the menu. Focus moving to nothing (a click on
@@ -174,7 +184,7 @@ export function Menu({
           next instanceof Node &&
           !wrapperRef.current?.contains(next)
         ) {
-          onOpenChange(false);
+          setOpen(false);
         }
       }}
     >
@@ -187,7 +197,7 @@ export function Menu({
           trigger.props.onClick?.(event);
           if (event.defaultPrevented) return;
           entryRef.current = 'first';
-          onOpenChange(!open);
+          setOpen(!open);
         },
         onKeyDown: (event) => {
           trigger.props.onKeyDown?.(event);
@@ -199,22 +209,24 @@ export function Menu({
             focusEdge(menuRef.current, edge);
           } else {
             entryRef.current = edge;
-            onOpenChange(true);
+            setOpen(true);
           }
         },
       })}
       {open ? (
-        <div
+        <Surface
           ref={menuRef}
+          material="overlay"
+          radius="lg"
           id={menuId}
           role="menu"
           aria-labelledby={triggerId}
           tabIndex={-1}
           onClick={handleMenuClick}
-          className="nova-overlay absolute left-0 top-full z-40 mt-2 flex min-w-48 flex-col rounded-lg p-1.5 outline-none"
+          className="absolute left-0 top-full z-40 mt-2 flex min-w-48 flex-col p-1.5 outline-none"
         >
           {children}
-        </div>
+        </Surface>
       ) : null}
     </div>
   );
@@ -232,15 +244,13 @@ export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
     return (
       <button
         ref={ref}
-        className={[
+        className={cx(
           'flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-ink transition-colors',
           'hover:bg-primary-soft focus:bg-primary-soft',
-          'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary',
+          focusRing,
           'disabled:cursor-not-allowed disabled:opacity-50',
           className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
+        )}
         {...rest}
         type="button"
         role="menuitem"

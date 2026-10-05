@@ -1,6 +1,12 @@
 import { createRef, useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import { Switch } from './switch';
 
 afterEach(() => cleanup());
@@ -75,26 +81,38 @@ describe('Switch behaviour', () => {
     const onCheckedChange = vi.fn();
     render(<Switch label="SMS reminders" onCheckedChange={onCheckedChange} />);
     fireEvent.click(screen.getByText('SMS reminders'));
-    expect(screen.getByRole('switch').getAttribute('aria-checked')).toBe('true');
+    expect(screen.getByRole('switch').getAttribute('aria-checked')).toBe(
+      'true',
+    );
     expect(onCheckedChange).toHaveBeenCalledWith(true);
   });
 
   it('honours defaultChecked', () => {
     render(<Switch label="SMS reminders" defaultChecked />);
-    expect(screen.getByRole('switch').getAttribute('aria-checked')).toBe('true');
+    expect(screen.getByRole('switch').getAttribute('aria-checked')).toBe(
+      'true',
+    );
   });
 
   it('is fully controlled when checked is given: it asks, the parent decides', () => {
     const onCheckedChange = vi.fn();
     const { rerender } = render(
-      <Switch label="SMS reminders" checked={false} onCheckedChange={onCheckedChange} />,
+      <Switch
+        label="SMS reminders"
+        checked={false}
+        onCheckedChange={onCheckedChange}
+      />,
     );
     const toggle = screen.getByRole('switch');
     fireEvent.click(toggle);
     expect(onCheckedChange).toHaveBeenCalledWith(true);
     expect(toggle.getAttribute('aria-checked')).toBe('false');
     rerender(
-      <Switch label="SMS reminders" checked onCheckedChange={onCheckedChange} />,
+      <Switch
+        label="SMS reminders"
+        checked
+        onCheckedChange={onCheckedChange}
+      />,
     );
     expect(toggle.getAttribute('aria-checked')).toBe('true');
   });
@@ -102,17 +120,25 @@ describe('Switch behaviour', () => {
   it('works with a state-owning parent', () => {
     function Parent() {
       const [on, setOn] = useState(false);
-      return <Switch label="SMS reminders" checked={on} onCheckedChange={setOn} />;
+      return (
+        <Switch label="SMS reminders" checked={on} onCheckedChange={setOn} />
+      );
     }
     render(<Parent />);
     fireEvent.click(screen.getByRole('switch'));
-    expect(screen.getByRole('switch').getAttribute('aria-checked')).toBe('true');
+    expect(screen.getByRole('switch').getAttribute('aria-checked')).toBe(
+      'true',
+    );
   });
 
   it('blocks the handler while disabled', () => {
     const onCheckedChange = vi.fn();
     render(
-      <Switch label="SMS reminders" disabled onCheckedChange={onCheckedChange} />,
+      <Switch
+        label="SMS reminders"
+        disabled
+        onCheckedChange={onCheckedChange}
+      />,
     );
     const toggle = screen.getByRole<HTMLButtonElement>('switch');
     expect(toggle.disabled).toBe(true);
@@ -137,7 +163,9 @@ describe('Switch behaviour', () => {
     fireEvent.click(screen.getByRole('switch'));
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onCheckedChange).not.toHaveBeenCalled();
-    expect(screen.getByRole('switch').getAttribute('aria-checked')).toBe('false');
+    expect(screen.getByRole('switch').getAttribute('aria-checked')).toBe(
+      'false',
+    );
   });
 });
 

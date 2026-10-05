@@ -17,7 +17,9 @@ function MenuDemo() {
         open={open}
         onOpenChange={setOpen}
       >
-        <MenuItem onClick={() => setChosen('Edit details')}>Edit details</MenuItem>
+        <MenuItem onClick={() => setChosen('Edit details')}>
+          Edit details
+        </MenuItem>
         <MenuItem onClick={() => setChosen('Print wristband')}>
           Print wristband
         </MenuItem>

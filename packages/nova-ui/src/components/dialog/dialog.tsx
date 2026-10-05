@@ -1,13 +1,20 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
+import { Surface } from '../../primitives/surface';
+import { useControllableState } from '../../primitives/use-controllable-state';
 import { getTabbables, trapTab } from './focus';
 import { inertOutside } from './inert';
 
 export interface DialogProps {
-  open: boolean;
+  // Controlled when given: the dialog asks to close through onClose and the parent decides.
+  open?: boolean;
+  // Without `open` the dialog keeps its own state, starting at this.
+  defaultOpen?: boolean;
   // Called for Escape and for the close button. The parent decides what closing means, which for a
   // form is the place to ask about unsaved changes.
-  onClose: () => void;
+  onClose?: () => void;
   title: ReactNode;
   description?: ReactNode;
   footer?: ReactNode;
@@ -28,9 +35,24 @@ const openDialogs: object[] = [];
 // A portal escapes a subtree-scoped NovaThemeProvider (see theme-provider.tsx), so under such a
 // provider the dialog shows the default theme. A product that themes the whole app with
 // applyNovaTheme is unaffected.
-export function Dialog({ open, ...rest }: DialogProps) {
-  if (!open || typeof document === 'undefined') return null;
-  return createPortal(<DialogLayer {...rest} />, document.body);
+export function Dialog({
+  open,
+  defaultOpen = false,
+  onClose,
+  ...rest
+}: DialogProps) {
+  const [isOpen, setOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: (next) => {
+      if (!next) onClose?.();
+    },
+  });
+  if (!isOpen || typeof document === 'undefined') return null;
+  return createPortal(
+    <DialogLayer onClose={() => setOpen(false)} {...rest} />,
+    document.body,
+  );
 }
 
 function DialogLayer({
@@ -41,11 +63,13 @@ function DialogLayer({
   children,
   className,
   closeLabel = 'Close',
-}: Omit<DialogProps, 'open'>) {
+}: Omit<DialogProps, 'open' | 'defaultOpen' | 'onClose'> & {
+  onClose: () => void;
+}) {
   const titleId = useId();
   const descriptionId = useId();
   const layerRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const onCloseRef = useRef(onClose);
   // Read while rendering, which is before anything inside can take focus (an autoFocus input does
@@ -102,7 +126,9 @@ function DialogLayer({
       // to repair.
       const current = document.activeElement;
       const lost =
-        current === null || current === document.body || layer.contains(current);
+        current === null ||
+        current === document.body ||
+        layer.contains(current);
       if (lost && opener instanceof HTMLElement && opener.isConnected) {
         opener.focus();
       }
@@ -124,19 +150,19 @@ function DialogLayer({
         onMouseDown={(event) => event.preventDefault()}
         className="absolute inset-0 bg-ink/40"
       />
-      <div
+      <Surface
         ref={panelRef}
+        material="overlay"
+        radius="lg"
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
-        className={[
-          'nova-overlay relative flex max-h-full w-full max-w-lg flex-col rounded-lg outline-none',
+        className={cx(
+          'relative flex max-h-full w-full max-w-lg flex-col outline-none',
           className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
+        )}
       >
         <div className="flex items-start justify-between gap-4 px-6 pt-5">
           <div className="min-w-0">
@@ -154,7 +180,10 @@ function DialogLayer({
             type="button"
             aria-label={closeLabel}
             onClick={() => onClose()}
-            className="-mr-2 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className={cx(
+              '-mr-2 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-surface-2',
+              focusRing,
+            )}
           >
             <svg
               viewBox="0 0 20 20"
@@ -178,7 +207,7 @@ function DialogLayer({
             {footer}
           </div>
         ) : null}
-      </div>
+      </Surface>
     </div>
   );
 }

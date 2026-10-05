@@ -1,4 +1,5 @@
 import { useId, type ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
 
 // The label / hint / error markup that TextField, Textarea and Select share. Internal: it is not
 // exported from the package barrel. Each control keeps its own element and its own classes; the
@@ -46,13 +47,12 @@ export function FieldShell({
   const errorId = `${id}-error`;
   const hasHint = isPresent(hint);
   const hasError = isPresent(error);
+  // Space-separated ids, the caller's own first; cx drops the parts that are not there.
   const describedby =
-    [describedBy, hasHint ? hintId : undefined, hasError ? errorId : undefined]
-      .filter(Boolean)
-      .join(' ') || undefined;
+    cx(describedBy, hasHint && hintId, hasError && errorId) || undefined;
 
   return (
-    <div className={['flex flex-col', className].filter(Boolean).join(' ')}>
+    <div className={cx('flex flex-col', className)}>
       {/* The asterisk sits beside the <label>, not inside it, so the accessible name stays the
           label text; the control's own `required` attribute is what assistive tech announces. */}
       <div className="flex items-baseline gap-1">

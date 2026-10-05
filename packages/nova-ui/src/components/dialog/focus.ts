@@ -44,7 +44,10 @@ function isTabbable(element: HTMLElement, root: HTMLElement): boolean {
 }
 
 function isDisabled(element: HTMLElement): boolean {
-  return element.matches(':disabled') || element.closest('fieldset[disabled]') !== null;
+  return (
+    element.matches(':disabled') ||
+    element.closest('fieldset[disabled]') !== null
+  );
 }
 
 // Radios of one group (same name, same form) are a single stop: the checked one, or the first when
@@ -101,7 +104,8 @@ export function trapTab(event: KeyboardEvent, panel: HTMLElement): void {
     : Node.DOCUMENT_POSITION_FOLLOWING;
   const somethingAhead = tabbables.some(
     (element) =>
-      element !== active && (active.compareDocumentPosition(element) & ahead) !== 0,
+      element !== active &&
+      (active.compareDocumentPosition(element) & ahead) !== 0,
   );
   if (!somethingAhead) {
     event.preventDefault();
