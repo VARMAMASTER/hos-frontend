@@ -23,5 +23,9 @@
     "tags": [
       "type:ui"
     ]
+  },
+  "dependencies": {
+    "react-is": "^19.3.0",
+    "recharts": "^3.10.1"
   }
 }
