@@ -14,6 +14,7 @@ const base = cx(
   'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors',
   focusRing,
   'disabled:pointer-events-none disabled:opacity-50',
+  'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
 );
 
 const variants: Record<ButtonVariant, string> = {
@@ -31,9 +32,21 @@ const sizes: Record<ButtonSize, string> = {
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   function Button(
-    { variant = 'primary', size = 'md', type = 'button', className, ...rest },
+    {
+      variant = 'primary',
+      size = 'md',
+      type = 'button',
+      className,
+      onClick,
+      ...rest
+    },
     ref,
   ) {
+    // aria-disabled is the disabled state that keeps focus: a natively disabled button that holds
+    // keyboard focus drops it to <body>. The button stays focusable and announced as unavailable,
+    // and a press does nothing (not even submit a form).
+    const unavailable =
+      rest['aria-disabled'] === true || rest['aria-disabled'] === 'true';
     return (
       <button
         ref={ref}
@@ -42,6 +55,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         data-size={size}
         className={cx(base, variants[variant], sizes[size], className)}
         {...rest}
+        onClick={unavailable ? (event) => event.preventDefault() : onClick}
       />
     );
   },

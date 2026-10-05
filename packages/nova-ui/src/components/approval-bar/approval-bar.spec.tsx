@@ -67,7 +67,8 @@ describe('ApprovalBar', () => {
     }
   });
 
-  it('while busy, disables every button, announces it with aria-busy and fires nothing', () => {
+  // aria-disabled, not disabled: a disabled button drops the keyboard focus it holds to <body>.
+  it('while busy, marks every button aria-disabled, announces it with aria-busy and fires nothing', () => {
     const onApprove = vi.fn();
     const onEdit = vi.fn();
     const onReject = vi.fn();
@@ -84,7 +85,8 @@ describe('ApprovalBar', () => {
     const controls = screen.getAllByRole('button') as HTMLButtonElement[];
     expect(controls).toHaveLength(3);
     for (const control of controls) {
-      expect(control.disabled).toBe(true);
+      expect(control.getAttribute('aria-disabled')).toBe('true');
+      expect(control.disabled).toBe(false);
       fireEvent.click(control);
     }
     expect(onApprove).not.toHaveBeenCalled();
@@ -119,6 +121,47 @@ describe('ApprovalBar', () => {
     rerender(<ApprovalBar onApprove={noop} approvedBy="Dr. Meera Iyer" />);
     expect(screen.getByRole('status')).toBe(status);
     expect(status.textContent).toContain('Approved by Dr. Meera Iyer');
+  });
+
+  it('keeps keyboard focus on Approve while the decision is submitted', () => {
+    const { rerender } = render(<ApprovalBar onApprove={noop} />);
+    button('Approve').focus();
+    rerender(<ApprovalBar onApprove={noop} busy />);
+    expect(document.activeElement).toBe(button('Approve'));
+  });
+
+  it('moves focus to the approval record when the controls go, instead of dropping it to <body>', () => {
+    const { rerender } = render(<ApprovalBar onApprove={noop} onEdit={noop} />);
+    button('Approve').focus();
+    rerender(<ApprovalBar onApprove={noop} onEdit={noop} busy />);
+    rerender(
+      <ApprovalBar
+        onApprove={noop}
+        onEdit={noop}
+        approvedBy="Dr. Meera Iyer"
+      />,
+    );
+    const status = screen.getByRole('status');
+    expect(document.activeElement).toBe(status);
+    expect(status.tabIndex).toBe(-1);
+  });
+
+  it('leaves focus alone when the user was elsewhere as the approval arrived', () => {
+    const { rerender } = render(
+      <>
+        <ApprovalBar onApprove={noop} />
+        <input aria-label="Notes" />
+      </>,
+    );
+    const notes = screen.getByLabelText('Notes');
+    notes.focus();
+    rerender(
+      <>
+        <ApprovalBar onApprove={noop} approvedBy="Dr. Meera Iyer" />
+        <input aria-label="Notes" />
+      </>,
+    );
+    expect(document.activeElement).toBe(notes);
   });
 
   it('keeps its controls when approvedBy is empty', () => {

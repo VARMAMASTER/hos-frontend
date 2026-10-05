@@ -35,6 +35,27 @@ describe('Button', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
+  it('stays focusable but does nothing while aria-disabled, so focus is never dropped', () => {
+    const onClick = vi.fn();
+    const onSubmit = vi.fn((event: { preventDefault: () => void }) =>
+      event.preventDefault(),
+    );
+    render(
+      <form onSubmit={onSubmit}>
+        <Button type="submit" aria-disabled onClick={onClick}>
+          Save
+        </Button>
+      </form>,
+    );
+    const button = screen.getByRole('button', { name: 'Save' });
+    button.focus();
+    fireEvent.click(button);
+    expect(onClick).not.toHaveBeenCalled();
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(button);
+    expect(button.getAttribute('aria-disabled')).toBe('true');
+  });
+
   it('exposes its variant and size, defaulting to primary / md', () => {
     render(
       <>
