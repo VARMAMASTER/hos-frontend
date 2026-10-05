@@ -19,6 +19,12 @@ describe('@hos/nova-ui public API', () => {
     'isHexColour',
     'primitives',
     'NOVA_DEFAULTS',
+    'cx',
+    'focusRing',
+    'Surface',
+    'SURFACE_MATERIALS',
+    'useControllableState',
+    'VisuallyHidden',
   ])('exports %s from the barrel', (name) => {
     expect(nova).toHaveProperty(name);
   });

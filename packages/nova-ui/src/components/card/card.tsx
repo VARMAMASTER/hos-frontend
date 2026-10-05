@@ -1,4 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { Surface, type SurfaceMaterial } from '../../primitives/surface';
 
 // panel is the default surface and takes the product material (glass or solid). data is for dense
 // data (tables, figures): it stays opaque under either material and carries its richness in a rim.
@@ -8,19 +10,17 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: CardVariant;
 }
 
-// Whole class names, so Tailwind's scanner finds each utility.
-const variants: Record<CardVariant, string> = {
-  panel: 'nova-surface',
-  data: 'nova-data',
+const materials: Record<CardVariant, SurfaceMaterial> = {
+  panel: 'surface',
+  data: 'data',
 };
 
 export function Card({ variant = 'panel', className, ...rest }: CardProps) {
   return (
-    <div
+    <Surface
+      material={materials[variant]}
       data-variant={variant}
-      className={['rounded-lg', variants[variant], className]
-        .filter(Boolean)
-        .join(' ')}
+      className={className}
       {...rest}
     />
   );
@@ -59,10 +59,5 @@ export function CardBody({
   className,
   ...rest
 }: HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={['px-6 py-4', className].filter(Boolean).join(' ')}
-      {...rest}
-    />
-  );
+  return <div className={cx('px-6 py-4', className)} {...rest} />;
 }

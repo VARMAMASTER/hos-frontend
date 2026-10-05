@@ -1,4 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { Surface } from '../../primitives/surface';
 
 // `title` is a ReactNode here, but React types the HTML attribute as a string.
 export interface HeroBandProps
@@ -23,12 +25,7 @@ export function HeroBand({
 }: HeroBandProps) {
   const Heading = `h${headingLevel}` as const;
   return (
-    <div
-      className={['nova-hero rounded-lg p-6 md:p-8', className]
-        .filter(Boolean)
-        .join(' ')}
-      {...rest}
-    >
+    <Surface material="hero" className={cx('p-6 md:p-8', className)} {...rest}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <Heading className="text-2xl font-semibold">{title}</Heading>
@@ -43,6 +40,6 @@ export function HeroBand({
         ) : null}
       </div>
       {children ? <div className="mt-6">{children}</div> : null}
-    </div>
+    </Surface>
   );
 }

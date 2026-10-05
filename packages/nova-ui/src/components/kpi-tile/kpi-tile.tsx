@@ -1,4 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { Surface } from '../../primitives/surface';
+import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export type KpiTrend = 'up' | 'down' | 'flat';
 export type KpiTone = 'default' | 'good' | 'warn' | 'crit';
@@ -52,11 +55,10 @@ export function KpiTile({
 }: KpiTileProps) {
   const marker = trend ? trends[trend] : undefined;
   return (
-    <div
+    <Surface
+      material="data"
       data-tone={tone}
-      className={['nova-data rounded-lg p-5', className]
-        .filter(Boolean)
-        .join(' ')}
+      className={cx('p-5', className)}
       {...rest}
     >
       <div className="text-sm text-ink-3">{label}</div>
@@ -66,20 +68,20 @@ export function KpiTile({
       {marker || hasContent(delta) ? (
         <div
           data-trend={trend}
-          className={[
+          className={cx(
             'mt-3 flex w-fit items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium',
             deltaTones[tone],
-          ].join(' ')}
+          )}
         >
           {marker ? (
             <>
               <span aria-hidden="true">{marker.glyph}</span>
-              <span className="sr-only">{marker.label}</span>
+              <VisuallyHidden>{marker.label}</VisuallyHidden>
             </>
           ) : null}
           {delta}
         </div>
       ) : null}
-    </div>
+    </Surface>
   );
 }

@@ -1,4 +1,6 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'ai';
 export type ButtonSize = 'sm' | 'md';
@@ -8,10 +10,11 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize;
 }
 
-const base =
-  'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors ' +
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ' +
-  'disabled:pointer-events-none disabled:opacity-50';
+const base = cx(
+  'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors',
+  focusRing,
+  'disabled:pointer-events-none disabled:opacity-50',
+);
 
 const variants: Record<ButtonVariant, string> = {
   primary: 'bg-primary text-on-primary hover:bg-primary-strong',
@@ -37,9 +40,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         type={type}
         data-variant={variant}
         data-size={size}
-        className={[base, variants[variant], sizes[size], className]
-          .filter(Boolean)
-          .join(' ')}
+        className={cx(base, variants[variant], sizes[size], className)}
         {...rest}
       />
     );

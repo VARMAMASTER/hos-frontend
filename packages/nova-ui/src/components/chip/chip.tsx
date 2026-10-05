@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'react';
+import { cx } from '../../primitives/cx';
 
 export type ChipTone = 'neutral' | 'good' | 'warn' | 'crit' | 'info' | 'ai';
 
@@ -19,13 +20,11 @@ export function Chip({ tone = 'neutral', className, ...rest }: ChipProps) {
   return (
     <span
       data-tone={tone}
-      className={[
+      className={cx(
         'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium',
         tones[tone],
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
       {...rest}
     />
   );
