@@ -3,7 +3,33 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import dts from 'vite-plugin-dts';
+import { readFileSync } from 'node:fs';
 import * as path from 'path';
+import type { Plugin } from 'vite';
+
+// Resolved from the consumer's node_modules, never bundled: React (and its subpaths) is a peer, and
+// Recharts and react-is are ordinary dependencies the app installs once.
+const EXTERNAL = /^(?:react|react-dom|recharts|react-is)(?:\/|$)/;
+
+// theme.css is the package's other half: the tokens, the material utilities and the Tailwind
+// @theme mapping every component's classes rely on. It ships as dist/theme.css (exported as
+// "@hos/nova-ui/theme.css") for the app's own Tailwind build to import.
+function shipThemeCss(): Plugin {
+  return {
+    name: 'nova:ship-theme-css',
+    apply: 'build',
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: 'theme.css',
+        source: readFileSync(
+          path.join(import.meta.dirname, 'src/styles/theme.css'),
+          'utf8',
+        ),
+      });
+    },
+  };
+}
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
@@ -15,6 +41,7 @@ export default defineConfig(() => ({
       tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
     }),
     tailwindcss(),
+    shipThemeCss(),
   ],
   // Uncomment this if you are using workers.
   // worker: {
@@ -39,8 +66,7 @@ export default defineConfig(() => ({
       formats: ['es' as const],
     },
     rolldownOptions: {
-      // External packages that should not be bundled into your library.
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      external: (id: string) => EXTERNAL.test(id),
     },
   },
   test: {

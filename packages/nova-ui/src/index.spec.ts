@@ -97,7 +97,6 @@ describe('@hos/nova-ui public API', () => {
     'NovaThemeError',
     'contrastRatio',
     'isHexColour',
-    'primitives',
     'NOVA_DEFAULTS',
     'cx',
     'focusRing',
@@ -124,6 +123,11 @@ describe('@hos/nova-ui public API', () => {
 
   it('keeps the chart folder own context out of the barrel', () => {
     expect(nova).not.toHaveProperty('ChartContext');
+  });
+
+  // Raw hex is for the token layer only; app code takes colour from the semantic tokens.
+  it('keeps the raw primitive palette out of the barrel', () => {
+    expect(nova).not.toHaveProperty('primitives');
   });
 
   it('keeps the Storybook-only example themes out of the barrel', () => {

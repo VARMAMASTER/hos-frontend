@@ -4,7 +4,8 @@
     "outDir": "out-tsc/storybook",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "lib": ["es2022", "dom"]
   },
   "exclude": [
     "src/**/*.spec.ts",
@@ -24,7 +25,9 @@
     "src/**/*.stories.mdx",
     ".storybook/*.js",
     ".storybook/*.ts",
-    ".storybook/*.tsx"
+    ".storybook/*.tsx",
+    "src/stories/**/*.ts",
+    "src/stories/**/*.tsx"
   ],
   "references": [
     {

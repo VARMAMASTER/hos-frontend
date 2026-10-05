@@ -12,6 +12,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./theme.css": {
+      "@hos-frontend/source": "./src/styles/theme.css",
+      "default": "./dist/theme.css"
     }
   },
   "files": [
@@ -23,6 +27,10 @@
     "tags": [
       "type:ui"
     ]
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "dependencies": {
     "react-is": "^19.3.0",

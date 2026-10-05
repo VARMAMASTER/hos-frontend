@@ -74,7 +74,6 @@ export * from './primitives/visually-hidden';
 export * from './theme/contrast';
 export * from './theme/create-theme';
 export * from './theme/theme-provider';
-export { primitives } from './tokens/primitives';
 export {
   GLASS,
   isNovaMaterial,
