@@ -488,6 +488,11 @@ describe('Tabs', () => {
       const chip = (name: string) => tab(name).querySelector('[data-surface]');
       expect(chip('Claims')?.getAttribute('data-surface')).toBe('surface');
       expect(tab('Claims').classList.contains('text-ink')).toBe(true);
+      // A brand bar under the selected label: selection is a shape, not only a tint.
+      expect(tab('Claims').classList.contains('after:bg-primary')).toBe(true);
+      expect(tab('Overview').classList.contains('after:bg-primary')).toBe(
+        false,
+      );
       for (const name of ['Overview', 'Notes']) {
         expect(chip(name)).toBeNull();
         expect(tab(name).classList.contains('text-ink-2')).toBe(true);

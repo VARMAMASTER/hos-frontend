@@ -235,7 +235,11 @@ export function Tab({
       className={cx(
         tab,
         focusRing,
-        selected ? 'text-ink' : 'text-ink-2 hover:text-ink',
+        // Selected: the raised chip behind the label and a brand bar under it, a shape as well as a
+        // tint, since the chip alone barely stands off the glass rail.
+        selected
+          ? 'text-ink after:absolute after:inset-x-3 after:bottom-0.5 after:h-0.5 after:rounded-full after:bg-primary'
+          : 'text-ink-2 hover:text-ink',
         className,
       )}
       onClick={(event) => {
