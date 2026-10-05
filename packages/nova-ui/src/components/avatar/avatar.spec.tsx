@@ -16,6 +16,12 @@ describe('Avatar', () => {
     ['  Asha   Rao  ', 'AR'],
     ['Ramesh Kumar Singh', 'RS'],
     ['Mary-Jane Watson', 'MW'],
+    // In a hospital nearly every clinician's name carries a title; the title is not the person.
+    ['Dr. Meera Iyer', 'MI'],
+    ['Dr Meera Iyer', 'MI'],
+    ['Prof. Arun Shah', 'AS'],
+    ['Mrs. Lakshmi', 'L'],
+    ['Dr.', 'D'],
   ])('derives the initials of %j as %j', (name, initials) => {
     const { container } = render(<Avatar name={name} />);
     expect(initialsShown(container)).toBe(initials);

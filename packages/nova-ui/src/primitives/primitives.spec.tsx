@@ -26,10 +26,17 @@ describe('cx', () => {
 });
 
 describe('focusRing', () => {
-  it('only shows the ring for keyboard focus, in the brand colour', () => {
+  it('only shows the ring for keyboard focus', () => {
     expect(focusRing).toContain('focus-visible:outline-2');
-    expect(focusRing).toContain('focus-visible:outline-primary');
     expect(focusRing).not.toMatch(/(^|\s)focus:/);
+  });
+
+  // The brand ring is ~2:1 on the dark chrome and hero, below the 3:1 a focus indicator needs.
+  // The ring colour is a token a surface can override, falling back to the brand where unset.
+  it('takes its colour from --nova-focus-ring, falling back to the brand primary', () => {
+    expect(focusRing).toContain(
+      'focus-visible:outline-[var(--nova-focus-ring,var(--nova-color-primary))]',
+    );
   });
 });
 

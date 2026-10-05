@@ -42,10 +42,6 @@ export interface SectionNavProps
 const itemBase =
   'relative flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm font-medium';
 
-// The standard focus ring is the brand colour, which is too dim on the dark chrome, so its colour
-// (only) is swapped for the light tint. Same ring, one declaration of it.
-const chromeFocusRing = cx(focusRing, 'outline-primary-soft!');
-
 const itemIdle =
   'text-(color:--nova-chrome-ink-2) hover:bg-primary/20 hover:text-on-primary';
 
@@ -100,7 +96,7 @@ export function SectionNav({
           const current = item.active && !disabled ? 'page' : undefined;
           const classes = cx(
             itemBase,
-            chromeFocusRing,
+            focusRing,
             current ? itemActive : itemIdle,
             disabled && itemDisabled,
           );

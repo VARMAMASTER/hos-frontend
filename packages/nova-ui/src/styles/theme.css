@@ -273,6 +273,7 @@
    under white text. */
 /* prettier-ignore */
 @utility nova-chrome {
+  --nova-focus-ring: #fff;
   --nova-chrome-ink-2: rgb(255 255 255 / 0.74);
   background-image: var(--nova-gradient-chrome);
   color: #fff;
@@ -293,6 +294,7 @@
    layer behind the content under either material. */
 /* prettier-ignore */
 @utility nova-hero {
+  --nova-focus-ring: var(--nova-color-on-primary);
   position: relative;
   isolation: isolate;
   color: var(--nova-color-on-primary);

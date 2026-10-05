@@ -68,10 +68,6 @@ const triggerClasses =
   'group flex w-full items-center gap-3 rounded-md border border-primary-soft/25 bg-primary/20 ' +
   'px-3 py-2 text-left text-on-primary hover:bg-primary/30 aria-expanded:bg-primary/40';
 
-// The standard focus ring is the brand colour, which is too dim on the dark chrome, so its colour
-// (only) is swapped for the light tint. Same ring, one declaration of it.
-const chromeFocusRing = cx(focusRing, 'outline-primary-soft!');
-
 // The menu is an overlay surface: light even on the dark chrome, so it uses ink tokens.
 const itemClasses =
   'flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-ink ' +
@@ -195,7 +191,7 @@ export function WorkspaceSwitcher({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
-        className={cx(triggerClasses, chromeFocusRing)}
+        className={cx(triggerClasses, focusRing)}
         onClick={() => {
           opensOn.current = 'current';
           setOpen(!open);

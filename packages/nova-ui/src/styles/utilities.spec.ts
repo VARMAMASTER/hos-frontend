@@ -151,6 +151,10 @@ describe('theme.css utilities', () => {
       );
     });
 
+    it('turns the keyboard focus ring white, since the brand ring is ~2:1 on the dark chrome', () => {
+      expect(chrome().declarations['--nova-focus-ring']).toBe('#fff');
+    });
+
     it('sets white text, and hands children their secondary ink at the alpha the proof assumes', () => {
       expect(chrome().declarations['color']).toBe('#fff');
       expect(chrome().declarations['--nova-chrome-ink-2']).toBe(
@@ -178,6 +182,12 @@ describe('theme.css utilities', () => {
 
   describe('nova-hero', () => {
     const hero = () => utility('nova-hero');
+
+    it('turns the keyboard focus ring to the on-primary colour, since the brand ring vanishes on the brand', () => {
+      expect(hero().declarations['--nova-focus-ring']).toBe(
+        'var(--nova-color-on-primary)',
+      );
+    });
 
     it('sets the on-primary text colour and frosts with the hero filter', () => {
       expect(hero().declarations).toMatchObject({

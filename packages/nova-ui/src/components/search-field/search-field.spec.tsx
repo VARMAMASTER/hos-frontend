@@ -2,6 +2,7 @@ import { createRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { SearchField } from './search-field';
+import { focusRing } from '../../primitives/focus-ring';
 
 afterEach(() => cleanup());
 
@@ -119,14 +120,14 @@ describe('SearchField', () => {
     expect(decorated.classList.contains('pr-14')).toBe(true);
   });
 
-  it('is drawn for the dark chrome: translucent white fill and rim, brand focus ring, secondary-ink placeholder', () => {
+  it('is drawn for the dark chrome: translucent white fill and rim, the shared focus ring, secondary-ink placeholder', () => {
     render(<SearchField label="Search patients" />);
     const input = screen.getByRole('searchbox');
     for (const name of [
       'bg-on-primary/12',
       'border',
       'border-on-primary/25',
-      'focus-visible:outline-primary',
+      ...focusRing.split(' '),
       'placeholder:text-[color:var(--nova-chrome-ink-2)]',
     ]) {
       expect(input.classList.contains(name), name).toBe(true);

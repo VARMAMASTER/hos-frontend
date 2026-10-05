@@ -21,9 +21,15 @@ function firstLetter(word: string): string {
   return Array.from(word)[0] ?? '';
 }
 
-// The first letter of the first and last words: "Asha Rao" is AR, "Ramesh" is R.
+// Titles are not the person: in a hospital nearly every clinician's name starts with one.
+const HONORIFIC = /^(?:dr|prof|mr|mrs|ms|miss|sr|sri|smt|shri)\.?$/i;
+
+// The first letter of the first and last words, after any leading titles: "Asha Rao" is AR,
+// "Ramesh" is R, "Dr. Meera Iyer" is MI. A name that is only a title keeps it rather than go blank.
 function initialsOf(name: string): string {
-  const words = name.trim().split(/\s+/).filter(Boolean);
+  const all = name.trim().split(/\s+/).filter(Boolean);
+  const firstName = all.findIndex((word) => !HONORIFIC.test(word));
+  const words = firstName === -1 ? all : all.slice(firstName);
   if (words.length === 0) return '?';
   const first = firstLetter(words[0] ?? '');
   const last =

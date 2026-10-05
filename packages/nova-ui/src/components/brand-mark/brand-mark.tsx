@@ -38,9 +38,6 @@ function initialsOf(name: string): string {
 }
 
 const row = 'flex min-w-0 items-center gap-3';
-// The standard focus ring is the brand colour, which is too dim on the dark chrome, so its colour
-// (only) is swapped for the light tint. Same ring, one declaration of it.
-const chromeFocusRing = cx(focusRing, 'outline-primary-soft!');
 const markBox = 'grid size-9 shrink-0 place-items-center rounded-md';
 const nameClass =
   'block truncate text-base font-bold leading-tight text-on-primary';
@@ -83,7 +80,7 @@ export function BrandMark({
         href={href}
         aria-labelledby={nameId}
         aria-describedby={sub ? subId : undefined}
-        className={cx(row, 'rounded-md', chromeFocusRing, className)}
+        className={cx(row, 'rounded-md', focusRing, className)}
       >
         {mark}
         <span className="min-w-0">
