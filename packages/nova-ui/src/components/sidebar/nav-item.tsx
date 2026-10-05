@@ -26,7 +26,7 @@ export type NavItemProps = NavItemAnchorProps | NavItemButtonProps;
 const base =
   'flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors';
 const resting =
-  'text-[color:var(--nova-chrome-ink-2)] hover:bg-on-primary/10 hover:text-on-primary';
+  'text-[color:var(--nova-chrome-ink-2)] hover:bg-on-primary/10 hover:text-on-primary focus-visible:bg-on-primary/10 focus-visible:text-on-primary';
 const current = 'bg-primary/40 text-on-primary';
 
 function classes(active: boolean, className: string | undefined): string {

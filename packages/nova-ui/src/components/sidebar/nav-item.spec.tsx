@@ -65,6 +65,14 @@ describe('NavItem', () => {
     expect(resting.classList.contains('bg-primary/40')).toBe(false);
     expect(resting.className).toContain('--nova-chrome-ink-2');
     expect(resting.classList.contains('hover:text-on-primary')).toBe(true);
+    // The shared brand ring is weak on the dark chrome, so keyboard focus also lifts the item the
+    // way hover does.
+    expect(resting.classList.contains('focus-visible:bg-on-primary/10')).toBe(
+      true,
+    );
+    expect(resting.classList.contains('focus-visible:text-on-primary')).toBe(
+      true,
+    );
   });
 
   it('renders a type="button" button with as="button", without leaking `as` into the DOM', () => {
