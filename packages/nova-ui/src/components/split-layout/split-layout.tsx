@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
 
 export type SplitRatio = '1-1' | '2-1' | '3-2';
 
@@ -41,13 +42,11 @@ export function SplitLayout({
   return (
     <div
       {...rest}
-      className={[
+      className={cx(
         'grid grid-cols-1 gap-5',
         columns[ratio][secondaryFirst ? 1 : 0],
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
     >
       {secondaryFirst
         ? [secondaryRegion, primaryRegion]

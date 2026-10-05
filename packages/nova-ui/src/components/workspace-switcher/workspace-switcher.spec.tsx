@@ -154,6 +154,57 @@ describe('WorkspaceSwitcher trigger', () => {
   });
 });
 
+describe('WorkspaceSwitcher without a parent-owned open state', () => {
+  function Bare() {
+    return (
+      <WorkspaceSwitcher
+        current={current}
+        groups={groups}
+        onSelect={() => undefined}
+      />
+    );
+  }
+
+  it('opens and closes itself, and reports the change when asked to', () => {
+    const onOpenChange = vi.fn();
+    render(
+      <WorkspaceSwitcher
+        current={current}
+        groups={groups}
+        onSelect={() => undefined}
+        onOpenChange={onOpenChange}
+      />,
+    );
+    fireEvent.click(trigger());
+    expect(screen.getByRole('menu')).toBeTruthy();
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+    press('Escape');
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    expect(document.activeElement).toBe(trigger());
+  });
+
+  it('starts closed and closes on selecting', () => {
+    render(<Bare />);
+    expect(screen.queryByRole('menu')).toBeNull();
+    fireEvent.click(trigger());
+    fireEvent.click(item(/ICU/));
+    expect(screen.queryByRole('menu')).toBeNull();
+  });
+
+  it('can start open', () => {
+    render(
+      <WorkspaceSwitcher
+        current={current}
+        groups={groups}
+        onSelect={() => undefined}
+        defaultOpen
+      />,
+    );
+    expect(screen.getByRole('menu')).toBeTruthy();
+  });
+});
+
 describe('WorkspaceSwitcher menu', () => {
   it('is a menu named by the trigger', () => {
     render(<Harness initialOpen />);

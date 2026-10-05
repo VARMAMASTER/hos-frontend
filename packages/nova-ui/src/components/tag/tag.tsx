@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'react';
+import { cx } from '../../primitives/cx';
 
 export type TagVariant = 'solid' | 'outline';
 export type TagTone = 'neutral' | 'primary' | 'ai';
@@ -38,9 +39,7 @@ export function Tag({
     <span
       data-variant={variant}
       data-tone={tone}
-      className={[base, styles[variant][tone], className]
-        .filter(Boolean)
-        .join(' ')}
+      className={cx(base, styles[variant][tone], className)}
       {...rest}
     />
   );

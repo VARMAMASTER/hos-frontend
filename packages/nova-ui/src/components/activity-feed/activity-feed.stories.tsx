@@ -1,14 +1,11 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import { Card, CardBody, CardHeader } from '../card/card';
 import { ActivityFeed } from './activity-feed';
 
+// The feed is its own data surface, so it is shown on the page, not inside a Card.
 const decorate: Decorator = (Story) => (
-  <Card className="max-w-lg">
-    <CardHeader title="Ward activity" description="Newest first" />
-    <CardBody className="p-0">
-      <Story />
-    </CardBody>
-  </Card>
+  <div className="max-w-lg">
+    <Story />
+  </div>
 );
 
 const meta = {

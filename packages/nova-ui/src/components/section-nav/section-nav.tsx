@@ -1,4 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
+import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 interface SectionNavItemBase {
   id: string;
@@ -37,8 +40,11 @@ export interface SectionNavProps
 // on-primary (white). Hover and active tint with the translucent brand colour, never with white,
 // so white text keeps its contrast on the chrome for every brand.
 const itemBase =
-  'relative flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm font-medium ' +
-  'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary-soft';
+  'relative flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm font-medium';
+
+// The standard focus ring is the brand colour, which is too dim on the dark chrome, so its colour
+// (only) is swapped for the light tint. Same ring, one declaration of it.
+const chromeFocusRing = cx(focusRing, 'outline-primary-soft!');
 
 const itemIdle =
   'text-(color:--nova-chrome-ink-2) hover:bg-primary/20 hover:text-on-primary';
@@ -71,7 +77,7 @@ function ItemContent({ item }: { item: SectionNavItem }) {
           <span className="shrink-0 rounded-full bg-primary/40 px-1.5 py-px text-[10px] font-bold text-on-primary">
             {item.badge}
             {/* The space is its own text node: name computation trims the text inside a span. */}{' '}
-            <span className="sr-only">{item.badgeLabel}</span>
+            <VisuallyHidden>{item.badgeLabel}</VisuallyHidden>
           </span>
         </>
       ) : null}
@@ -92,13 +98,12 @@ export function SectionNav({
         {items.map((item) => {
           const disabled = item.disabled === true;
           const current = item.active && !disabled ? 'page' : undefined;
-          const classes = [
+          const classes = cx(
             itemBase,
+            chromeFocusRing,
             current ? itemActive : itemIdle,
-            disabled ? itemDisabled : null,
-          ]
-            .filter(Boolean)
-            .join(' ');
+            disabled && itemDisabled,
+          );
 
           let control: ReactNode;
           if (item.href !== undefined && !disabled) {

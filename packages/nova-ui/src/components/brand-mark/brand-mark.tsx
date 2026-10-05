@@ -1,4 +1,6 @@
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
 
 export interface BrandMarkProps
   extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
@@ -36,6 +38,9 @@ function initialsOf(name: string): string {
 }
 
 const row = 'flex min-w-0 items-center gap-3';
+// The standard focus ring is the brand colour, which is too dim on the dark chrome, so its colour
+// (only) is swapped for the light tint. Same ring, one declaration of it.
+const chromeFocusRing = cx(focusRing, 'outline-primary-soft!');
 const markBox = 'grid size-9 shrink-0 place-items-center rounded-md';
 const nameClass =
   'block truncate text-base font-bold leading-tight text-on-primary';
@@ -78,13 +83,7 @@ export function BrandMark({
         href={href}
         aria-labelledby={nameId}
         aria-describedby={sub ? subId : undefined}
-        className={[
-          row,
-          'rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-soft',
-          className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
+        className={cx(row, 'rounded-md', chromeFocusRing, className)}
       >
         {mark}
         <span className="min-w-0">
@@ -103,7 +102,7 @@ export function BrandMark({
 
   const Heading = `h${headingLevel}` as const;
   return (
-    <div {...rest} className={[row, className].filter(Boolean).join(' ')}>
+    <div {...rest} className={cx(row, className)}>
       {mark}
       <div className="min-w-0">
         <Heading className={nameClass}>{name}</Heading>

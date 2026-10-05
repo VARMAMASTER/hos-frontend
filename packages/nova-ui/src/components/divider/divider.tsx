@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'react';
+import { cx } from '../../primitives/cx';
 
 export type DividerOrientation = 'horizontal' | 'vertical';
 
@@ -58,13 +59,11 @@ export function Divider({
         {...rest}
         {...semantics}
         aria-label={label}
-        className={[
+        className={cx(
           labelled[orientation],
           'text-xs font-medium text-ink-3',
           className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
+        )}
       >
         <span aria-hidden="true" className={half[orientation]} />
         <span>{label}</span>
@@ -78,7 +77,7 @@ export function Divider({
       {...rest}
       {...semantics}
       aria-hidden={decorative ? true : undefined}
-      className={[rule[orientation], className].filter(Boolean).join(' ')}
+      className={cx(rule[orientation], className)}
     />
   );
 }

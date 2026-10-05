@@ -11,16 +11,31 @@ describe('IconTile', () => {
     expect(screen.getByText('SV').getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('is exposed with its label as the accessible name when it stands alone', () => {
+  it('is exposed, as visually hidden text carrying its label, when it stands alone', () => {
     render(<IconTile label="Pharmacy">Ph</IconTile>);
-    const tile = screen.getByRole('img', { name: 'Pharmacy' });
-    expect(tile.getAttribute('aria-hidden')).toBeNull();
+    const label = screen.getByText('Pharmacy');
+    expect(label.classList.contains('sr-only')).toBe(true);
+    const tile = label.closest('[data-tone]');
+    expect(tile).toBeTruthy();
+    expect(tile?.getAttribute('aria-hidden')).toBeNull();
+    expect(label.getAttribute('aria-hidden')).toBeNull();
   });
 
-  it('names a labelled tile from the label, not from its monogram', () => {
+  it('hides the monogram of a labelled tile, so it is not read out a second time', () => {
     render(<IconTile label="Pharmacy">Ph</IconTile>);
-    expect(screen.getByRole('img').getAttribute('aria-label')).toBe('Pharmacy');
-    expect(screen.queryByRole('img', { name: 'Ph' })).toBeNull();
+    expect(screen.getByText('Ph').getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('hides the glyph of a labelled tile too', () => {
+    render(
+      <IconTile label="Beds">
+        <svg data-testid="glyph" viewBox="0 0 24 24" />
+      </IconTile>,
+    );
+    expect(
+      screen.getByTestId('glyph').closest('[aria-hidden="true"]'),
+    ).toBeTruthy();
+    expect(screen.getByText('Beds')).toBeTruthy();
   });
 
   it('can be exposed explicitly with aria-hidden={false}', () => {
@@ -34,7 +49,8 @@ describe('IconTile', () => {
         La
       </IconTile>,
     );
-    expect(screen.getByRole('img', { name: 'Lab' })).toBeTruthy();
+    const tile = screen.getByText('Lab').closest('[data-tone]');
+    expect(tile?.getAttribute('aria-hidden')).toBeNull();
   });
 
   it('defaults to the chrome tone at the small size', () => {

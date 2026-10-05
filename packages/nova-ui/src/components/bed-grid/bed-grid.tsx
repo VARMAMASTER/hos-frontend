@@ -1,4 +1,8 @@
 import type { HTMLAttributes } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
+import { Surface } from '../../primitives/surface';
+import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export type BedStatus = 'free' | 'occupied' | 'cleaning' | 'blocked';
 
@@ -26,7 +30,8 @@ export interface BedGridProps
 }
 
 // Status is always a word on the cell and in its accessible text; colour only backs it up. A
-// blocked bed is neutral and dashed (not red) because red is kept for clinical urgency.
+// blocked bed is neutral and dashed (not red) because red is kept for clinical urgency. The tint
+// replaces the data surface's white fill, and the border marks the cell's edge.
 const statusStyles: Record<BedStatus, { cell: string; word: string }> = {
   free: { cell: 'border-good/40 bg-good-soft', word: 'text-good-deep' },
   occupied: { cell: 'border-info/40 bg-info-soft', word: 'text-info-deep' },
@@ -36,11 +41,6 @@ const statusStyles: Record<BedStatus, { cell: string; word: string }> = {
     word: 'text-ink-2',
   },
 };
-
-const cellBase = 'block min-h-16 w-full rounded-md border p-2.5 text-left';
-
-const interactive =
-  'cursor-pointer hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 
 // Only an occupied bed has a patient. A bed that is free, being cleaned or blocked never shows or
 // announces one, even if stale data supplies a name: two contradictory signals on one bed is how
@@ -53,9 +53,8 @@ function patientOf(bed: Bed): string | undefined {
 // accessible name is the same in every browser and on both the button and the plain list item (where
 // an aria-label is patchily supported). The visual layer below repeats it and is aria-hidden.
 function readout(bed: Bed): string {
-  return [`Bed ${bed.label}`, bed.status, patientOf(bed), bed.ward]
-    .filter(Boolean)
-    .join(', ');
+  const parts = [`Bed ${bed.label}`, bed.status, patientOf(bed), bed.ward];
+  return parts.filter((part): part is string => Boolean(part)).join(', ');
 }
 
 function BedContent({ bed }: { bed: Bed }) {
@@ -69,7 +68,10 @@ function BedContent({ bed }: { bed: Bed }) {
           </span>
           {/* The status word is the cue; colour only backs it up. */}
           <span
-            className={`text-[11px] font-bold tracking-wide uppercase ${statusStyles[bed.status].word}`}
+            className={cx(
+              'text-[11px] font-bold tracking-wide uppercase',
+              statusStyles[bed.status].word,
+            )}
           >
             {bed.status}
           </span>
@@ -83,7 +85,7 @@ function BedContent({ bed }: { bed: Bed }) {
           <span className="block truncate text-xs text-ink-2">{bed.ward}</span>
         ) : null}
       </span>
-      <span className="sr-only">{readout(bed)}</span>
+      <VisuallyHidden>{readout(bed)}</VisuallyHidden>
     </>
   );
 }
@@ -99,32 +101,43 @@ export function BedGrid({
     <ul
       {...rest}
       aria-label={ariaLabel}
-      className={[
+      className={cx(
         'grid grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-2',
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
     >
-      {beds.map((bed) => {
-        const cell = `${cellBase} ${statusStyles[bed.status].cell}`;
-        return onSelect ? (
-          <li key={bed.id}>
+      {beds.map((bed) => (
+        // Every cell is an opaque data surface: bed status is clinical, so it must stay legible
+        // under glass. The list item carries the surface and the status; a button, when there is
+        // one, fills it.
+        <Surface
+          key={bed.id}
+          as="li"
+          material="data"
+          radius="md"
+          data-status={bed.status}
+          className={cx(
+            'border',
+            statusStyles[bed.status].cell,
+            !onSelect && 'min-h-16 p-2.5',
+          )}
+        >
+          {onSelect ? (
             <button
               type="button"
-              data-status={bed.status}
-              className={`${cell} ${interactive}`}
+              className={cx(
+                'block min-h-16 w-full cursor-pointer rounded-[inherit] p-2.5 text-left hover:shadow-sm',
+                focusRing,
+              )}
               onClick={() => onSelect(bed.id)}
             >
               <BedContent bed={bed} />
             </button>
-          </li>
-        ) : (
-          <li key={bed.id} data-status={bed.status} className={cell}>
+          ) : (
             <BedContent bed={bed} />
-          </li>
-        );
-      })}
+          )}
+        </Surface>
+      ))}
     </ul>
   );
 }

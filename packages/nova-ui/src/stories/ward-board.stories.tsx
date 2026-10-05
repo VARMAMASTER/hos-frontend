@@ -4,7 +4,8 @@ import { ActivityFeed } from '../components/activity-feed/activity-feed';
 import { BedGrid, type Bed } from '../components/bed-grid/bed-grid';
 import { BrandMark } from '../components/brand-mark/brand-mark';
 import { Card, CardBody, CardHeader } from '../components/card/card';
-import { Chip } from '../components/chip/chip';
+import { HeroBand } from '../components/hero-band/hero-band';
+import { KpiTile } from '../components/kpi-tile/kpi-tile';
 import {
   SectionNav,
   type SectionNavItem,
@@ -204,23 +205,27 @@ function WardBoard() {
       </aside>
 
       <main className="min-w-0 space-y-4 p-6">
-        <h1 className="text-xl font-semibold text-ink">
-          {workspace.name} ward board
-        </h1>
+        <HeroBand
+          title={`${workspace.name} ward board`}
+          description="Press a bed to open it"
+        >
+          <div className="grid gap-3 sm:grid-cols-3">
+            <KpiTile label="Free beds" value={count('free')} tone="good" />
+            <KpiTile label="Occupied" value={count('occupied')} />
+            <KpiTile
+              label="Being cleaned"
+              value={count('cleaning')}
+              tone="warn"
+            />
+          </div>
+        </HeroBand>
         <SplitLayout
           ratio="2-1"
           primary={
             <Card>
               <CardHeader
                 title="Beds"
-                description="Press a bed to open it"
-                actions={
-                  <div className="flex flex-wrap justify-end gap-1.5">
-                    <Chip tone="good">{count('free')} free</Chip>
-                    <Chip tone="info">{count('occupied')} occupied</Chip>
-                    <Chip tone="warn">{count('cleaning')} cleaning</Chip>
-                  </div>
-                }
+                description="General and semi-private wards"
               />
               <CardBody className="space-y-3">
                 <BedGrid
@@ -237,48 +242,51 @@ function WardBoard() {
             </Card>
           }
           secondary={
-            <Card>
-              <CardHeader title="Activity" description="Newest first" />
-              <CardBody className="p-0">
-                <ActivityFeed
-                  aria-label="Ward activity"
-                  items={[
-                    {
-                      id: '1',
-                      time: '09:12 AM',
-                      title: 'Bed GM-04 vacated',
-                      detail: 'Sent for cleaning',
-                    },
-                    {
-                      id: '2',
-                      time: '08:40 AM',
-                      title: 'Discharge summary filed',
-                      tone: 'good',
-                    },
-                    {
-                      id: '3',
-                      time: '07:48 AM',
-                      title: 'Ramesh moved to ICU',
-                      detail: 'Approved by the ward consultant',
-                      tone: 'warn',
-                    },
-                    {
-                      id: '4',
-                      time: '07:15 AM',
-                      title: 'Monitor alarm in bed SP-01',
-                      tone: 'crit',
-                    },
-                    {
-                      id: '5',
-                      time: '06:30 AM',
-                      title: 'Handover note drafted',
-                      detail: 'Awaiting nurse review',
-                      tone: 'ai',
-                    },
-                  ]}
-                />
-              </CardBody>
-            </Card>
+            <section aria-labelledby="activity-heading" className="space-y-2">
+              <h2
+                id="activity-heading"
+                className="text-base font-semibold text-ink"
+              >
+                Activity
+              </h2>
+              <ActivityFeed
+                aria-label="Ward activity"
+                items={[
+                  {
+                    id: '1',
+                    time: '09:12 AM',
+                    title: 'Bed GM-04 vacated',
+                    detail: 'Sent for cleaning',
+                  },
+                  {
+                    id: '2',
+                    time: '08:40 AM',
+                    title: 'Discharge summary filed',
+                    tone: 'good',
+                  },
+                  {
+                    id: '3',
+                    time: '07:48 AM',
+                    title: 'Ramesh moved to ICU',
+                    detail: 'Approved by the ward consultant',
+                    tone: 'warn',
+                  },
+                  {
+                    id: '4',
+                    time: '07:15 AM',
+                    title: 'Monitor alarm in bed SP-01',
+                    tone: 'crit',
+                  },
+                  {
+                    id: '5',
+                    time: '06:30 AM',
+                    title: 'Handover note drafted',
+                    detail: 'Awaiting nurse review',
+                    tone: 'ai',
+                  },
+                ]}
+              />
+            </section>
           }
         />
       </main>

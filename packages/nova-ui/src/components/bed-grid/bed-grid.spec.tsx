@@ -146,7 +146,7 @@ describe('BedGrid', () => {
           />,
         );
         const cell = screen.getByRole('button');
-        expect(cell.dataset['status']).toBe(status);
+        expect(cell.closest('li')?.dataset['status']).toBe(status);
         const word = within(cell).getByText(status);
         // visible text, not a screen-reader-only aside
         expect(word.classList.contains('sr-only')).toBe(false);
@@ -274,6 +274,21 @@ describe('BedGrid', () => {
         c.startsWith('grid-cols-[repeat(auto-fill'),
       ),
     ).toBe(true);
+  });
+
+  it('builds every cell on the opaque data surface, so clinical status stays legible under glass', () => {
+    render(<BedGrid beds={beds} ariaLabel="Beds" />);
+    for (const cell of screen.getAllByRole('listitem')) {
+      expect(cell.dataset['surface']).toBe('data');
+      expect(cell.classList.contains('nova-data')).toBe(true);
+    }
+  });
+
+  it('keeps the same surface and status on the list item when the cell is a button', () => {
+    render(<BedGrid beds={beds} onSelect={() => undefined} ariaLabel="Beds" />);
+    const [first] = screen.getAllByRole('listitem');
+    expect(first.dataset['surface']).toBe('data');
+    expect(first.dataset['status']).toBe('occupied');
   });
 
   it('merges a caller className onto the list', () => {

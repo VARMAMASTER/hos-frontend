@@ -1,4 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export type IconTileTone = 'chrome' | 'ai';
 export type IconTileSize = 'sm' | 'md';
@@ -9,9 +11,10 @@ export interface IconTileProps
   children: ReactNode;
   tone?: IconTileTone;
   size?: IconTileSize;
-  // Only for the rare tile that stands alone with no text beside it: exposes the tile as an image
-  // with this name. Beside a text label leave it off and the tile stays hidden from assistive
-  // technology, so the icon is not announced as noise.
+  // Only for the rare tile that stands alone with no text beside it: the label is read out as
+  // visually hidden text and the glyph or monogram is hidden, so nothing is announced twice. Beside
+  // a text label leave it off and the whole tile stays hidden from assistive technology, so the icon
+  // is not announced as noise.
   label?: string;
 }
 
@@ -28,8 +31,8 @@ const tones: Record<IconTileTone, string> = {
 };
 
 const sizes: Record<IconTileSize, string> = {
-  sm: 'size-6 text-[10px] [&>svg]:size-4',
-  md: 'size-8 text-xs [&>svg]:size-5',
+  sm: 'size-6 text-[10px] [&_svg]:size-4',
+  md: 'size-8 text-xs [&_svg]:size-5',
 };
 
 export function IconTile({
@@ -47,16 +50,21 @@ export function IconTile({
   return (
     <span
       {...rest}
-      role={exposed ? 'img' : undefined}
-      aria-label={label}
       aria-hidden={hidden ? true : undefined}
       data-tone={tone}
       data-size={size}
-      className={[base, tones[tone], sizes[size], className]
-        .filter(Boolean)
-        .join(' ')}
+      className={cx(base, tones[tone], sizes[size], className)}
     >
-      {children}
+      {exposed ? (
+        <>
+          <span aria-hidden="true" className="grid place-items-center">
+            {children}
+          </span>
+          <VisuallyHidden>{label}</VisuallyHidden>
+        </>
+      ) : (
+        children
+      )}
     </span>
   );
 }

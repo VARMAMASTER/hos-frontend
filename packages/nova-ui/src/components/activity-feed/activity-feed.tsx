@@ -1,4 +1,7 @@
-import type { OlHTMLAttributes, ReactNode } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../../primitives/cx';
+import { Surface } from '../../primitives/surface';
+import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export type ActivityTone = 'neutral' | 'good' | 'warn' | 'crit' | 'info' | 'ai';
 
@@ -12,7 +15,7 @@ export interface ActivityFeedItem {
 }
 
 export interface ActivityFeedProps
-  extends Omit<OlHTMLAttributes<HTMLOListElement>, 'children'> {
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   items: ActivityFeedItem[];
   // Shown instead of an empty list.
   emptyMessage?: ReactNode;
@@ -40,6 +43,8 @@ const markers: Record<ActivityTone, string> = {
   ai: 'rounded-full bg-ai',
 };
 
+// The feed is its own panel on the opaque data surface: events are clinical records (an alarm, a
+// transfer), and translucency would cost legibility. Do not nest it in a Card body.
 export function ActivityFeed({
   items,
   emptyMessage = 'No recent activity',
@@ -48,18 +53,17 @@ export function ActivityFeed({
 }: ActivityFeedProps) {
   if (items.length === 0) {
     return (
-      <p
-        className={['px-4 py-6 text-center text-sm text-ink-3', className]
-          .filter(Boolean)
-          .join(' ')}
+      <Surface
+        material="data"
+        className={cx('px-4 py-6 text-center text-sm text-ink-3', className)}
       >
-        {emptyMessage}
-      </p>
+        <p>{emptyMessage}</p>
+      </Surface>
     );
   }
 
   return (
-    <ol {...rest} className={className}>
+    <Surface as="ol" material="data" {...rest} className={className}>
       {items.map(({ id, time, title, detail, tone = 'neutral' }) => (
         <li
           key={id}
@@ -69,7 +73,7 @@ export function ActivityFeed({
           <span
             data-marker=""
             aria-hidden="true"
-            className={`mt-1.5 size-2.5 shrink-0 ${markers[tone]}`}
+            className={cx('mt-1.5 size-2.5 shrink-0', markers[tone])}
           />
           <span className="shrink-0 pt-0.5 font-mono text-xs whitespace-nowrap text-ink-3">
             {time}
@@ -78,7 +82,7 @@ export function ActivityFeed({
             <div className="font-medium text-ink">
               {toneWord[tone] ? (
                 <>
-                  <span className="sr-only">{toneWord[tone]}:</span>{' '}
+                  <VisuallyHidden>{toneWord[tone]}:</VisuallyHidden>{' '}
                 </>
               ) : null}
               {title}
@@ -91,6 +95,6 @@ export function ActivityFeed({
           </div>
         </li>
       ))}
-    </ol>
+    </Surface>
   );
 }

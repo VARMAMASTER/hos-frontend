@@ -6,6 +6,11 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
+import { Surface } from '../../primitives/surface';
+import { useControllableState } from '../../primitives/use-controllable-state';
+import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export interface WorkspaceOption {
   id: string;
@@ -32,9 +37,11 @@ export interface WorkspaceSwitcherProps
   groups: WorkspaceGroup[];
   // Called with the chosen id, including when the current workspace is chosen again.
   onSelect: (id: string) => void;
-  // Controlled: the parent owns whether the menu is open.
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  // Whether the menu is open. Give it with onOpenChange and the parent owns the state (controlled);
+  // leave it off and the switcher keeps its own, starting from defaultOpen.
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   // A line at the top of the menu ("Switch workspace").
   hint?: ReactNode;
 }
@@ -59,14 +66,16 @@ function focusMenuItem(menu: HTMLElement | null, which: 'current' | 'last') {
 
 const triggerClasses =
   'group flex w-full items-center gap-3 rounded-md border border-primary-soft/25 bg-primary/20 ' +
-  'px-3 py-2 text-left text-on-primary hover:bg-primary/30 aria-expanded:bg-primary/40 ' +
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-soft';
+  'px-3 py-2 text-left text-on-primary hover:bg-primary/30 aria-expanded:bg-primary/40';
 
-// The menu is a nova-overlay: a light surface even on the dark chrome, so it uses ink tokens.
+// The standard focus ring is the brand colour, which is too dim on the dark chrome, so its colour
+// (only) is swapped for the light tint. Same ring, one declaration of it.
+const chromeFocusRing = cx(focusRing, 'outline-primary-soft!');
+
+// The menu is an overlay surface: light even on the dark chrome, so it uses ink tokens.
 const itemClasses =
   'flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-ink ' +
-  'hover:bg-primary-soft focus-visible:bg-primary-soft focus-visible:outline-2 ' +
-  'focus-visible:-outline-offset-2 focus-visible:outline-primary ' +
+  'hover:bg-primary-soft focus-visible:bg-primary-soft ' +
   'aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
 
 // Current is bold and ticked, as well as tinted and aria-checked.
@@ -76,12 +85,18 @@ export function WorkspaceSwitcher({
   current,
   groups,
   onSelect,
-  open,
+  open: openProp,
+  defaultOpen = false,
   onOpenChange,
   hint,
   className,
   ...rest
 }: WorkspaceSwitcherProps) {
+  const [open, setOpen] = useControllableState({
+    value: openProp,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const triggerId = useId();
   const menuId = useId();
   const hintId = useId();
@@ -104,14 +119,14 @@ export function WorkspaceSwitcher({
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (event: Event) => {
-      if (!rootRef.current?.contains(event.target as Node)) onOpenChange(false);
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
     };
     document.addEventListener('pointerdown', onPointerDown);
     return () => document.removeEventListener('pointerdown', onPointerDown);
-  }, [open, onOpenChange]);
+  }, [open, setOpen]);
 
   const closeAndReturnFocus = () => {
-    onOpenChange(false);
+    setOpen(false);
     triggerRef.current?.focus();
   };
 
@@ -129,7 +144,7 @@ export function WorkspaceSwitcher({
         focusMenuItem(menuRef.current, which);
       } else {
         opensOn.current = which;
-        onOpenChange(true);
+        setOpen(true);
       }
     } else if (event.key === 'Escape' && open) {
       event.preventDefault();
@@ -172,11 +187,7 @@ export function WorkspaceSwitcher({
   };
 
   return (
-    <div
-      {...rest}
-      ref={rootRef}
-      className={['relative', className].filter(Boolean).join(' ')}
-    >
+    <div {...rest} ref={rootRef} className={cx('relative', className)}>
       <button
         ref={triggerRef}
         id={triggerId}
@@ -184,15 +195,15 @@ export function WorkspaceSwitcher({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
-        className={triggerClasses}
+        className={cx(triggerClasses, chromeFocusRing)}
         onClick={() => {
           opensOn.current = 'current';
-          onOpenChange(!open);
+          setOpen(!open);
         }}
         onKeyDown={onTriggerKeyDown}
       >
         <span className="min-w-0 flex-1">
-          <span className="sr-only">Current workspace:</span>{' '}
+          <VisuallyHidden>Current workspace:</VisuallyHidden>{' '}
           <span className="block truncate text-sm font-semibold">
             {current.name}
           </span>
@@ -223,7 +234,11 @@ export function WorkspaceSwitcher({
       </button>
 
       {open ? (
-        <div className="nova-overlay absolute inset-x-0 top-full z-50 mt-1.5 max-h-[70vh] overflow-y-auto rounded-lg p-1.5">
+        <Surface
+          material="overlay"
+          radius="lg"
+          className="absolute inset-x-0 top-full z-50 mt-1.5 max-h-[70vh] overflow-y-auto p-1.5"
+        >
           {hint ? (
             <div id={hintId} className="px-3 pt-1.5 pb-1 text-xs text-ink-3">
               {hint}
@@ -256,12 +271,11 @@ export function WorkspaceSwitcher({
                         aria-checked={isCurrent}
                         aria-disabled={item.disabled ? true : undefined}
                         tabIndex={-1}
-                        className={[
+                        className={cx(
                           itemClasses,
-                          isCurrent ? itemCurrentClasses : null,
-                        ]
-                          .filter(Boolean)
-                          .join(' ')}
+                          focusRing,
+                          isCurrent && itemCurrentClasses,
+                        )}
                         onClick={() => choose(item)}
                         onKeyDown={(event) => {
                           if (event.key === 'Enter' || event.key === ' ') {
@@ -306,7 +320,7 @@ export function WorkspaceSwitcher({
               );
             })}
           </div>
-        </div>
+        </Surface>
       ) : null}
     </div>
   );

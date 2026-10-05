@@ -132,6 +132,21 @@ describe('ActivityFeed', () => {
     expect(warn).not.toBe(crit);
   });
 
+  it('sits on the opaque data surface, because events are clinical records', () => {
+    render(<ActivityFeed items={items} />);
+    const list = screen.getByRole('list');
+    expect(list.dataset['surface']).toBe('data');
+    expect(list.classList.contains('nova-data')).toBe(true);
+  });
+
+  it('keeps the same surface under its empty message', () => {
+    render(<ActivityFeed items={[]} />);
+    const message = screen.getByText('No recent activity');
+    expect(
+      message.closest('[data-surface]')?.getAttribute('data-surface'),
+    ).toBe('data');
+  });
+
   it('names the list when given an aria-label', () => {
     render(<ActivityFeed items={items} aria-label="Ward activity" />);
     expect(screen.getByRole('list', { name: 'Ward activity' })).toBeTruthy();

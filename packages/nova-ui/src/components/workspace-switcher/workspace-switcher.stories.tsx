@@ -79,3 +79,15 @@ export const Open: Story = {
   args: Closed.args,
   render: () => <Controlled startOpen />,
 };
+
+export const Uncontrolled: Story = {
+  name: 'Uncontrolled (keeps its own open state)',
+  args: Closed.args,
+  render: () => (
+    <WorkspaceSwitcher
+      current={{ id: 'kr', name: 'Krishna Hospital', label: 'Vijayawada' }}
+      groups={groups}
+      onSelect={() => undefined}
+    />
+  ),
+};
