@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -482,7 +483,9 @@ describe('WorkspaceSwitcher keyboard', () => {
       </>,
     );
     const search = screen.getByLabelText('Search patients');
-    search.focus();
+    // Focus leaving the menu for another control closes it (Menu's shared behaviour), a state
+    // update, so the move is wrapped in act.
+    act(() => search.focus());
     fireEvent.pointerDown(search);
     expect(screen.queryByRole('menu')).toBeNull();
     expect(document.activeElement).toBe(search);
