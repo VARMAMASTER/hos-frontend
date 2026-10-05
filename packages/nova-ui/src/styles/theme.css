@@ -1,0 +1,85 @@
+/* Stock palette removed so a component cannot reach for bg-red-500 instead of a semantic token. */
+@theme {
+  --color-*: initial;
+  --shadow-sm:
+    0 1px 2px hsl(262deg 45% 27% / 0.07),
+    0 2px 6px -1px hsl(262deg 45% 27% / 0.07);
+  --shadow-md:
+    0 2px 4px hsl(262deg 45% 27% / 0.06),
+    0 8px 16px -4px hsl(262deg 45% 27% / 0.09),
+    0 20px 32px -10px hsl(262deg 45% 27% / 0.1);
+}
+
+@theme inline {
+  --color-bg: var(--nova-color-bg);
+  --color-surface: var(--nova-color-surface);
+  --color-surface-2: var(--nova-color-surface-2);
+  --color-border: var(--nova-color-border);
+  --color-border-strong: var(--nova-color-border-strong);
+  --color-ink: var(--nova-color-ink);
+  --color-ink-2: var(--nova-color-ink-2);
+  --color-ink-3: var(--nova-color-ink-3);
+  --color-primary: var(--nova-color-primary);
+  --color-primary-strong: var(--nova-color-primary-strong);
+  --color-primary-soft: var(--nova-color-primary-soft);
+  --color-on-primary: var(--nova-color-on-primary);
+  --color-ai: var(--nova-color-ai);
+  --color-ai-deep: var(--nova-color-ai-deep);
+  --color-ai-soft: var(--nova-color-ai-soft);
+  --color-good: var(--nova-color-good);
+  --color-good-soft: var(--nova-color-good-soft);
+  --color-good-deep: var(--nova-color-good-deep);
+  --color-warn: var(--nova-color-warn);
+  --color-warn-soft: var(--nova-color-warn-soft);
+  --color-warn-deep: var(--nova-color-warn-deep);
+  --color-crit: var(--nova-color-crit);
+  --color-crit-soft: var(--nova-color-crit-soft);
+  --color-crit-deep: var(--nova-color-crit-deep);
+  --color-info: var(--nova-color-info);
+  --color-info-soft: var(--nova-color-info-soft);
+  --color-info-deep: var(--nova-color-info-deep);
+  --radius-sm: var(--nova-radius-sm);
+  --radius-md: var(--nova-radius-md);
+  --radius-lg: var(--nova-radius-lg);
+  --font-sans: var(--nova-font-body);
+  --font-mono: var(--nova-font-mono);
+}
+
+/* The defaults below stay byte-identical to NOVA_DEFAULTS (tokens/semantic.ts), in the
+   prototype's upper-case hex and double-quoted font stacks. Prettier would lower-case the hex
+   and swap the quotes, and semantic.spec.ts compares the two exactly. */
+/* prettier-ignore */
+:root {
+  --nova-color-bg: #F0EFF9;
+  --nova-color-surface: #FFFFFF;
+  --nova-color-surface-2: #F8F7FD;
+  --nova-color-border: #E4E1F2;
+  --nova-color-border-strong: #CFC9E6;
+  --nova-color-ink: #1A1730;
+  --nova-color-ink-2: #5B5775;
+  --nova-color-ink-3: #6A6584;
+  --nova-color-primary: #6D4FE0;
+  --nova-color-primary-strong: #5636B8;
+  --nova-color-primary-soft: #EFEAFC;
+  --nova-color-on-primary: #FFFFFF;
+  --nova-color-ai: #0E7490;
+  --nova-color-ai-deep: #0B5567;
+  --nova-color-ai-soft: #DDF4FA;
+  --nova-color-good: #0B8A68;
+  --nova-color-good-soft: #E3F2EC;
+  --nova-color-good-deep: #07634B;
+  --nova-color-warn: #B45309;
+  --nova-color-warn-soft: #FBEEDD;
+  --nova-color-warn-deep: #8A3E06;
+  --nova-color-crit: #B3261E;
+  --nova-color-crit-soft: #F9E7E5;
+  --nova-color-crit-deep: #8E1D16;
+  --nova-color-info: #2563A8;
+  --nova-color-info-soft: #E7EFF8;
+  --nova-color-info-deep: #1A4C85;
+  --nova-radius-sm: 8px;
+  --nova-radius-md: 12px;
+  --nova-radius-lg: 18px;
+  --nova-font-body: "Google Sans Flex", system-ui, -apple-system, sans-serif;
+  --nova-font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+}

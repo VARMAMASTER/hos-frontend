@@ -4,9 +4,15 @@
 dist
 tmp
 out-tsc
+test-output
 
 # dependencies
 node_modules
+
+# local environment (an .env.example stays tracked)
+.env
+.env.local
+.env.*.local
 
 # IDEs and editors
 /.idea
