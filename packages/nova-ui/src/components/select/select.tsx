@@ -1,0 +1,118 @@
+import { forwardRef, type ReactNode, type SelectHTMLAttributes } from 'react';
+import { cx } from '../../primitives/cx';
+import { focusRing } from '../../primitives/focus-ring';
+import { FieldShell } from '../text-field/field-shell';
+
+export interface SelectOption {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
+// A native <select>: keyboard handling, typeahead and screen-reader behaviour come from the
+// platform. `multiple` and `size` are left out because the styling is for a single choice.
+export interface SelectProps
+  extends Omit<
+    SelectHTMLAttributes<HTMLSelectElement>,
+    'children' | 'multiple' | 'size'
+  > {
+  label: ReactNode;
+  hint?: ReactNode;
+  // Setting it marks the field invalid and announces the message; clear it to clear the state.
+  error?: ReactNode;
+  options: readonly SelectOption[];
+  // Shown until a choice is made. On a required field it cannot be chosen; on an optional one it can,
+  // which is how a choice is cleared.
+  placeholder?: string;
+}
+
+const base = cx(
+  'nova-field peer block h-10 w-full appearance-none rounded-md pl-3 pr-10 text-sm text-ink transition-colors',
+  focusRing,
+  'disabled:cursor-not-allowed disabled:opacity-50',
+);
+
+// ink-3 rather than border-strong for the same reason as TextField: the edge must reach 3:1.
+const valid = 'border-ink-3! hover:border-ink-2!';
+const invalid = 'border-crit!';
+
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(
+  function Select(
+    {
+      id,
+      label,
+      hint,
+      error,
+      options,
+      placeholder,
+      required,
+      className,
+      value,
+      defaultValue,
+      'aria-describedby': describedBy,
+      ...rest
+    },
+    ref,
+  ) {
+    // Without a selected option the browser picks the first enabled one, which would hide a
+    // placeholder, so an uncontrolled select starts on the empty value when it has one.
+    const selection =
+      value !== undefined
+        ? { value }
+        : { defaultValue: defaultValue ?? (placeholder ? '' : undefined) };
+
+    return (
+      <FieldShell
+        id={id}
+        label={label}
+        hint={hint}
+        error={error}
+        required={required}
+        describedBy={describedBy}
+        className={className}
+      >
+        {(field) => (
+          <div className="relative flex items-center">
+            <select
+              ref={ref}
+              required={required}
+              data-invalid={field['aria-invalid'] ? 'true' : undefined}
+              className={cx(base, field['aria-invalid'] ? invalid : valid)}
+              {...selection}
+              {...rest}
+              {...field}
+            >
+              {placeholder ? (
+                <option value="" disabled={required}>
+                  {placeholder}
+                </option>
+              ) : null}
+              {options.map((option) => (
+                <option
+                  key={option.value}
+                  value={option.value}
+                  disabled={option.disabled}
+                >
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <svg
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              focusable="false"
+              className="pointer-events-none absolute right-3 h-4 w-4 text-ink-3 peer-disabled:opacity-50"
+            >
+              <path d="M5 8l5 5 5-5" />
+            </svg>
+          </div>
+        )}
+      </FieldShell>
+    );
+  },
+);

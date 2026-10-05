@@ -70,6 +70,17 @@ describe('@hos/nova-ui public API', () => {
     'SplitLayout',
     'Tag',
     'WorkspaceSwitcher',
+    'Banner',
+    'Checkbox',
+    'Dialog',
+    'Menu',
+    'MenuItem',
+    'Radio',
+    'Select',
+    'Switch',
+    'TextField',
+    'Textarea',
+    'Tooltip',
     'NovaThemeProvider',
     'applyNovaTheme',
     'createNovaTheme',
@@ -112,4 +123,10 @@ describe('@hos/nova-ui public API', () => {
   it('keeps the Tabs context internal', () => {
     expect(nova).not.toHaveProperty('TabsContext');
   });
+  it.each(['FieldShell', 'getTabbables', 'trapTab', 'inertOutside'])(
+    'keeps the internal helper %s out of the barrel',
+    (name) => {
+      expect(nova).not.toHaveProperty(name);
+    },
+  );
 });
