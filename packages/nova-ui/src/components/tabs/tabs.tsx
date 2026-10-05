@@ -1,7 +1,11 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useId,
+  useLayoutEffect,
+  useRef,
+  useState,
   type ButtonHTMLAttributes,
   type HTMLAttributes,
   type KeyboardEvent,
@@ -16,6 +20,37 @@ interface TabsContextValue {
   value: string;
   onValueChange: (value: string) => void;
   baseId: string;
+  // The one tab that takes part in the page's Tab order.
+  tabStop: string;
+  register: (
+    value: string,
+    element: HTMLElement,
+    disabled: boolean,
+  ) => () => void;
+}
+
+interface RegisteredTab {
+  element: HTMLElement;
+  disabled: boolean;
+}
+
+// The selected tab is the tab stop, as long as it is an enabled tab of this set. Otherwise (nothing
+// selected, the selected tab disabled, or a value naming no tab) the first enabled tab is, so the
+// tablist can always be reached with Tab.
+function pickTabStop(
+  selected: string,
+  tabs: ReadonlyMap<string, RegisteredTab>,
+): string {
+  const enabled = Array.from(tabs)
+    .filter(([, tab]) => !tab.disabled)
+    .sort(([, a], [, b]) =>
+      a.element.compareDocumentPosition(b.element) &
+      Node.DOCUMENT_POSITION_FOLLOWING
+        ? -1
+        : 1,
+    )
+    .map(([value]) => value);
+  return enabled.includes(selected) ? selected : (enabled[0] ?? selected);
 }
 
 // Internal: the four parts share the selection through it, so callers only ever use the parts.
@@ -63,8 +98,34 @@ export function Tabs({
     defaultValue,
     onChange: onValueChange,
   });
+  // The tabs register themselves (element and disabled state), so the set knows which tab can be
+  // the tab stop without the caller listing them twice.
+  const tabs = useRef(new Map<string, RegisteredTab>());
+  const [, setRegistrations] = useState(0);
+  const register = useCallback(
+    (tabValue: string, element: HTMLElement, disabled: boolean) => {
+      tabs.current.set(tabValue, { element, disabled });
+      setRegistrations((count) => count + 1);
+      return () => {
+        if (tabs.current.get(tabValue)?.element === element) {
+          tabs.current.delete(tabValue);
+        }
+        setRegistrations((count) => count + 1);
+      };
+    },
+    [],
+  );
+  const tabStop = pickTabStop(selected, tabs.current);
   return (
-    <TabsContext value={{ value: selected, onValueChange: select, baseId }}>
+    <TabsContext
+      value={{
+        value: selected,
+        onValueChange: select,
+        baseId,
+        tabStop,
+        register,
+      }}
+    >
       <div {...rest}>{children}</div>
     </TabsContext>
   );
@@ -121,10 +182,23 @@ export function Tab({
   children,
   onClick,
   onKeyDown,
+  disabled = false,
   ...rest
 }: TabProps) {
-  const { value: selectedValue, onValueChange, baseId } = useTabs('Tab');
+  const {
+    value: selectedValue,
+    onValueChange,
+    baseId,
+    tabStop,
+    register,
+  } = useTabs('Tab');
   const selected = value === selectedValue;
+  const ref = useRef<HTMLButtonElement>(null);
+
+  useLayoutEffect(() => {
+    if (!ref.current) return undefined;
+    return register(value, ref.current, disabled);
+  }, [register, value, disabled]);
 
   // Arrow keys move between the enabled tabs of this tab's own list, Home and End jump to the ends,
   // and the tab that gets focus is activated (the automatic-activation tabs pattern).
@@ -149,12 +223,15 @@ export function Tab({
   return (
     <button
       {...rest}
+      ref={ref}
+      disabled={disabled}
       type="button"
       role="tab"
       id={tabId(baseId, value)}
       aria-selected={selected}
-      aria-controls={panelId(baseId, value)}
-      tabIndex={selected ? 0 : -1}
+      // Only the selected panel is mounted, so only its tab may point at it.
+      aria-controls={selected ? panelId(baseId, value) : undefined}
+      tabIndex={value === tabStop ? 0 : -1}
       className={cx(
         tab,
         focusRing,

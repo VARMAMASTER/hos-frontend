@@ -81,6 +81,17 @@ describe('Tabs', () => {
       expect(screen.getByRole('tabpanel', { name: 'Overview' })).toBe(panel);
     });
 
+    // Unselected panels are not mounted, so pointing at them would name ids that do not exist.
+    it('points aria-controls only from the selected tab, at a panel that exists', () => {
+      render(<Harness initial="claims" />);
+      expect(tab('Overview').hasAttribute('aria-controls')).toBe(false);
+      expect(tab('Notes').hasAttribute('aria-controls')).toBe(false);
+      const controls = tab('Claims').getAttribute('aria-controls') ?? '';
+      expect(document.getElementById(controls)).toBe(
+        screen.getByRole('tabpanel'),
+      );
+    });
+
     it('gives every tab its own id and keeps two tab sets on one page apart', () => {
       render(
         <>
@@ -272,6 +283,67 @@ describe('Tabs', () => {
       fireEvent.click(tab('Notes'));
       expect(tab('Notes').tabIndex).toBe(0);
       expect(tab('Overview').tabIndex).toBe(-1);
+    });
+
+    // Without a tab stop the whole tablist is skipped by Tab, so a keyboard user could never reach it.
+    function stops() {
+      return screen
+        .getAllByRole('tab')
+        .filter((element) => element.tabIndex === 0)
+        .map((element) => element.textContent);
+    }
+
+    it('makes the first tab the tab stop when nothing is selected', () => {
+      render(
+        <Tabs>
+          <TabList>
+            <Tab value="a">A</Tab>
+            <Tab value="b">B</Tab>
+          </TabList>
+        </Tabs>,
+      );
+      expect(stops()).toEqual(['A']);
+    });
+
+    it('skips a disabled first tab when choosing the fallback tab stop', () => {
+      render(
+        <Tabs>
+          <TabList>
+            <Tab value="a" disabled>
+              A
+            </Tab>
+            <Tab value="b">B</Tab>
+            <Tab value="c">C</Tab>
+          </TabList>
+        </Tabs>,
+      );
+      expect(stops()).toEqual(['B']);
+    });
+
+    it('falls back to the first enabled tab when the selected tab is disabled', () => {
+      render(
+        <Tabs value="b" onValueChange={() => undefined}>
+          <TabList>
+            <Tab value="a">A</Tab>
+            <Tab value="b" disabled>
+              B
+            </Tab>
+          </TabList>
+        </Tabs>,
+      );
+      expect(stops()).toEqual(['A']);
+    });
+
+    it('falls back to the first enabled tab when the value names no tab in the list', () => {
+      render(
+        <Tabs value="gone" onValueChange={() => undefined}>
+          <TabList>
+            <Tab value="a">A</Tab>
+            <Tab value="b">B</Tab>
+          </TabList>
+        </Tabs>,
+      );
+      expect(stops()).toEqual(['A']);
     });
   });
 
