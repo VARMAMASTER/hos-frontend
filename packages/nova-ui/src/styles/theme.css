@@ -182,3 +182,87 @@
     radial-gradient(760px 620px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-strong) calc(20% * var(--nova-glass)), transparent), transparent 60%),
     radial-gradient(620px 520px at 18% 104%, rgb(34 211 238 / calc(0.1 * var(--nova-glass))), transparent 58%);
 }
+
+/* Surfaces. Each utility below reads material tokens and never names a material, so one rule serves
+   glass and solid: data-nova-material (or the OS asking for less transparency) swaps the token
+   values and nothing else. The translucent fills are the ones the legibility proof in
+   material.spec.ts covers; utilities.spec.ts pins this wiring. */
+
+/* The default panel. */
+@utility nova-surface {
+  background-color: var(--nova-surface-fill);
+  -webkit-backdrop-filter: var(--nova-surface-filter);
+  backdrop-filter: var(--nova-surface-filter);
+  border: 1px solid var(--nova-surface-border);
+  box-shadow: var(--nova-surface-shadow);
+}
+
+/* Floating layers: menus, dialogs, tooltips, popovers. */
+@utility nova-overlay {
+  background-color: var(--nova-overlay-fill);
+  -webkit-backdrop-filter: var(--nova-overlay-filter);
+  backdrop-filter: var(--nova-overlay-filter);
+  border: 1px solid var(--nova-overlay-border);
+  box-shadow: var(--nova-overlay-shadow);
+}
+
+/* Form controls. The border is the strong token on both materials, so a control keeps a clear
+   edge even where the glass behind it is busy. */
+@utility nova-field {
+  background-color: var(--nova-field-fill);
+  -webkit-backdrop-filter: var(--nova-field-filter);
+  backdrop-filter: var(--nova-field-filter);
+  border: 1px solid var(--nova-color-border-strong);
+}
+
+/* The dark app frame (sidebar, top bar). The base is the brand mixed into GLASS.chromeBase at
+   GLASS.chromeBrandShare (30%), composited at the chrome opacity; material.spec.ts proves white
+   text and the secondary ink below stay at 4.5:1 over exactly this. Children take their secondary
+   ink from --nova-chrome-ink-2 (GLASS.chromeInk2Alpha). The rim marks the bottom and side edges,
+   so one utility frames either a top bar or a sidebar. */
+/* prettier-ignore */
+@utility nova-chrome {
+  --nova-chrome-ink-2: rgb(255 255 255 / 0.74);
+  background-color: color-mix(in srgb, color-mix(in srgb, var(--nova-color-primary-strong) 30%, #120C26) calc(var(--nova-chrome-opacity) * 100%), transparent);
+  color: #fff;
+  border-bottom: 1px solid rgb(255 255 255 / 0.12);
+  border-right: 1px solid rgb(255 255 255 / 0.12);
+  -webkit-backdrop-filter: var(--nova-chrome-filter);
+  backdrop-filter: var(--nova-chrome-filter);
+}
+
+/* The page-top emphasis band: the brand gradient, each stop composited at the hero opacity.
+   createNovaTheme gates white text against exactly these two stops at the glass hero opacity, so
+   the gradient may use no other colour. */
+/* prettier-ignore */
+@utility nova-hero {
+  background-image: linear-gradient(120deg, color-mix(in srgb, var(--nova-color-primary-strong) calc(var(--nova-hero-opacity) * 100%), transparent), color-mix(in srgb, var(--nova-color-primary) calc(var(--nova-hero-opacity) * 100%), transparent));
+  color: var(--nova-color-on-primary);
+  -webkit-backdrop-filter: var(--nova-hero-filter);
+  backdrop-filter: var(--nova-hero-filter);
+}
+
+/* Containers for dense data (tables, KPI tiles, financial figures). Never translucent, under either
+   material: glass under dense data costs legibility, so these stay opaque and put the richness at
+   the boundary, as a 1px brand-to-cyan rim that fades out. The rim is a masked pseudo-element:
+   its padding is the 1px ring, and the mask composite removes everything inside it so only the
+   edge paints. */
+/* prettier-ignore */
+@utility nova-data {
+  position: relative;
+  background-color: var(--nova-color-surface);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-primary) 55%, transparent), rgb(34 211 238 / 0.26), transparent);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
