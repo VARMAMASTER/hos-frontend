@@ -2,12 +2,18 @@ import { describe, expect, it } from 'vitest';
 import * as nova from './index';
 import type {
   AppShellProps,
+  AreaChartProps,
+  BarChartProps,
   CardProps,
+  ChartConfig,
+  DonutChartProps,
   HeroBandProps,
   KpiTileProps,
+  LineChartProps,
   NavItemProps,
   SearchFieldProps,
   SidebarProps,
+  SparklineProps,
   TabListProps,
   TabPanelProps,
   TabProps,
@@ -27,16 +33,6 @@ type ShellPropTypes =
   | TabProps
   | TabsProps
   | TopBarProps;
-  AreaChartProps,
-  BarChartProps,
-  CardProps,
-  ChartConfig,
-  DonutChartProps,
-  HeroBandProps,
-  KpiTileProps,
-  LineChartProps,
-  SparklineProps,
-} from './index';
 
 describe('@hos/nova-ui public API', () => {
   it.each([
