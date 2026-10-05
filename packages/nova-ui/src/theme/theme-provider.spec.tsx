@@ -1,7 +1,11 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
 import { createNovaTheme } from './create-theme';
-import { applyNovaTheme, NovaThemeProvider } from './theme-provider';
+import {
+  applyNovaMaterial,
+  applyNovaTheme,
+  NovaThemeProvider,
+} from './theme-provider';
 
 afterEach(() => cleanup());
 
@@ -54,5 +58,69 @@ describe('applyNovaTheme', () => {
       document.documentElement.style.getPropertyValue('--nova-color-primary'),
     ).toBe('');
     expect(document.documentElement.dataset['novaTheme']).toBeUndefined();
+  });
+});
+
+describe('material', () => {
+  const solidHospital = createNovaTheme({
+    name: 'Old PCs',
+    material: 'solid',
+  });
+
+  const wrapperOf = (text: string) =>
+    screen.getByText(text).parentElement as HTMLElement;
+
+  it('sets no material attribute when nobody chooses one, so the CSS default (glass) applies', () => {
+    render(
+      <NovaThemeProvider theme={teal}>
+        <p>default material</p>
+      </NovaThemeProvider>,
+    );
+    expect(wrapperOf('default material').dataset['novaMaterial']).toBe(
+      undefined,
+    );
+  });
+
+  it('applies the product-wide material given to the provider', () => {
+    render(
+      <NovaThemeProvider material="solid">
+        <p>product solid</p>
+      </NovaThemeProvider>,
+    );
+    expect(wrapperOf('product solid').dataset['novaMaterial']).toBe('solid');
+  });
+
+  it("lets a hospital's theme override the product-wide material", () => {
+    render(
+      <NovaThemeProvider material="glass" theme={solidHospital}>
+        <p>hospital override</p>
+      </NovaThemeProvider>,
+    );
+    expect(wrapperOf('hospital override').dataset['novaMaterial']).toBe(
+      'solid',
+    );
+  });
+
+  it("applyNovaTheme sets the hospital's material on <html> and the cleanup restores it", () => {
+    document.documentElement.dataset['novaMaterial'] = 'glass';
+    try {
+      const restore = applyNovaTheme(solidHospital);
+      expect(document.documentElement.dataset['novaMaterial']).toBe('solid');
+      restore();
+      expect(document.documentElement.dataset['novaMaterial']).toBe('glass');
+    } finally {
+      delete document.documentElement.dataset['novaMaterial'];
+    }
+  });
+
+  it('applyNovaMaterial switches the whole product and the cleanup removes the attribute it added', () => {
+    try {
+      const restore = applyNovaMaterial('solid');
+      expect(document.documentElement.dataset['novaMaterial']).toBe('solid');
+      restore();
+      expect(document.documentElement.dataset['novaMaterial']).toBe(undefined);
+    } finally {
+      delete document.documentElement.dataset['novaMaterial'];
+    }
   });
 });

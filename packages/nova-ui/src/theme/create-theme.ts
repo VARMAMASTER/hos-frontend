@@ -1,5 +1,6 @@
+import { GLASS, isNovaMaterial, type NovaMaterial } from '../tokens/material';
 import { NOVA_DEFAULTS, type NovaVariable } from '../tokens/semantic';
-import { contrastRatio, isHexColour } from './contrast';
+import { contrastRatio, isHexColour, mixColours } from './contrast';
 
 export class NovaThemeError extends Error {
   override name = 'NovaThemeError';
@@ -15,11 +16,14 @@ export interface NovaBrand {
 export interface NovaThemeInput {
   name: string;
   brand?: NovaBrand;
+  // The hospital's override of the product-wide material; unset (or a NULL column) keeps the default.
+  material?: NovaMaterial | null;
 }
 
 export interface NovaTheme {
   name: string;
   cssVariables: Partial<Record<NovaVariable, string>>;
+  material?: NovaMaterial;
 }
 
 const BRAND_COLOURS = {
@@ -46,13 +50,34 @@ const CONTRAST_PAIRS: ReadonlyArray<
   ],
 ];
 
+// On glass the hero band is the brand gradient at GLASS.heroOpacity, so the lightest canvas shows
+// through and white text loses contrast. Checked unless the hospital chose solid.
+const GLASS_HERO_PAIRS: ReadonlyArray<
+  readonly [background: NovaVariable, usedBy: string]
+> = [
+  ['--nova-color-primary-strong', 'hero text on glass, start of the gradient'],
+  ['--nova-color-primary', 'hero text on glass, end of the gradient'],
+];
+
 const MIN_CONTRAST = 4.5;
 const PLAIN_FONT_STACK = /^[\w\s",'-]+$/;
+
+// Rounded down, so a ratio just under the floor never reads as meeting it ("4.50:1 … needs 4.5:1").
+function formatRatio(ratio: number): string {
+  return (Math.floor(ratio * 100) / 100).toFixed(2);
+}
 
 export function createNovaTheme(input: NovaThemeInput): NovaTheme {
   const { name } = input;
   const brand: NovaBrand = input.brand ?? {};
   const cssVariables: Partial<Record<NovaVariable, string>> = {};
+
+  const material = input.material ?? undefined;
+  if (material !== undefined && !isNovaMaterial(material)) {
+    throw new NovaThemeError(
+      `Theme "${name}": material must be "glass" or "solid" (got "${String(material)}").`,
+    );
+  }
 
   const brandKeys = Object.keys(BRAND_COLOURS) as Array<
     keyof typeof BRAND_COLOURS
@@ -80,8 +105,25 @@ export function createNovaTheme(input: NovaThemeInput): NovaTheme {
     const ratio = contrastRatio(resolve(foreground), resolve(background));
     if (ratio < MIN_CONTRAST) {
       throw new NovaThemeError(
-        `Theme "${name}": ${resolve(foreground)} on ${resolve(background)} gives ${ratio.toFixed(2)}:1 for ${usedBy} — needs at least ${MIN_CONTRAST}:1.`,
+        `Theme "${name}": ${resolve(foreground)} on ${resolve(background)} gives ${formatRatio(ratio)}:1 for ${usedBy} — needs at least ${MIN_CONTRAST}:1.`,
       );
+    }
+  }
+
+  if (material !== 'solid') {
+    const text = resolve('--nova-color-on-primary');
+    for (const [background, usedBy] of GLASS_HERO_PAIRS) {
+      const fill = mixColours(
+        resolve(background),
+        GLASS.heroOpacity,
+        resolve('--nova-color-bg'),
+      );
+      const ratio = contrastRatio(text, fill);
+      if (ratio < MIN_CONTRAST) {
+        throw new NovaThemeError(
+          `Theme "${name}": ${text} on ${resolve(background)} at ${Math.round(GLASS.heroOpacity * 100)}% glass gives ${formatRatio(ratio)}:1 for ${usedBy} — needs at least ${MIN_CONTRAST}:1. Choose a darker brand colour or set material to "solid".`,
+        );
+      }
     }
   }
 
@@ -97,5 +139,7 @@ export function createNovaTheme(input: NovaThemeInput): NovaTheme {
     cssVariables['--nova-font-body'] = brand.fontBody;
   }
 
-  return { name, cssVariables };
+  return material === undefined
+    ? { name, cssVariables }
+    : { name, cssVariables, material };
 }

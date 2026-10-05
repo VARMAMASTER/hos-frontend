@@ -13,7 +13,10 @@ describe('theme.css defaults', () => {
       fileURLToPath(new URL('../styles/theme.css', import.meta.url)),
       'utf8',
     );
-    const rootBlock = css.slice(css.indexOf(':root'));
+    // Only the plain `:root {` block: the material blocks (`:root, [data-nova-material…]`) are
+    // checked against MATERIAL_TOKENS in material.spec.ts.
+    const start = css.search(/:root\s*\{/);
+    const rootBlock = css.slice(start, css.indexOf('}', start));
     const declared = Object.fromEntries(
       [...rootBlock.matchAll(/(--nova-[\w-]+):\s*([^;]+);/g)].map((match) => [
         match[1],

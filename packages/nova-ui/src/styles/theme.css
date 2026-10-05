@@ -83,3 +83,102 @@
   --nova-font-body: "Google Sans Flex", system-ui, -apple-system, sans-serif;
   --nova-font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
 }
+
+/* Material: glass is the product default (no attribute needed); a hospital theme or the product can
+   set data-nova-material="solid". Values mirror MATERIAL_TOKENS (tokens/material.ts); material.spec.ts
+   compares them. Accessibility and missing backdrop-filter support always force solid. */
+/* prettier-ignore */
+:root,
+[data-nova-material='glass'] {
+  --nova-glass: 1;
+  --nova-surface-fill: rgb(255 255 255 / 0.78);
+  --nova-surface-filter: blur(14px) saturate(140%);
+  --nova-surface-border: rgb(255 255 255 / 0.55);
+  --nova-surface-shadow: 0 2px 4px hsl(262deg 45% 27% / 0.06), 0 8px 16px -4px hsl(262deg 45% 27% / 0.09), 0 20px 32px -10px hsl(262deg 45% 27% / 0.1), inset 0 1px 0 0 rgb(255 255 255 / 0.7);
+  --nova-overlay-fill: rgb(255 255 255 / 0.84);
+  --nova-overlay-filter: blur(20px) saturate(160%);
+  --nova-overlay-border: rgb(255 255 255 / 0.6);
+  --nova-overlay-shadow: 0 2px 4px hsl(262deg 45% 27% / 0.06), 0 8px 16px -4px hsl(262deg 45% 27% / 0.09), 0 20px 32px -10px hsl(262deg 45% 27% / 0.1), inset 0 1px 0 0 rgb(255 255 255 / 0.65);
+  --nova-field-fill: rgb(255 255 255 / 0.88);
+  --nova-field-filter: blur(8px);
+  --nova-chrome-opacity: 0.78;
+  --nova-chrome-filter: blur(18px) saturate(150%);
+  --nova-hero-opacity: 0.92;
+  --nova-hero-filter: blur(20px) saturate(160%);
+}
+
+/* prettier-ignore */
+[data-nova-material='solid'] {
+  --nova-glass: 0;
+  --nova-surface-fill: var(--nova-color-surface);
+  --nova-surface-filter: none;
+  --nova-surface-border: var(--nova-color-border);
+  --nova-surface-shadow: 0 1px 2px hsl(262deg 45% 27% / 0.07), 0 2px 6px -1px hsl(262deg 45% 27% / 0.07);
+  --nova-overlay-fill: var(--nova-color-surface);
+  --nova-overlay-filter: none;
+  --nova-overlay-border: var(--nova-color-border);
+  --nova-overlay-shadow: 0 2px 4px hsl(262deg 45% 27% / 0.06), 0 8px 16px -4px hsl(262deg 45% 27% / 0.09), 0 20px 32px -10px hsl(262deg 45% 27% / 0.1);
+  --nova-field-fill: var(--nova-color-surface);
+  --nova-field-filter: none;
+  --nova-chrome-opacity: 1;
+  --nova-chrome-filter: none;
+  --nova-hero-opacity: 1;
+  --nova-hero-filter: none;
+}
+
+/* prettier-ignore */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  :root,
+  [data-nova-material] {
+    --nova-glass: 0;
+    --nova-surface-fill: var(--nova-color-surface);
+    --nova-surface-filter: none;
+    --nova-surface-border: var(--nova-color-border);
+    --nova-surface-shadow: 0 1px 2px hsl(262deg 45% 27% / 0.07), 0 2px 6px -1px hsl(262deg 45% 27% / 0.07);
+    --nova-overlay-fill: var(--nova-color-surface);
+    --nova-overlay-filter: none;
+    --nova-overlay-border: var(--nova-color-border);
+    --nova-overlay-shadow: 0 2px 4px hsl(262deg 45% 27% / 0.06), 0 8px 16px -4px hsl(262deg 45% 27% / 0.09), 0 20px 32px -10px hsl(262deg 45% 27% / 0.1);
+    --nova-field-fill: var(--nova-color-surface);
+    --nova-field-filter: none;
+    --nova-chrome-opacity: 1;
+    --nova-chrome-filter: none;
+    --nova-hero-opacity: 1;
+    --nova-hero-filter: none;
+  }
+}
+
+/* prettier-ignore */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root,
+  [data-nova-material] {
+    --nova-glass: 0;
+    --nova-surface-fill: var(--nova-color-surface);
+    --nova-surface-filter: none;
+    --nova-surface-border: var(--nova-color-border);
+    --nova-surface-shadow: 0 1px 2px hsl(262deg 45% 27% / 0.07), 0 2px 6px -1px hsl(262deg 45% 27% / 0.07);
+    --nova-overlay-fill: var(--nova-color-surface);
+    --nova-overlay-filter: none;
+    --nova-overlay-border: var(--nova-color-border);
+    --nova-overlay-shadow: 0 2px 4px hsl(262deg 45% 27% / 0.06), 0 8px 16px -4px hsl(262deg 45% 27% / 0.09), 0 20px 32px -10px hsl(262deg 45% 27% / 0.1);
+    --nova-field-fill: var(--nova-color-surface);
+    --nova-field-filter: none;
+    --nova-chrome-opacity: 1;
+    --nova-chrome-filter: none;
+    --nova-hero-opacity: 1;
+    --nova-hero-filter: none;
+  }
+}
+
+/* The canvas glass frosts: brand-tinted aurora on glass, flat background on solid (--nova-glass
+   scales every tint to zero). Brand-dependent styles live in utilities so they resolve where they
+   are used and pick up a subtree's hospital theme. */
+/* prettier-ignore */
+@utility nova-canvas {
+  background-color: var(--nova-color-bg);
+  background-image:
+    radial-gradient(680px 520px at 8% -6%, color-mix(in srgb, var(--nova-color-primary) calc(26% * var(--nova-glass)), transparent), transparent 62%),
+    radial-gradient(720px 560px at 96% 4%, rgb(96 165 250 / calc(0.22 * var(--nova-glass))), transparent 60%),
+    radial-gradient(760px 620px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-strong) calc(20% * var(--nova-glass)), transparent), transparent 60%),
+    radial-gradient(620px 520px at 18% 104%, rgb(34 211 238 / calc(0.1 * var(--nova-glass))), transparent 58%);
+}

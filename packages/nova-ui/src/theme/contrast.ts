@@ -10,14 +10,40 @@ export function contrastRatio(a: string, b: string): number {
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 }
 
-function relativeLuminance(hex: string): number {
+// The colour you see when `colour` is painted at `opacity` over `backdrop`: CSS
+// `color-mix(in srgb, colour <opacity>, backdrop)`, which is how a glass fill composites.
+export function mixColours(
+  colour: string,
+  opacity: number,
+  backdrop: string,
+): string {
+  if (!(opacity >= 0 && opacity <= 1)) {
+    throw new RangeError(`Expected an opacity between 0 and 1, got ${opacity}`);
+  }
+  const top = channels(colour);
+  const bottom = channels(backdrop);
+  return `#${top
+    .map((value, index) =>
+      Math.round(value * opacity + bottom[index] * (1 - opacity))
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')
+    .toUpperCase()}`;
+}
+
+function channels(hex: string): number[] {
   if (!isHexColour(hex)) {
     throw new TypeError(
       `Expected a 6-digit hex colour like #6D4FE0, got "${hex}"`,
     );
   }
-  const [r, g, b] = [1, 3, 5].map((offset) => {
-    const channel = parseInt(hex.slice(offset, offset + 2), 16) / 255;
+  return [1, 3, 5].map((offset) => parseInt(hex.slice(offset, offset + 2), 16));
+}
+
+function relativeLuminance(hex: string): number {
+  const [r, g, b] = channels(hex).map((value) => {
+    const channel = value / 255;
     return channel <= 0.04045
       ? channel / 12.92
       : ((channel + 0.055) / 1.055) ** 2.4;

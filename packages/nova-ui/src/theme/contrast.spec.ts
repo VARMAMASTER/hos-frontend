@@ -1,5 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import { contrastRatio, isHexColour } from './contrast';
+import { contrastRatio, isHexColour, mixColours } from './contrast';
+
+describe('mixColours', () => {
+  it('composites a colour at an opacity over a backdrop, channel by channel (CSS color-mix in srgb)', () => {
+    expect(mixColours('#FFFFFF', 0.5, '#000000')).toBe('#808080');
+    expect(mixColours('#6D4FE0', 0.26, '#F0EFF9')).toBe('#CEC5F3');
+  });
+
+  it('returns the colour itself at full opacity and the backdrop at zero', () => {
+    expect(mixColours('#6D4FE0', 1, '#F0EFF9')).toBe('#6D4FE0');
+    expect(mixColours('#6D4FE0', 0, '#F0EFF9')).toBe('#F0EFF9');
+  });
+
+  it('refuses an opacity outside 0..1 and anything that is not a 6-digit hex colour', () => {
+    expect(() => mixColours('#FFFFFF', 1.2, '#000000')).toThrow(RangeError);
+    expect(() => mixColours('white', 0.5, '#000000')).toThrow(TypeError);
+  });
+});
 
 describe('contrastRatio', () => {
   it('is 21:1 for black on white', () => {
