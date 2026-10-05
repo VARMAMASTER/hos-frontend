@@ -9,6 +9,8 @@ import {
 } from '@testing-library/react';
 import { Menu, MenuItem } from '../menu/menu';
 import { Tooltip } from '../tooltip/tooltip';
+import { createNovaTheme } from '../../theme/create-theme';
+import { applyNovaTheme, NovaThemeProvider } from '../../theme/theme-provider';
 import { Dialog } from './dialog';
 
 afterEach(() => cleanup());
@@ -654,5 +656,63 @@ describe('Dialog with other layers inside it', () => {
     press('Escape');
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(active()).toBe(actions);
+  });
+});
+
+describe('Dialog inside a themed subtree', () => {
+  const teal = createNovaTheme({
+    name: 'Teal Care',
+    brand: {
+      primary: '#0F766E',
+      primaryStrong: '#115E59',
+      primarySoft: '#CCFBF1',
+    },
+  });
+
+  it('portals into the nearest themed root, so an open dialog keeps the hospital theme and material', () => {
+    render(
+      <NovaThemeProvider theme={teal} material="solid">
+        <p>Ward 4</p>
+        <Dialog open onClose={() => undefined} title="Discharge" />
+      </NovaThemeProvider>,
+    );
+    const root = screen.getByText('Ward 4').parentElement;
+    const layer = dialog().parentElement as HTMLElement;
+    expect(layer.parentElement).toBe(root);
+    expect(
+      layer.closest('[data-nova-theme]')?.getAttribute('data-nova-theme'),
+    ).toBe('Teal Care');
+    expect(
+      layer.closest('[data-nova-material]')?.getAttribute('data-nova-material'),
+    ).toBe('solid');
+  });
+
+  it('still makes everything else inert: the rest of the themed root and the page around it', () => {
+    render(
+      <>
+        <button type="button">Outside</button>
+        <NovaThemeProvider theme={teal}>
+          <p>Ward 4</p>
+          <Dialog open onClose={() => undefined} title="Discharge" />
+        </NovaThemeProvider>
+      </>,
+    );
+    expect(screen.getByText('Ward 4').hasAttribute('inert')).toBe(true);
+    expect(
+      screen
+        .getByRole('button', { name: 'Outside', hidden: true })
+        .hasAttribute('inert'),
+    ).toBe(true);
+    expect(dialog().closest('[inert]')).toBeNull();
+  });
+
+  it('falls back to <body> when the theme is applied to the whole document', () => {
+    const restore = applyNovaTheme(teal);
+    try {
+      render(<Dialog open onClose={() => undefined} title="Discharge" />);
+      expect(dialog().parentElement?.parentElement).toBe(document.body);
+    } finally {
+      restore();
+    }
   });
 });

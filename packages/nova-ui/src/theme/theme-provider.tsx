@@ -15,7 +15,8 @@ export interface NovaThemeProviderProps {
   children: ReactNode;
 }
 
-// Subtree-scoped: content portalled to <body> escapes it. For an app-wide tenant theme use applyNovaTheme.
+// Subtree-scoped. Dialog portals into the nearest themed root, so it keeps this theme; other content
+// portalled to <body> escapes it. For an app-wide tenant theme use applyNovaTheme.
 export function NovaThemeProvider({
   theme,
   material,

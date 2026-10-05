@@ -1,4 +1,11 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
@@ -29,12 +36,21 @@ export interface DialogProps {
 // dialog at a time and a confirmation over a form does not take the form with it.
 const openDialogs: object[] = [];
 
-// A modal dialog. It is portalled to <body>; it is labelled by its title; the page behind it is made
-// inert; Tab cycles inside it; Escape closes it; and focus goes back to whatever opened it.
-//
-// A portal escapes a subtree-scoped NovaThemeProvider (see theme-provider.tsx), so under such a
-// provider the dialog shows the default theme. A product that themes the whole app with
-// applyNovaTheme is unaffected.
+// The element a dialog portals into: the nearest themed root around where the Dialog is rendered (a
+// NovaThemeProvider, or an element applyNovaTheme themed), so the open dialog keeps the hospital's
+// theme and material; <body> when there is none, or when the theme is on the whole document.
+function portalTarget(anchor: Element | null): Element {
+  const themed = anchor?.closest('[data-nova-theme]');
+  return themed &&
+    themed !== document.documentElement &&
+    themed !== document.body
+    ? themed
+    : document.body;
+}
+
+// A modal dialog. It is portalled to the nearest themed root (or <body>); it is labelled by its
+// title; everything else on the page is made inert; Tab cycles inside it; Escape closes it; and
+// focus goes back to whatever opened it.
 export function Dialog({
   open,
   defaultOpen = false,
@@ -48,10 +64,22 @@ export function Dialog({
       if (!next) onClose?.();
     },
   });
-  if (!isOpen || typeof document === 'undefined') return null;
-  return createPortal(
-    <DialogLayer onClose={() => setOpen(false)} {...rest} />,
-    document.body,
+  // A hidden marker where the Dialog sits in the tree, so the themed root around it can be found.
+  const anchorRef = useRef<HTMLSpanElement>(null);
+  const [container, setContainer] = useState<Element | null>(null);
+  useLayoutEffect(() => {
+    setContainer(isOpen ? portalTarget(anchorRef.current) : null);
+  }, [isOpen]);
+  return (
+    <>
+      <span ref={anchorRef} hidden />
+      {isOpen && container
+        ? createPortal(
+            <DialogLayer onClose={() => setOpen(false)} {...rest} />,
+            container,
+          )
+        : null}
+    </>
   );
 }
 

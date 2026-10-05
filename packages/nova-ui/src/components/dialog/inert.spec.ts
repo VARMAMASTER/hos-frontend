@@ -26,6 +26,23 @@ describe('inertOutside', () => {
     expect(keep.hasAttribute('inert')).toBe(false);
   });
 
+  // A dialog portalled into a themed root sits deep in the page, not directly under <body>.
+  it('inerts the siblings at every level above a nested layer, and never its ancestors', () => {
+    const app = element('app');
+    const themed = element('themed');
+    const content = document.createElement('main');
+    const keep = document.createElement('div');
+    themed.append(content, keep);
+    const release = inertOutside(keep);
+    expect(app.hasAttribute('inert')).toBe(true);
+    expect(content.hasAttribute('inert')).toBe(true);
+    expect(themed.hasAttribute('inert')).toBe(false);
+    expect(keep.hasAttribute('inert')).toBe(false);
+    release();
+    expect(app.hasAttribute('inert')).toBe(false);
+    expect(content.hasAttribute('inert')).toBe(false);
+  });
+
   it('restores everything it changed', () => {
     const app = element('app');
     const keep = element('keep');
