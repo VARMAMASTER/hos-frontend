@@ -4,13 +4,22 @@ import type { CardProps, HeroBandProps, KpiTileProps } from './index';
 
 describe('@hos/nova-ui public API', () => {
   it.each([
+    'ActivityFeed',
+    'BedGrid',
+    'BrandMark',
     'Button',
     'Chip',
     'Card',
     'CardHeader',
     'CardBody',
+    'Divider',
     'HeroBand',
+    'IconTile',
     'KpiTile',
+    'SectionNav',
+    'SplitLayout',
+    'Tag',
+    'WorkspaceSwitcher',
     'NovaThemeProvider',
     'applyNovaTheme',
     'createNovaTheme',
