@@ -124,7 +124,7 @@ describe('SearchField', () => {
     render(<SearchField label="Search patients" />);
     const input = screen.getByRole('searchbox');
     for (const name of [
-      'bg-on-primary/12',
+      'bg-(--nova-chrome-field)',
       'border',
       'border-on-primary/25',
       ...focusRing.split(' '),

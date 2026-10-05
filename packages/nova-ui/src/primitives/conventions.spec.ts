@@ -52,6 +52,10 @@ describe('component conventions', () => {
     ).toEqual([]);
   });
 
+  it('never forces a border colour with an important modifier — a control sets --nova-field-edge instead', () => {
+    expect(offenders(/\bborder-[\w-]+!/)).toEqual([]);
+  });
+
   it('never writes its own backdrop-filter — material comes from the surface utilities', () => {
     expect(offenders(/backdrop-(?:filter|blur)/)).toEqual([]);
   });

@@ -16,6 +16,7 @@
   --color-surface-2: var(--nova-color-surface-2);
   --color-border: var(--nova-color-border);
   --color-border-strong: var(--nova-color-border-strong);
+  --color-border-control: var(--nova-color-border-control);
   --color-ink: var(--nova-color-ink);
   --color-ink-2: var(--nova-color-ink-2);
   --color-ink-3: var(--nova-color-ink-3);
@@ -55,9 +56,10 @@
   --nova-color-surface-2: #F8F7FD;
   --nova-color-border: #E4E1F2;
   --nova-color-border-strong: #CFC9E6;
+  --nova-color-border-control: #736E8B;
   --nova-color-ink: #1A1730;
   --nova-color-ink-2: #5B5775;
-  --nova-color-ink-3: #6A6584;
+  --nova-color-ink-3: #5D5974;
   --nova-color-primary: #6D4FE0;
   --nova-color-primary-strong: #5636B8;
   --nova-color-primary-soft: #EFEAFC;
@@ -210,10 +212,10 @@
   --nova-gradient-brand: linear-gradient(120deg, var(--nova-color-primary-strong), var(--nova-color-primary));
   --nova-gradient-chrome: linear-gradient(180deg, color-mix(in srgb, color-mix(in srgb, var(--nova-color-primary-strong) 30%, #120C26) calc(var(--nova-chrome-opacity) * 100%), transparent), color-mix(in srgb, #120C26 calc(var(--nova-chrome-opacity) * 100%), transparent));
   --nova-gradient-aurora:
-    radial-gradient(680px 520px at 8% -6%, color-mix(in srgb, var(--nova-color-primary) calc(26% * var(--nova-glass)), transparent), transparent 62%),
-    radial-gradient(720px 560px at 96% 4%, rgb(96 165 250 / calc(0.22 * var(--nova-glass))), transparent 60%),
-    radial-gradient(760px 620px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-strong) calc(20% * var(--nova-glass)), transparent), transparent 60%),
-    radial-gradient(620px 520px at 18% 104%, rgb(34 211 238 / calc(0.1 * var(--nova-glass))), transparent 58%);
+    radial-gradient(680px 520px at 8% -6%, color-mix(in srgb, var(--nova-color-primary) calc(10% * var(--nova-glass)), transparent), transparent 62%),
+    radial-gradient(720px 560px at 96% 4%, color-mix(in srgb, #60A5FA calc(6% * var(--nova-glass)), transparent), transparent 60%),
+    radial-gradient(760px 620px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-strong) calc(10% * var(--nova-glass)), transparent), transparent 60%),
+    radial-gradient(620px 520px at 18% 104%, color-mix(in srgb, #22D3EE calc(6% * var(--nova-glass)), transparent), transparent 58%);
   --nova-gradient-edge: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-primary) 55%, transparent), rgb(34 211 238 / 0.26), transparent);
 }
 
@@ -263,26 +265,44 @@
   box-shadow: var(--nova-overlay-shadow);
 }
 
-/* Form controls. The border is the strong token on both materials, so a control keeps a clear
-   edge even where the glass behind it is busy. */
+/* Form controls. The edge is --nova-field-edge, border-control unless a state sets it: the 3:1 edge
+   material.spec.ts proves against the fill and the backdrop, so a control keeps a clear edge even
+   where the glass behind it is busy (WCAG 1.4.11). Hover, checked and invalid each set the variable,
+   so a control never fights this border with an important modifier; invalid comes last and wins. */
 @utility nova-field {
   --nova-focus-ring: var(--nova-color-primary);
   background-color: var(--nova-field-fill);
   -webkit-backdrop-filter: var(--nova-field-filter);
   backdrop-filter: var(--nova-field-filter);
-  border: 1px solid var(--nova-color-border-strong);
+  border: 1px solid var(--nova-field-edge, var(--nova-color-border-control));
+
+  &:hover:where(:not(:disabled)) {
+    --nova-field-edge: var(--nova-color-ink-2);
+  }
+
+  &:checked,
+  &[aria-checked='true'] {
+    --nova-field-edge: var(--nova-color-primary);
+  }
+
+  &[aria-invalid='true'] {
+    --nova-field-edge: var(--nova-color-crit);
+  }
 }
 
 /* The dark app frame (sidebar, top bar), painted with the chrome gradient; material.spec.ts proves
    white text and the secondary ink below stay at 4.5:1 over its lightest point. Children take their
-   secondary ink from --nova-chrome-ink-2 (GLASS.chromeInk2Alpha). The rim marks the bottom and
-   side edges, so one utility frames either a top bar or a sidebar. Where color-mix is missing the
+   secondary ink from --nova-chrome-ink-2 (GLASS.chromeInk2Alpha) and a field's lift from
+   --nova-chrome-field (GLASS.chromeFieldAlpha); the proof covers the ink inside that field too.
+   The rim marks the bottom and side edges, so one utility frames either a top bar or a sidebar.
+   Where color-mix is missing the
    gradient token is invalid, so the frame falls back to a solid brand fill rather than to nothing
    under white text. */
 /* prettier-ignore */
 @utility nova-chrome {
   --nova-focus-ring: #fff;
-  --nova-chrome-ink-2: rgb(255 255 255 / 0.74);
+  --nova-chrome-ink-2: rgb(255 255 255 / 0.88);
+  --nova-chrome-field: rgb(255 255 255 / 0.08);
   background-image: var(--nova-gradient-chrome);
   color: #fff;
   border-bottom: 1px solid rgb(255 255 255 / 0.12);

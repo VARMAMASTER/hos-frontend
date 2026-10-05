@@ -14,10 +14,19 @@ export function isNovaMaterial(value: unknown): value is NovaMaterial {
 }
 
 // The numbers glass legibility rests on. theme.css uses the same values (material.spec.ts checks),
-// createNovaTheme gates hero text with them, and the spec proves small text stays at 4.5:1 for any
-// brand.
+// createNovaTheme gates hero and brand text with them, and the spec proves text stays at 4.5:1 (and
+// control edges and the focus ring at 3:1) for any brand.
+//
+// The canvas tints are deliberately light. Breadcrumbs, page tabs and headings sit straight on the
+// canvas, and the proof takes the darkest tint any brand could bring (black) stacked on the darker
+// accent at full strength: secondary and small text only hold 4.5:1 there with the brand blobs at
+// 10% and the accents at 6%.
 export const GLASS = {
-  canvasTint: 0.26,
+  // Both brand blobs of the aurora (primary and primary-strong).
+  canvasTint: 0.1,
+  // The fixed accent hues of the aurora (sky blue, cyan) and their strength.
+  canvasAccents: ['#60A5FA', '#22D3EE'],
+  canvasAccentTint: 0.06,
   surfaceAlpha: 0.78,
   overlayAlpha: 0.84,
   fieldAlpha: 0.88,
@@ -25,7 +34,10 @@ export const GLASS = {
   chromeOpacity: 0.78,
   chromeBase: '#120C26',
   chromeBrandShare: 0.3,
-  chromeInk2Alpha: 0.74,
+  // The secondary ink on the chrome; high enough to stay 4.5:1 as a placeholder inside a chrome field.
+  chromeInk2Alpha: 0.88,
+  // The white lift of a field on the chrome (the top bar's search).
+  chromeFieldAlpha: 0.08,
 } as const;
 
 const SHADOW_SM =

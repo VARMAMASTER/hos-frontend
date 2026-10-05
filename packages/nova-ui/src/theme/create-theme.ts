@@ -60,6 +60,7 @@ const GLASS_HERO_PAIRS: ReadonlyArray<
 ];
 
 const MIN_CONTRAST = 4.5;
+const WHITE = '#FFFFFF';
 const PLAIN_FONT_STACK = /^[\w\s",'-]+$/;
 
 // Rounded down, so a ratio just under the floor never reads as meeting it ("4.50:1 … needs 4.5:1").
@@ -112,16 +113,41 @@ export function createNovaTheme(input: NovaThemeInput): NovaTheme {
 
   if (material !== 'solid') {
     const text = resolve('--nova-color-on-primary');
-    for (const [background, usedBy] of GLASS_HERO_PAIRS) {
-      const fill = mixColours(
-        resolve(background),
-        GLASS.heroOpacity,
-        resolve('--nova-color-bg'),
+    // The hero's glass shows whatever is behind it: the canvas on a page, white inside a Card or a
+    // Dialog. White lifts the gradient's light end the most, so both are checked.
+    for (const [backdrop, where] of [
+      [resolve('--nova-color-bg'), ''],
+      [WHITE, ' over white'],
+    ] as const) {
+      for (const [background, usedBy] of GLASS_HERO_PAIRS) {
+        const fill = mixColours(
+          resolve(background),
+          GLASS.heroOpacity,
+          backdrop,
+        );
+        const ratio = contrastRatio(text, fill);
+        if (ratio < MIN_CONTRAST) {
+          throw new NovaThemeError(
+            `Theme "${name}": ${text} on ${resolve(background)} at ${Math.round(GLASS.heroOpacity * 100)}% glass${where} gives ${formatRatio(ratio)}:1 for ${usedBy} — needs at least ${MIN_CONTRAST}:1. Choose a darker brand colour or set material to "solid".`,
+          );
+        }
+      }
+    }
+
+    // Brand text (breadcrumb links, ghost buttons, outline tags) sits straight on the canvas, which
+    // the brand itself tints. Checked over the darker accent hue, at full strength, as the material
+    // proof does.
+    const strong = resolve('--nova-color-primary-strong');
+    for (const accent of GLASS.canvasAccents) {
+      const canvas = mixColours(
+        resolve('--nova-color-primary'),
+        GLASS.canvasTint,
+        mixColours(accent, GLASS.canvasAccentTint, resolve('--nova-color-bg')),
       );
-      const ratio = contrastRatio(text, fill);
+      const ratio = contrastRatio(strong, canvas);
       if (ratio < MIN_CONTRAST) {
         throw new NovaThemeError(
-          `Theme "${name}": ${text} on ${resolve(background)} at ${Math.round(GLASS.heroOpacity * 100)}% glass gives ${formatRatio(ratio)}:1 for ${usedBy} — needs at least ${MIN_CONTRAST}:1. Choose a darker brand colour or set material to "solid".`,
+          `Theme "${name}": ${strong} on the brand-tinted canvas gives ${formatRatio(ratio)}:1 for brand text on the canvas — needs at least ${MIN_CONTRAST}:1. Choose a darker brand colour or set material to "solid".`,
         );
       }
     }

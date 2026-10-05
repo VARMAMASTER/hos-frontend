@@ -21,10 +21,6 @@ const base = cx(
   'disabled:cursor-not-allowed disabled:opacity-50',
 );
 
-// ink-3 rather than border-strong for the same reason as TextField: the edge must reach 3:1.
-const valid = 'border-ink-3! hover:border-ink-2!';
-const invalid = 'border-crit!';
-
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea(
     {
@@ -56,7 +52,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             rows={rows}
             required={required}
             data-invalid={field['aria-invalid'] ? 'true' : undefined}
-            className={cx(base, field['aria-invalid'] ? invalid : valid)}
+            className={base}
             {...rest}
             {...field}
           />

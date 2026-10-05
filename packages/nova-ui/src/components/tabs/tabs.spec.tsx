@@ -398,17 +398,15 @@ describe('Tabs', () => {
   });
 
   describe('look', () => {
-    it('draws the list as a bordered, rounded rail on a faint brand tint', () => {
+    // The rail is a glass panel, not a brand tint over the bare canvas: text on a panel is what
+    // material.spec.ts proves at 4.5:1 for every brand, so the unselected tabs' secondary ink holds.
+    it('draws the list as a rounded rail on the surface material', () => {
       render(<Harness />);
       const list = screen.getByRole('tablist');
-      for (const name of [
-        'rounded-lg',
-        'border',
-        'border-border',
-        'bg-primary/10',
-      ]) {
-        expect(list.classList.contains(name), name).toBe(true);
-      }
+      expect(list.getAttribute('data-surface')).toBe('surface');
+      expect(list.classList.contains('nova-surface')).toBe(true);
+      expect(list.classList.contains('rounded-lg')).toBe(true);
+      expect(list.className).not.toMatch(/bg-primary/);
     });
 
     it('gives the selected tab a surface chip and the strong ink, and the others the secondary ink', () => {

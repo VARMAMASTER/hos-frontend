@@ -91,14 +91,19 @@ describe('TextField error', () => {
     expect(describedByIds(input)).toContain(message.id);
   });
 
-  it('takes a crit border when invalid, and none when valid', () => {
+  // nova-field turns its own edge crit on aria-invalid (utilities.spec.ts), so the control carries
+  // no border class of its own to fight the utility with.
+  it('takes the crit edge through aria-invalid when invalid, and no border override either way', () => {
     const { rerender } = render(<TextField label="Phone" />);
-    expect(screen.getByLabelText('Phone').className).not.toContain(
-      'border-crit',
+    expect(screen.getByLabelText('Phone').hasAttribute('aria-invalid')).toBe(
+      false,
     );
+    expect(screen.getByLabelText('Phone').className).not.toMatch(/border-/);
     rerender(<TextField label="Phone" error="Required" />);
     const input = screen.getByLabelText('Phone');
-    expect(input.className).toContain('border-crit');
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+    expect(input.classList.contains('nova-field')).toBe(true);
+    expect(input.className).not.toMatch(/border-/);
     expect(input.dataset['invalid']).toBe('true');
   });
 

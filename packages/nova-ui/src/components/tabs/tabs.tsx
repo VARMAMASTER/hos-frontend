@@ -72,15 +72,19 @@ export function Tabs({
 
 export type TabListProps = HTMLAttributes<HTMLDivElement>;
 
+// The rail is a glass panel rather than a brand tint over the bare canvas: the unselected tabs'
+// secondary ink is then text on a surface, which material.spec.ts proves at 4.5:1 for every brand.
 export function TabList({ className, ...rest }: TabListProps) {
   // Fails fast outside <Tabs>, as its tabs would.
   useTabs('TabList');
   return (
-    <div
+    <Surface
+      material="surface"
+      radius="lg"
       {...rest}
       role="tablist"
       className={cx(
-        'inline-flex max-w-full items-center gap-1 overflow-x-auto rounded-lg border border-border bg-primary/10 p-1',
+        'inline-flex max-w-full items-center gap-1 overflow-x-auto p-1',
         className,
       )}
     />

@@ -69,10 +69,10 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
           id={id}
           aria-checked={isOn}
           disabled={disabled}
-          // ink-3 edge for 3:1 against the surface (WCAG 1.4.11); on fills with primary.
+          // nova-field draws the 3:1 edge and turns it primary when aria-checked; on fills too.
           className={cx(
-            'nova-field group relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border-ink-3!',
-            'transition-colors motion-reduce:transition-none aria-checked:border-primary! aria-checked:bg-primary',
+            'nova-field group relative inline-flex h-6 w-11 shrink-0 items-center rounded-full',
+            'transition-colors motion-reduce:transition-none aria-checked:bg-primary',
             focusRing,
             'disabled:cursor-not-allowed',
           )}

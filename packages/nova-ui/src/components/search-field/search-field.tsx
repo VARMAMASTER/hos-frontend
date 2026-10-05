@@ -19,11 +19,13 @@ export interface SearchFieldProps
 }
 
 // The field sits on the dark chrome, so it is a translucent white fill with a white rim rather than
-// nova-field (the light-canvas material). White is `on-primary`: the stock `white` is removed from
+// nova-field (the light-canvas material). The fill and the placeholder ink are the chrome's own tokens
+// (--nova-chrome-field, --nova-chrome-ink-2), which material.spec.ts proves at 4.5:1 together: the
+// label is visually hidden, so the placeholder is the only visible one. White is `on-primary`: the stock `white` is removed from
 // the theme. The shared focus ring is the brand's; the white rim turning solid keeps focus visible
 // on the dark chrome, where the brand alone would not be.
 const field =
-  'h-10 w-full rounded-md border border-on-primary/25 bg-on-primary/12 text-sm text-on-primary [color-scheme:dark] ' +
+  'h-10 w-full rounded-md border border-on-primary/25 bg-(--nova-chrome-field) text-sm text-on-primary [color-scheme:dark] ' +
   'placeholder:text-[color:var(--nova-chrome-ink-2)] focus-visible:border-on-primary ' +
   'disabled:pointer-events-none disabled:opacity-50';
 

@@ -126,6 +126,42 @@ describe('createNovaTheme', () => {
       ).toBe('#6C57E0');
     });
 
+    // A HeroBand inside a Card or a Dialog has white behind its glass, not the canvas, and white
+    // lifts the gradient's light end further than the canvas does.
+    it('gates glass hero text over a white region too, not only over the canvas', () => {
+      const grey = {
+        primary: '#6C6C6C',
+        primaryStrong: '#6C6C6C',
+        primarySoft: '#FFFFFF',
+      };
+      const glassy = () => createNovaTheme({ name: 'Grey', brand: grey });
+      expect(glassy).toThrow(
+        /#FFFFFF on #6C6C6C at 92% glass over white gives 4\.41:1 for hero text on glass/,
+      );
+      expect(() =>
+        createNovaTheme({ name: 'Grey', brand: grey, material: 'solid' }),
+      ).not.toThrow();
+    });
+
+    // Breadcrumb links, ghost buttons and outline tags put primary-strong straight on the canvas,
+    // which the brand itself tints.
+    it('rejects a brand whose own text (primary-strong) falls below 4.5:1 on the canvas its glass tint makes', () => {
+      const grey = {
+        primary: '#686868',
+        primaryStrong: '#686868',
+        primarySoft: '#FFFFFF',
+      };
+      const glassy = () => createNovaTheme({ name: 'Grey', brand: grey });
+      expect(glassy).toThrow(NovaThemeError);
+      expect(glassy).toThrow(
+        /#686868 on the brand-tinted canvas gives 4\.1\d:1 for brand text on the canvas/,
+      );
+      expect(glassy).toThrow(/set material to "solid"/);
+      expect(() =>
+        createNovaTheme({ name: 'Grey', brand: grey, material: 'solid' }),
+      ).not.toThrow();
+    });
+
     it('accepts the HOS default and both example hospitals on glass', () => {
       expect(() =>
         createNovaTheme({ name: 'Teal Care', brand: tealCare }),

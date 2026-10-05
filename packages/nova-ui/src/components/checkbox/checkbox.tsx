@@ -62,10 +62,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             disabled={disabled}
             checked={isChecked}
             onChange={handleChange}
-            // ink-3 edge for 3:1 against the surface (WCAG 1.4.11); checked fills with primary.
+            // nova-field draws the 3:1 edge and turns it primary when checked; checked fills too.
             className={cx(
-              'nova-field peer h-5 w-5 appearance-none rounded-sm border-ink-3!',
-              'checked:border-primary! checked:bg-primary',
+              'nova-field peer h-5 w-5 appearance-none rounded-sm',
+              'checked:bg-primary',
               focusRing,
               'disabled:cursor-not-allowed',
             )}

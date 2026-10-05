@@ -21,11 +21,7 @@ const base = cx(
   'disabled:cursor-not-allowed disabled:opacity-50',
 );
 
-// The ! lets the colour win over the border nova-field itself draws (border-strong), which the
-// utility emits after these classes. The border is ink-3, not border-strong: a field's edge is the only thing that says "type here",
-// so it needs 3:1 against its surroundings (WCAG 1.4.11) and border-strong is only about 1.6:1.
-const valid = 'border-ink-3! hover:border-ink-2!';
-const invalid = 'border-crit!';
+// The edge (3:1 at rest, ink-2 on hover, crit when aria-invalid) is nova-field's own: see theme.css.
 
 const iconSlot =
   'pointer-events-none absolute flex text-ink-3 peer-disabled:opacity-50';
@@ -67,7 +63,6 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
               data-invalid={field['aria-invalid'] ? 'true' : undefined}
               className={cx(
                 base,
-                field['aria-invalid'] ? invalid : valid,
                 leadingIcon ? 'pl-10' : 'pl-3',
                 trailingIcon ? 'pr-10' : 'pr-3',
               )}

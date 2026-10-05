@@ -124,12 +124,34 @@ describe('theme.css utilities', () => {
     },
   );
 
-  it('nova-field frosts a form control and keeps the strong border so its edge never relies on the glass', () => {
+  // The edge is a custom property, so a control states hover, invalid or checked by setting one
+  // variable instead of fighting the utility's border with an important modifier. Unset, it is
+  // border-control, which material.spec.ts proves at 3:1 against the fill and the backdrop.
+  it('nova-field frosts a form control and draws its edge from --nova-field-edge, border-control by default', () => {
     expect(utility('nova-field').declarations).toMatchObject({
       'background-color': 'var(--nova-field-fill)',
       'backdrop-filter': 'var(--nova-field-filter)',
       '-webkit-backdrop-filter': 'var(--nova-field-filter)',
-      border: '1px solid var(--nova-color-border-strong)',
+      border:
+        '1px solid var(--nova-field-edge, var(--nova-color-border-control))',
+    });
+  });
+
+  it('nova-field sets its own edge for hover, checked and invalid, with invalid winning as the last rule', () => {
+    const { nested } = utility('nova-field');
+    expect(Object.keys(nested)).toEqual([
+      '&:hover:where(:not(:disabled))',
+      "&:checked, &[aria-checked='true']",
+      "&[aria-invalid='true']",
+    ]);
+    expect(nested['&:hover:where(:not(:disabled))']?.declarations).toEqual({
+      '--nova-field-edge': 'var(--nova-color-ink-2)',
+    });
+    expect(nested["&:checked, &[aria-checked='true']"]?.declarations).toEqual({
+      '--nova-field-edge': 'var(--nova-color-primary)',
+    });
+    expect(nested["&[aria-invalid='true']"]?.declarations).toEqual({
+      '--nova-field-edge': 'var(--nova-color-crit)',
     });
   });
 
@@ -171,6 +193,12 @@ describe('theme.css utilities', () => {
       expect(chrome().declarations['color']).toBe('#fff');
       expect(chrome().declarations['--nova-chrome-ink-2']).toBe(
         `rgb(255 255 255 / ${GLASS.chromeInk2Alpha})`,
+      );
+    });
+
+    it('hands a field on the chrome its lift at the alpha the placeholder proof assumes', () => {
+      expect(chrome().declarations['--nova-chrome-field']).toBe(
+        `rgb(255 255 255 / ${GLASS.chromeFieldAlpha})`,
       );
     });
 

@@ -40,7 +40,9 @@ function blocksFor(selector: string): Array<Record<string, string>> {
   return blocks;
 }
 
+const ink2 = NOVA_DEFAULTS['--nova-color-ink-2'];
 const ink3 = NOVA_DEFAULTS['--nova-color-ink-3'];
+const borderControl = NOVA_DEFAULTS['--nova-color-border-control'];
 const bg = NOVA_DEFAULTS['--nova-color-bg'];
 const white = '#FFFFFF';
 
@@ -84,10 +86,46 @@ describe('material', () => {
   });
 });
 
+// The worst cases every proof below uses, built from the same numbers theme.css paints with.
+//
+// The canvas: the aurora tints the background with the brand (two blobs, both at GLASS.canvasTint at
+// most) and with fixed accent hues (GLASS.canvasAccents, at GLASS.canvasAccentTint). Black is the
+// darkest tint any brand could bring, and the proof stacks it on top of the darker accent at full
+// strength, a point the gradients never actually reach, so it holds wherever the blobs overlap on a
+// narrow screen.
+const darker = (a: string, b: string) =>
+  contrastRatio(a, white) >= contrastRatio(b, white) ? a : b;
+const canvasUnder = (accent: string) =>
+  mixColours(
+    '#000000',
+    GLASS.canvasTint,
+    mixColours(accent, GLASS.canvasAccentTint, bg),
+  );
+const darkestCanvas = GLASS.canvasAccents.map(canvasUnder).reduce(darker);
+// The chrome at its darkest: a black brand mixed into the base, over the darkest canvas.
+const darkestChrome = mixColours(
+  mixColours('#000000', GLASS.chromeBrandShare, GLASS.chromeBase),
+  GLASS.chromeOpacity,
+  darkestCanvas,
+);
+// The chrome at its lightest: the lightest brand the solid gate allows (white on primary-strong at
+// 4.5:1 caps its luminance, and #767676 sits at that cap), over white, which is what a sticky top bar
+// has under it when it scrolls over a card.
+const lightestChrome = mixColours(
+  mixColours('#767676', GLASS.chromeBrandShare, GLASS.chromeBase),
+  GLASS.chromeOpacity,
+  white,
+);
+
 describe('glass legibility holds for every possible hospital brand', () => {
-  // The canvas behind glass is tinted by the brand primary at GLASS.canvasTint at most.
-  // Black is the darkest tint any brand could bring, so it is the worst case for dark text.
-  const darkestCanvas = mixColours('#000000', GLASS.canvasTint, bg);
+  it('takes the darker of the accent hues, under the darkest brand tint, as the darkest canvas', () => {
+    expect(GLASS.canvasAccents.length).toBeGreaterThan(0);
+    for (const accent of GLASS.canvasAccents) {
+      expect(contrastRatio(canvasUnder(accent), white)).toBeLessThanOrEqual(
+        contrastRatio(darkestCanvas, white),
+      );
+    }
+  });
 
   it('keeps small text (ink-3) at 4.5:1 or more on glass panels, overlays and fields', () => {
     for (const alpha of [
@@ -101,17 +139,67 @@ describe('glass legibility holds for every possible hospital brand', () => {
     }
   });
 
-  it('keeps secondary chrome text at 4.5:1 or more over the lightest canvas, for the lightest brand the solid gate allows', () => {
-    // The solid gate needs white on primary-strong >= 4.5:1, which caps its luminance; #767676 sits at that cap.
-    const chromeBase = mixColours(
-      '#767676',
-      GLASS.chromeBrandShare,
-      GLASS.chromeBase,
+  // Breadcrumbs, page tabs, a divider's label and a page heading's subtitle sit on the bare canvas.
+  it.each([
+    ['secondary text (ink-2)', ink2],
+    ['small text (ink-3)', ink3],
+  ])('keeps %s placed directly on the canvas at 4.5:1 or more', (_, ink) => {
+    expect(contrastRatio(ink, darkestCanvas)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  // A menu anchored in the sidebar (the workspace switcher) composites its overlay over the dark
+  // chrome, not over the canvas.
+  it.each([
+    ['secondary text (ink-2)', ink2],
+    ['small text (ink-3)', ink3],
+  ])(
+    'keeps %s at 4.5:1 or more on an overlay anchored in the dark chrome',
+    (_, ink) => {
+      expect(
+        contrastRatio(
+          ink,
+          mixColours(white, GLASS.overlayAlpha, darkestChrome),
+        ),
+      ).toBeGreaterThanOrEqual(4.5);
+    },
+  );
+
+  it('keeps white text and the secondary chrome ink at 4.5:1 or more on the lightest chrome', () => {
+    const secondaryText = mixColours(
+      white,
+      GLASS.chromeInk2Alpha,
+      lightestChrome,
     );
-    const chrome = mixColours(chromeBase, GLASS.chromeOpacity, bg);
-    const secondaryText = mixColours(white, GLASS.chromeInk2Alpha, chrome);
-    expect(contrastRatio(white, chrome)).toBeGreaterThanOrEqual(4.5);
-    expect(contrastRatio(secondaryText, chrome)).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(white, lightestChrome)).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(secondaryText, lightestChrome)).toBeGreaterThanOrEqual(
+      4.5,
+    );
+  });
+
+  // The search field in the top bar lifts the chrome with its own fill, and its placeholder (the
+  // secondary chrome ink) is the only visible label it has.
+  it('keeps the secondary chrome ink at 4.5:1 or more inside a chrome field, where it is the placeholder', () => {
+    const field = mixColours(white, GLASS.chromeFieldAlpha, lightestChrome);
+    expect(
+      contrastRatio(mixColours(white, GLASS.chromeInk2Alpha, field), field),
+    ).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(white, field)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  // WCAG 1.4.11: a field's edge is the thing that says "type here", so it needs 3:1 against both of
+  // its neighbours, the field's own fill and whatever the field sits on.
+  it('gives a form control an edge (border-control) of 3:1 or more against its fill and its backdrop', () => {
+    for (const neighbour of [
+      darkestCanvas,
+      mixColours(white, GLASS.fieldAlpha, darkestCanvas),
+      mixColours(white, GLASS.surfaceAlpha, darkestCanvas),
+      white,
+    ]) {
+      expect(
+        contrastRatio(borderControl, neighbour),
+        neighbour,
+      ).toBeGreaterThanOrEqual(3);
+    }
   });
 });
 
@@ -120,13 +208,6 @@ describe('the keyboard focus ring on light surfaces holds 3:1 for every hospital
   // needs white on the primary at 4.5:1, which caps its luminance: #767676 is the lightest primary
   // that passes, so it is the worst case for a ring on a light fill.
   const lightestPrimary = '#767676';
-  const darkestCanvas = mixColours('#000000', GLASS.canvasTint, bg);
-  // The darkest the chrome can be: a black brand mixed into the base, over the darkest canvas.
-  const darkestChrome = mixColours(
-    mixColours('#000000', GLASS.chromeBrandShare, GLASS.chromeBase),
-    GLASS.chromeOpacity,
-    darkestCanvas,
-  );
 
   it('the lightest primary the gate allows is the one this proof uses', () => {
     expect(contrastRatio(white, lightestPrimary)).toBeGreaterThanOrEqual(4.5);
@@ -176,9 +257,31 @@ describe('theme.css material blocks', () => {
     ]);
   });
 
-  it('tints the canvas with the brand at exactly the strength the legibility proof assumes', () => {
+  it('tints the canvas with both brand blobs at exactly the strength the legibility proof assumes', () => {
+    const tint = `calc(${Math.round(GLASS.canvasTint * 100)}% * var(--nova-glass))`;
     expect(css).toContain(
-      `color-mix(in srgb, var(--nova-color-primary) calc(${GLASS.canvasTint * 100}% * var(--nova-glass)), transparent)`,
+      `color-mix(in srgb, var(--nova-color-primary) ${tint}, transparent)`,
+    );
+    expect(css).toContain(
+      `color-mix(in srgb, var(--nova-color-primary-strong) ${tint}, transparent)`,
+    );
+  });
+
+  it('paints each accent hue of the aurora at exactly the strength the proof assumes, and no other tint', () => {
+    const aurora = (/--nova-gradient-aurora:([^;]*);/.exec(css)?.[1] ?? '')
+      .replace(/\s+/g, ' ')
+      .toUpperCase();
+    for (const accent of GLASS.canvasAccents) {
+      expect(aurora).toContain(
+        `COLOR-MIX(IN SRGB, ${accent.toUpperCase()} CALC(${Math.round(GLASS.canvasAccentTint * 100)}% * VAR(--NOVA-GLASS)), TRANSPARENT)`,
+      );
+    }
+    // Two brand blobs and the accents: nothing else tints the canvas.
+    expect(aurora.match(/RADIAL-GRADIENT\(/g)).toHaveLength(
+      2 + GLASS.canvasAccents.length,
+    );
+    expect(aurora.match(/COLOR-MIX\(/g)).toHaveLength(
+      2 + GLASS.canvasAccents.length,
     );
   });
 });

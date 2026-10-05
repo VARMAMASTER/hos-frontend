@@ -145,7 +145,8 @@ describe('Select error', () => {
     const message = screen.getByText('Pick a ward');
     expect(select.getAttribute('aria-invalid')).toBe('true');
     expect(describedByIds(select)).toContain(message.id);
-    expect(select.className).toContain('border-crit');
+    expect(select.classList.contains('nova-field')).toBe(true);
+    expect(select.className).not.toMatch(/border-/);
   });
 
   it('describes by the hint first, then the error', () => {

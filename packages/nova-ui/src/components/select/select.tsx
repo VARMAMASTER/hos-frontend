@@ -32,10 +32,6 @@ const base = cx(
   'disabled:cursor-not-allowed disabled:opacity-50',
 );
 
-// ink-3 rather than border-strong for the same reason as TextField: the edge must reach 3:1.
-const valid = 'border-ink-3! hover:border-ink-2!';
-const invalid = 'border-crit!';
-
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   function Select(
     {
@@ -77,7 +73,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               ref={ref}
               required={required}
               data-invalid={field['aria-invalid'] ? 'true' : undefined}
-              className={cx(base, field['aria-invalid'] ? invalid : valid)}
+              className={base}
               {...selection}
               {...rest}
               {...field}

@@ -19,7 +19,7 @@ const base = cx(
 const variants: Record<ButtonVariant, string> = {
   primary: 'bg-primary text-on-primary hover:bg-primary-strong',
   secondary:
-    'border border-border-strong bg-surface text-ink hover:bg-surface-2',
+    'border border-border-control bg-surface text-ink hover:bg-surface-2',
   ghost: 'text-primary-strong hover:bg-primary-soft',
   ai: 'bg-ai text-on-primary hover:bg-ai-deep',
 };

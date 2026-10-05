@@ -8,6 +8,8 @@ export const NOVA_DEFAULTS = {
   '--nova-color-surface-2': p.lavender[50],
   '--nova-color-border': p.lavender[200],
   '--nova-color-border-strong': p.lavender[300],
+  // The edge of a form control or a secondary button: 3:1 against its fill and its backdrop.
+  '--nova-color-border-control': p.ink[400],
   '--nova-color-ink': p.ink[900],
   '--nova-color-ink-2': p.ink[600],
   '--nova-color-ink-3': p.ink[500],

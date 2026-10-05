@@ -33,7 +33,8 @@ describe('Textarea', () => {
     const message = screen.getByText('Add at least one line');
     expect(field.getAttribute('aria-invalid')).toBe('true');
     expect(describedByIds(field)).toContain(message.id);
-    expect(field.className).toContain('border-crit');
+    expect(field.classList.contains('nova-field')).toBe(true);
+    expect(field.className).not.toMatch(/border-/);
   });
 
   it('is neither invalid nor described when there is no hint and no error', () => {
