@@ -6,14 +6,15 @@ import { Chip } from '../components/chip/chip';
 import { HeroBand } from '../components/hero-band/hero-band';
 import { KpiTile } from '../components/kpi-tile/kpi-tile';
 
-const meta = { title: 'Materials/Glass and solid' } satisfies Meta;
+const meta = { title: 'Materials/Glass, frost and solid' } satisfies Meta;
 
 export default meta;
 
-// Flip Material in the toolbar to compare. Glass is the prototype's own: the hero, the glass panel,
-// the top bar and the overlay frost; solid is the same layout with the prototype's opaque fallbacks.
-// Cards, fields and data (the KPI tiles, the data card) are opaque in the prototype, so they look the
-// same under both.
+// Flip Material in the toolbar to compare, and Scheme for each in the dark. Glass is the prototype's
+// own: the hero, the glass panel, the top bar and the overlay frost. Frost is a heavier, more opaque
+// glass, tinted toward panel-2. Solid is the same layout with the prototype's opaque fallbacks. Cards,
+// fields and data (the KPI tiles, the data card) are opaque in the prototype, so they look the same
+// under all three.
 export const Surfaces: StoryObj = {
   render: () => (
     <div className="flex flex-col gap-6">
@@ -50,7 +51,7 @@ export const Surfaces: StoryObj = {
         <Card variant="glass">
           <CardHeader
             title="Glass panel"
-            description=".glass-panel on glass, the card on solid"
+            description=".glass-panel on glass, heavier on frost, the card on solid"
             actions={<Chip tone="ai">AI draft</Chip>}
           />
           <CardBody className="flex flex-wrap gap-2">
@@ -61,7 +62,7 @@ export const Surfaces: StoryObj = {
         <Card variant="data">
           <CardHeader
             title="Data card"
-            description="Opaque under both materials, with the gradient edge"
+            description="Opaque under every material, with the gradient edge"
             actions={<Chip tone="info">Dense data</Chip>}
           />
           <CardBody className="flex flex-wrap gap-2">
