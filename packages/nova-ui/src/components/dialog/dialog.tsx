@@ -35,9 +35,16 @@ export interface DialogProps {
   role?: 'dialog' | 'alertdialog';
   // Leaves out the corner close button, so the way out is the dialog's own actions (and Escape).
   hideClose?: boolean;
-  // Merged onto the panel after `className`, so a caller can set the width it wants.
-  panelClassName?: string;
+  // The panel's width: 'md' for forms and content, 'sm' (280px) for a short confirmation.
+  size?: DialogSize;
 }
+
+export type DialogSize = 'sm' | 'md';
+
+const sizes: Record<DialogSize, string> = {
+  sm: 'max-w-[280px]',
+  md: 'max-w-lg',
+};
 
 // The open dialogs, bottom to top. Only the top one answers the keyboard, so Escape closes one
 // dialog at a time and a confirmation over a form does not take the form with it.
@@ -100,7 +107,7 @@ function DialogLayer({
   closeLabel = 'Close',
   role = 'dialog',
   hideClose = false,
-  panelClassName,
+  size = 'md',
 }: Omit<DialogProps, 'open' | 'defaultOpen' | 'onClose'> & {
   onClose: () => void;
 }) {
@@ -198,9 +205,9 @@ function DialogLayer({
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
         className={cx(
-          'relative flex max-h-full w-full max-w-lg flex-col outline-none motion-safe:animate-dialog-in [--nova-overlay-lift:var(--nova-elevation-3)]',
+          'relative flex max-h-full w-full flex-col outline-none motion-safe:animate-dialog-in [--nova-overlay-lift:var(--nova-elevation-3)]',
+          sizes[size],
           className,
-          panelClassName,
         )}
       >
         <div className="flex items-start justify-between gap-4 px-6 pt-5">

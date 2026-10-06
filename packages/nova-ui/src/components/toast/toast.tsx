@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
-import { playMotion } from './motion';
+import { playMotion } from '../../primitives/motion';
 
 export type ToastVariant = 'info' | 'success' | 'error';
 
@@ -185,7 +185,7 @@ function ToastView({
         }
       }}
       className={cx(
-        'pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-lg px-4 py-3 text-callout [--nova-focus-ring:currentColor]',
+        'pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-lg px-4 py-3 text-callout shadow-elevation-2 [--nova-focus-ring:currentColor]',
         variants[toast.variant],
       )}
     >

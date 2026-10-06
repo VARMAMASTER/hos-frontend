@@ -167,6 +167,16 @@ describe('Dialog semantics', () => {
     expect(scrim.classList).toContain('motion-safe:animate-fade-in');
   });
 
+  it('is md wide by default and 280px wide at size sm, never both', () => {
+    render(<Dialog open onClose={() => undefined} title="Hi" />);
+    expect(dialog().classList).toContain('max-w-lg');
+    expect(dialog().classList).not.toContain('max-w-[280px]');
+    cleanup();
+    render(<Dialog open onClose={() => undefined} title="Hi" size="sm" />);
+    expect(dialog().classList).toContain('max-w-[280px]');
+    expect(dialog().classList).not.toContain('max-w-lg');
+  });
+
   it('lifts the panel at elevation 3, the top of the scale', () => {
     render(<Dialog open onClose={() => undefined} title="Hi" />);
     expect(dialog().classList).toContain(
@@ -782,24 +792,6 @@ describe('Dialog hideClose', () => {
     expect(screen.getAllByRole('button')).toHaveLength(1);
     press('Escape');
     expect(onClose).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('Dialog panelClassName', () => {
-  it('adds its classes to the panel, next to the existing className', () => {
-    render(
-      <Dialog
-        open
-        onClose={() => undefined}
-        title="Hi"
-        className="from-class"
-        panelClassName="max-w-[280px]!"
-      />,
-    );
-    const classes = dialog().classList;
-    expect(classes).toContain('max-w-[280px]!');
-    expect(classes).toContain('from-class');
-    expect(classes).toContain('relative');
   });
 });
 

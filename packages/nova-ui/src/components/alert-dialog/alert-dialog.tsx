@@ -66,7 +66,7 @@ export function AlertDialog({
       onClose={onClose}
       role="alertdialog"
       hideClose
-      panelClassName="max-w-[280px]!"
+      size="sm"
       title={title}
       description={message}
     >

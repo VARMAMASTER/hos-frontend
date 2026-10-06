@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { useControllableState } from '../../primitives/use-controllable-state';
-import { playMotion } from '../toast/motion';
+import { playMotion } from '../../primitives/motion';
 
 export interface OtpInputProps
   extends Omit<

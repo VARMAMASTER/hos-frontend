@@ -82,6 +82,17 @@ describe('Toaster live regions', () => {
   });
 });
 
+describe('Toast elevation', () => {
+  it('lifts every toast at elevation 2, like the other overlays', () => {
+    render(<Toaster />);
+    show('a', 'info');
+    show('b', 'error');
+    for (const toast of toasts()) {
+      expect(toast.classList).toContain('shadow-elevation-2');
+    }
+  });
+});
+
 describe('Toast auto-dismiss', () => {
   it('goes away after 3500ms', () => {
     render(<Toaster />);
@@ -217,13 +228,13 @@ describe('Toast dismissal', () => {
 });
 
 describe('Toast styling rules', () => {
-  it('uses the callout text and the lg radius, with no shadow', () => {
+  it('uses the callout text and the lg radius, and no shadow but elevation 2', () => {
     render(<Toaster />);
     show('Saved');
     const classes = (toasts()[0] as HTMLElement).className;
     expect(classes).toContain('text-callout');
     expect(classes).toContain('rounded-lg');
-    expect(classes).not.toMatch(/shadow/);
+    expect(classes.match(/\S*shadow\S*/g)).toEqual(['shadow-elevation-2']);
     expect(classes).not.toContain('font-medium');
   });
 
