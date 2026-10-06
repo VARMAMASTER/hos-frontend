@@ -457,19 +457,22 @@ export function AmbientScribeRecorder({
               ))}
             </span>
           ) : null}
-          <span role="status">{words.status[status]}</span>
-          {recorded ? (
-            <>
-              <span aria-hidden="true"> · </span>
-              <span
-                role="timer"
-                aria-label={`${words.elapsed} ${time}`}
-                className="tabular-nums"
-              >
-                {time}
-              </span>
-            </>
-          ) : null}
+          {/* One inline run, so "Recording · 02:41" reads as the prototype's single label. */}
+          <span>
+            <span role="status">{words.status[status]}</span>
+            {recorded ? (
+              <>
+                <span aria-hidden="true"> · </span>
+                <span
+                  role="timer"
+                  aria-label={`${words.elapsed} ${time}`}
+                  className="tabular-nums"
+                >
+                  {time}
+                </span>
+              </>
+            ) : null}
+          </span>
         </span>
         {currentLanguage ? (
           languageOptions && onLanguageChange ? (

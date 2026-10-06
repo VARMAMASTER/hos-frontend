@@ -250,14 +250,14 @@ const warnIcon = (
 const padField = cx(
   'min-w-0 flex-1',
   '[&_input]:min-h-12 [&_input]:text-center [&_input]:font-mono [&_input]:text-[16px] [&_input]:font-semibold',
-  '[&_label]:text-[11px] [&_label]:font-bold [&_label]:uppercase [&_label]:tracking-wide [&_label]:text-ink-3',
+  '[&_label]:text-[11px] [&_label]:font-bold [&_label]:uppercase [&_label]:tracking-[0.04em] [&_label]:text-ink-3',
 );
 const aiFilled =
   '[--nova-field-edge:var(--nova-color-ai)] [--nova-field-fill:var(--nova-color-ai-ghost)]';
 
 // The pane headings: the prototype's 12px bold uppercase in the AI ink.
 const paneHeading =
-  'mb-1 font-display text-[12px] font-bold uppercase tracking-wide text-ai-deep';
+  'mb-1 font-display text-[12px] font-bold uppercase tracking-[0.04em] text-ai-deep';
 
 // The prototype's voice entry (14-nursing.html, "Voice entry — GM-03"): an AI draft that shows what
 // the nurse said, then what HOS will chart, pre-filled and editable, with Approve & chart and Say it
@@ -371,7 +371,7 @@ export function VoiceEntryCapture({
           <p
             data-slot="transcript"
             lang={transcriptLang}
-            className="text-[13px] italic leading-relaxed text-ink"
+            className="text-[13px] italic leading-[1.6] text-ink"
           >
             {transcript}
             {status === 'listening' ? <StreamCaret /> : null}
