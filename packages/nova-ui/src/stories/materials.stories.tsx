@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { AiBadge } from '../components/ai-badge/ai-badge';
 import { Button } from '../components/button/button';
 import { Card, CardBody, CardHeader } from '../components/card/card';
 import { Chip } from '../components/chip/chip';
@@ -54,7 +55,7 @@ export const Surfaces: StoryObj = {
         <Card variant="data">
           <CardHeader
             title="Data card"
-            description="Opaque under both materials, with the richness in the rim"
+            description="Opaque under both materials, edged with a soft hairline"
             actions={<Chip tone="info">Dense data</Chip>}
           />
           <CardBody className="flex flex-wrap gap-2">
@@ -64,13 +65,13 @@ export const Surfaces: StoryObj = {
         </Card>
       </div>
 
-      {/* The AI rail and the brand gradient text, until components use them. */}
+      {/* The AI rail (AiPanel's draft state) and the brand gradient text. */}
       <div className="grid items-center gap-4 md:grid-cols-2">
         <Card className="nova-ai-rail">
           <CardHeader
             title="AI draft"
-            description="The rail marks an AI surface in the fixed AI gradient"
-            actions={<Chip tone="ai">AI</Chip>}
+            description="A solid AI-cyan rail and the spark mark an AI surface"
+            actions={<AiBadge />}
           />
         </Card>
         <h2 className="nova-gradient-text w-fit text-3xl font-semibold">

@@ -3,7 +3,7 @@ import { cx } from '../../primitives/cx';
 import { Surface, type SurfaceMaterial } from '../../primitives/surface';
 
 // panel is the default surface and takes the product material (glass or solid). data is for dense
-// data (tables, figures): it stays opaque under either material and carries its richness in a rim.
+// data (tables, figures): it stays opaque under either material, edged with a 1px soft hairline.
 export type CardVariant = 'panel' | 'data';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {

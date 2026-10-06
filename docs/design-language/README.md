@@ -6,7 +6,7 @@ Owner decision (2026-10-06): "Apple refinements on Nova", with Inter as the type
 
 Nova keeps:
 
-- its identity: violet brand, per-hospital themes, the glass/solid material axis, and the brand, chrome, aurora, edge and AI gradients;
+- its identity: violet brand, per-hospital themes, the glass/solid material axis, and the brand, chrome, aurora and AI gradients;
 - every accessibility rule.
 
 Nova adopts Apple's typography, spacing, radius grammar, control shapes, flat elevation and motion.
@@ -70,8 +70,9 @@ These files are copies of the project skill `.claude/skills/apple-design-system`
 
 - **One interactive accent: Nova `primary`.** It is violet by default and each hospital's own brand under its theme; it is the "Action Blue" role. Links, CTAs, focus and selected state all use it. No second interactive colour.
 - Status colours stay Nova's accessible -soft / -deep pairs, not iOS system colours (`#ff9500` on white is about 2.2:1). Status is never decoration.
-- AI stays the fixed cyan with the ✦ marker and the AI gradient.
-- Gradients stay where Nova's identity lives: the hero band, the sidebar and top-bar chrome, the aurora canvas, the data-card edge, and AI accents. **No gradient on buttons**; the pill shape carries the emphasis.
+- AI stays the fixed cyan with the ✦ marker. The AI rail is solid cyan; the AI gradient is never a border.
+- Gradients stay where Nova's identity lives: the hero band, the sidebar and top-bar chrome, and the aurora canvas. **No gradient on buttons**; the pill shape carries the emphasis.
+- No gradient borders: edges are 1px hairlines; data surfaces are opaque with a hairline.
 
 ## Controls (from the catalog, adapted)
 

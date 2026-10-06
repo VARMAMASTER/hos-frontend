@@ -17,9 +17,9 @@ export interface TableProps extends HTMLAttributes<HTMLTableElement> {
   caption: ReactNode;
 }
 
-// The frame is the data material: opaque under both materials, with its richness in a 1px rim.
+// The frame is the data material: opaque under both materials, edged with a 1px soft hairline.
 // Glass behind a column of numbers costs legibility, so never swap it for a translucent surface.
-// The rim is painted on the frame, so the frame itself must not scroll; the scroller sits inside it.
+// The hairline is the frame's border, so the frame itself must not scroll; the scroller sits inside it.
 // className styles the frame (placement, spacing); every other attribute describes the <table>
 // itself (id, aria-describedby, ...) and lands on it.
 export function Table({ caption, className, children, ...rest }: TableProps) {

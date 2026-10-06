@@ -254,7 +254,7 @@
 
 /* Named gradients, so components, stories and future work reuse one definition of each.
 
-   Brand-derived ones (brand, chrome, aurora, edge) are built from the hospital's own colour tokens,
+   Brand-derived ones (brand, chrome, aurora) are built from the hospital's own colour tokens,
    so every hospital theme gets its own gradient with no extra work. A var() inside a custom
    property is resolved where the property is declared and then inherited as a finished value, so
    declared on the root alone these would stay HOS violet inside a NovaThemeProvider subtree. They are
@@ -279,7 +279,6 @@
     radial-gradient(940px 740px at 96% 4%, color-mix(in srgb, #60A5FA calc(6% * var(--nova-glass)), transparent), transparent 70%),
     radial-gradient(980px 800px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-strong) calc(10% * var(--nova-glass)), transparent), transparent 70%),
     radial-gradient(840px 700px at 18% 104%, color-mix(in srgb, #22D3EE calc(6% * var(--nova-glass)), transparent), transparent 70%);
-  --nova-gradient-edge: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-primary) 55%, transparent), rgb(34 211 238 / 0.26), transparent);
 }
 
 /* The AI signature: bright cyan, through the AI cyan, into a fixed violet primitive (primitives.violet
@@ -415,35 +414,20 @@
   }
 }
 
-/* Containers for dense data (tables, KPI tiles, financial figures). Never translucent, under either
-   material: glass under dense data costs legibility, so these stay opaque and put the richness at
-   the boundary, as a 1px brand-to-cyan rim that fades out. The rim is a masked pseudo-element:
-   its padding is the 1px ring, and the mask composite removes everything inside it so only the
-   edge paints. */
-/* prettier-ignore */
+/* Containers for dense data (tables, KPI tiles, charts, financial figures). Never translucent, under
+   either material: glass under dense data costs legibility, so these stay opaque. Their edge is the
+   card's plain 1px soft hairline: no gradient, no rim, no shadow (owner decision: no gradient
+   borders). A consumer can still restyle the edge (BedGrid's status borders): this utility sorts
+   ahead of Tailwind's border utilities. */
 @utility nova-data {
   --nova-focus-ring: var(--nova-color-primary);
   position: relative;
   background-color: var(--nova-color-surface);
+  border: 1px solid var(--nova-color-border);
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    border-radius: inherit;
-    background: var(--nova-gradient-edge);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-
-  /* Selected: the rim becomes a 2px primary edge, as on a selected panel. */
-  &[data-selected='true']::before {
-    padding: 2px;
-    background: var(--nova-color-primary);
+  /* Selected: the edge upgrades to 2px primary, as on a selected panel. */
+  &[data-selected='true'] {
+    border: 2px solid var(--nova-color-primary);
   }
 }
 
@@ -462,11 +446,13 @@
   }
 }
 
-/* The rail that marks an AI surface: a 3px strip down the left edge in the AI gradient. It is a
-   background layer, so it needs no positioning, follows the surface's rounded corners, sits flush
-   with the border, and combines with nova-surface, nova-overlay or nova-data. */
+/* The rail that marks an AI surface: a solid 3px strip of the AI cyan down the left edge (no
+   gradient on any edge). It is a single-colour background layer, so it needs no positioning,
+   follows the surface's rounded corners, sits flush with the border, and combines with
+   nova-surface, nova-overlay or nova-data. AI output is told apart by the AiBadge spark and label
+   as well as this rail, never by colour alone. */
 @utility nova-ai-rail {
-  background-image: var(--nova-gradient-ai);
+  background-image: linear-gradient(var(--nova-color-ai), var(--nova-color-ai));
   background-repeat: no-repeat;
   background-origin: border-box;
   background-position: left top;

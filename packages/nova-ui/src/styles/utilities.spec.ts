@@ -131,11 +131,10 @@ describe('theme.css utilities', () => {
     ).toEqual({ border: '2px solid var(--nova-color-primary)' });
   });
 
-  it('nova-data turns a selected container rim into a 2px primary edge', () => {
+  it('nova-data upgrades a selected container to a 2px primary border', () => {
     expect(
-      utility('nova-data').nested["&[data-selected='true']::before"]
-        ?.declarations,
-    ).toEqual({ padding: '2px', background: 'var(--nova-color-primary)' });
+      utility('nova-data').nested["&[data-selected='true']"]?.declarations,
+    ).toEqual({ border: '2px solid var(--nova-color-primary)' });
   });
 
   // The edge is a custom property, so a control states hover, invalid or checked by setting one
@@ -294,27 +293,19 @@ describe('theme.css utilities', () => {
       );
     });
 
-    it('puts the richness in a 1px gradient rim that only paints its edge', () => {
+    // Owner decision: no gradient borders. A data surface is opaque with the card's soft hairline.
+    it('edges itself with a plain 1px soft hairline, the card hairline', () => {
+      expect(utility('nova-data').declarations['border']).toBe(
+        '1px solid var(--nova-color-border)',
+      );
+    });
+
+    it('draws no gradient and no ::before rim', () => {
       const data = utility('nova-data');
-      expect(data.declarations['position']).toBe('relative');
-      const rim = data.nested['&::before'];
-      expect(rim).toBeDefined();
-      expect(rim?.declarations).toMatchObject({
-        content: "''",
-        position: 'absolute',
-        inset: '0',
-        padding: '1px',
-        'border-radius': 'inherit',
-        'pointer-events': 'none',
-        background: 'var(--nova-gradient-edge)',
-        'mask-composite': 'exclude',
-        '-webkit-mask-composite': 'xor',
-      });
-      for (const mask of ['mask', '-webkit-mask']) {
-        expect(rim?.declarations[mask]).toBe(
-          'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
-        );
-      }
+      expect(JSON.stringify(data)).not.toMatch(/gradient|mask/);
+      expect(
+        Object.keys(data.nested).some((key) => /::?before/.test(key)),
+      ).toBe(false);
     });
   });
 
@@ -342,9 +333,12 @@ describe('theme.css utilities', () => {
     });
   });
 
-  it('nova-ai-rail paints a 3px rail down the left edge with the AI gradient, flush with the border and clipped by the radius', () => {
+  // A solid AI-cyan rail: one colour, start to end (a single-colour layer, so no colour ever
+  // changes along it). AI output is told apart by the AiBadge spark and label plus this rail.
+  it('nova-ai-rail paints a solid 3px AI-cyan rail down the left edge, flush with the border and clipped by the radius', () => {
     expect(utility('nova-ai-rail').declarations).toEqual({
-      'background-image': 'var(--nova-gradient-ai)',
+      'background-image':
+        'linear-gradient(var(--nova-color-ai), var(--nova-color-ai))',
       'background-repeat': 'no-repeat',
       'background-origin': 'border-box',
       'background-position': 'left top',
@@ -364,7 +358,6 @@ describe('theme.css named gradients', () => {
     '--nova-gradient-brand',
     '--nova-gradient-chrome',
     '--nova-gradient-aurora',
-    '--nova-gradient-edge',
   ])(
     'declares %s on every theme and material scope, so a subtree re-resolves it',
     (name) => {
@@ -401,10 +394,9 @@ describe('theme.css named gradients', () => {
     );
   });
 
-  it('--nova-gradient-edge is the 135deg brand-to-cyan rim that fades out', () => {
-    expect(scoped()['--nova-gradient-edge']).toBe(
-      'linear-gradient(135deg, color-mix(in srgb, var(--nova-color-primary) 55%, transparent), rgb(34 211 238 / 0.26), transparent)',
-    );
+  // Owner decision: no gradient borders, so the data-card edge gradient is gone everywhere.
+  it('declares no --nova-gradient-edge on any scope', () => {
+    expect(source).not.toContain('--nova-gradient-edge');
   });
 
   describe('--nova-gradient-ai', () => {
@@ -486,11 +478,7 @@ describe('theme.css named gradients', () => {
     });
 
     it('and so do the other brand-derived gradients, with none of the default violet left in them', () => {
-      for (const name of [
-        '--nova-gradient-chrome',
-        '--nova-gradient-aurora',
-        '--nova-gradient-edge',
-      ]) {
+      for (const name of ['--nova-gradient-chrome', '--nova-gradient-aurora']) {
         const themed = resolve(name, rose);
         expect(themed, name).not.toBe(resolve(name));
         expect(themed.toUpperCase(), name).toMatch(/#(?:9D174D|831843)/);

@@ -16,7 +16,7 @@ export type SparklineProps = Omit<CartesianChartProps, 'legend'>;
 // is marked. The data table alternative and the accessible name are still there.
 //
 // It is bare by default: it lives inside a tile that is already an opaque data surface, so it brings
-// no surface of its own (another rim would draw a box inside the box). Pass bare={false} to stand
+// no surface of its own (another hairline would draw a box inside the box). Pass bare={false} to stand
 // it alone on its own opaque surface.
 export function Sparkline({
   seriesKeys,

@@ -90,6 +90,16 @@ describe('component conventions', () => {
     ).toEqual([]);
   });
 
+  // Owner decision: no gradient on any border, edge, rim or button. Gradients live only in the
+  // theme.css surface fills (hero, chrome, aurora) and the brand gradient text utility.
+  it('never paints a gradient of its own', () => {
+    expect(
+      offenders(
+        /bg-(?:linear|radial|conic|gradient)-|nova-gradient-|gradient\(/,
+      ),
+    ).toEqual([]);
+  });
+
   // The type ramp is the only set of sizes; an arbitrary size that duplicates a ramp step hides it
   // from a ramp change.
   it('never writes an arbitrary text size that a ramp token already names', () => {
