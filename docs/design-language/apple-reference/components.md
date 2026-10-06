@@ -103,19 +103,19 @@ get a `canvasParchment` badge with a semantic `fg`.
 
 ```ts
 PROJECT_STATUS_PALETTE = {
-  open:         { bg: 'primary',         fg: 'onPrimary',  label: 'Open' },
-  in_progress:  { bg: 'canvasParchment', fg: 'primary',    label: 'In progress' },
-  under_review: { bg: 'canvasParchment', fg: 'warning',    label: 'Under review' },
-  completed:    { bg: 'canvasParchment', fg: 'inkMuted80', label: 'Completed' },
-  disputed:     { bg: 'canvasParchment', fg: 'danger',     label: 'Disputed' },
-  cancelled:    { bg: 'canvasParchment', fg: 'inkMuted48', label: 'Cancelled' },
+  open: { bg: 'primary', fg: 'onPrimary', label: 'Open' },
+  in_progress: { bg: 'canvasParchment', fg: 'primary', label: 'In progress' },
+  under_review: { bg: 'canvasParchment', fg: 'warning', label: 'Under review' },
+  completed: { bg: 'canvasParchment', fg: 'inkMuted80', label: 'Completed' },
+  disputed: { bg: 'canvasParchment', fg: 'danger', label: 'Disputed' },
+  cancelled: { bg: 'canvasParchment', fg: 'inkMuted48', label: 'Cancelled' },
 };
 ESCROW_STATUS_PALETTE = {
-  pending:  { bg: 'canvasParchment', fg: 'warning',    label: 'Awaiting payment' },
-  held:     { bg: 'primary',         fg: 'onPrimary',  label: 'Held' },
-  released: { bg: 'canvasParchment', fg: 'primary',    label: 'Released' },
+  pending: { bg: 'canvasParchment', fg: 'warning', label: 'Awaiting payment' },
+  held: { bg: 'primary', fg: 'onPrimary', label: 'Held' },
+  released: { bg: 'canvasParchment', fg: 'primary', label: 'Released' },
   refunded: { bg: 'canvasParchment', fg: 'inkMuted80', label: 'Refunded' },
-  disputed: { bg: 'canvasParchment', fg: 'danger',     label: 'Disputed' },
+  disputed: { bg: 'canvasParchment', fg: 'danger', label: 'Disputed' },
 };
 ```
 
@@ -167,6 +167,7 @@ Never import react-native `Alert` / `ActionSheetIOS` — the gray OS dialogs bre
 language. One `AlertProvider` at the root exposes `alert()` and `sheet()`.
 
 **`alert({ title, message?, buttons? })` — centered dialog.**
+
 - Backdrop `colors.scrim`; card `maxWidth: 280`, `canvas`, `radius.lg`,
   `borderCurve: 'continuous'`, `overflow: hidden`. **No shadow.**
 - Title `semiBold size="headline"` centered; message `regular size="callout"` `inkMuted80`
@@ -177,6 +178,7 @@ language. One `AlertProvider` at the root exposes `alert()` and `sheet()`.
 - Enter: scale `0.94→1` (180ms) + fade.
 
 **`sheet({ title?, message?, options })` — bottom action sheet.**
+
 - Two stacked `canvas` `radius.lg` cards over the scrim: options card + a separate Cancel
   card (Cancel is appended **automatically** — never add your own). Rows: `minHeight 52`,
   centered `regular size="body"` `primary` (destructive → `danger`), 1px `hairline`
@@ -223,7 +225,7 @@ button), `showBack?`, `onBack?`, `sheet?` (drops the safe-area top inset on form
 button), `right={<NotificationBell/>}` (+ a compose/filter button where relevant).
 
 **Home/dashboard exception:** a **fixed** (non-collapsing) welcome hero — greeting +
-settings + bell, `paddingTop: insets.top + spacing.sm` — that does *not* scroll away.
+settings + bell, `paddingTop: insets.top + spacing.sm` — that does _not_ scroll away.
 
 ---
 

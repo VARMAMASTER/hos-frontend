@@ -6,6 +6,7 @@ Use this when **reviewing** UI. Report each violation as
 > HOS / Nova: where this list says Action Blue `#0066cc`, read Nova `primary`. For status colours and control edges, follow `hos-frontend/docs/design-language/README.md`.
 
 ## Color
+
 - [ ] Every interactive element (link, primary CTA, active tab, focus) uses `primary`
       (Action Blue `#0066cc`) — and **nothing else** is used as an accent.
 - [ ] `danger` / `success` / `warning` appear only for **status**, never as decoration
@@ -15,6 +16,7 @@ Use this when **reviewing** UI. Report each violation as
 - [ ] Links on a **dark** surface use `primaryOnDark`, not `primary`.
 
 ## Type
+
 - [ ] Only weights **400 / 600 / 700** are used. **No 500 / medium** anywhere.
 - [ ] Body copy is `body` (17px / 400). Headlines are `bold` (700). Labels/emphasis are
       `semiBold` (600).
@@ -23,6 +25,7 @@ Use this when **reviewing** UI. Report each violation as
 - [ ] Large headlines carry slightly tight tracking; small text does not.
 
 ## Shape & elevation
+
 - [ ] **No shadow** on any card, button, sheet, input, or text. (Only hero/product
       imagery may carry the single soft drop-shadow.)
 - [ ] Every rounded surface sets `borderCurve: 'continuous'`.
@@ -32,6 +35,7 @@ Use this when **reviewing** UI. Report each violation as
       `primaryFocus`. No heavy borders otherwise.
 
 ## Layout
+
 - [ ] Content respects the gutter (`spacing.xl` horizontal) — lists/cards never touch
       the device edge.
 - [ ] Spacing values are `spacing.*` tokens, not raw numbers.
@@ -41,6 +45,7 @@ Use this when **reviewing** UI. Report each violation as
       home/hero screens), not the platform default header.
 
 ## Components & interaction
+
 - [ ] Confirmations/menus use the custom Apple `alert()` / `sheet()` — **never**
       react-native `Alert` or `ActionSheetIOS`.
 - [ ] Icons are named as SF Symbols and rendered via the one cross-platform `Icon`
@@ -52,6 +57,7 @@ Use this when **reviewing** UI. Report each violation as
 - [ ] Motion is quiet: 150–240ms ease-out, subtle spring, no bounce.
 
 ## The instinct test
+
 - [ ] When emphasis was needed, the fix changed **surface or weight** — not added a
       shadow or a second color. If a shadow or new hue crept in, it's almost certainly
       off-language.

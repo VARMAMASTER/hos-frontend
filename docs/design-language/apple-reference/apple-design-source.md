@@ -10,21 +10,21 @@ Density is low. Elevation appears only when a product image rests on a surface, 
 
 ## Colours
 
-| Token | Hex | Role |
-|---|---|---|
-| primary | #0066cc | Action Blue: every link, CTA and focus root |
-| primary-focus | #0071e3 | keyboard focus ring (2px solid) |
-| primary-on-dark | #2997ff | links on dark surfaces |
-| ink | #1d1d1f | all text on light surfaces (not pure black) |
-| ink-muted-80 | #333333 | softer body |
-| ink-muted-48 | #7a7a7a | disabled, fine print |
-| divider-soft | #f0f0f0 | ring-like separator |
-| hairline | #e0e0e0 | 1px card / chip border |
-| canvas | #ffffff | dominant surface |
-| canvas-parchment | #f5f5f7 | signature off-white, alternating surfaces |
-| surface-pearl | #fafafc | secondary button fill |
-| surface-tile-1/2/3 | #272729 / #2a2a2c / #252527 | dark surfaces |
-| surface-chip-translucent | #d2d2d7 @ 64% | circular controls over imagery |
+| Token                    | Hex                         | Role                                        |
+| ------------------------ | --------------------------- | ------------------------------------------- |
+| primary                  | #0066cc                     | Action Blue: every link, CTA and focus root |
+| primary-focus            | #0071e3                     | keyboard focus ring (2px solid)             |
+| primary-on-dark          | #2997ff                     | links on dark surfaces                      |
+| ink                      | #1d1d1f                     | all text on light surfaces (not pure black) |
+| ink-muted-80             | #333333                     | softer body                                 |
+| ink-muted-48             | #7a7a7a                     | disabled, fine print                        |
+| divider-soft             | #f0f0f0                     | ring-like separator                         |
+| hairline                 | #e0e0e0                     | 1px card / chip border                      |
+| canvas                   | #ffffff                     | dominant surface                            |
+| canvas-parchment         | #f5f5f7                     | signature off-white, alternating surfaces   |
+| surface-pearl            | #fafafc                     | secondary button fill                       |
+| surface-tile-1/2/3       | #272729 / #2a2a2c / #252527 | dark surfaces                               |
+| surface-chip-translucent | #d2d2d7 @ 64%               | circular controls over imagery              |
 
 **No decorative gradients.** Atmospheric depth comes from imagery, not CSS.
 
@@ -32,22 +32,23 @@ Density is low. Elevation appears only when a product image rests on a surface, 
 
 SF Pro Display (≥ 19px) and SF Pro Text (below). Off-Apple, **Inter** is the closest equivalent; nudge display tracking by -0.01em, and tighten body line-height from 1.47 to about 1.44.
 
-| Token | Size | Weight | Line height | Tracking |
-|---|---|---|---|---|
-| hero-display | 56 | 600 | 1.07 | -0.28px |
-| display-lg | 40 | 600 | 1.10 | 0 |
-| display-md | 34 | 600 | 1.47 | -0.374px |
-| lead | 28 | 400 | 1.14 | 0.196px |
-| tagline | 21 | 600 | 1.19 | 0.231px |
-| body-strong | 17 | 600 | 1.24 | -0.374px |
-| body | 17 | 400 | 1.47 | -0.374px |
-| caption | 14 | 400 | 1.43 | -0.224px |
-| caption-strong | 14 | 600 | 1.29 | -0.224px |
-| button-utility | 14 | 400 | 1.29 | -0.224px |
-| fine-print | 12 | 400 | 1.0 | -0.12px |
-| micro-legal | 10 | 400 | 1.3 | -0.08px |
+| Token          | Size | Weight | Line height | Tracking |
+| -------------- | ---- | ------ | ----------- | -------- |
+| hero-display   | 56   | 600    | 1.07        | -0.28px  |
+| display-lg     | 40   | 600    | 1.10        | 0        |
+| display-md     | 34   | 600    | 1.47        | -0.374px |
+| lead           | 28   | 400    | 1.14        | 0.196px  |
+| tagline        | 21   | 600    | 1.19        | 0.231px  |
+| body-strong    | 17   | 600    | 1.24        | -0.374px |
+| body           | 17   | 400    | 1.47        | -0.374px |
+| caption        | 14   | 400    | 1.43        | -0.224px |
+| caption-strong | 14   | 600    | 1.29        | -0.224px |
+| button-utility | 14   | 400    | 1.29        | -0.224px |
+| fine-print     | 12   | 400    | 1.0         | -0.12px  |
+| micro-legal    | 10   | 400    | 1.3         | -0.08px  |
 
 Principles:
+
 - Negative tracking at display sizes; never at 12px or below.
 - Body runs at 17px, not 16.
 - The weight ladder is 300 / 400 / 600 / 700, with 300 rare and **500 deliberately absent**. Headlines use 600.
@@ -59,26 +60,26 @@ Base unit 8px: 4, 8, 12, 17, 24, 32, 48, and 80 for sections. Card padding is 24
 
 ## Elevation and depth
 
-| Level | Treatment | Use |
-|---|---|---|
-| Flat | no shadow, no border | sections, nav |
-| Soft hairline | 1px `rgba(0,0,0,0.08)` | utility cards, sub-nav separator |
-| Backdrop blur | `backdrop-filter: saturate(180%) blur(20px)` on parchment at 80% | sticky sub-nav, floating sticky bar |
-| Product shadow | `rgba(0,0,0,0.22) 3px 5px 30px` | product imagery only |
+| Level          | Treatment                                                        | Use                                 |
+| -------------- | ---------------------------------------------------------------- | ----------------------------------- |
+| Flat           | no shadow, no border                                             | sections, nav                       |
+| Soft hairline  | 1px `rgba(0,0,0,0.08)`                                           | utility cards, sub-nav separator    |
+| Backdrop blur  | `backdrop-filter: saturate(180%) blur(20px)` on parchment at 80% | sticky sub-nav, floating sticky bar |
+| Product shadow | `rgba(0,0,0,0.22) 3px 5px 30px`                                  | product imagery only                |
 
 Exactly one drop-shadow, and only for product imagery: never cards, buttons or text. UI elevation comes from surface-colour change and backdrop blur on sticky bars.
 
 ## Shapes
 
-| Token | Value | Use |
-|---|---|---|
-| none | 0 | full-bleed tiles |
-| xs | 5 | rare subtle chips |
-| sm | 8 | compact utility buttons, inline imagery |
-| md | 11 | pearl capsule buttons |
-| lg | 18 | utility cards |
-| pill | 9999 | primary CTAs, option chips, search: the signature Apple pill |
-| full | 50% | circular controls |
+| Token | Value | Use                                                          |
+| ----- | ----- | ------------------------------------------------------------ |
+| none  | 0     | full-bleed tiles                                             |
+| xs    | 5     | rare subtle chips                                            |
+| sm    | 8     | compact utility buttons, inline imagery                      |
+| md    | 11    | pearl capsule buttons                                        |
+| lg    | 18    | utility cards                                                |
+| pill  | 9999  | primary CTAs, option chips, search: the signature Apple pill |
+| full  | 50%   | circular controls                                            |
 
 ## Controls
 

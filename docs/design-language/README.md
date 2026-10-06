@@ -1,10 +1,11 @@
 # Nova design language: Apple refinements on violet glass
 
-**This file is binding.** The Apple references in this folder supply the *craft*. Where they conflict with Nova, this file decides.
+**This file is binding.** The Apple references in this folder supply the _craft_. Where they conflict with Nova, this file decides.
 
 Owner decision (2026-10-06): "Apple refinements on Nova", with Inter as the typeface.
 
 Nova keeps:
+
 - its identity: violet brand, per-hospital themes, the glass/solid material axis, and the brand, chrome, aurora, edge and AI gradients;
 - every accessibility rule.
 
@@ -13,6 +14,7 @@ Nova adopts Apple's typography, spacing, radius grammar, control shapes, flat el
 ## References (read for intent; this file wins on conflict)
 
 These files are copies of the project skill `.claude/skills/apple-design-system` in the HOS folder:
+
 - `apple-reference/apple-design-source.md`: the Apple visual philosophy (condensed DESIGN.md).
 - `apple-reference/tokens.md`: the token set (colour, spacing, radius, borders, type).
 - `apple-reference/components.md`: per-component specs. They are React Native; translate `View`→`div` but keep the tokens, radii, weights and border widths.
@@ -23,18 +25,19 @@ These files are copies of the project skill `.claude/skills/apple-design-system`
 - **Inter** (variable) replaces Google Sans Flex as `--nova-font-body`. IBM Plex Mono stays for figures, IDs and tabular numbers. Update the Google Fonts links in Storybook (`.storybook/preview-head.html`) and the web app (`apps/web/index.html`).
 - **Type ramp** becomes tokens, mapped into Tailwind's `@theme`:
 
-  | Token | Size |
-  |---|---|
-  | `micro` | 11px |
-  | `caption` | 13px |
-  | `callout` | 15px |
-  | `body` | 17px |
+  | Token      | Size |
+  | ---------- | ---- |
+  | `micro`    | 11px |
+  | `caption`  | 13px |
+  | `callout`  | 15px |
+  | `body`     | 17px |
   | `headline` | 20px |
-  | `title3` | 28px |
-  | `title2` | 40px |
-  | `title1` | 56px |
+  | `title3`   | 28px |
+  | `title2`   | 40px |
+  | `title1`   | 56px |
 
   Components use the ramp, never ad-hoc `text-[13px]`.
+
 - **Weights: 400 / 600 / 700 only. 500 is banned.** No `font-medium` anywhere. Labels and emphasis use 600, body 400, headlines 700.
 - Headlines (≥ 20px) tighten tracking slightly, about -0.01em. Small text is never tightened.
 - Body reading text and form input text are 17px. Dense data (table cells, chips, meta lines) uses `callout` (15) or `caption` (13). This is a clinical density decision: tables stay scannable.
@@ -44,13 +47,13 @@ These files are copies of the project skill `.claude/skills/apple-design-system`
 - Spacing scale: 2, 4, 8, 12, 16, 20, 24, 32, 48, 64. Prefer `gap` on flex containers over per-child margins. Card interior padding is 20, field padding 16 × 12, label-to-control gap 4, gap between stacked fields 16-20.
 - **Radius grammar**, from `apple-reference-tokens.md` and replacing Nova's 8/12/18:
 
-  | Token | Value | Use |
-  |---|---|---|
-  | `sm` | 6px | inline, compact |
-  | `md` | 10px | inputs, small tiles |
-  | `lg` | 14px | cards, dialogs, sheets |
-  | `xl` | 20px | large hero surfaces |
-  | `pill` | full | anything that reads as an action: buttons, filter chips, search |
+  | Token  | Value | Use                                                             |
+  | ------ | ----- | --------------------------------------------------------------- |
+  | `sm`   | 6px   | inline, compact                                                 |
+  | `md`   | 10px  | inputs, small tiles                                             |
+  | `lg`   | 14px  | cards, dialogs, sheets                                          |
+  | `xl`   | 20px  | large hero surfaces                                             |
+  | `pill` | full  | anything that reads as an action: buttons, filter chips, search |
 
   Nothing in between. Corners stay continuous (Nova's global `corner-shape: squircle`, the web equivalent of `borderCurve: 'continuous'`). True circles (avatars, switch thumbs, dots) opt out with `[corner-shape:round]`.
 
@@ -59,7 +62,7 @@ These files are copies of the project skill `.claude/skills/apple-design-system`
 - **No shadow on cards, buttons, inputs, chips, menus or dialogs.** Depth comes from surface change, 1px hairlines, the glass material's blur, and a scrim behind modals. Remove Nova's hue-tinted card and button shadows, and the glass surfaces' drop shadows. Glass keeps its frosted fill, its blur and its 1px white rim / top inset highlight; that highlight is a rim, not a shadow.
 - Two border widths only:
   - 1px for default edges;
-  - 2px `primary` only on a *selected* card or option.
+  - 2px `primary` only on a _selected_ card or option.
 - Card and divider hairlines use a soft hairline token, as subtle as Apple's.
 - **Interactive control edges are the exception.** Inputs, selects, checkboxes, radios and the switch track keep a boundary of at least 3:1 against their surface. Nova's proven `--nova-field-edge` stays: WCAG 1.4.11 applies, and clinicians must see a field. Focused uses 1px plus the focus ring in `primary`; error uses crit.
 
@@ -136,5 +139,6 @@ These files are copies of the project skill `.claude/skills/apple-design-system`
 ## Unchanged rules (still enforced by tests)
 
 Status is never colour-only. Text is at least 4.5:1, every brand proven. Focus rings and control edges are at least 3:1. Dense data is never translucent. Tenants cannot override status or AI. Components compose the primitives. `conventions.spec.ts` gains:
+
 - no `font-medium` (weight 500 is banned);
 - no shadow utilities on components.
