@@ -35,6 +35,12 @@ export const BRAND_SCHEME_TOKENS = [
   '--nova-color-primary-soft',
   '--nova-color-primary-ghost',
   '--nova-color-primary-hover',
+  // The highlight family: HOS Violet's is the prototype's sky (semantic.ts), and a hospital's is that
+  // sky moved to its own hue, keeping the violet-to-sky step between brand and highlight.
+  '--nova-color-highlight',
+  '--nova-color-highlight-soft',
+  '--nova-color-highlight-deep',
+  '--nova-color-highlight-hover',
 ] as const;
 
 export const BRAND_CHROME_TOKENS = [
@@ -47,6 +53,8 @@ export const BRAND_CHROME_TOKENS = [
   '--nova-color-chrome-accent',
   '--nova-color-chrome-accent-soft',
   '--nova-color-chrome-ring',
+  // The highlight on the chrome: the hero's far stop and the end of the .sb-bar fill.
+  '--nova-color-chrome-glow-2',
   '--nova-color-sidebar-1',
   '--nova-color-sidebar-2',
   '--nova-color-sidebar-3',
@@ -182,14 +190,13 @@ const SEEN_OVER_WHITE: ReadonlyArray<readonly [BrandChromeToken, number]> = [
   ['--nova-color-chrome-1', MATERIAL_LEVELS.glass.heroBaseAlpha],
 ];
 
-function noLighterOverWhite(
+// Darkens a moved colour until `blend` (the luminance it shows through a glass layer) is no lighter
+// than `ceiling`, HOS Violet's own.
+function noLighterThan(
   moved: string,
-  original: string,
-  alpha: number,
+  ceiling: number,
+  blend: (hex: string) => number,
 ): string {
-  const ceiling = relativeLuminance(mixColours(original, alpha, '#FFFFFF'));
-  const blend = (hex: string) =>
-    relativeLuminance(mixColours(hex, alpha, '#FFFFFF'));
   if (blend(moved) <= ceiling) return moved;
   const { c, h } = toOklch(moved);
   let target = relativeLuminance(moved);
@@ -210,8 +217,32 @@ function movePalette(
     if (!(token in TRANSLUCENT)) moved[token] = move(value);
   }
   for (const [token, alpha] of SEEN_OVER_WHITE) {
-    moved[token] = noLighterOverWhite(moved[token], palette[token], alpha);
+    const overWhite = (hex: string) =>
+      relativeLuminance(mixColours(hex, alpha, '#FFFFFF'));
+    moved[token] = noLighterThan(
+      moved[token],
+      overWhite(palette[token]),
+      overWhite,
+    );
   }
+  // The hero's far stop, the sky glow, is seen at its own alpha over the hero base over white: kept no
+  // lighter there than HOS Violet's, so white text and the hero's secondary ink keep their ratios.
+  const glow = '--nova-color-chrome-glow-2';
+  const base = '--nova-color-chrome-1';
+  const { heroEndAlpha, heroBaseAlpha } = MATERIAL_LEVELS.glass;
+  const overHero = (baseHex: string) => (hex: string) =>
+    relativeLuminance(
+      mixColours(
+        hex,
+        heroEndAlpha,
+        mixColours(baseHex, heroBaseAlpha, '#FFFFFF'),
+      ),
+    );
+  moved[glow] = noLighterThan(
+    moved[glow],
+    overHero(palette[base])(palette[glow]),
+    overHero(moved[base]),
+  );
   for (const [token, [base, alpha]] of Object.entries(TRANSLUCENT)) {
     moved[token] = rgba(moved[base], alpha);
   }

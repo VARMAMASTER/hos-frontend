@@ -49,6 +49,10 @@
   --color-primary-ghost: var(--nova-color-primary-ghost);
   --color-primary-hover: var(--nova-color-primary-hover);
   --color-on-primary: var(--nova-color-on-primary);
+  --color-highlight: var(--nova-color-highlight);
+  --color-highlight-soft: var(--nova-color-highlight-soft);
+  --color-highlight-deep: var(--nova-color-highlight-deep);
+  --color-highlight-hover: var(--nova-color-highlight-hover);
   --color-ai: var(--nova-color-ai);
   --color-ai-bright: var(--nova-color-ai-bright);
   --color-ai-deep: var(--nova-color-ai-deep);
@@ -131,6 +135,10 @@
   --nova-color-primary-ghost: #F8F5FE;
   --nova-color-primary-hover: #5636B8;
   --nova-color-on-primary: #FFFFFF;
+  --nova-color-highlight: #3276C8;
+  --nova-color-highlight-soft: #E1EEFF;
+  --nova-color-highlight-deep: #004F9C;
+  --nova-color-highlight-hover: #004F9C;
   --nova-color-ai: #0E7490;
   --nova-color-ai-bright: #22D3EE;
   --nova-color-ai-deep: #0B5567;
@@ -244,6 +252,10 @@
     --nova-color-primary-soft: light-dark(#EFEAFC, #282446);
     --nova-color-primary-ghost: light-dark(#F8F5FE, #212033);
     --nova-color-primary-hover: light-dark(#5636B8, #6241D1);
+    --nova-color-highlight: light-dark(#3276C8, #60A5FA);
+    --nova-color-highlight-soft: light-dark(#E1EEFF, #122946);
+    --nova-color-highlight-deep: light-dark(#004F9C, #7AB1F5);
+    --nova-color-highlight-hover: light-dark(#004F9C, #8CBFFF);
     --nova-color-ai: light-dark(#0E7490, #1F7D9A);
     --nova-color-ai-deep: light-dark(#0B5567, #75B7CE);
     --nova-color-ai-soft: light-dark(#DDF4FA, #022D3A);
@@ -422,7 +434,11 @@
    four-blob mesh (body::before), tinted at the strengths the legibility proof allows; its second
    brand blob is primary-hover, which is primary-strong in the light scheme and stays a deep fill in
    the dark one. The edges are .edge-premium and the KPI tile's own edge: the chrome accent into the
-   AI cyan, fading out. The bar is the prototype's .sb-bar fill. */
+   AI cyan, fading out. The bar is the prototype's .sb-bar fill, the chrome accent into the sky glow:
+   the highlight pair on the chrome. The highlight gradients are the same move on a light or dark
+   panel, the brand into the highlight: a fill (gauges, underlines, markers), a rail (a selected
+   row), an edge (an emphasised card) and the soft wash under highlight text (the brand's tint into
+   the highlight's). Each stop is proven in theme/legibility.ts. */
 /* prettier-ignore */
 :root,
 [data-nova-theme],
@@ -437,6 +453,10 @@
   --nova-gradient-edge: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-chrome-accent) 55%, transparent), color-mix(in srgb, var(--nova-color-ai-bright) 26%, transparent) 60%, transparent 85%);
   --nova-gradient-edge-kpi: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-chrome-accent) 50%, transparent), color-mix(in srgb, var(--nova-color-ai-bright) 24%, transparent) 65%, transparent 85%);
   --nova-gradient-bar: linear-gradient(90deg, var(--nova-color-chrome-accent), var(--nova-color-chrome-glow-2));
+  --nova-gradient-highlight: linear-gradient(90deg, var(--nova-color-primary), var(--nova-color-highlight));
+  --nova-gradient-highlight-rail: linear-gradient(180deg, var(--nova-color-primary), var(--nova-color-highlight));
+  --nova-gradient-highlight-edge: linear-gradient(135deg, var(--nova-color-primary), var(--nova-color-highlight));
+  --nova-gradient-highlight-wash: linear-gradient(90deg, var(--nova-color-primary-soft), var(--nova-color-highlight-soft));
   --nova-tabbar-tint: color-mix(in srgb, var(--nova-color-chrome-2) 7%, transparent);
   --nova-surface-fill: color-mix(in srgb, color-mix(in srgb, var(--nova-color-surface-2) var(--nova-surface-tint), var(--nova-color-surface)) var(--nova-surface-alpha), transparent);
   --nova-surface-border: color-mix(in srgb, var(--nova-surface-rim) calc(var(--nova-glass) * 100%), var(--nova-color-border));
@@ -772,4 +792,86 @@
   background-origin: border-box;
   background-position: left top;
   background-size: 3px 100%;
+}
+
+/* The highlight: a second accent beside the brand, used deliberately and never on an ordinary button
+   (the prototype's .btn-primary stays solid). Every utility reads the scoped gradient tokens above,
+   so it follows the nearest hospital theme and the scheme; theme/legibility.ts proves each stop.
+   The highlight is a mark, never text of its own: highlight text is the deep ink (text-highlight-deep)
+   or, for a large display figure only, nova-highlight-text. */
+
+/* A fill, brand into highlight: a gauge or progress bar (extending the prototype's .sb-bar fill), the
+   active tab's underline, a sorted column's marker, a milestone. */
+@utility nova-highlight-grad {
+  background-image: var(--nova-gradient-highlight);
+}
+
+/* The 3px rail down the left edge of a selected row, flush with the border, as the AI rail is drawn. */
+@utility nova-highlight-rail {
+  background-image: var(--nova-gradient-highlight-rail);
+  background-repeat: no-repeat;
+  background-origin: border-box;
+  background-position: left top;
+  background-size: 3px 100%;
+}
+
+/* The soft wash under highlight text (a highlight chip, tag or announcement): the brand's tint into
+   the highlight's, with the highlight tint as its solid fallback. The deep ink holds 4.5:1 across it. */
+@utility nova-highlight-wash {
+  background-color: var(--nova-color-highlight-soft);
+  background-image: var(--nova-gradient-highlight-wash);
+}
+
+/* Gradient text, brand into highlight, for large display figures only (a KPI tile's value): proven at
+   3:1, the large-text floor, point by point. The solid deep ink comes first and the clip only where
+   background-clip: text is supported, so the figure is never invisible and holds 4.5:1 unclipped.
+   The gradient spans the element's own box, so use it on an inline or w-fit element. */
+@utility nova-highlight-text {
+  color: var(--nova-color-highlight-deep);
+
+  @supports (-webkit-background-clip: text) or (background-clip: text) {
+    background-image: var(--nova-gradient-highlight);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* The 1px gradient hairline of an emphasised card or a selected option, drawn as the data edge is: a
+   masked pseudo-element whose padding is the ring. The host must be positioned (relative or
+   absolute); the ring sits just inside its border. A data surface swaps it in through
+   --nova-data-edge instead. */
+/* prettier-ignore */
+@utility nova-highlight-edge {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: var(--nova-gradient-highlight-edge);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* A 2px gradient ring a hair outside a positioned host, for an avatar. */
+/* prettier-ignore */
+@utility nova-highlight-ring {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    padding: 2px;
+    border-radius: inherit;
+    background: var(--nova-gradient-highlight-edge);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
 }

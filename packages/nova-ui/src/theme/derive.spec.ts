@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { MATERIAL_LEVELS } from '../tokens/material';
 import { NOVA_DARK } from '../tokens/scheme';
 import { NOVA_DEFAULTS } from '../tokens/semantic';
 import {
@@ -8,7 +9,7 @@ import {
   toOklch,
   withLuminance,
 } from './colour';
-import { contrastRatio } from './contrast';
+import { contrastRatio, mixColours } from './contrast';
 import {
   BRAND_CHROME_TOKENS,
   BRAND_SCHEME_TOKENS,
@@ -117,7 +118,7 @@ describe('deriveNovaPalette', () => {
   });
 
   // Contrast is a function of luminance, so a colour moved at its own luminance keeps every ratio
-  // it was proven at. (The top bar and hero chrome are only ever darker, see below.)
+  // it was proven at. (The top bar and hero chrome, and the hero's sky glow, are only ever darker.)
   it('moves each opaque colour at the luminance it had in HOS Violet, so every proven ratio survives', () => {
     const { light, dark } = deriveNovaPalette(teal);
     for (const [palette, template] of [
@@ -132,7 +133,8 @@ describe('deriveNovaPalette', () => {
         const moved = relativeLuminance(value);
         if (
           token === '--nova-color-chrome-1' ||
-          token === '--nova-color-chrome-3'
+          token === '--nova-color-chrome-3' ||
+          token === '--nova-color-chrome-glow-2'
         ) {
           expect(moved, token).toBeLessThanOrEqual(pinned + 0.002);
         } else {
@@ -197,6 +199,144 @@ describe('deriveNovaPalette', () => {
     });
     expect(toOklch(light['--nova-color-chrome-2']).c).toBeLessThan(0.01);
     expect(toOklch(light['--nova-color-bg']).c).toBeLessThan(0.005);
+  });
+});
+
+// The highlight: a second accent, used deliberately beside the brand (a gauge fill, the active tab's
+// underline, a KPI's gradient figure, a "New" chip). For HOS Violet it is the prototype's own sky,
+// --chrome-glow-2 (#60A5FA): the far stop of the hero, the .sb-bar fill and the aurora. Like every
+// brand colour it is built, then moved to a hospital's hue at the same luminance.
+describe('the highlight family', () => {
+  const HIGHLIGHT = [
+    '--nova-color-highlight',
+    '--nova-color-highlight-soft',
+    '--nova-color-highlight-deep',
+    '--nova-color-highlight-hover',
+  ] as const;
+  const sky = toOklch(NOVA_DEFAULTS['--nova-color-chrome-glow-2']);
+
+  it('is a brand scheme token family, so every hospital theme derives its own in both schemes', () => {
+    for (const token of HIGHLIGHT) {
+      expect(BRAND_SCHEME_TOKENS as readonly string[], token).toContain(token);
+      expect(token in NOVA_DARK, token).toBe(true);
+    }
+  });
+
+  // Built, not picked: the sky's hue and chroma, pinned to the luminance of each member's twin in the
+  // brand family, so the highlight passes exactly the proofs the brand family passes.
+  it("is the prototype's sky for HOS Violet: #60A5FA itself in the dark, held to its legible luminance in the light", () => {
+    expect(NOVA_DEFAULTS['--nova-color-chrome-glow-2']).toBe('#60A5FA');
+    const strong = relativeLuminance(
+      NOVA_DEFAULTS['--nova-color-primary-strong'],
+    );
+    const soft = relativeLuminance(NOVA_DEFAULTS['--nova-color-primary-soft']);
+    const deep = withLuminance(sky.h, sky.c, strong, 'darker');
+    expect({
+      '--nova-color-highlight': NOVA_DEFAULTS['--nova-color-highlight'],
+      '--nova-color-highlight-soft':
+        NOVA_DEFAULTS['--nova-color-highlight-soft'],
+      '--nova-color-highlight-deep':
+        NOVA_DEFAULTS['--nova-color-highlight-deep'],
+      '--nova-color-highlight-hover':
+        NOVA_DEFAULTS['--nova-color-highlight-hover'],
+    }).toEqual({
+      '--nova-color-highlight': withLuminance(sky.h, sky.c, 0.18, 'darker'),
+      '--nova-color-highlight-soft': withLuminance(
+        sky.h,
+        Math.min(sky.c, 0.03),
+        soft,
+        'lighter',
+      ),
+      '--nova-color-highlight-deep': deep,
+      '--nova-color-highlight-hover': deep,
+    });
+    expect({
+      '--nova-color-highlight': NOVA_DARK['--nova-color-highlight'],
+      '--nova-color-highlight-soft': NOVA_DARK['--nova-color-highlight-soft'],
+      '--nova-color-highlight-deep': NOVA_DARK['--nova-color-highlight-deep'],
+      '--nova-color-highlight-hover': NOVA_DARK['--nova-color-highlight-hover'],
+    }).toEqual({
+      '--nova-color-highlight': '#60A5FA',
+      '--nova-color-highlight-soft': withLuminance(
+        sky.h,
+        Math.min(sky.c, 0.06),
+        DARK_BRAND_LUMINANCE.primarySoft,
+        'darker',
+      ),
+      '--nova-color-highlight-deep': withLuminance(
+        sky.h,
+        sky.c * 0.8,
+        DARK_BRAND_LUMINANCE.primaryStrong,
+        'lighter',
+      ),
+      '--nova-color-highlight-hover': withLuminance(
+        sky.h,
+        sky.c,
+        0.5,
+        'lighter',
+      ),
+    });
+  });
+
+  it('keeps every member on the sky hue', () => {
+    for (const token of HIGHLIGHT) {
+      for (const value of [NOVA_DEFAULTS[token], NOVA_DARK[token]]) {
+        expect(Math.abs(hueDelta(toOklch(value).h, sky.h)), token).toBeLessThan(
+          3,
+        );
+      }
+    }
+  });
+
+  it("moves to each hospital's hue, keeping the violet-to-sky step between brand and highlight", () => {
+    const step = hueDelta(toOklch(HOS_VIOLET).h, sky.h);
+    for (const brand of [teal, { ...teal, primary: '#9D174D' }]) {
+      const { light, dark } = deriveNovaPalette(brand);
+      const brandHue = toOklch(brand.primary).h;
+      for (const palette of [light, dark]) {
+        const offset = hueDelta(
+          brandHue,
+          toOklch(palette['--nova-color-highlight']).h,
+        );
+        expect(Math.abs(offset - step), brand.primary).toBeLessThan(8);
+        expect(palette['--nova-color-highlight']).not.toBe(
+          NOVA_DEFAULTS['--nova-color-highlight'],
+        );
+      }
+    }
+  });
+
+  // The hero's far stop is the highlight on the chrome. It follows the brand, but blended over the
+  // hero base over white it is never lighter than HOS Violet's, so white text on the hero keeps the
+  // ratio material.spec.ts proves for the prototype's own sky.
+  it("makes the chrome's sky glow (the hero's far stop) the brand's highlight, never lighter over the hero base than the prototype's", () => {
+    expect(BRAND_CHROME_TOKENS as readonly string[]).toContain(
+      '--nova-color-chrome-glow-2',
+    );
+    const glass = MATERIAL_LEVELS.glass;
+    const lightestHero = (palette: Record<string, string>) =>
+      relativeLuminance(
+        mixColours(
+          palette['--nova-color-chrome-glow-2'] ?? '',
+          glass.heroEndAlpha,
+          mixColours(
+            palette['--nova-color-chrome-1'] ?? '',
+            glass.heroBaseAlpha,
+            '#FFFFFF',
+          ),
+        ),
+      );
+    const ceiling = lightestHero(NOVA_DEFAULTS);
+    for (let hue = 0; hue < 360; hue += 15) {
+      for (const chroma of [0.05, 0.12, 0.3]) {
+        const primary = withLuminance(hue, chroma, 0.142, 'darker');
+        const { light } = deriveNovaPalette({ primary });
+        expect(lightestHero(light), primary).toBeLessThanOrEqual(ceiling);
+      }
+    }
+    expect(
+      deriveNovaPalette(teal).light['--nova-color-chrome-glow-2'],
+    ).not.toBe('#60A5FA');
   });
 });
 

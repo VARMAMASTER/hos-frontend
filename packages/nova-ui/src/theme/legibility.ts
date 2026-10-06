@@ -180,6 +180,53 @@ export function legibilityChecks(
     );
   }
 
+  // The highlight, through the brand's own gates. Its marks (a gauge fill, the active tab's underline,
+  // a selected edge, a selected row's rail, a milestone node, an avatar ring) and its hovered edge at
+  // 3:1 on every ground a control sits on. Its deep ink at 4.5:1 on its tint, across the wash (the
+  // brand's tint into the highlight's) and on the panels. And the gradient figure, brand into
+  // highlight, at 3:1 as large display text on an opaque tile, point by point along the gradient.
+  const highlight = hex('--nova-color-highlight');
+  const highlightDeep = hex('--nova-color-highlight-deep');
+  const highlightSoft = hex('--nova-color-highlight-soft');
+  for (const ground of grounds) {
+    check(
+      'a highlight mark (a fill, an underline, an edge or a ring)',
+      highlight,
+      ground,
+      MARK,
+      true,
+    );
+    check(
+      'a hovered highlight edge',
+      hex('--nova-color-highlight-hover'),
+      ground,
+      MARK,
+      true,
+    );
+  }
+  check('highlight text on its tint', highlightDeep, highlightSoft, TEXT, true);
+  for (let step = 0; step <= 4; step++) {
+    check(
+      'highlight text on the highlight wash',
+      highlightDeep,
+      mixColours(highlightSoft, step / 4, soft),
+      TEXT,
+      true,
+    );
+  }
+  for (const ground of [surface, surface2]) {
+    check('highlight text on a panel', highlightDeep, ground, TEXT, true);
+    for (let step = 0; step <= 10; step++) {
+      check(
+        'the highlight gradient as large display text',
+        mixColours(highlight, step / 10, primary),
+        ground,
+        MARK,
+        true,
+      );
+    }
+  }
+
   // The top bar at its lightest: its light end over white, which is what a sticky bar has under it
   // when it scrolls over the lightest thing there is. Then its search field, lifted by the field fill.
   const topbar = mixColours(chrome3, m.chromeEndAlpha, WHITE);

@@ -30,6 +30,18 @@ export const NOVA_DEFAULTS = {
   // a dark panel there) while this stays a fill white text holds 4.5:1 on.
   '--nova-color-primary-hover': p.violet[700],
   '--nova-color-on-primary': p.white,
+  // The highlight: a second accent, used deliberately beside the brand (a gauge fill, the active
+  // tab's underline, a KPI's gradient figure, a "New" chip). For HOS Violet it is the prototype's sky,
+  // --chrome-glow-2, the far stop of every prototype brand gradient (the hero, .sb-bar, the aurora).
+  // Each member is the sky pinned to its brand twin's luminance, so it passes the brand's proofs: the
+  // highlight is a 3:1 mark on every ground (2.5:1 for #60A5FA itself on white, so it is held at the
+  // lightest value that passes), deep is text at 4.5:1 on soft, on the wash and on a panel, and hover
+  // is the mark one step further from the ground. The highlight carries no text of its own and never
+  // carries state alone. A hospital theme derives its own (theme/derive.ts).
+  '--nova-color-highlight': p.sky[600],
+  '--nova-color-highlight-soft': p.sky[50],
+  '--nova-color-highlight-deep': p.sky[800],
+  '--nova-color-highlight-hover': p.sky[800],
   // AI signature (--ai, --ai-bright, --ai-deep, --ai-soft, --ai-ghost, --ai-line)
   '--nova-color-ai': p.cyan[700],
   '--nova-color-ai-bright': p.cyan[400],

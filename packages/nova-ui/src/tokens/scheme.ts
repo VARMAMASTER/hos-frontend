@@ -40,6 +40,12 @@ export const NOVA_DARK = {
   '--nova-color-primary-soft': '#282446',
   '--nova-color-primary-ghost': '#212033',
   '--nova-color-primary-hover': '#6241D1',
+  // The highlight in the dark is the prototype's sky itself (#60A5FA, 6.4:1 on a dark panel), its tint
+  // and ink pinned as the brand's are (0.022 and 0.42), and its hover a step lighter (0.5).
+  '--nova-color-highlight': '#60A5FA',
+  '--nova-color-highlight-soft': '#122946',
+  '--nova-color-highlight-deep': '#7AB1F5',
+  '--nova-color-highlight-hover': '#8CBFFF',
   '--nova-color-ai': '#1F7D9A',
   '--nova-color-ai-deep': '#75B7CE',
   '--nova-color-ai-soft': '#022D3A',

@@ -3,6 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { relativeLuminance, withLuminance } from '../theme/colour';
 import { contrastRatio, mixColours } from '../theme/contrast';
 import { screenColours } from '../theme/legibility';
 import {
@@ -466,6 +467,78 @@ describe('the keyboard focus ring holds 3:1 for every hospital brand', () => {
   it('the white ring on the top bar and the hero', () => {
     expect(contrastRatio(white, lightestTopbar)).toBeGreaterThanOrEqual(3);
     expect(contrastRatio(white, lightestHero)).toBeGreaterThanOrEqual(3);
+  });
+});
+
+// The highlight (theme/derive.ts) is moved to a hospital's hue at the luminance it has here, give or
+// take the rounding derive.spec.ts allows (0.006). Contrast depends on luminance alone, so a grey at
+// the worst luminance in that window stands for every hospital's highlight.
+const NUDGE = 0.006;
+const greyAt = (luminance: number) => withLuminance(0, 0, luminance, 'nearest');
+const lighterBound = (hex: string) => greyAt(relativeLuminance(hex) + NUDGE);
+const darkerBound = (hex: string) => greyAt(relativeLuminance(hex) - NUDGE);
+const highlight = NOVA_DEFAULTS['--nova-color-highlight'];
+const highlightDeep = NOVA_DEFAULTS['--nova-color-highlight-deep'];
+const highlightSoft = NOVA_DEFAULTS['--nova-color-highlight-soft'];
+const highlightHover = NOVA_DEFAULTS['--nova-color-highlight-hover'];
+
+describe('the highlight holds for every hospital brand', () => {
+  // A gauge fill, the active tab's underline, a selected card's edge, a milestone node and an avatar
+  // ring sit on the canvas, on a glass panel over it and on an opaque card.
+  it.each([
+    ['the darkest canvas', darkestCanvas],
+    [
+      'a glass panel over it',
+      mixColours(white, GLASS.surfaceAlpha, darkestCanvas),
+    ],
+    [
+      'an overlay over it',
+      mixColours(white, GLASS.overlayAlpha, darkestCanvas),
+    ],
+    ['an opaque card', white],
+  ])('a highlight mark (and its hovered edge) at 3:1 on %s', (_, ground) => {
+    for (const mark of [highlight, highlightHover]) {
+      expect(contrastRatio(lighterBound(mark), ground)).toBeGreaterThanOrEqual(
+        3,
+      );
+    }
+  });
+
+  // The prototype's sky is held in the light scheme: as a mark on a white card it is 2.5:1.
+  it("would fail with the prototype's sky (#60A5FA) on a light panel, which is why the light highlight is held", () => {
+    expect(contrastRatio(HERO_SKY, white)).toBeLessThan(3);
+    expect(contrastRatio(highlight, white)).toBeGreaterThanOrEqual(3);
+  });
+
+  // Highlight text: the deep ink on its own tint, on the wash (the brand's soft tint into the
+  // highlight's) and on a panel.
+  it('keeps highlight text at 4.5:1 on its tint, its wash and a panel', () => {
+    const ink = lighterBound(highlightDeep);
+    for (const ground of [
+      darkerBound(highlightSoft),
+      darkerBound(NOVA_DEFAULTS['--nova-color-primary-soft']),
+      white,
+      NOVA_DEFAULTS['--nova-color-surface-2'],
+    ]) {
+      expect(contrastRatio(ink, ground), ground).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  // The gradient figure on a KPI tile: every point from the lightest brand the gate allows to the
+  // highlight, at 3:1 on the opaque tile (large text, WCAG 1.4.3). sRGB interpolation never yields a
+  // colour lighter than its lighter end, which these samples confirm.
+  it('keeps the highlight gradient at 3:1 as large display text, point by point, with a 4.5:1 solid fallback', () => {
+    for (let step = 0; step <= 10; step++) {
+      const point = mixColours(
+        lighterBound(highlight),
+        step / 10,
+        lightestPrimary,
+      );
+      expect(contrastRatio(point, white), point).toBeGreaterThanOrEqual(3);
+    }
+    expect(
+      contrastRatio(lighterBound(highlightDeep), white),
+    ).toBeGreaterThanOrEqual(4.5);
   });
 });
 

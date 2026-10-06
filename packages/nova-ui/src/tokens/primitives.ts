@@ -33,6 +33,12 @@ export const primitives = {
     // prototype).
     sidebar: { 1: '#26185A', 2: '#1A0F42', 3: '#150C34' },
   },
+  // The highlight (see --nova-color-highlight* in semantic.ts and scheme.ts): the prototype's sky,
+  // --chrome-glow-2 (#60A5FA, chrome.glow2 above), at its own hue and chroma, pinned to the luminance
+  // of each member's twin in the brand family (derive.spec.ts rebuilds them). 600 holds 3:1 on every
+  // light ground, which the prototype's sky (2.5:1 on white) does not. The dark values are in
+  // NOVA_DARK (scheme.ts), with the other dark values.
+  sky: { 50: '#E1EEFF', 600: '#3276C8', 800: '#004F9C' },
   // The data palette (see --nova-chart-* in semantic.ts): sky, gold, rose, olive, lavender, plum.
   data: {
     sky: '#248FCC',
