@@ -128,7 +128,9 @@ describe('Button', () => {
       const md = screen.getByRole('button', { name: 'Admit' });
       const sm = screen.getByRole('button', { name: 'Hold' });
       for (const button of [md, sm]) {
+        // A true capsule: the global squircle would flatten the ends into a rounded rectangle.
         expect(button.classList.contains('rounded-full')).toBe(true);
+        expect(button.classList.contains('[corner-shape:round]')).toBe(true);
         expect(button.classList.contains('font-normal')).toBe(true);
         expect(button.className).not.toMatch(/font-(?:medium|semibold|bold)/);
       }
@@ -137,6 +139,17 @@ describe('Button', () => {
       );
       expect(sm.classList.contains('text-callout')).toBe(true);
     });
+
+    // Every variant carries a 1px border (transparent unless it is the outline's edge), so a row of
+    // mixed variants shares one height.
+    it.each(['primary', 'outline', 'ghost', 'danger', 'ai'] as const)(
+      'gives the %s variant a 1px border, so every variant is the same height',
+      (variant) => {
+        render(<Button variant={variant}>Go</Button>);
+        const button = screen.getByRole('button', { name: 'Go' });
+        expect(button.classList.contains('border')).toBe(true);
+      },
+    );
 
     it.each(['primary', 'outline', 'ghost', 'danger', 'ai'] as const)(
       'paints the %s variant with no shadow and no gradient',

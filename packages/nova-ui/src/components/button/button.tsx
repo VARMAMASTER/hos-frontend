@@ -28,7 +28,10 @@ type DrawnVariant = Exclude<ButtonVariant, 'secondary'>;
 // The pill CTA (docs/design-language/README.md): the shape carries the emphasis, so the label stays
 // at 400, and there is never a shadow or a gradient. It presses to 0.95, only when motion is welcome.
 const base = cx(
-  'relative inline-flex items-center justify-center rounded-full font-normal',
+  // A true capsule opts out of the global squircle, which would flatten its ends into a rounded
+  // rectangle. Every variant has a 1px border (transparent unless it is the outline's edge), so a row
+  // of mixed variants shares one height.
+  'relative inline-flex items-center justify-center rounded-full [corner-shape:round] border font-normal',
   'transition-[color,background-color,border-color,transform] duration-150 ease-out motion-reduce:transition-none',
   'motion-safe:active:scale-95 aria-disabled:active:scale-100 aria-busy:active:scale-100',
   focusRing,
@@ -42,12 +45,13 @@ const base = cx(
 // chrome included; the theme gate also holds that text on primary-soft (hover) and the canvas
 // (ghost).
 const variants: Record<DrawnVariant, string> = {
-  primary: 'bg-primary text-on-primary hover:bg-primary-strong',
+  primary:
+    'border-transparent bg-primary text-on-primary hover:bg-primary-strong',
   outline:
-    'border border-primary bg-surface text-primary-strong hover:bg-primary-soft',
-  ghost: 'text-primary-strong hover:bg-primary-soft',
-  danger: 'bg-crit text-on-primary hover:bg-crit-deep',
-  ai: 'bg-ai text-on-primary hover:bg-ai-deep',
+    'border-primary bg-surface text-primary-strong hover:bg-primary-soft',
+  ghost: 'border-transparent text-primary-strong hover:bg-primary-soft',
+  danger: 'border-transparent bg-crit text-on-primary hover:bg-crit-deep',
+  ai: 'border-transparent bg-ai text-on-primary hover:bg-ai-deep',
 };
 
 const AI_SPARK = "before:content-['✦'_/_'']";

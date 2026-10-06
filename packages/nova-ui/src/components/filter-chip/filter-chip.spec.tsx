@@ -85,6 +85,7 @@ describe('FilterChip', () => {
     expect([...chip.classList]).toEqual(
       expect.arrayContaining([
         'rounded-full',
+        '[corner-shape:round]',
         'text-caption',
         'bg-surface-2',
         'motion-safe:active:scale-[0.96]',

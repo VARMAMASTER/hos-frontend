@@ -73,7 +73,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
           // backdrop, material.spec.ts), so the track is its own boundary and the white thumb reads
           // on it at 4.8:1. On, it fills with the primary, which nova-field also edges.
           className={cx(
-            'nova-field group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full',
+            'nova-field group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full [corner-shape:round]',
             '[--nova-field-fill:var(--nova-color-border-control)] hover:[--nova-field-fill:var(--nova-color-ink-2)]',
             'transition-colors duration-200 ease-out motion-reduce:transition-none aria-checked:bg-primary',
             focusRing,

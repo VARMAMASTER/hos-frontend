@@ -191,7 +191,12 @@ describe('Switch, iOS-style', () => {
     render(<Switch label="Ramesh SMS" />);
     const track = screen.getByRole('switch');
     expect([...track.classList]).toEqual(
-      expect.arrayContaining(['rounded-full', 'h-7', 'w-12']),
+      expect.arrayContaining([
+        'rounded-full',
+        '[corner-shape:round]',
+        'h-7',
+        'w-12',
+      ]),
     );
     const thumb = track.querySelector('span') as HTMLElement;
     expect([...thumb.classList]).toEqual(

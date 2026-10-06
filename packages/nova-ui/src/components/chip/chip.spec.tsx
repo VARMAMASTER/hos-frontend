@@ -24,6 +24,7 @@ describe('Chip', () => {
     expect([...chip.classList]).toEqual(
       expect.arrayContaining([
         'rounded-full',
+        '[corner-shape:round]',
         'px-2',
         'py-0.5',
         'text-caption',

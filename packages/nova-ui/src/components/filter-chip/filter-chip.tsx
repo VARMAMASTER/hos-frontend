@@ -50,7 +50,7 @@ export const FilterChip = forwardRef<HTMLButtonElement, FilterChipProps>(
         type="button"
         aria-pressed={isOn}
         className={cx(
-          'inline-flex min-h-8 cursor-pointer items-center gap-1 rounded-full border px-3 py-1 text-caption font-semibold',
+          'inline-flex min-h-8 cursor-pointer items-center gap-1 rounded-full [corner-shape:round] border px-3 py-1 text-caption font-semibold',
           'transition-[color,background-color,border-color,transform] duration-150 ease-out motion-reduce:transition-none motion-safe:active:scale-[0.96]',
           isOn
             ? 'border-primary bg-primary text-on-primary hover:border-primary-strong hover:bg-primary-strong'

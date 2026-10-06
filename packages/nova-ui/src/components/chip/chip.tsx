@@ -34,7 +34,7 @@ export function Chip({ tone = 'neutral', className, ...rest }: ChipProps) {
     <span
       data-tone={tone}
       className={cx(
-        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-caption font-semibold',
+        'inline-flex items-center gap-1 rounded-full [corner-shape:round] px-2 py-0.5 text-caption font-semibold',
         tones[tone],
         className,
       )}
