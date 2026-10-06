@@ -24,7 +24,7 @@ function Preset({
     <NovaThemeProvider
       theme={theme}
       scheme={scheme}
-      className="nova-canvas flex flex-col gap-3 rounded-lg p-4 text-ink"
+      className="nova-canvas flex flex-col gap-3 rounded-lg p-4 text-ink motion-safe:transition-colors motion-safe:duration-base motion-safe:ease-standard"
     >
       <div className="nova-chrome flex items-center justify-between rounded-md px-4 py-2.5">
         <span className="text-[13px] font-semibold">{theme.name}</span>
