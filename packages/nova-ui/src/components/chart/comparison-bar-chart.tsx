@@ -54,6 +54,8 @@ const STATUS = 'Status';
 const MET = 'Met target';
 
 const BAR_SIZE = 12;
+// Room right of the bullet track for its figures ("11.2 / 10").
+const FIGURES_MARGIN = 88;
 const BAR_RADIUS: [number, number, number, number] = [0, 4, 4, 0];
 
 interface LabelProps {
@@ -62,6 +64,12 @@ interface LabelProps {
   width?: number | string;
   height?: number | string;
   value?: unknown;
+}
+
+interface BulletLabelProps extends LabelProps {
+  index?: number;
+  // The chart's box, margins included.
+  parentViewBox?: { x: number; width: number };
 }
 
 // Actual against target per department. As a bullet chart, each department is a bar on a track with
@@ -226,7 +234,7 @@ export function ComparisonBarChart({
     ) * 1.05,
   );
 
-  // The bar, its target tick and its figures, drawn together so the tick sits on the track's scale.
+  // The bar and its target tick, drawn together so the tick sits on the track's scale.
   const bullet = (props: BarShapeProps) => {
     const datum = (props.payload ?? {}) as ChartDatum;
     const actual = reading(datum[actualKey]);
@@ -276,20 +284,30 @@ export function ComparisonBarChart({
             colour={WARN}
           />
         ) : null}
-        {actual !== null ? (
-          <text
-            data-bullet-label=""
-            x={trackX + trackWidth + 8}
-            y={middle}
-            dominantBaseline="central"
-            className="fill-ink text-[12px] font-semibold tabular-nums"
-          >
-            {target !== null
-              ? `${show(actual)} / ${show(target)}`
-              : show(actual)}
-          </text>
-        ) : null}
       </g>
+    );
+  };
+
+  // The figures after the track. They are a label list, not part of the bar shape: the bars are
+  // clipped to the plot, and the track runs to its right edge.
+  const figures = ({ y, height, index, parentViewBox }: BulletLabelProps) => {
+    const datum = rows[index ?? -1];
+    const actual = reading(datum?.[actualKey]);
+    if (!datum || actual === null || !parentViewBox) {
+      return null;
+    }
+    const target = reading(datum[targetKey]);
+    return (
+      <text
+        data-bullet-label=""
+        // The chart box less the right margin is the end of the track.
+        x={parentViewBox.x + parentViewBox.width - FIGURES_MARGIN + 8}
+        y={Number(y) + Number(height) / 2}
+        dominantBaseline="central"
+        className="fill-ink text-[12px] font-semibold tabular-nums"
+      >
+        {target !== null ? `${show(actual)} / ${show(target)}` : show(actual)}
+      </text>
     );
   };
 
@@ -320,7 +338,7 @@ export function ComparisonBarChart({
       <BarChart
         data={rows as Array<Record<string, unknown>>}
         layout="vertical"
-        margin={{ top: 8, right: 88, bottom: 0, left: 0 }}
+        margin={{ top: 8, right: FIGURES_MARGIN, bottom: 0, left: 0 }}
       >
         <CartesianGrid horizontal={false} stroke={GRID_STROKE} />
         <XAxis
@@ -348,7 +366,9 @@ export function ComparisonBarChart({
           barSize={BAR_SIZE}
           shape={bullet}
           isAnimationActive={animate}
-        />
+        >
+          <LabelList dataKey={actualKey} content={figures} />
+        </Bar>
       </BarChart>
     </ChartFrame>
   );

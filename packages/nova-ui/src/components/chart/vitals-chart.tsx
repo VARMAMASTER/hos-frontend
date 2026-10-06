@@ -156,16 +156,25 @@ function withUnit(label: ReactNode, unit: string | undefined): ReactNode {
 
 const range = (min: number, max: number) => `${min}–${max}`;
 
-// The value axis: the entry's own domain, or the readings, ranges and thresholds with 10% air.
-function domainOf(
+// A tick step of 1, 2 or 5 x 10^n, about a quarter of the span: four or five round ticks a panel.
+function tickStep(span: number): number {
+  if (!(span > 0)) {
+    return 1;
+  }
+  const power = 10 ** Math.floor(Math.log10(span));
+  return ([1, 2, 5, 10].find((m) => m * power >= span) ?? 10) * power;
+}
+
+const exact = (n: number) => Math.round(n * 1e6) / 1e6;
+
+// The value axis: the entry's own domain, or the readings, ranges and thresholds widened to round
+// figures, with a tick at every step.
+function axisOf(
   keys: ReadonlyArray<string>,
   rows: ReadonlyArray<ChartDatum>,
   config: VitalsConfig,
-): [number, number] {
+): { domain: [number, number]; ticks: number[] } {
   const fixed = keys.map((key) => config[key]?.domain).find(Boolean);
-  if (fixed) {
-    return [fixed[0], fixed[1]];
-  }
   const values = keys.flatMap((key) => {
     const entry = config[key];
     return [
@@ -174,13 +183,23 @@ function domainOf(
       ...(entry?.thresholds ?? []).map((threshold) => threshold.value),
     ];
   });
-  if (values.length === 0) {
-    return [0, 1];
+  const low = fixed ? fixed[0] : values.length > 0 ? Math.min(...values) : 0;
+  const high = fixed ? fixed[1] : values.length > 0 ? Math.max(...values) : 1;
+  const step = tickStep((high - low) / 4);
+  const from = fixed ? low : Math.floor(low / step) * step;
+  let to = fixed ? high : Math.ceil(high / step) * step;
+  if (to <= from) {
+    to = from + step;
   }
-  const low = Math.min(...values);
-  const high = Math.max(...values);
-  const air = (high - low) * 0.1 || 1;
-  return [Math.floor(low - air), Math.ceil(high + air)];
+  const ticks: number[] = [];
+  for (
+    let tick = Math.ceil(from / step) * step;
+    tick <= to + 1e-9;
+    tick += step
+  ) {
+    ticks.push(exact(tick));
+  }
+  return { domain: [exact(from), exact(to)], ticks };
 }
 
 // Patient vitals over time, as small multiples on one time axis: each panel shades its normal range,
@@ -449,12 +468,11 @@ export function VitalsChart({
                     />
                   )}
                   <YAxis
-                    domain={domainOf(panel.seriesKeys, rows, config)}
+                    {...axisOf(panel.seriesKeys, rows, config)}
                     tickLine={false}
                     axisLine={false}
                     tick={VALUE_TICK}
                     width={40}
-                    tickCount={4}
                   />
                   {normals.map(({ key, normal }) =>
                     normal ? (
@@ -480,7 +498,8 @@ export function VitalsChart({
                         ifOverflow="extendDomain"
                         label={{
                           value: threshold.label,
-                          position: 'insideTopRight',
+                          // The left end: now, usually the right edge, has its label there.
+                          position: 'insideTopLeft',
                           fill: 'var(--nova-color-ink-2)',
                           fontSize: 11,
                         }}
@@ -512,7 +531,8 @@ export function VitalsChart({
                         first
                           ? {
                               value: 'Now',
-                              position: 'insideTopLeft',
+                              // Left of the rule: now is usually the right edge.
+                              position: 'insideTopRight',
                               fill: 'var(--nova-color-ink-2)',
                               fontSize: 11,
                             }

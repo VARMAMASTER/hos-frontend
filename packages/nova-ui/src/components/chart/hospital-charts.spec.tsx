@@ -85,6 +85,19 @@ function describedText(figure: HTMLElement): string {
   );
 }
 
+// The x of a category's axis tick, and of a marker (the first point of its polygon is its centre x).
+function tickX(container: HTMLElement, label: string): number {
+  const tick = Array.from(
+    container.querySelectorAll('.recharts-xAxis-tick-labels text'),
+  ).find((text) => text.textContent === label);
+  return Number(tick?.getAttribute('x'));
+}
+
+function markerX(container: HTMLElement, selector: string): number {
+  const points = container.querySelector(selector)?.getAttribute('points');
+  return Number(points?.split(',')[0]);
+}
+
 // A breach marker never relies on colour: its shape says high or low.
 function flags(container: HTMLElement, attribute: string): string[] {
   return Array.from(container.querySelectorAll(`[${attribute}]`)).map(
@@ -216,6 +229,34 @@ describe('VitalsChart', () => {
       container.querySelectorAll('[data-vital-now]').length,
     ).toBeGreaterThan(0);
     expect(screen.getAllByText('Now').length).toBeGreaterThan(0);
+  });
+
+  // Now is usually the last reading, at the right edge: its label sits left of the rule.
+  it('writes the now label on the inside of the rule, so it is never cut off at the edge', () => {
+    const { container } = render(<VitalsChart {...props} now="09:00" />);
+    const label = Array.from(container.querySelectorAll('text')).find(
+      (text) => text.textContent === 'Now',
+    );
+    expect(label?.getAttribute('text-anchor')).toBe('end');
+    // Threshold names sit at the left end of their rule, clear of the now label at the right.
+    const threshold = Array.from(container.querySelectorAll('text')).find(
+      (text) => text.textContent === 'Tachycardia',
+    );
+    expect(threshold?.getAttribute('text-anchor')).toBe('start');
+  });
+
+  it('puts round figures on each value axis', () => {
+    const { container } = render(<VitalsChart {...props} />);
+    const axes = Array.from(
+      container.querySelectorAll('.recharts-yAxis-tick-labels'),
+    ).map((axis) =>
+      Array.from(axis.querySelectorAll('text')).map((text) => text.textContent),
+    );
+    // Heart rate spans 60-130 (range and threshold): steps of 20. SpO2 spans 91-100: steps of 5.
+    expect(axes).toEqual([
+      ['60', '80', '100', '120', '140'],
+      ['90', '95', '100'],
+    ]);
   });
 
   it('groups series into one panel when asked (systolic and diastolic blood pressure)', () => {
@@ -376,6 +417,20 @@ describe('OccupancyAreaChart', () => {
     expect(
       container.querySelector('[data-occupancy-over]')?.tagName.toLowerCase(),
     ).toBe('polygon');
+  });
+
+  // A marker is a reference element, not part of a series: it must land on its period's tick.
+  it('puts each marker on its period, at the axis tick', () => {
+    const { container } = render(<OccupancyAreaChart {...props} />);
+    expect(markerX(container, '[data-occupancy-over]')).toBeCloseTo(
+      tickX(container, 'Wed'),
+      0,
+    );
+    expect(
+      container.querySelectorAll(
+        '.recharts-xAxis .recharts-cartesian-axis-tick',
+      ),
+    ).toHaveLength(4);
   });
 
   it('names the wards, the capacity and the over-capacity marker in its legend', () => {
@@ -597,6 +652,19 @@ describe('WaitTimeChart', () => {
     ).toBe('diamond');
   });
 
+  it('puts each marker on its hour, at the axis tick', () => {
+    const { container } = render(<WaitTimeChart {...props} />);
+    expect(markerX(container, '[data-wait-breach="p50"]')).toBeCloseTo(
+      tickX(container, '10:00'),
+      0,
+    );
+    expect(
+      container.querySelectorAll(
+        '.recharts-xAxis .recharts-cartesian-axis-tick',
+      ),
+    ).toHaveLength(4);
+  });
+
   it('names the median, the band, the target and both markers in its legend', () => {
     render(<WaitTimeChart {...props} />);
     expect(
@@ -773,6 +841,21 @@ describe('DepartmentHeatmap', () => {
       container.querySelector('[data-heat-grid]') as Element,
     );
     expect(screen.queryByRole('tooltip', { hidden: true })).toBeNull();
+  });
+
+  it('writes each hour label in full, never truncated to an ellipsis', () => {
+    const { container } = render(<DepartmentHeatmap {...props} />);
+    const head = Array.from(
+      container.querySelectorAll('[data-heat-column]'),
+    ).map((label) => ({
+      text: label.textContent,
+      truncated: label.classList.contains('truncate'),
+    }));
+    expect(head).toEqual([
+      { text: '08:00', truncated: false },
+      { text: '09:00', truncated: false },
+      { text: '10:00', truncated: false },
+    ]);
   });
 
   it('has a scale legend from zero to the maximum, and no data, in words', () => {
@@ -1191,6 +1274,29 @@ describe('ComparisonBarChart', () => {
       x0 + (width * 100) / 120,
       1,
     );
+  });
+
+  // The bars are clipped to the plot; figures drawn with them past the track were cut off. They
+  // are a label list of their own, after the track.
+  it('writes each department figures after its track, in the label layer outside the bar clip', () => {
+    const { container } = render(<ComparisonBarChart {...props} />);
+    const labels = Array.from(
+      container.querySelectorAll('[data-bullet-label]'),
+    );
+    expect(labels.map((label) => label.textContent)).toEqual([
+      '112 / 100',
+      '74 / 90',
+      '60 / 60',
+    ]);
+    labels.forEach((label) => {
+      expect(label.closest('.recharts-bar-rectangles')).toBeNull();
+      expect(label.closest('.recharts-label-list')).toBeTruthy();
+    });
+    const actual = container.querySelector('[data-bullet-actual]');
+    const trackEnd =
+      Number(actual?.getAttribute('data-track-x')) +
+      Number(actual?.getAttribute('data-track-width'));
+    expect(Number(labels[0].getAttribute('x'))).toBeCloseTo(trackEnd + 8, 0);
   });
 
   it('marks a department that missed its target by shape', () => {

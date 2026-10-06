@@ -235,7 +235,9 @@ export function DepartmentHeatmap({
           {columnOrder.map((column, index) => (
             <span
               key={`head-${String(column)}`}
-              className="truncate pb-1 text-center text-[11px] text-ink-2 tabular-nums"
+              data-heat-column=""
+              // Labelled columns are spaced out, so a label may run over its unlabelled neighbours.
+              className="overflow-visible whitespace-nowrap pb-1 text-center text-[11px] text-ink-2 tabular-nums"
             >
               {index % every === 0 ? columnFormatter(column) : ''}
             </span>
