@@ -25,7 +25,7 @@ export function StatusDot({ tone, label, className, ...rest }: StatusDotProps) {
     <span
       data-tone={tone}
       className={cx(
-        'inline-flex items-center gap-2 text-sm text-ink',
+        'inline-flex items-center gap-2 text-callout text-ink',
         className,
       )}
       {...rest}

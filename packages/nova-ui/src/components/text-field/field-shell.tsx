@@ -86,7 +86,7 @@ export function FieldShell({
         {hasError ? (
           <p
             id={errorId}
-            className="mt-1 flex items-start gap-1.5 text-caption font-semibold text-crit-deep"
+            className="mt-1 flex items-start gap-2 text-caption font-semibold text-crit-deep"
           >
             <ErrorIcon />
             {error}

@@ -44,7 +44,7 @@ export function AiPanel({
       {...rest}
     >
       <div className="flex items-start justify-between gap-4 px-6 py-4">
-        <Heading id={titleId} className="text-base font-semibold text-ink">
+        <Heading id={titleId} className="text-headline font-semibold text-ink">
           {title}
         </Heading>
         {/* Approved is a draft no longer, but a machine still wrote it: the badge stays, in words. */}
@@ -53,7 +53,7 @@ export function AiPanel({
           {state === 'approved' ? <Chip tone="good">Approved</Chip> : null}
         </div>
       </div>
-      <div className="px-6 pb-4 text-sm text-ink">{children}</div>
+      <div className="px-6 pb-4 text-callout text-ink">{children}</div>
       {footer ? (
         <div className="border-t border-border px-6 py-3">{footer}</div>
       ) : null}

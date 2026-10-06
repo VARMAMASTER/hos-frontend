@@ -268,12 +268,15 @@ export function Menu({
           material="overlay"
           radius="lg"
           className={cx(
-            'absolute top-full z-40 mt-1.5 max-h-[70vh] overflow-y-auto p-1.5',
+            'absolute top-full z-40 mt-2 max-h-[70vh] overflow-y-auto p-2',
             fullWidth ? 'inset-x-0' : 'left-0 min-w-48',
           )}
         >
           {header ? (
-            <div id={headerId} className="px-3 pt-1.5 pb-1 text-xs text-ink-3">
+            <div
+              id={headerId}
+              className="px-3 pt-2 pb-1 text-caption text-ink-3"
+            >
               {header}
             </div>
           ) : null}
@@ -308,7 +311,7 @@ export function MenuGroup({ label, children, ...rest }: MenuGroupProps) {
     <div {...rest} role="group" aria-labelledby={labelId}>
       <div
         id={labelId}
-        className="px-3 pt-2.5 pb-1 text-micro font-bold tracking-wide text-ink-3 uppercase"
+        className="px-3 pt-3 pb-1 text-micro font-bold tracking-wide text-ink-3 uppercase"
       >
         {label}
       </div>
@@ -327,7 +330,7 @@ export interface MenuItemProps
 }
 
 const item = cx(
-  'flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm text-ink transition-colors',
+  'flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-callout text-ink transition-colors',
   'hover:bg-primary-soft focus:bg-primary-soft',
   focusRing,
   'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
@@ -376,7 +379,7 @@ const Item = forwardRef<
       ) : (
         <span className="min-w-0 flex-1">
           <span className="block truncate">{children}</span>{' '}
-          <span className="block truncate text-xs font-normal text-ink-3">
+          <span className="block truncate text-caption font-normal text-ink-3">
             {description}
           </span>
         </span>

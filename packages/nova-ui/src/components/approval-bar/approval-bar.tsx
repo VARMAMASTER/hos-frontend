@@ -99,7 +99,7 @@ export function ApprovalBar({
         role="status"
         tabIndex={approvedBy ? -1 : undefined}
         className={cx(
-          'w-fit rounded-sm text-sm font-semibold text-good-deep',
+          'w-fit rounded-sm text-callout font-semibold text-good-deep',
           focusRing,
         )}
       >

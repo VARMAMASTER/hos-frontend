@@ -52,7 +52,7 @@ export function Timeline({ items, ...rest }: TimelineProps) {
                     'flex shrink-0 items-center justify-center rounded-full [corner-shape:round]',
                     // AI is never marked by colour alone: its marker carries the spark too.
                     tone === 'ai'
-                      ? 'size-5 text-xs leading-none text-on-primary'
+                      ? 'size-5 text-caption leading-none text-on-primary'
                       : 'size-3',
                     markers[tone],
                   )}
@@ -68,15 +68,15 @@ export function Timeline({ items, ...rest }: TimelineProps) {
               )}
             </div>
             <div className={last ? 'min-w-0 flex-1' : 'min-w-0 flex-1 pb-6'}>
-              <div className="text-xs text-ink-3">{item.time}</div>
+              <div className="text-caption text-ink-3">{item.time}</div>
               {/* The tone is a visible word (or the AI badge) before the title, so a critical event
                   and a good one differ in greyscale and are announced differently. */}
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-ink">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-callout font-semibold text-ink">
                 <ToneLabel tone={tone} />
                 {item.title}
               </div>
               {item.description ? (
-                <div className="mt-1 text-sm text-ink-2">
+                <div className="mt-1 text-callout text-ink-2">
                   {item.description}
                 </div>
               ) : null}

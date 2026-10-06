@@ -66,9 +66,9 @@ export function KpiTile({
       className={cx('p-5', className)}
       {...rest}
     >
-      <div className="text-sm text-ink-3">{label}</div>
+      <div className="text-callout text-ink-3">{label}</div>
       <div className="mt-1 flex items-end justify-between gap-3">
-        <div className="min-w-0 font-mono text-3xl font-semibold text-ink">
+        <div className="min-w-0 font-mono text-title3 font-semibold text-ink">
           {value}
         </div>
         {visual ? (
@@ -82,7 +82,7 @@ export function KpiTile({
           data-delta=""
           data-trend={trend}
           className={cx(
-            'mt-3 flex w-fit items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold',
+            'mt-3 flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-caption font-semibold',
             deltaTones[tone],
           )}
         >

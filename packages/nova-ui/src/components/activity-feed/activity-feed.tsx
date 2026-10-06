@@ -29,9 +29,9 @@ const markers: Record<ActivityTone, string> = {
   neutral: 'size-2.5 rounded-full bg-ink-3',
   good: 'size-2.5 rounded-full bg-good',
   warn: 'size-2.5 bg-warn [clip-path:polygon(50%_0,100%_100%,0_100%)]',
-  crit: 'size-2.5 rounded-xs bg-crit',
+  crit: 'size-2.5 rounded-none bg-crit',
   info: 'size-2.5 rounded-full bg-info',
-  ai: 'flex size-2.5 items-center justify-center text-xs leading-none text-ai',
+  ai: 'flex size-2.5 items-center justify-center text-caption leading-none text-ai',
 };
 
 // The feed is its own panel on the opaque data surface: events are clinical records (an alarm, a
@@ -46,7 +46,10 @@ export function ActivityFeed({
     return (
       <Surface
         material="data"
-        className={cx('px-4 py-6 text-center text-sm text-ink-3', className)}
+        className={cx(
+          'px-4 py-6 text-center text-callout text-ink-3',
+          className,
+        )}
       >
         <p>{emptyMessage}</p>
       </Surface>
@@ -59,16 +62,16 @@ export function ActivityFeed({
         <li
           key={id}
           data-tone={tone}
-          className="flex gap-3 border-b border-border px-4 py-3 text-sm last:border-b-0"
+          className="flex gap-3 border-b border-border px-4 py-3 text-callout last:border-b-0"
         >
           <span
             data-marker=""
             aria-hidden="true"
-            className={cx('mt-1.5 shrink-0', markers[tone])}
+            className={cx('mt-1 shrink-0', markers[tone])}
           >
             {tone === 'ai' ? '✦' : null}
           </span>
-          <span className="shrink-0 pt-0.5 font-mono text-xs whitespace-nowrap text-ink-3">
+          <span className="shrink-0 pt-0.5 font-mono text-caption whitespace-nowrap text-ink-3">
             {time}
           </span>
           <div className="min-w-0">

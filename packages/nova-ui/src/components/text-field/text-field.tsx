@@ -63,8 +63,8 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
               data-invalid={field['aria-invalid'] ? 'true' : undefined}
               className={cx(
                 base,
-                leadingIcon ? 'pl-10.5' : 'pl-4',
-                trailingIcon ? 'pr-10.5' : 'pr-4',
+                leadingIcon ? 'pl-12' : 'pl-4',
+                trailingIcon ? 'pr-12' : 'pr-4',
               )}
               {...rest}
               {...field}

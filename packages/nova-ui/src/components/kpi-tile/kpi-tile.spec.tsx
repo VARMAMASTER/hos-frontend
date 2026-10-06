@@ -18,7 +18,7 @@ describe('KpiTile', () => {
     render(<KpiTile label="Beds free" value="14" />);
     const value = classesOf(screen.getByText('14'));
     expect(value).toContain('font-mono');
-    expect(value).toContain('text-3xl');
+    expect(value).toContain('text-title3');
     expect(classesOf(screen.getByText('Beds free'))).toContain('text-ink-3');
   });
 
@@ -100,9 +100,11 @@ describe('KpiTile tone', () => {
       expect(screen.getByTestId('tile').dataset['tone']).toBe(tone);
       const [fill, ink] = expected[tone];
       const delta = classesOf(screen.getByText('+4'));
-      // text-xs is the size, not a colour.
+      // text-caption is the size, not a colour.
       expect(delta.filter((name) => name.startsWith('bg-'))).toEqual([fill]);
-      expect(delta.filter((name) => /^text-(?!xs$)/.test(name))).toEqual([ink]);
+      expect(delta.filter((name) => /^text-(?!caption$)/.test(name))).toEqual([
+        ink,
+      ]);
     },
   );
 });

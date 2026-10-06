@@ -40,7 +40,7 @@ export interface SectionNavProps
 // on-primary (white). Hover and active tint with the translucent brand colour, never with white,
 // so white text keeps its contrast on the chrome for every brand.
 const itemBase =
-  'relative flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm font-normal';
+  'relative flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-callout font-normal';
 
 const itemIdle =
   'text-(color:--nova-chrome-ink-2) hover:bg-primary/20 hover:text-on-primary';
@@ -70,7 +70,7 @@ function ItemContent({ item }: { item: SectionNavItem }) {
       {hasBadge ? (
         <>
           {' '}
-          <span className="shrink-0 rounded-full bg-primary/40 px-1.5 py-px text-[10px] font-bold text-on-primary">
+          <span className="shrink-0 rounded-full bg-primary/40 px-2 py-px text-micro font-bold text-on-primary">
             {item.badge}
             {/* The space is its own text node: name computation trims the text inside a span. */}{' '}
             <VisuallyHidden>{item.badgeLabel}</VisuallyHidden>

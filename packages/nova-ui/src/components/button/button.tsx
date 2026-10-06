@@ -59,7 +59,7 @@ const variants: Record<DrawnVariant, string> = {
 const AI_SPARK = "before:content-['✦'_/_'']";
 
 const sizes: Record<ButtonSize, string> = {
-  sm: 'px-4 py-1.5 text-callout',
+  sm: 'px-4 py-2 text-callout',
   md: 'px-6 py-3 text-body',
 };
 

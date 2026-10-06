@@ -66,7 +66,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
       <label
         htmlFor={id}
         className={cx(
-          'py-2.5 text-body text-ink',
+          'flex min-h-11 items-center py-2 text-body text-ink',
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
         )}
       >

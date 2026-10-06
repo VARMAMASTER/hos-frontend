@@ -119,7 +119,7 @@ export function ChartContainer({
         role="figure"
         aria-label={ariaLabel}
         aria-describedby={description ? descriptionId : undefined}
-        className={cx(!bare && 'p-4', 'text-xs', className)}
+        className={cx(!bare && 'p-4', 'text-caption', className)}
         style={{ ...vars, ...style } as CSSProperties}
       >
         {description ? (
@@ -218,7 +218,7 @@ export function ChartTooltipContent({
       material="overlay"
       radius="md"
       role="tooltip"
-      className={cx('grid min-w-32 gap-1.5 px-3 py-2 text-xs', className)}
+      className={cx('grid min-w-32 gap-1 px-3 py-2 text-caption', className)}
     >
       {showHeading ? (
         <div className="font-semibold text-ink">{heading}</div>
@@ -294,7 +294,7 @@ export function ChartLegendContent({
   return (
     <ul
       className={cx(
-        'flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-3 text-xs',
+        'flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-3 text-caption',
         className,
       )}
     >
@@ -307,7 +307,7 @@ export function ChartLegendContent({
           return (
             <li
               key={`${key}-${index}`}
-              className="flex items-center gap-1.5 text-ink-2"
+              className="flex items-center gap-2 text-ink-2"
             >
               {Icon ? (
                 <Icon />
@@ -319,7 +319,7 @@ export function ChartLegendContent({
                     'shrink-0',
                     item.type === 'line'
                       ? 'h-0.5 w-3.5 rounded-full'
-                      : 'size-2.5 rounded-[3px]',
+                      : 'size-2.5 rounded-none',
                   )}
                   style={{ backgroundColor: item.color }}
                 />

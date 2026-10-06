@@ -59,8 +59,8 @@ export function Banner({
     >
       <ToneIcon tone={tone} />
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold">{title}</p>
-        {children ? <div className="mt-1 text-sm">{children}</div> : null}
+        <p className="text-callout font-semibold">{title}</p>
+        {children ? <div className="mt-1 text-callout">{children}</div> : null}
       </div>
       {action ? <div className="shrink-0 self-center">{action}</div> : null}
       {onDismiss ? (

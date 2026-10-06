@@ -116,8 +116,8 @@ describe('SearchField', () => {
     const decorated = screen.getByRole('searchbox', { name: 'Decorated' });
     expect(plain.classList.contains('pl-3')).toBe(true);
     expect(plain.classList.contains('pr-3')).toBe(true);
-    expect(decorated.classList.contains('pl-10')).toBe(true);
-    expect(decorated.classList.contains('pr-14')).toBe(true);
+    expect(decorated.classList.contains('pl-12')).toBe(true);
+    expect(decorated.classList.contains('pr-16')).toBe(true);
   });
 
   it('is drawn for the dark chrome: translucent white fill and rim, the shared focus ring, secondary-ink placeholder', () => {

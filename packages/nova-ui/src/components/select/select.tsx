@@ -27,7 +27,7 @@ export interface SelectProps
 }
 
 const base = cx(
-  'nova-field peer block w-full appearance-none rounded-md py-3 pl-4 pr-11 text-body text-ink transition-colors',
+  'nova-field peer block w-full appearance-none rounded-md py-3 pl-4 pr-12 text-body text-ink transition-colors',
   focusRing,
   'disabled:cursor-not-allowed disabled:opacity-50',
 );

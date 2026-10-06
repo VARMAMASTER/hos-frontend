@@ -68,13 +68,13 @@ export function WorkspaceSwitcher({
           <button type="button" className={cx(triggerClasses, focusRing)}>
             <span className="min-w-0 flex-1">
               <VisuallyHidden>Current workspace:</VisuallyHidden>{' '}
-              <span className="block truncate text-sm font-semibold">
+              <span className="block truncate text-callout font-semibold">
                 {current.name}
               </span>
               {current.label ? (
                 <>
                   {' '}
-                  <span className="block truncate text-xs text-(color:--nova-chrome-ink-2)">
+                  <span className="block truncate text-caption text-(color:--nova-chrome-ink-2)">
                     {current.label}
                   </span>
                 </>

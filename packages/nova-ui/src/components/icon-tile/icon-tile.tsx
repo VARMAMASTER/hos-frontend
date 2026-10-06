@@ -31,8 +31,8 @@ const tones: Record<IconTileTone, string> = {
 };
 
 const sizes: Record<IconTileSize, string> = {
-  sm: 'size-6 text-[10px] [&_svg]:size-4',
-  md: 'size-8 text-xs [&_svg]:size-5',
+  sm: 'size-6 text-micro [&_svg]:size-4',
+  md: 'size-8 text-caption [&_svg]:size-5',
 };
 
 export function IconTile({

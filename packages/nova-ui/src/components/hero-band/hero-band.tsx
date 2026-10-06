@@ -28,9 +28,9 @@ export function HeroBand({
     <Surface material="hero" className={cx('p-6 md:p-8', className)} {...rest}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <Heading className="text-2xl font-semibold">{title}</Heading>
+          <Heading className="text-title3 font-semibold">{title}</Heading>
           {description ? (
-            <p className="mt-2 text-sm font-normal text-on-primary">
+            <p className="mt-2 text-body font-normal text-on-primary">
               {description}
             </p>
           ) : null}

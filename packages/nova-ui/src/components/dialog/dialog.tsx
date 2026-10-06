@@ -212,11 +212,11 @@ function DialogLayer({
       >
         <div className="flex items-start justify-between gap-4 px-6 pt-5">
           <div className="min-w-0">
-            <h2 id={titleId} className="text-lg font-semibold text-ink">
+            <h2 id={titleId} className="text-headline font-semibold text-ink">
               {title}
             </h2>
             {description ? (
-              <p id={descriptionId} className="mt-1 text-sm text-ink-2">
+              <p id={descriptionId} className="mt-1 text-callout text-ink-2">
                 {description}
               </p>
             ) : null}
@@ -247,7 +247,7 @@ function DialogLayer({
             </button>
           )}
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4 text-sm text-ink">
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4 text-body text-ink">
           {children}
         </div>
         {footer ? (

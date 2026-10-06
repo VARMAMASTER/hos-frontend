@@ -262,14 +262,12 @@ describe('TextField icons', () => {
     const { rerender } = render(<TextField label="Search" />);
     const plain = screen.getByLabelText('Search').classList;
     expect([...plain]).toEqual(expect.arrayContaining(['pl-4', 'pr-4']));
-    expect(plain).not.toContain('pl-10.5');
+    expect(plain).not.toContain('pl-12');
     rerender(
       <TextField label="Search" leadingIcon={<svg />} trailingIcon={<svg />} />,
     );
     const withIcons = screen.getByLabelText('Search').classList;
-    expect([...withIcons]).toEqual(
-      expect.arrayContaining(['pl-10.5', 'pr-10.5']),
-    );
+    expect([...withIcons]).toEqual(expect.arrayContaining(['pl-12', 'pr-12']));
     expect(withIcons).not.toContain('pl-4');
     expect(withIcons).not.toContain('pr-4');
   });

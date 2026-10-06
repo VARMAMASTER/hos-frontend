@@ -25,7 +25,7 @@ export interface SearchFieldProps
 // the theme. The shared focus ring is the brand's; the white rim turning solid keeps focus visible
 // on the dark chrome, where the brand alone would not be.
 const field =
-  'h-10 w-full rounded-md border border-on-primary/25 bg-(--nova-chrome-field) text-sm text-on-primary [color-scheme:dark] ' +
+  'h-10 w-full rounded-md border border-on-primary/25 bg-(--nova-chrome-field) text-callout text-on-primary [color-scheme:dark] ' +
   'placeholder:text-[color:var(--nova-chrome-ink-2)] focus-visible:border-on-primary ' +
   'disabled:pointer-events-none disabled:opacity-50';
 
@@ -60,7 +60,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
           <VisuallyHidden>{label}</VisuallyHidden>
         </label>
         {icon ? (
-          <span aria-hidden="true" className={cx(adornment, 'left-3')}>
+          <span aria-hidden="true" className={cx(adornment, 'left-4')}>
             {icon}
           </span>
         ) : null}
@@ -73,13 +73,16 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
           className={cx(
             field,
             focusRing,
-            icon ? 'pl-10' : 'pl-3',
-            shortcutHint ? 'pr-14' : 'pr-3',
+            icon ? 'pl-12' : 'pl-3',
+            shortcutHint ? 'pr-16' : 'pr-3',
             className,
           )}
         />
         {shortcutHint ? (
-          <span aria-hidden="true" className={cx(adornment, 'right-3 text-xs')}>
+          <span
+            aria-hidden="true"
+            className={cx(adornment, 'right-4 text-caption')}
+          >
             {shortcutHint}
           </span>
         ) : null}

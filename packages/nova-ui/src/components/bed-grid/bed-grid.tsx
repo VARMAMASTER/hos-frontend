@@ -63,7 +63,7 @@ function BedContent({ bed }: { bed: Bed }) {
     <>
       <span aria-hidden="true" className="block">
         <span className="flex flex-wrap items-baseline justify-between gap-x-2">
-          <span className="font-mono text-xs font-semibold text-ink">
+          <span className="font-mono text-caption font-semibold text-ink">
             {bed.label}
           </span>
           {/* The status word is the cue; colour only backs it up. */}
@@ -77,12 +77,14 @@ function BedContent({ bed }: { bed: Bed }) {
           </span>
         </span>
         {patient ? (
-          <span className="mt-1 block truncate text-sm font-semibold text-ink">
+          <span className="mt-1 block truncate text-callout font-semibold text-ink">
             {patient}
           </span>
         ) : null}
         {bed.ward ? (
-          <span className="block truncate text-xs text-ink-2">{bed.ward}</span>
+          <span className="block truncate text-caption text-ink-2">
+            {bed.ward}
+          </span>
         ) : null}
       </span>
       <VisuallyHidden>{readout(bed)}</VisuallyHidden>
@@ -119,14 +121,14 @@ export function BedGrid({
           className={cx(
             'border',
             statusStyles[bed.status].cell,
-            !onSelect && 'min-h-16 p-2.5',
+            !onSelect && 'min-h-16 p-3',
           )}
         >
           {onSelect ? (
             <button
               type="button"
               className={cx(
-                'block min-h-16 w-full cursor-pointer rounded-[inherit] p-2.5 text-left hover:bg-ink/5 motion-safe:active:scale-[0.98] motion-safe:transition-transform',
+                'block min-h-16 w-full cursor-pointer nova-radius-inherit p-3 text-left hover:bg-ink/5 motion-safe:active:scale-[0.98] motion-safe:transition-transform',
                 focusRing,
               )}
               onClick={() => onSelect(bed.id)}

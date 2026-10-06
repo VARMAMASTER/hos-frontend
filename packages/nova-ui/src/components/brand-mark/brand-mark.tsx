@@ -40,9 +40,9 @@ function initialsOf(name: string): string {
 const row = 'flex min-w-0 items-center gap-3';
 const markBox = 'grid size-9 shrink-0 place-items-center rounded-md';
 const nameClass =
-  'block truncate text-base font-bold leading-tight text-on-primary';
+  'block truncate text-body font-bold leading-tight text-on-primary';
 const subClass =
-  'block truncate text-xs leading-snug text-(color:--nova-chrome-ink-2)';
+  'block truncate text-caption leading-snug text-(color:--nova-chrome-ink-2)';
 
 export function BrandMark({
   name,
@@ -60,7 +60,7 @@ export function BrandMark({
     logo === undefined ? (
       <span
         aria-hidden="true"
-        className={`${markBox} bg-primary text-sm font-bold tracking-tight text-on-primary`}
+        className={`${markBox} bg-primary text-callout font-bold tracking-tight text-on-primary`}
       >
         {initialsOf(name)}
       </span>

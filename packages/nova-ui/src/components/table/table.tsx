@@ -32,10 +32,10 @@ export function Table({ caption, className, children, ...rest }: TableProps) {
         role="region"
         aria-labelledby={captionId}
         tabIndex={0}
-        className={cx('overflow-x-auto rounded-[inherit]', focusRing)}
+        className={cx('overflow-x-auto nova-radius-inherit', focusRing)}
       >
         <table
-          className="w-full border-collapse text-left text-sm text-ink"
+          className="w-full border-collapse text-left text-callout text-ink"
           {...rest}
         >
           <caption id={captionId}>
@@ -114,9 +114,9 @@ export function TableHeaderCell({
     <th
       scope={scope}
       className={cx(
-        'px-4 py-2.5',
+        'px-4 py-3',
         // A row header is body text that labels its row; a column header is a small caption.
-        scope === 'row' ? 'font-semibold' : 'text-xs font-semibold',
+        scope === 'row' ? 'font-semibold' : 'text-caption font-semibold',
         columnClasses(align, numeric),
         className,
       )}
@@ -141,7 +141,7 @@ export function TableCell({
 }: TableCellProps) {
   return (
     <td
-      className={cx('px-4 py-2.5', columnClasses(align, numeric), className)}
+      className={cx('px-4 py-3', columnClasses(align, numeric), className)}
       {...rest}
     />
   );

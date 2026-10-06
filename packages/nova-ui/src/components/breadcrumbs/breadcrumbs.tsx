@@ -39,7 +39,7 @@ export function Breadcrumbs({ items, ...rest }: BreadcrumbsProps) {
   if (items.length === 0) return null;
   return (
     <nav aria-label="Breadcrumb" {...rest}>
-      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-3">
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-callout text-ink-3">
         {items.map((item, index) => {
           const current = index === items.length - 1;
           return (

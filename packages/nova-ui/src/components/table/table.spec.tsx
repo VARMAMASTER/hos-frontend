@@ -72,8 +72,8 @@ describe('Table', () => {
     renderResults();
     const column = screen.getByText('Test');
     const row = screen.getByText('Haemoglobin');
-    expect(column.classList.contains('text-xs')).toBe(true);
-    expect(row.classList.contains('text-xs')).toBe(false);
+    expect(column.classList.contains('text-caption')).toBe(true);
+    expect(row.classList.contains('text-caption')).toBe(false);
     expect(row.classList.contains('font-semibold')).toBe(true);
   });
 

@@ -140,11 +140,11 @@ export function DonutChart({
                   <tspan
                     x={cx}
                     y={cy}
-                    className="fill-ink font-mono text-2xl font-semibold"
+                    className="fill-ink font-mono text-headline font-semibold"
                   >
                     {shown}
                   </tspan>
-                  <tspan x={cx} y={cy + 20} className="fill-ink-3 text-xs">
+                  <tspan x={cx} y={cy + 20} className="fill-ink-3 text-caption">
                     {totalLabel}
                   </tspan>
                 </text>

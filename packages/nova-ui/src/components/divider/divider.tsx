@@ -61,7 +61,7 @@ export function Divider({
         aria-label={label}
         className={cx(
           labelled[orientation],
-          'text-xs font-semibold text-ink-3',
+          'text-caption font-semibold text-ink-3',
           className,
         )}
       >
