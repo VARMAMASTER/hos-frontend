@@ -6,6 +6,9 @@
   --color-*: initial;
   --radius-*: initial;
   --shadow-*: initial;
+  /* Spacing is the 4px unit: p-3 is 12px. Only the design language scale is allowed (2, 4, 8, 12,
+     16, 20, 24, 32, 48, 64 px, that is steps 0.5 to 16), which conventions.spec.ts enforces. */
+  --spacing: 4px;
   /* Motion is quiet and quick: entrances 150-240ms ease-out. Components apply these under
      motion-safe, so prefers-reduced-motion turns them off. */
   --animate-dialog-in: nova-dialog-in 180ms ease-out;
@@ -461,6 +464,13 @@
   &[data-selected='true'] {
     border: 2px solid var(--nova-color-primary);
   }
+}
+
+/* A child that fills a rounded surface (a scroll frame, a pressable cell) takes the surface's
+   corners, whatever radius it has. A utility instead of rounded-[inherit]: the radius grammar
+   (rounded-none | sm | md | lg | xl | full) has no arbitrary values. */
+@utility nova-radius-inherit {
+  border-radius: inherit;
 }
 
 /* Text painted with the brand gradient. The real brand colour comes first and the clip, which turns

@@ -364,6 +364,14 @@ describe('theme.css utilities', () => {
     });
   });
 
+  // A scroll frame or a button inside a rounded Surface clips to the Surface's corners, whatever its
+  // radius. It is a utility, not an arbitrary rounded-[inherit], so the radius grammar stays closed.
+  it('nova-radius-inherit takes the corner radius of its parent', () => {
+    expect(utility('nova-radius-inherit').declarations).toEqual({
+      'border-radius': 'inherit',
+    });
+  });
+
   // A solid AI-cyan rail: one colour, start to end (a single-colour layer, so no colour ever
   // changes along it). AI output is told apart by the AiBadge spark and label plus this rail.
   it('nova-ai-rail paints a solid 3px AI-cyan rail down the left edge, flush with the border and clipped by the radius', () => {
