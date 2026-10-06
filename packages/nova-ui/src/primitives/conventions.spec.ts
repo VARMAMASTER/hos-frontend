@@ -2,11 +2,18 @@
 // Nova's component rules, enforced. Components are composed from tokens and primitives (SOLID:
 // each primitive has one job, components depend on them instead of re-implementing them), so a
 // change to class merging, the focus ring or a surface happens in one place and reaches all of them.
+// The scales they police are the HOS prototype's (os/public/assets/hos.css), from tokens/scale.ts.
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { RADIUS_UTILITIES, SPACING_STEPS } from '../tokens/scale';
+import {
+  FONT_WEIGHT_UTILITIES,
+  PROTOTYPE_TYPE_SIZES,
+  RADIUS_UTILITIES,
+  SHADOW_UTILITIES,
+  SPACING_STEPS,
+} from '../tokens/scale';
 
 const componentsDir = fileURLToPath(new URL('../components', import.meta.url));
 
@@ -25,16 +32,27 @@ const files = sourceFiles(componentsDir).map((path) => ({
   text: readFileSync(path, 'utf8'),
 }));
 
-// Any shadow that is not an elevation class: a stock or arbitrary shadow utility, an inset or drop
-// shadow, or a box-shadow declaration (CSS or a style object). Naming box-shadow as a property to
-// transition is fine.
-const SHADOW_OFFENCE =
-  /(?<![\w-])(?:inset-|drop-)?shadow(?:-(?!(?:elevation-(?:1|2|3|button)|none)\b)|(?=['"`\s]))|box-?shadow['"]?\s*:/i;
+// Any shadow that is not one of the prototype's: a stock size outside SHADOW_UTILITIES, an arbitrary
+// shadow utility, an inset or drop shadow, or a box-shadow declaration (CSS or a style object).
+// Naming box-shadow as a property to transition, or setting a surface's lift property to a shadow
+// token, is fine.
+const SHADOW_NAMES = [...SHADOW_UTILITIES, 'shadow-none']
+  .map((name) => name.slice('shadow-'.length))
+  .join('|');
+const SHADOW_OFFENCE = new RegExp(
+  String.raw`(?<![\w-])(?:inset|drop)-shadow|(?<![\w-])shadow(?:-(?!(?:${SHADOW_NAMES})(?![\w-]))|(?=['"\x60\s]))|box-?shadow['"]?\s*:`,
+  'i',
+);
 
 // A utility class starts a string, follows whitespace, a quote or a variant colon, or opens a group.
 const CLASS_START = /(?<=^|[\s'"`:!(])/.source;
 const code = (text: string) =>
   text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+
+// A guard reports the utility, without its variant prefix.
+function bare(cls: string): string {
+  return cls.slice(cls.lastIndexOf(':') + 1);
+}
 
 // Padding, margin, gap and space utilities, with a numeric, px, auto or arbitrary value, negative
 // margins included. Sizes (h-, w-, size-), insets and translate are not spacing and are not matched.
@@ -70,22 +88,61 @@ const radiusOffences = (text: string): string[] =>
       (utility) => !(RADIUS_UTILITIES as readonly string[]).includes(utility),
     );
 
-const STOCK_TEXT_SIZE = new RegExp(
-  CLASS_START + /text-(?:xs|sm|base|lg|xl|\d+xl)(?![\w-])/.source,
+// A text size is one of the prototype's, written text-[Npx] with N in PROTOTYPE_TYPE_SIZES. Tailwind's
+// stock sizes, the retired Apple ramp, an arbitrary size off the list and a variable size all fail.
+// An arbitrary colour (text-[color:…], text-[var(--…)]) is a colour, not a size.
+const NAMED_TEXT_SIZE = new RegExp(
+  CLASS_START +
+    /(?:[\w-]+:)*text-(?:xs|sm|base|lg|xl|\d+xl|micro|caption|callout|body|headline|title\d)(?![\w-])/
+      .source,
   'g',
 );
-const typeOffences = (text: string): string[] =>
-  [...code(text).matchAll(STOCK_TEXT_SIZE)].map((match) => match[0]);
+const ARBITRARY_TEXT_SIZE = new RegExp(
+  CLASS_START +
+    /(?:[\w-]+:)*text-(?:\[(?!color:|#|rgb|hsl|oklch|var\()[^\]]*\]|\(length:[^)]*\))/
+      .source,
+  'g',
+);
+const isPrototypeSize = (utility: string) => {
+  const px = /^text-\[(\d+(?:\.\d+)?)px\]$/.exec(bare(utility));
+  return (
+    px !== null &&
+    (PROTOTYPE_TYPE_SIZES as readonly number[]).includes(Number(px[1]))
+  );
+};
+const typeOffences = (text: string): string[] => [
+  ...[...code(text).matchAll(NAMED_TEXT_SIZE)].map((match) => match[0]),
+  ...[...code(text).matchAll(ARBITRARY_TEXT_SIZE)]
+    .map((match) => match[0])
+    .filter((utility) => !isPrototypeSize(utility)),
+];
 
-// A guard reports the utility, without its variant prefix.
-const bare = (cls: string) => cls.slice(cls.lastIndexOf(':') + 1);
+// Weights are the prototype's 400 / 500 / 600 / 700, written as FONT_WEIGHT_UTILITIES.
+const WEIGHT_UTILITY = new RegExp(
+  CLASS_START +
+    /(?:[\w-]+:)*font-(?:thin|extralight|light|normal|medium|semibold|bold|extrabold|black|\[[^\]]*\])(?![\w-])/
+      .source,
+  'g',
+);
+const weightOffences = (text: string): string[] => [
+  ...[...code(text).matchAll(WEIGHT_UTILITY)]
+    .map((match) => match[0])
+    .filter(
+      (utility) =>
+        !(FONT_WEIGHT_UTILITIES as readonly string[]).includes(bare(utility)),
+    ),
+  ...[...code(text).matchAll(/fontWeight:\s*['"]?(\d+)/g)]
+    .map((match) => match[1] ?? '')
+    .filter((weight) => !['400', '500', '600', '700'].includes(weight))
+    .map((weight) => `fontWeight: ${weight}`),
+];
 
 // The components that break a rule, each with the classes that break it.
 const offences = (find: (text: string) => string[]) =>
   files
     .map((file) => ({
       path: file.path,
-      classes: [...new Set(find(file.text))],
+      classes: [...new Set(find(file.text).map(bare))],
     }))
     .filter((file) => file.classes.length > 0);
 
@@ -129,9 +186,7 @@ describe('component conventions', () => {
   // nova-field is the exception: it is applied to the form control element itself.
   it('reaches the surface materials only through Surface, never by writing the utility class', () => {
     const material =
-      /(?<=['"`\s])nova-(?:surface|overlay|chrome|hero|data)(?=['"`\s])/;
-    const code = (text: string) =>
-      text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+      /(?<=['"`\s])nova-(?:card|surface|overlay|chrome|sidebar|hero|data|ai-block)(?=['"`\s])/;
     expect(
       files
         .filter((file) => material.test(code(file.text)))
@@ -147,12 +202,14 @@ describe('component conventions', () => {
     expect(offenders(/backdrop-(?:filter|blur)/)).toEqual([]);
   });
 
-  // Elevation comes only from the --nova-elevation-* tokens (through the surface utilities, or the
-  // shadow-elevation-* classes); a component never invents a shadow.
-  it('casts no shadow of its own: only shadow-elevation-1|2|3|button or shadow-none', () => {
-    // Comments are prose ("never a shadow"), so only the code is policed.
-    const code = (text: string) =>
-      text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+  // The prototype draws plain border-radius corners: no corner-shape anywhere.
+  it('draws plain rounded corners, never a corner-shape of its own', () => {
+    expect(offenders(/corner-shape/)).toEqual([]);
+  });
+
+  // Shadows come only from the prototype's --shadow-* tokens (through the surface utilities, or the
+  // shadow-sm | md | lg | glass classes); a component never invents a shadow.
+  it('casts no shadow of its own: only shadow-sm | md | lg | glass or shadow-none', () => {
     expect(
       files
         .filter((file) => SHADOW_OFFENCE.test(code(file.text)))
@@ -160,48 +217,61 @@ describe('component conventions', () => {
     ).toEqual([]);
   });
 
-  it('the shadow guard rejects a stock or arbitrary shadow and accepts the elevation classes', () => {
+  it('the shadow guard rejects a stock, arbitrary, inset or drop shadow and accepts the prototype scale', () => {
     for (const bad of [
-      "'shadow-lg'",
-      "'hover:shadow-sm'",
+      "'shadow-xl'",
+      "'hover:shadow-2xl'",
+      "'shadow-xs'",
       "'shadow-[0_1px_2px_black]'",
       "'shadow'",
       '{ boxShadow: "0 0 4px" }',
       "'inset-shadow-sm'",
       "'drop-shadow-md'",
+      "'shadow-elevation-1'",
+      "'shadow-glassy'",
     ]) {
       expect(SHADOW_OFFENCE.test(bad), bad).toBe(true);
     }
     for (const good of [
-      "'shadow-elevation-1'",
-      "'hover:shadow-elevation-2'",
-      "'shadow-elevation-button'",
+      "'shadow-sm'",
+      "'hover:shadow-md'",
+      "'shadow-lg'",
+      "'shadow-glass'",
       "'shadow-none'",
-      "'[--nova-overlay-lift:var(--nova-elevation-3)]'",
+      "'[--nova-overlay-lift:var(--nova-shadow-lg)]'",
       "'transition-[transform,box-shadow]'",
     ]) {
       expect(SHADOW_OFFENCE.test(good), good).toBe(false);
     }
   });
 
-  // Owner decision: no gradient on any border, edge, rim or button. Gradients live only in the
-  // theme.css surface fills (hero, chrome, aurora) and the brand gradient text utility.
-  it('never paints a gradient of its own', () => {
-    expect(
-      offenders(
-        /bg-(?:linear|radial|conic|gradient)-|nova-gradient-|gradient\(/,
-      ),
-    ).toEqual([]);
+  // Gradients are restored as the prototype draws them, but they live in theme.css (the AI gradient,
+  // the rail, the chrome, the hero and the data edge) and reach a component as a utility or a token.
+  const GRADIENT_OFFENCE = /bg-(?:linear|radial|conic|gradient)-|gradient\(/;
+  it('never paints a gradient of its own: gradients come from the theme.css tokens and utilities', () => {
+    expect(offenders(GRADIENT_OFFENCE)).toEqual([]);
   });
 
-  // The type ramp is the only set of sizes; an arbitrary size that duplicates a ramp step hides it
-  // from a ramp change.
-  it('never writes an arbitrary text size that a ramp token already names', () => {
-    expect(offenders(/text-\[(?:11|13|15|17|20|28|40|56)px\]/)).toEqual([]);
+  it('the gradient guard rejects a hand-written gradient and accepts the token utilities', () => {
+    for (const bad of [
+      "'bg-linear-to-r from-ai to-primary'",
+      "'bg-radial-[at_25%_25%]'",
+      "'bg-[linear-gradient(90deg,red,blue)]'",
+      "{ backgroundImage: 'conic-gradient(red, blue)' }",
+    ]) {
+      expect(GRADIENT_OFFENCE.test(bad), bad).toBe(true);
+    }
+    for (const good of [
+      "'nova-ai-grad'",
+      "'nova-ai-mark'",
+      "'[--nova-data-edge:var(--nova-gradient-edge-kpi)]'",
+    ]) {
+      expect(GRADIENT_OFFENCE.test(good), good).toBe(false);
+    }
   });
 
-  // The ramp is text-micro … text-title1; Tailwind's stock sizes are not part of it.
-  it('sizes text only with the type ramp, never a stock text-xs|sm|base|lg|xl|2xl… size', () => {
+  // The prototype's sizes (PROTOTYPE_TYPE_SIZES) are the only sizes.
+  it('sizes text only with the prototype sizes, written text-[Npx]', () => {
     expect(offences(typeOffences)).toEqual([]);
   });
 
@@ -217,17 +287,17 @@ describe('component conventions', () => {
 
   it('the spacing guard rejects off-scale and arbitrary spacing and accepts the scale', () => {
     for (const bad of [
-      'p-1.5',
-      'py-2.5',
+      'p-1.25',
+      'py-3.5',
       'pl-10',
       'pr-14',
-      'gap-1.5',
+      'gap-7',
       'px-7',
-      '-mt-1.5',
+      '-mt-3.5',
       'md:gap-x-10',
-      'hover:p-2.5',
+      'hover:p-16',
       '[&>svg]:ms-9',
-      'space-y-1.5',
+      'space-y-16',
       'p-[13px]',
       'mx-[var(--x)]',
       'gap-(--gap)',
@@ -239,10 +309,13 @@ describe('component conventions', () => {
       'p-0',
       'p-px',
       'p-0.5',
+      'p-1.5',
+      'py-2.5',
       'px-3',
-      'py-16',
+      'py-12',
       'gap-x-2',
       'gap-y-1',
+      'gap-1.5',
       '-mr-2',
       'sm:px-6',
       'mx-auto',
@@ -254,7 +327,7 @@ describe('component conventions', () => {
       'pl-4',
       'top-1.5',
       'translate-x-5',
-      'text-micro',
+      'text-[11px]',
       'pointer-events-none',
       'space-x-reverse',
     ]) {
@@ -285,7 +358,7 @@ describe('component conventions', () => {
     expect(radiusOffences("'md:rounded-lg'")).toEqual([]);
   });
 
-  it('the type guard rejects stock text sizes and accepts the ramp and text colours', () => {
+  it('the type guard rejects stock, retired-ramp, off-list and variable sizes and accepts the prototype sizes and text colours', () => {
     for (const bad of [
       'text-xs',
       'text-sm',
@@ -293,30 +366,36 @@ describe('component conventions', () => {
       'text-lg',
       'text-xl',
       'text-2xl',
-      'text-3xl',
       'md:text-9xl',
-    ]) {
-      expect(typeOffences(`'${bad}'`), bad).toEqual([bare(bad)]);
-    }
-    for (const good of [
-      'text-micro',
       'text-caption',
       'text-callout',
       'text-body',
-      'text-headline',
       'text-title3',
+      'text-[17.5px]',
+      'text-[1rem]',
+      'text-[length:var(--x)]',
+      'text-(length:--x)',
+      'sm:text-[18px]',
+    ]) {
+      expect(typeOffences(`'${bad}'`).map(bare), bad).toEqual([bare(bad)]);
+    }
+    for (const good of [
+      ...PROTOTYPE_TYPE_SIZES.map((px) => `text-[${px}px]`),
+      'md:text-[13.5px]',
       'text-ink-2',
       'text-left',
       'text-center',
       'text-primary',
+      'text-[color:var(--nova-chrome-ink-2)]',
+      'text-[var(--nova-sidebar-ink-2)]',
     ]) {
       expect(typeOffences(`'${good}'`), good).toEqual([]);
     }
   });
 });
 
-// The weight ladder is 400 / 600 / 700 everywhere, stories included: 500 is banned.
-describe('the weight ladder', () => {
+// The weights are the prototype's 400 / 500 / 600 / 700 everywhere, stories included.
+describe('the weights', () => {
   const srcDir = fileURLToPath(new URL('..', import.meta.url));
   const everySource = (dir: string): string[] =>
     readdirSync(dir).flatMap((name) => {
@@ -325,12 +404,35 @@ describe('the weight ladder', () => {
       return /\.tsx?$/.test(name) && !/\.spec\.tsx?$/.test(name) ? [path] : [];
     });
 
-  it('never uses weight 500 (font-medium) in a component, primitive or story', () => {
-    const medium = /\bfont-medium\b|font-\[500\]|fontWeight:\s*['"]?500\b/;
+  it('uses only font-normal, font-medium, font-semibold and font-bold in a component, primitive or story', () => {
     expect(
       everySource(srcDir)
-        .filter((path) => medium.test(readFileSync(path, 'utf8')))
-        .map((path) => path.slice(srcDir.length)),
+        .map((path) => ({
+          path: path.slice(srcDir.length),
+          weights: [
+            ...new Set(weightOffences(readFileSync(path, 'utf8')).map(bare)),
+          ],
+        }))
+        .filter((file) => file.weights.length > 0),
     ).toEqual([]);
+  });
+
+  it('the weight guard rejects a weight off the prototype ladder and accepts the four it uses', () => {
+    for (const bad of [
+      'font-light',
+      'font-thin',
+      'font-extrabold',
+      'font-black',
+      'font-[550]',
+      'hover:font-extralight',
+    ]) {
+      expect(weightOffences(`'${bad}'`).map(bare), bad).toEqual([bare(bad)]);
+    }
+    expect(weightOffences('{ fontWeight: 300 }')).toEqual(['fontWeight: 300']);
+    for (const good of [...FONT_WEIGHT_UTILITIES, 'md:font-semibold']) {
+      expect(weightOffences(`'${good}'`), good).toEqual([]);
+    }
+    expect(weightOffences('{ fontWeight: 500 }')).toEqual([]);
+    expect(weightOffences("'font-sans font-mono font-display'")).toEqual([]);
   });
 });

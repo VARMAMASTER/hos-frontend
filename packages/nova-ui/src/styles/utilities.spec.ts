@@ -96,13 +96,18 @@ const BRAND_SCOPES = ':root, [data-nova-theme], [data-nova-material]';
 describe('theme.css utilities', () => {
   it.each([
     'nova-canvas',
+    'nova-card',
     'nova-surface',
     'nova-overlay',
     'nova-field',
     'nova-chrome',
+    'nova-sidebar',
     'nova-hero',
     'nova-data',
+    'nova-ai-block',
     'nova-gradient-text',
+    'nova-ai-grad',
+    'nova-ai-mark',
     'nova-ai-rail',
   ])('declares @utility %s', (name) => {
     expect(Object.keys(utility(name).declarations).length).toBeGreaterThan(0);
@@ -112,39 +117,33 @@ describe('theme.css utilities', () => {
     ['nova-surface', 'surface'],
     ['nova-overlay', 'overlay'],
   ])(
-    '%s draws its fill, frost and rim from the %s material tokens',
+    '%s draws its fill, frost, rim and shadow from the %s material tokens',
     (name, token) => {
       expect(utility(name).declarations).toMatchObject({
         'background-color': `var(--nova-${token}-fill)`,
         'backdrop-filter': `var(--nova-${token}-filter)`,
         '-webkit-backdrop-filter': `var(--nova-${token}-filter)`,
         border: `1px solid var(--nova-${token}-border)`,
+        'box-shadow': `var(--nova-${token}-lift, var(--nova-${token}-shadow))`,
       });
     },
   );
 
-  // The lift comes from the elevation scale, under glass and solid alike, with the material's own
-  // layer (the glass top highlight) on top. A component that needs another level sets the
-  // utility's non-inherited lift property (a Dialog asks for level 3; a hovered card for level 2).
-  it.each([
-    ['nova-surface', 'surface', 1],
-    ['nova-overlay', 'overlay', 2],
-  ] as const)(
-    '%s lifts at elevation %s unless its lift property asks for another level',
-    (name, token, level) => {
-      expect(utility(name).declarations['box-shadow']).toBe(
-        `var(--nova-${token}-lift, var(--nova-elevation-${level})), var(--nova-${token}-shadow)`,
-      );
-    },
-  );
-
-  it('nova-data lifts at elevation 1 too, unless its lift property asks for another level', () => {
-    expect(utility('nova-data').declarations['box-shadow']).toBe(
-      'var(--nova-data-lift, var(--nova-elevation-1))',
+  // The prototype's .card: an opaque panel, a 1px --line edge and --shadow-sm, under either material.
+  it('nova-card is the prototype card, opaque under either material', () => {
+    const card = utility('nova-card');
+    expect(card.declarations).toMatchObject({
+      'background-color': 'var(--nova-color-surface)',
+      border: '1px solid var(--nova-color-border)',
+      'box-shadow': 'var(--nova-surface-lift, var(--nova-shadow-sm))',
+    });
+    expect(JSON.stringify(card)).not.toMatch(
+      /--nova-(?:glass|surface-(?:fill|filter|border|shadow)|overlay|chrome|hero)\b/,
     );
+    expect(card.declarations).not.toHaveProperty('backdrop-filter');
   });
 
-  // Registered as non-inherited, so a Dialog's level 3 never leaks into the cards and menus it holds.
+  // Registered as non-inherited, so a Dialog's lift never leaks into the cards and menus it holds.
   it.each(['--nova-surface-lift', '--nova-overlay-lift', '--nova-data-lift'])(
     'registers %s as a non-inherited property',
     (name) => {
@@ -155,30 +154,27 @@ describe('theme.css utilities', () => {
     },
   );
 
-  // A selected card or option upgrades its edge to 2px primary, the only place 2px appears.
-  it('nova-surface upgrades a selected panel to a 2px primary border', () => {
-    expect(
-      utility('nova-surface').nested["&[data-selected='true']"]?.declarations,
-    ).toEqual({ border: '2px solid var(--nova-color-primary)' });
-  });
+  // A selected card or option upgrades its edge to 2px primary.
+  it.each(['nova-card', 'nova-surface', 'nova-data'])(
+    '%s upgrades a selected container to a 2px primary border',
+    (name) => {
+      expect(
+        utility(name).nested["&[data-selected='true']"]?.declarations,
+      ).toEqual({ border: '2px solid var(--nova-color-primary)' });
+    },
+  );
 
-  it('nova-data upgrades a selected container to a 2px primary border', () => {
-    expect(
-      utility('nova-data').nested["&[data-selected='true']"]?.declarations,
-    ).toEqual({ border: '2px solid var(--nova-color-primary)' });
-  });
-
-  // The edge is a custom property, so a control states hover, invalid or checked by setting one
-  // variable instead of fighting the utility's border with an important modifier. Unset, it is
-  // border-control, which material.spec.ts proves at 3:1 against the fill and the backdrop.
-  it('nova-field frosts a form control and draws its edge from --nova-field-edge, border-control by default', () => {
-    expect(utility('nova-field').declarations).toMatchObject({
-      'background-color': 'var(--nova-field-fill)',
-      'backdrop-filter': 'var(--nova-field-filter)',
-      '-webkit-backdrop-filter': 'var(--nova-field-filter)',
+  // The prototype's .f-input is an opaque panel. The edge is a custom property, so a control states
+  // hover, invalid or checked by setting one variable instead of fighting the utility's border with
+  // an important modifier. Unset, it is border-control, which material.spec.ts proves at 3:1.
+  it('nova-field is an opaque panel with its edge from --nova-field-edge, border-control by default', () => {
+    const field = utility('nova-field');
+    expect(field.declarations).toMatchObject({
+      'background-color': 'var(--nova-color-surface)',
       border:
         '1px solid var(--nova-field-edge, var(--nova-color-border-control))',
     });
+    expect(field.declarations).not.toHaveProperty('backdrop-filter');
   });
 
   it('nova-field sets its own edge for hover, focus, checked and invalid, with invalid winning as the last rule', () => {
@@ -192,7 +188,6 @@ describe('theme.css utilities', () => {
     expect(nested['&:hover:where(:not(:disabled))']?.declarations).toEqual({
       '--nova-field-edge': 'var(--nova-color-ink-2)',
     });
-    // Focused: the 1px edge turns primary (the focus ring draws outside it).
     expect(nested['&:focus']?.declarations).toEqual({
       '--nova-field-edge': 'var(--nova-color-primary)',
     });
@@ -204,11 +199,18 @@ describe('theme.css utilities', () => {
     });
   });
 
-  // The ring is a custom property, so it inherits. The chrome and the hero turn it white for their
-  // own dark controls; a light surface nested inside them (a menu anchored in the sidebar, a card in
-  // the hero) must turn it back, or its focused items draw a white ring on white.
-  it.each(['nova-surface', 'nova-overlay', 'nova-field', 'nova-data'])(
-    '%s resets the keyboard focus ring to the brand primary, so a light surface nested in the chrome or the hero never inherits a white ring',
+  // The ring is a custom property, so it inherits. The chrome and the hero set their own for their
+  // dark controls; a light surface nested inside them (a menu anchored in the sidebar, a card in the
+  // hero) must turn it back, or its focused items draw a pale ring on white.
+  it.each([
+    'nova-card',
+    'nova-surface',
+    'nova-overlay',
+    'nova-field',
+    'nova-data',
+    'nova-ai-block',
+  ])(
+    '%s resets the keyboard focus ring to the brand primary, so a light surface nested in the chrome or the hero never inherits a pale ring',
     (name) => {
       expect(utility(name).declarations['--nova-focus-ring']).toBe(
         'var(--nova-color-primary)',
@@ -225,16 +227,17 @@ describe('theme.css utilities', () => {
 
   // Each block looks its utility up inside the test, so a missing or renamed utility fails its own
   // tests by name instead of failing the whole file while it is being collected.
-  describe('nova-chrome', () => {
+  describe('nova-chrome (the prototype .topbar)', () => {
     const chrome = () => utility('nova-chrome');
 
-    it('paints the chrome gradient token', () => {
-      expect(chrome().declarations['background-image']).toBe(
-        'var(--nova-gradient-chrome)',
-      );
+    it('lays the grain over the top-bar fill, blended as the prototype blends it', () => {
+      expect(chrome().declarations).toMatchObject({
+        'background-image': 'var(--nova-grain), var(--nova-chrome-fill)',
+        'background-blend-mode': 'overlay, normal',
+      });
     });
 
-    it('turns the keyboard focus ring white, since the brand ring is ~2:1 on the dark chrome', () => {
+    it('turns the keyboard focus ring white, since the chrome accent is 2.4:1 at the light end', () => {
       expect(chrome().declarations['--nova-focus-ring']).toBe('#fff');
     });
 
@@ -243,72 +246,83 @@ describe('theme.css utilities', () => {
       expect(chrome().declarations['--nova-chrome-ink-2']).toBe(
         `rgb(255 255 255 / ${GLASS.chromeInk2Alpha})`,
       );
-    });
-
-    it('hands a field on the chrome its lift at the alpha the placeholder proof assumes', () => {
       expect(chrome().declarations['--nova-chrome-field']).toBe(
         `rgb(255 255 255 / ${GLASS.chromeFieldAlpha})`,
       );
     });
 
-    it('frosts with the chrome filter and rims the bottom and the side with a 1px hairline', () => {
+    it('frosts with the chrome filter and rims the bottom with the chrome line and an inner highlight', () => {
       expect(chrome().declarations).toMatchObject({
         'backdrop-filter': 'var(--nova-chrome-filter)',
         '-webkit-backdrop-filter': 'var(--nova-chrome-filter)',
-        'border-bottom': '1px solid rgb(255 255 255 / 0.12)',
-        'border-right': '1px solid rgb(255 255 255 / 0.12)',
+        'border-bottom': '1px solid var(--nova-color-chrome-line)',
+        'box-shadow': 'inset 0 -1px 0 0 rgba(255,255,255,.06)',
       });
-    });
-
-    it('falls back to a solid brand fill where color-mix is missing, so white text never lands on nothing', () => {
-      expect(
-        chrome().nested[
-          '@supports not (color: color-mix(in srgb, red 50%, transparent))'
-        ]?.declarations,
-      ).toEqual({ 'background-color': 'var(--nova-color-primary-strong)' });
     });
   });
 
-  describe('nova-hero', () => {
-    const hero = () => utility('nova-hero');
+  describe('nova-sidebar (the prototype .sidebar)', () => {
+    const sidebar = () => utility('nova-sidebar');
 
-    it('turns the keyboard focus ring to the on-primary colour, since the brand ring vanishes on the brand', () => {
-      expect(hero().declarations['--nova-focus-ring']).toBe(
-        'var(--nova-color-on-primary)',
-      );
+    it('paints the grain over the sidebar gradient, screened as the prototype screens its lift, and never frosts', () => {
+      expect(sidebar().declarations).toMatchObject({
+        'background-image': 'var(--nova-grain), var(--nova-gradient-sidebar)',
+        'background-blend-mode': 'overlay, screen, normal',
+        'border-right': '1px solid var(--nova-color-chrome-line)',
+        'box-shadow': 'inset -1px 0 0 rgba(255,255,255,.05)',
+        color: 'var(--nova-color-chrome-ink)',
+      });
+      expect(sidebar().declarations).not.toHaveProperty('backdrop-filter');
     });
 
-    it('sets the on-primary text colour and frosts with the hero filter', () => {
+    it('rings focus in the chrome accent and hands children the proven secondary ink', () => {
+      expect(sidebar().declarations).toMatchObject({
+        '--nova-focus-ring': 'var(--nova-color-chrome-accent)',
+        '--nova-sidebar-ink-2': `rgb(241 238 251 / ${GLASS.sidebarInk2Alpha})`,
+      });
+    });
+  });
+
+  describe('nova-hero (the prototype .glass-hero)', () => {
+    const hero = () => utility('nova-hero');
+
+    it('paints the hero fill over the hero base, frosted, rimmed with the chrome line', () => {
       expect(hero().declarations).toMatchObject({
-        color: 'var(--nova-color-on-primary)',
+        'background-color': 'var(--nova-hero-base)',
+        'background-image': 'var(--nova-hero-fill)',
         'backdrop-filter': 'var(--nova-hero-filter)',
         '-webkit-backdrop-filter': 'var(--nova-hero-filter)',
+        border: '1px solid var(--nova-color-chrome-line)',
+        'box-shadow':
+          'var(--nova-shadow-glass), inset 0 1px 0 0 rgba(255,255,255,.16)',
+        overflow: 'hidden',
       });
     });
 
-    it('paints the brand gradient token on a layer behind its content, at the hero opacity', () => {
+    it('sets white text and a white ring, and hands children the proven secondary ink', () => {
+      expect(hero().declarations).toMatchObject({
+        color: '#fff',
+        '--nova-focus-ring': '#fff',
+        '--nova-hero-ink-2': `rgb(255 255 255 / ${GLASS.heroInk2Alpha})`,
+      });
+    });
+
+    it('lays the grain behind its content', () => {
       expect(hero().declarations).toMatchObject({
         position: 'relative',
         isolation: 'isolate',
       });
-      expect(hero().nested['&::before']?.declarations).toMatchObject({
-        content: "''",
-        position: 'absolute',
-        inset: '0',
+      expect(hero().nested['&::after']?.declarations).toMatchObject({
+        'background-image': 'var(--nova-grain-hero)',
+        opacity: '0.06',
+        'mix-blend-mode': 'overlay',
         'z-index': '-1',
-        'border-radius': 'inherit',
-        'background-image': 'var(--nova-gradient-brand)',
-        opacity: 'var(--nova-hero-opacity)',
         'pointer-events': 'none',
       });
     });
-
-    it('does not repeat the gradient stops, so the token stays the one definition', () => {
-      expect(JSON.stringify(hero())).not.toMatch(/--nova-color-primary/);
-    });
   });
 
-  describe('nova-data', () => {
+  describe('nova-data (the prototype card with .edge-premium)', () => {
     it('is opaque under either material, filling with the plain surface colour', () => {
       const { declarations } = utility('nova-data');
       expect(declarations['background-color']).toBe(
@@ -324,19 +338,63 @@ describe('theme.css utilities', () => {
       );
     });
 
-    // Owner decision: no gradient borders. A data surface is opaque with the card's soft hairline.
-    it('edges itself with a plain 1px soft hairline, the card hairline', () => {
-      expect(utility('nova-data').declarations['border']).toBe(
-        '1px solid var(--nova-color-border)',
-      );
+    it('rests on the card hairline and --shadow-sm', () => {
+      expect(utility('nova-data').declarations).toMatchObject({
+        border: '1px solid var(--nova-color-border)',
+        'box-shadow': 'var(--nova-data-lift, var(--nova-shadow-sm))',
+      });
     });
 
-    it('draws no gradient and no ::before rim', () => {
-      const data = utility('nova-data');
-      expect(JSON.stringify(data)).not.toMatch(/gradient|mask/);
-      expect(
-        Object.keys(data.nested).some((key) => /::?before/.test(key)),
-      ).toBe(false);
+    it('draws the gradient edge as a masked 1px ring, swappable through --nova-data-edge', () => {
+      expect(utility('nova-data').nested['&::before']?.declarations).toEqual({
+        content: "''",
+        position: 'absolute',
+        inset: '0',
+        padding: '1px',
+        'border-radius': 'inherit',
+        background: 'var(--nova-data-edge, var(--nova-gradient-edge))',
+        '-webkit-mask':
+          'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+        '-webkit-mask-composite': 'xor',
+        mask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+        'mask-composite': 'exclude',
+        'pointer-events': 'none',
+      });
+    });
+  });
+
+  describe('nova-ai-block (the prototype .ai-block)', () => {
+    const block = () => utility('nova-ai-block');
+
+    it('washes near-white, edges in the AI line with no left border, and pads 16px plus the rail', () => {
+      expect(block().declarations).toMatchObject({
+        'background-color': 'var(--nova-color-ai-ghost)',
+        border: '1px solid var(--nova-color-ai-line)',
+        'border-left': 'none',
+        padding: 'var(--nova-space-6)',
+        'padding-left': 'calc(var(--nova-space-6) + 3px)',
+        overflow: 'hidden',
+      });
+    });
+
+    it('draws the 3px AI gradient rail down the left edge as a background layer', () => {
+      expect(block().declarations).toMatchObject({
+        'background-image': 'var(--nova-gradient-ai-rail)',
+        'background-repeat': 'no-repeat',
+        'background-origin': 'border-box',
+        'background-position': 'left top',
+        'background-size': '3px 100%',
+      });
+    });
+
+    it('settles once approved: a green wash, a green edge and a solid green rail', () => {
+      expect(block().nested["&[data-approved='true']"]?.declarations).toEqual({
+        'background-color': 'var(--nova-color-good-soft)',
+        'background-image':
+          'linear-gradient(var(--nova-color-good), var(--nova-color-good))',
+        'border-color':
+          'color-mix(in srgb, var(--nova-color-good) 32%, transparent)',
+      });
     });
   });
 
@@ -354,7 +412,6 @@ describe('theme.css utilities', () => {
 
     it('only turns the text transparent inside a background-clip support query', () => {
       expect(text().declarations).not.toHaveProperty('background-image');
-      expect(text().declarations['color']).not.toBe('transparent');
       expect(text().nested[clip]?.declarations).toEqual({
         'background-image': 'var(--nova-gradient-brand)',
         '-webkit-background-clip': 'text',
@@ -372,12 +429,18 @@ describe('theme.css utilities', () => {
     });
   });
 
-  // A solid AI-cyan rail: one colour, start to end (a single-colour layer, so no colour ever
-  // changes along it). AI output is told apart by the AiBadge spark and label plus this rail.
-  it('nova-ai-rail paints a solid 3px AI-cyan rail down the left edge, flush with the border and clipped by the radius', () => {
+  it('nova-ai-grad fills with the AI gradient and nova-ai-mark with the AI mark', () => {
+    expect(utility('nova-ai-grad').declarations).toEqual({
+      'background-image': 'var(--nova-gradient-ai)',
+    });
+    expect(utility('nova-ai-mark').declarations).toEqual({
+      'background-image': 'var(--nova-ai-mark)',
+    });
+  });
+
+  it('nova-ai-rail paints the 3px AI gradient rail down the left edge, flush with the border', () => {
     expect(utility('nova-ai-rail').declarations).toEqual({
-      'background-image':
-        'linear-gradient(var(--nova-color-ai), var(--nova-color-ai))',
+      'background-image': 'var(--nova-gradient-ai-rail)',
       'background-repeat': 'no-repeat',
       'background-origin': 'border-box',
       'background-position': 'left top',
@@ -392,10 +455,12 @@ describe('theme.css named gradients', () => {
   // NovaThemeProvider subtree, so those tokens are declared on every scope a theme or material can set.
   const scoped = () => rulesFor(BRAND_SCOPES)[0]?.declarations ?? {};
   const fixed = () => rulesFor(':root').map((rule) => rule.declarations);
+  const fixedValue = (name: string) =>
+    fixed().find((d) => name in d)?.[name] ?? '';
 
   it.each([
     '--nova-gradient-brand',
-    '--nova-gradient-chrome',
+    '--nova-gradient-sidebar',
     '--nova-gradient-aurora',
   ])(
     'declares %s on every theme and material scope, so a subtree re-resolves it',
@@ -405,53 +470,74 @@ describe('theme.css named gradients', () => {
     },
   );
 
-  it('declares --nova-gradient-ai on :root alone, so no theme or material scope can re-resolve it', () => {
-    expect(fixed().filter((d) => '--nova-gradient-ai' in d)).toHaveLength(1);
-    expect(scoped()).not.toHaveProperty('--nova-gradient-ai');
-  });
+  it.each([
+    '--nova-gradient-ai',
+    '--nova-gradient-ai-rail',
+    '--nova-gradient-edge',
+    '--nova-gradient-edge-kpi',
+  ])(
+    'declares %s on :root alone, so no theme or material scope can re-resolve it',
+    (name) => {
+      expect(fixed().filter((d) => name in d)).toHaveLength(1);
+      expect(scoped()).not.toHaveProperty(name);
+    },
+  );
 
-  it('--nova-gradient-brand runs 120deg from primary-strong to primary, the two stops the hero contrast gate checks', () => {
+  it('--nova-gradient-brand runs 120deg from primary-strong to primary', () => {
     expect(scoped()['--nova-gradient-brand']).toBe(
       'linear-gradient(120deg, var(--nova-color-primary-strong), var(--nova-color-primary))',
     );
   });
 
-  it('--nova-gradient-chrome deepens downward from the proof’s brand mix to the bare base, both at the chrome opacity', () => {
-    const at = (colour: string) =>
-      `color-mix(in srgb, ${colour} calc(var(--nova-chrome-opacity) * 100%), transparent)`;
-    const lifted = `color-mix(in srgb, var(--nova-color-primary-strong) ${percent(GLASS.chromeBrandShare)}, ${GLASS.chromeBase})`;
-    expect(scoped()['--nova-gradient-chrome']?.toLowerCase()).toBe(
-      `linear-gradient(180deg, ${at(lifted)}, ${at(GLASS.chromeBase)})`.toLowerCase(),
+  it('--nova-gradient-sidebar is the prototype sidebar: the brand lift at 42% over a base that deepens downward', () => {
+    expect(scoped()['--nova-gradient-sidebar']).toBe(
+      `radial-gradient(120% 42% at 0% 0%, color-mix(in srgb, var(--nova-color-primary) ${percent(GLASS.sidebarBrandShare)}, transparent), transparent 70%), linear-gradient(180deg, #26185A 0%, #1A0F42 42%, #150C34 100%)`,
     );
   });
 
-  it('--nova-gradient-aurora is the four-blob mesh, tinted by the brand at the strength the proof assumes', () => {
+  it('--nova-gradient-aurora is the prototype four-blob mesh, tinted by the brand at the strength the proof assumes', () => {
     const aurora = scoped()['--nova-gradient-aurora'] ?? '';
     expect(aurora.match(/radial-gradient\(/g)).toHaveLength(4);
+    for (const geometry of [
+      '680px 520px at 8% -6%',
+      '720px 560px at 96% 4%',
+      '760px 620px at 78% 96%',
+      '620px 520px at 18% 104%',
+    ]) {
+      expect(aurora).toContain(`radial-gradient(${geometry}, `);
+    }
     expect(aurora).toContain(
       `color-mix(in srgb, var(--nova-color-primary) calc(${percent(GLASS.canvasTint)} * var(--nova-glass)), transparent)`,
     );
   });
 
-  // Owner decision: no gradient borders, so the data-card edge gradient is gone everywhere.
-  it('declares no --nova-gradient-edge on any scope', () => {
-    expect(source).not.toContain('--nova-gradient-edge');
+  it('--nova-gradient-edge is the prototype .edge-premium and --nova-gradient-edge-kpi the .kpi edge', () => {
+    expect(fixedValue('--nova-gradient-edge')).toBe(
+      'linear-gradient(135deg, rgba(167,139,250,.55), rgba(34,211,238,.26) 60%, transparent 85%)',
+    );
+    expect(fixedValue('--nova-gradient-edge-kpi')).toBe(
+      'linear-gradient(135deg, rgba(167,139,250,.5), rgba(34,211,238,.24) 65%, transparent 85%)',
+    );
   });
 
-  describe('--nova-gradient-ai', () => {
-    const ai = () =>
-      fixed().find((d) => '--nova-gradient-ai' in d)?.['--nova-gradient-ai'] ??
-      '';
-
-    it('runs 135deg from the bright cyan through the AI cyan into the fixed violet primitive', () => {
-      expect(ai().toLowerCase()).toBe(
-        `linear-gradient(135deg, #22d3ee, var(--nova-color-ai), ${primitives.violet[600]})`.toLowerCase(),
+  describe('the AI gradients', () => {
+    it('--nova-gradient-ai runs 135deg from the bright cyan through the AI cyan into the pinned violet', () => {
+      expect(fixedValue('--nova-gradient-ai')).toBe(
+        `linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, ${primitives.violet[600]} 105%)`,
       );
     });
 
-    it('never references the brand, so no hospital can recolour the mark that says a machine wrote this', () => {
-      expect(ai()).not.toBe('');
-      expect(ai()).not.toMatch(/--nova-color-primary/);
+    it('--nova-gradient-ai-rail runs down from the pinned violet through the AI cyan to the bright stop', () => {
+      expect(fixedValue('--nova-gradient-ai-rail')).toBe(
+        `linear-gradient(180deg, ${primitives.violet[600]} 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%)`,
+      );
+    });
+
+    it('never reference the brand, so no hospital can recolour the mark that says a machine wrote this', () => {
+      for (const name of ['--nova-gradient-ai', '--nova-gradient-ai-rail']) {
+        expect(fixedValue(name), name).not.toBe('');
+        expect(fixedValue(name), name).not.toMatch(/--nova-color-primary/);
+      }
     });
   });
 
@@ -497,11 +583,13 @@ describe('theme.css named gradients', () => {
       },
     });
 
-    it('a wildly different brand leaves --nova-gradient-ai exactly as it was', () => {
-      const original = resolve('--nova-gradient-ai');
-      expect(original).toContain('#22D3EE');
-      expect(resolve('--nova-gradient-ai', rose)).toBe(original);
-      expect(resolve('--nova-gradient-ai', teal)).toBe(original);
+    it('a wildly different brand leaves the AI gradients exactly as they were', () => {
+      for (const name of ['--nova-gradient-ai', '--nova-gradient-ai-rail']) {
+        const original = resolve(name);
+        expect(original).toContain('#22D3EE');
+        expect(resolve(name, rose)).toBe(original);
+        expect(resolve(name, teal)).toBe(original);
+      }
     });
 
     it('while --nova-gradient-brand follows the brand', () => {
@@ -516,8 +604,11 @@ describe('theme.css named gradients', () => {
       );
     });
 
-    it('and so do the other brand-derived gradients, with none of the default violet left in them', () => {
-      for (const name of ['--nova-gradient-chrome', '--nova-gradient-aurora']) {
+    it('and so do the sidebar lift and the aurora, with none of the default violet left in them', () => {
+      for (const name of [
+        '--nova-gradient-sidebar',
+        '--nova-gradient-aurora',
+      ]) {
         const themed = resolve(name, rose);
         expect(themed, name).not.toBe(resolve(name));
         expect(themed.toUpperCase(), name).toMatch(/#(?:9D174D|831843)/);
@@ -531,8 +622,6 @@ describe('theme.css Tailwind theme mapping', () => {
   const stock = () => block('@theme').declarations;
   const mapped = () => block('@theme inline').declarations;
 
-  // The stock shadow scale is gone, so shadow-sm and friends generate nothing; the only shadows are
-  // the elevation tokens.
   it('resets the stock shadow, radius and colour scales, so only Nova tokens generate utilities', () => {
     expect(stock()).toMatchObject({
       '--color-*': 'initial',
@@ -544,66 +633,71 @@ describe('theme.css Tailwind theme mapping', () => {
     ).toEqual([]);
   });
 
-  it('maps the elevation scale, and nothing else, into shadow-elevation-* utilities', () => {
+  it('maps the prototype shadow scale, and nothing else, into shadow-sm | md | lg | glass', () => {
     const shadows = Object.entries(mapped()).filter(([name]) =>
       name.startsWith('--shadow-'),
     );
     expect(shadows).toEqual(
-      ['1', '2', '3', 'button'].map((level) => [
-        `--shadow-elevation-${level}`,
-        `var(--nova-elevation-${level})`,
+      ['sm', 'md', 'lg', 'glass'].map((size) => [
+        `--shadow-${size}`,
+        `var(--nova-shadow-${size})`,
       ]),
     );
   });
 
-  it('maps the radius grammar sm / md / lg / xl onto the Nova tokens', () => {
-    for (const step of ['sm', 'md', 'lg', 'xl']) {
-      expect(mapped()[`--radius-${step}`]).toBe(`var(--nova-radius-${step})`);
-    }
+  it('maps the prototype radii sm / md / lg / xl / full onto the Nova tokens', () => {
+    const radii = Object.entries(mapped()).filter(([name]) =>
+      name.startsWith('--radius-'),
+    );
+    expect(radii).toEqual(
+      ['sm', 'md', 'lg', 'xl', 'full'].map((step) => [
+        `--radius-${step}`,
+        `var(--nova-radius-${step})`,
+      ]),
+    );
+  });
+
+  // Sizes are written text-[Npx] from PROTOTYPE_TYPE_SIZES; there is no named ramp any more.
+  it('maps no named text sizes', () => {
     expect(
-      Object.keys(mapped()).filter((name) => name.startsWith('--radius-')),
-    ).toHaveLength(4);
+      Object.keys({ ...stock(), ...mapped() }).filter((name) =>
+        name.startsWith('--text-'),
+      ),
+    ).toEqual([]);
   });
 
-  it.each([
-    'micro',
-    'caption',
-    'callout',
-    'body',
-    'headline',
-    'title3',
-    'title2',
-    'title1',
-  ])(
-    'maps the %s step of the type ramp, with its line height, into text-* utilities',
-    (step) => {
-      expect(mapped()).toMatchObject({
-        [`--text-${step}`]: `var(--nova-text-${step})`,
-        [`--text-${step}--line-height`]: `var(--nova-text-${step}--line-height)`,
-      });
-    },
-  );
+  it('sets Google Sans Flex as the sans and display face and IBM Plex Mono as the mono face', () => {
+    expect(mapped()).toMatchObject({
+      '--font-sans': 'var(--nova-font-body)',
+      '--font-display': 'var(--nova-font-display)',
+      '--font-mono': 'var(--nova-font-mono)',
+      '--default-font-family': 'var(--nova-font-body)',
+    });
+  });
 
-  // Headlines (20px and up) tighten slightly; small text is never tightened.
-  it('tightens the tracking of headline sizes only', () => {
-    const tightened = Object.entries(mapped())
-      .filter(([name]) => name.endsWith('--letter-spacing'))
-      .map(([name, value]) => [name, value]);
-    expect(tightened).toEqual(
-      ['headline', 'title3', 'title2', 'title1'].map((step) => [
-        `--text-${step}--letter-spacing`,
-        'var(--nova-tracking-tight)',
-      ]),
-    );
+  it('carries the prototype heading tracking as tracking-h1 | h2 | h3', () => {
+    expect(stock()).toMatchObject({
+      '--tracking-h1': '-0.015em',
+      '--tracking-h2': '-0.01em',
+      '--tracking-h3': '-0.005em',
+    });
   });
 });
 
 describe('theme.css base rules', () => {
-  // corner-shape is not inherited, so the rule has to reach every box. Browsers without it ignore the
-  // declaration and draw plain rounded corners, which is why a refactor must not drop it as dead weight.
-  it('gives every element and pseudo-element continuous (squircle) corners, so each rounded-* and surface utility inherits the shape', () => {
-    expect(block('@layer base').nested['*, ::before, ::after']).toMatchObject({
-      declarations: { 'corner-shape': 'squircle' },
+  // The prototype draws plain border-radius corners: the Apple squircle is gone.
+  it('sets no corner-shape anywhere, so every radius is a plain border-radius', () => {
+    expect(source).not.toMatch(/corner-shape/);
+  });
+
+  it('sets the prototype page type on the body: Google Sans Flex, 14px on a 1.55 line', () => {
+    expect(block('@layer base').nested['body']?.declarations).toEqual({
+      'font-family': 'var(--nova-font-body)',
+      'font-size': '14px',
+      'line-height': '1.55',
+      color: 'var(--nova-color-ink)',
+      background: 'var(--nova-color-bg)',
+      'font-optical-sizing': 'auto',
     });
   });
 });

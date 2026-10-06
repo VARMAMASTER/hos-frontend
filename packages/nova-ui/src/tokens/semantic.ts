@@ -2,24 +2,38 @@ import { primitives as p } from './primitives';
 
 export type NovaVariable = `--nova-${string}`;
 
+// The HOS prototype's :root (os/public/assets/hos.css, "HOS Design System v3"), under Nova's
+// semantic names. Every value is the prototype's, verbatim, except the two an accessibility proof
+// holds (ink-3 and border-control, below); semantic.spec.ts compares the two files token by token.
 export const NOVA_DEFAULTS = {
+  // content canvas and ink (--bg, --panel, --panel-2, --line, --line-strong, --ink, --ink-2, --ink-3)
   '--nova-color-bg': p.lavender[100],
   '--nova-color-surface': p.white,
   '--nova-color-surface-2': p.lavender[50],
   '--nova-color-border': p.lavender[200],
   '--nova-color-border-strong': p.lavender[300],
-  // The edge of a form control or a secondary button: 3:1 against its fill and its backdrop.
+  // The edge of a form control: 3:1 against its fill and its backdrop (WCAG 1.4.11). The prototype's
+  // .f-input edge is --line-strong (#CFC9E6), 1.6:1 on white, so the proven edge stays.
   '--nova-color-border-control': p.ink[400],
   '--nova-color-ink': p.ink[900],
   '--nova-color-ink-2': p.ink[600],
+  // The prototype's --ink-3 is #6A6584 (4.84:1 on the bare canvas). The aurora tints the canvas, and
+  // small print must hold 4.5:1 on the darkest tint (material.spec.ts), so this stays darkened.
   '--nova-color-ink-3': p.ink[500],
+  // brand (--teal, --teal-strong, --teal-soft, --teal-ghost): a hospital theme may set the first three
   '--nova-color-primary': p.violet[600],
   '--nova-color-primary-strong': p.violet[700],
   '--nova-color-primary-soft': p.violet[100],
+  '--nova-color-primary-ghost': p.violet[50],
   '--nova-color-on-primary': p.white,
+  // AI signature (--ai, --ai-bright, --ai-deep, --ai-soft, --ai-ghost, --ai-line)
   '--nova-color-ai': p.cyan[700],
+  '--nova-color-ai-bright': p.cyan[400],
   '--nova-color-ai-deep': p.cyan[800],
   '--nova-color-ai-soft': p.cyan[100],
+  '--nova-color-ai-ghost': p.cyan[50],
+  '--nova-color-ai-line': p.cyan[200],
+  // status, with the "-deep" text-on-tint pairing for each -soft fill
   '--nova-color-good': p.green[600],
   '--nova-color-good-soft': p.green[100],
   '--nova-color-good-deep': p.green[800],
@@ -32,59 +46,74 @@ export const NOVA_DEFAULTS = {
   '--nova-color-info': p.blue[700],
   '--nova-color-info-soft': p.blue[100],
   '--nova-color-info-deep': p.blue[800],
+  // chrome: the deep indigo-violet app frame (--chrome-*). Fixed for every hospital, like the
+  // prototype; the brand reaches the sidebar only through its violet lift (theme.css).
+  '--nova-color-chrome-1': p.chrome[1],
+  '--nova-color-chrome-2': p.chrome[2],
+  '--nova-color-chrome-3': p.chrome[3],
+  '--nova-color-chrome-glass': 'rgba(23, 15, 48, 0.60)',
+  '--nova-color-chrome-line': 'rgba(255, 255, 255, 0.12)',
+  '--nova-color-chrome-ink': p.chrome.ink,
+  '--nova-color-chrome-ink-2': 'rgba(241, 238, 251, 0.66)',
+  '--nova-color-chrome-accent': p.chrome.accent,
+  '--nova-color-chrome-accent-soft': 'rgba(167, 139, 250, 0.18)',
+  '--nova-color-chrome-glow-2': p.chrome.glow2,
   // The data palette: six series colours, fixed for every hospital like status and AI, so the same
   // chart reads the same everywhere (never in the theme allow-list). Built with the dataviz method
   // (OKLab/OKLCH, Machado 2009 colour-vision simulation): neighbouring slots at least 12.8 apart
   // under protanopia and deuteranopia and 23 apart with full colour vision; at least 3:1 against
   // white; and at least 11 (OKLab x 100) from every status colour, its deep ink, the brand violet and
-  // the AI cyan, so a series never reads as a judgement. palette.spec.ts checks these.
+  // the AI cyan, so a series never reads as a judgement. palette.spec.ts checks these. (The
+  // prototype's three-colour triad reuses the good and info hues, which that proof forbids.)
   '--nova-chart-1': p.data.sky,
   '--nova-chart-2': p.data.gold,
   '--nova-chart-3': p.data.rose,
   '--nova-chart-4': p.data.olive,
   '--nova-chart-5': p.data.lavender,
   '--nova-chart-6': p.data.plum,
-  // The radius grammar (docs/design-language/README.md): sm inline and compact, md inputs and small
-  // tiles, lg cards and dialogs, xl large hero surfaces; anything that reads as an action is a pill
-  // (rounded-full). Nothing in between.
-  '--nova-radius-sm': '6px',
-  '--nova-radius-md': '10px',
-  '--nova-radius-lg': '14px',
-  '--nova-radius-xl': '20px',
+  // The AI signature gradient (--ai-grad) and the multicolour AI mark (--ai-mark, the mark only:
+  // never a chip, button, panel tint or anything that carries state). The gradient's last stop is
+  // the prototype's violet pinned as a literal, never var(--nova-color-primary), so no hospital's
+  // brand can recolour the sign that a machine wrote this.
+  '--nova-gradient-ai':
+    'linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, #6D4FE0 105%)',
+  '--nova-ai-mark':
+    'conic-gradient(from 0deg at 50% 50%, #EA4335 0deg, #4285F4 92deg, #34A853 184deg, #FBBC04 272deg, #EA4335 360deg)',
+  // radii (--r-sm, --r-md, --r-lg, --r-xl, --r-full)
+  '--nova-radius-sm': '8px',
+  '--nova-radius-md': '12px',
+  '--nova-radius-lg': '18px',
+  '--nova-radius-xl': '22px',
+  '--nova-radius-full': '999px',
+  // spacing (--space-0 … --space-10)
+  '--nova-space-0': '2px',
+  '--nova-space-1': '4px',
+  '--nova-space-2': '6px',
+  '--nova-space-3': '8px',
+  '--nova-space-4': '10px',
+  '--nova-space-5': '12px',
+  '--nova-space-6': '16px',
+  '--nova-space-7': '20px',
+  '--nova-space-8': '24px',
+  '--nova-space-9': '32px',
+  '--nova-space-10': '48px',
+  // shadows, hue-tinted to violet, never neutral black (--shadow-hue, --shadow-sm|md|lg|glass)
+  '--nova-shadow-hue': '262deg 45% 27%',
+  '--nova-shadow-sm':
+    '0 1px 2px hsl(var(--nova-shadow-hue) / .07), 0 2px 6px -1px hsl(var(--nova-shadow-hue) / .07)',
+  '--nova-shadow-md':
+    '0 2px 4px hsl(var(--nova-shadow-hue) / .06), 0 8px 16px -4px hsl(var(--nova-shadow-hue) / .09), 0 20px 32px -10px hsl(var(--nova-shadow-hue) / .10)',
+  '--nova-shadow-lg':
+    '0 4px 8px -2px hsl(var(--nova-shadow-hue) / .07), 0 12px 24px -6px hsl(var(--nova-shadow-hue) / .11), 0 28px 48px -14px hsl(var(--nova-shadow-hue) / .14)',
+  '--nova-shadow-glass':
+    '0 8px 24px -8px hsl(var(--nova-shadow-hue) / .45), 0 2px 10px hsl(var(--nova-shadow-hue) / .28)',
   '--nova-sidebar-w': '248px',
-  '--nova-font-body': '"Inter", system-ui, -apple-system, sans-serif',
+  // fonts (--f-display, --f-body, --f-mono): Google Sans Flex, one variable family for display and
+  // body; IBM Plex Mono for tabular clinical and financial figures.
+  '--nova-font-display':
+    '"Google Sans Flex", system-ui, -apple-system, sans-serif',
+  '--nova-font-body':
+    '"Google Sans Flex", system-ui, -apple-system, sans-serif',
   '--nova-font-mono':
     '"IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace',
-  // The type ramp. Body reading text and form input text are 17px; dense data (table cells, chips,
-  // meta lines) uses callout or caption, so tables stay scannable. Paired with the weight ladder
-  // 400 / 600 / 700 (500 is banned) and, from headline up, the tight tracking below.
-  '--nova-text-micro': '11px',
-  '--nova-text-micro--line-height': '14px',
-  '--nova-text-caption': '13px',
-  '--nova-text-caption--line-height': '18px',
-  '--nova-text-callout': '15px',
-  '--nova-text-callout--line-height': '20px',
-  '--nova-text-body': '17px',
-  '--nova-text-body--line-height': '24px',
-  '--nova-text-headline': '20px',
-  '--nova-text-headline--line-height': '26px',
-  '--nova-text-title3': '28px',
-  '--nova-text-title3--line-height': '34px',
-  '--nova-text-title2': '40px',
-  '--nova-text-title2--line-height': '46px',
-  '--nova-text-title1': '56px',
-  '--nova-text-title1--line-height': '60px',
-  '--nova-tracking-tight': '-0.01em',
-  // The elevation scale: a subtle, premium lift, soft and low-opacity, tinted to the Nova violet
-  // shadow hue (never neutral black). 1: resting cards, panels and data surfaces. 2: menus,
-  // popovers, tooltips, toasts, a hovered interactive card. 3: dialogs and sheets. button: the
-  // filled buttons only. Not tenant-overridable. Components never invent a shadow.
-  '--nova-elevation-1':
-    '0 1px 2px hsl(262deg 45% 27% / 0.05), 0 2px 8px -2px hsl(262deg 45% 27% / 0.08)',
-  '--nova-elevation-2':
-    '0 2px 4px hsl(262deg 45% 27% / 0.06), 0 10px 24px -6px hsl(262deg 45% 27% / 0.12)',
-  '--nova-elevation-3':
-    '0 4px 8px hsl(262deg 45% 27% / 0.06), 0 20px 40px -12px hsl(262deg 45% 27% / 0.18)',
-  '--nova-elevation-button':
-    '0 1px 2px hsl(262deg 45% 27% / 0.12), 0 2px 6px -2px hsl(262deg 45% 27% / 0.16)',
 } as const satisfies Record<NovaVariable, string>;

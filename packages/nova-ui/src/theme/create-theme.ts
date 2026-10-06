@@ -73,17 +73,7 @@ const CONTRAST_PAIRS: ReadonlyArray<
   ],
 ];
 
-// On glass the hero band is the brand gradient at GLASS.heroOpacity, so the lightest canvas shows
-// through and white text loses contrast. Checked unless the hospital chose solid.
-const GLASS_HERO_PAIRS: ReadonlyArray<
-  readonly [background: NovaVariable, usedBy: string]
-> = [
-  ['--nova-color-primary-strong', 'hero text on glass, start of the gradient'],
-  ['--nova-color-primary', 'hero text on glass, end of the gradient'],
-];
-
 const MIN_CONTRAST = 4.5;
-const WHITE = '#FFFFFF';
 const PLAIN_FONT_STACK = /^[\w\s",'-]+$/;
 
 // Rounded down, so a ratio just under the floor never reads as meeting it ("4.50:1 … needs 4.5:1").
@@ -135,28 +125,6 @@ export function createNovaTheme(input: NovaThemeInput): NovaTheme {
   }
 
   if (material !== 'solid') {
-    const text = resolve('--nova-color-on-primary');
-    // The hero's glass shows whatever is behind it: the canvas on a page, white inside a Card or a
-    // Dialog. White lifts the gradient's light end the most, so both are checked.
-    for (const [backdrop, where] of [
-      [resolve('--nova-color-bg'), ''],
-      [WHITE, ' over white'],
-    ] as const) {
-      for (const [background, usedBy] of GLASS_HERO_PAIRS) {
-        const fill = mixColours(
-          resolve(background),
-          GLASS.heroOpacity,
-          backdrop,
-        );
-        const ratio = contrastRatio(text, fill);
-        if (ratio < MIN_CONTRAST) {
-          throw new NovaThemeError(
-            `Theme "${name}": ${text} on ${resolve(background)} at ${Math.round(GLASS.heroOpacity * 100)}% glass${where} gives ${formatRatio(ratio)}:1 for ${usedBy} — needs at least ${MIN_CONTRAST}:1. Choose a darker brand colour or set material to "solid".`,
-          );
-        }
-      }
-    }
-
     // Brand text (breadcrumb links, ghost buttons, outline tags) sits straight on the canvas, which
     // the brand itself tints. Checked over the darker accent hue, at full strength, as the material
     // proof does.

@@ -67,14 +67,6 @@ describe('createNovaTheme', () => {
   });
 
   describe('material (glass or solid)', () => {
-    // White text on this primary passes the solid gate (5.15:1), but on the 92% glass hero over
-    // the lightest canvas it drops to 4.499:1.
-    const nearLimit = {
-      primary: '#6C57E0',
-      primaryStrong: '#5636B8',
-      primarySoft: '#EFEAFC',
-    };
-
     it('leaves material unset when the hospital does not choose, so the product default applies', () => {
       expect(createNovaTheme({ name: 'HOS Violet' })).not.toHaveProperty(
         'material',
@@ -106,41 +98,20 @@ describe('createNovaTheme', () => {
       );
     });
 
-    it('rejects a brand whose white hero text would fall below 4.5:1 on glass, rounding the ratio down', () => {
-      const glassy = () =>
-        createNovaTheme({ name: 'Near Limit', brand: nearLimit });
-      expect(glassy).toThrow(NovaThemeError);
-      expect(glassy).toThrow(
-        /#FFFFFF on #6C57E0 at 92% glass gives 4\.49:1 for hero text on glass/,
-      );
-      expect(glassy).toThrow(/set material to "solid"/);
-    });
-
-    it('accepts the same brand when the hospital chooses solid, where the hero is opaque', () => {
-      expect(
-        createNovaTheme({
-          name: 'Near Limit',
-          brand: nearLimit,
-          material: 'solid',
-        }).cssVariables['--nova-color-primary'],
-      ).toBe('#6C57E0');
-    });
-
-    // A HeroBand inside a Card or a Dialog has white behind its glass, not the canvas, and white
-    // lifts the gradient's light end further than the canvas does.
-    it('gates glass hero text over a white region too, not only over the canvas', () => {
-      const grey = {
-        primary: '#6C6C6C',
-        primaryStrong: '#6C6C6C',
-        primarySoft: '#FFFFFF',
+    // The hero band is the prototype's fixed violet-to-sky glass (.glass-hero), not the brand, and
+    // material.spec.ts proves its white text for every hospital. A brand that only clears the button
+    // gate is therefore fine on glass.
+    it('needs no hero gate for a brand: the hero does not take the brand colours', () => {
+      const nearLimit = {
+        primary: '#6C57E0',
+        primaryStrong: '#5636B8',
+        primarySoft: '#EFEAFC',
       };
-      const glassy = () => createNovaTheme({ name: 'Grey', brand: grey });
-      expect(glassy).toThrow(
-        /#FFFFFF on #6C6C6C at 92% glass over white gives 4\.41:1 for hero text on glass/,
-      );
-      expect(() =>
-        createNovaTheme({ name: 'Grey', brand: grey, material: 'solid' }),
-      ).not.toThrow();
+      expect(
+        createNovaTheme({ name: 'Near Limit', brand: nearLimit }).cssVariables[
+          '--nova-color-primary'
+        ],
+      ).toBe('#6C57E0');
     });
 
     // Breadcrumb links, ghost buttons and outline tags put primary-strong straight on the canvas,

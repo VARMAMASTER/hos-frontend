@@ -1,15 +1,19 @@
-/* Stock scales removed. The palette, so a component cannot reach for bg-red-500 instead of a
-   semantic token. The radii, so only the grammar below exists (rounded-none and rounded-full are
-   Tailwind's own static values and stay). The shadows, because elevation is flat: depth comes from
-   surface change, hairlines, the glass frost and a scrim, so shadow-sm and friends generate nothing. */
+/* Nova is the HOS prototype (os/public/assets/hos.css, "HOS Design System v3"): its tokens, shapes and
+   sizes, under Nova's semantic names. The stock Tailwind scales are removed so only the prototype's
+   exist: the palette (a component cannot reach for bg-red-500 instead of a semantic token), the
+   radii (only --r-sm … --r-full) and the shadows (only --shadow-sm | md | lg | glass). */
 @theme {
   --color-*: initial;
   --radius-*: initial;
   --shadow-*: initial;
-  /* Spacing is the 4px unit: p-3 is 12px. Only the design language scale is allowed (2, 4, 8, 12,
-     16, 20, 24, 32, 48, 64 px, that is steps 0.5 to 16), which conventions.spec.ts enforces. */
+  /* Spacing is the 4px unit: p-3 is 12px, p-2.5 is 10px. Only the prototype's --space-* scale is
+     allowed (2, 4, 6, 8, 10, 12, 16, 20, 24, 32, 48 px), which conventions.spec.ts enforces. */
   --spacing: 4px;
-  /* Motion is quiet and quick: entrances 150-240ms ease-out. Components apply these under
+  /* The prototype's heading tracking (h1, h2, h3). */
+  --tracking-h1: -0.015em;
+  --tracking-h2: -0.01em;
+  --tracking-h3: -0.005em;
+  /* Motion is quiet and quick, as in the prototype (120-200ms). Components apply these under
      motion-safe, so prefers-reduced-motion turns them off. */
   --animate-dialog-in: nova-dialog-in 180ms ease-out;
   --animate-fade-in: nova-fade-in 180ms ease-out;
@@ -42,10 +46,14 @@
   --color-primary: var(--nova-color-primary);
   --color-primary-strong: var(--nova-color-primary-strong);
   --color-primary-soft: var(--nova-color-primary-soft);
+  --color-primary-ghost: var(--nova-color-primary-ghost);
   --color-on-primary: var(--nova-color-on-primary);
   --color-ai: var(--nova-color-ai);
+  --color-ai-bright: var(--nova-color-ai-bright);
   --color-ai-deep: var(--nova-color-ai-deep);
   --color-ai-soft: var(--nova-color-ai-soft);
+  --color-ai-ghost: var(--nova-color-ai-ghost);
+  --color-ai-line: var(--nova-color-ai-line);
   --color-good: var(--nova-color-good);
   --color-good-soft: var(--nova-color-good-soft);
   --color-good-deep: var(--nova-color-good-deep);
@@ -58,39 +66,28 @@
   --color-info: var(--nova-color-info);
   --color-info-soft: var(--nova-color-info-soft);
   --color-info-deep: var(--nova-color-info-deep);
+  --color-chrome-1: var(--nova-color-chrome-1);
+  --color-chrome-2: var(--nova-color-chrome-2);
+  --color-chrome-3: var(--nova-color-chrome-3);
+  --color-chrome-line: var(--nova-color-chrome-line);
+  --color-chrome-ink: var(--nova-color-chrome-ink);
+  --color-chrome-accent: var(--nova-color-chrome-accent);
+  --color-chrome-accent-soft: var(--nova-color-chrome-accent-soft);
   --radius-sm: var(--nova-radius-sm);
   --radius-md: var(--nova-radius-md);
   --radius-lg: var(--nova-radius-lg);
   --radius-xl: var(--nova-radius-xl);
-  /* The elevation scale is the only shadow scale: shadow-elevation-1 | 2 | 3 | button. */
-  --shadow-elevation-1: var(--nova-elevation-1);
-  --shadow-elevation-2: var(--nova-elevation-2);
-  --shadow-elevation-3: var(--nova-elevation-3);
-  --shadow-elevation-button: var(--nova-elevation-button);
+  --radius-full: var(--nova-radius-full);
+  /* The prototype's shadow scale is the only shadow scale: shadow-sm | md | lg | glass. */
+  --shadow-sm: var(--nova-shadow-sm);
+  --shadow-md: var(--nova-shadow-md);
+  --shadow-lg: var(--nova-shadow-lg);
+  --shadow-glass: var(--nova-shadow-glass);
   --font-sans: var(--nova-font-body);
+  --font-display: var(--nova-font-display);
   --font-mono: var(--nova-font-mono);
-  /* The type ramp as text-micro … text-title1, each with its own line height. Headline sizes and up
-     tighten their tracking slightly; small text is never tightened. */
-  --text-micro: var(--nova-text-micro);
-  --text-micro--line-height: var(--nova-text-micro--line-height);
-  --text-caption: var(--nova-text-caption);
-  --text-caption--line-height: var(--nova-text-caption--line-height);
-  --text-callout: var(--nova-text-callout);
-  --text-callout--line-height: var(--nova-text-callout--line-height);
-  --text-body: var(--nova-text-body);
-  --text-body--line-height: var(--nova-text-body--line-height);
-  --text-headline: var(--nova-text-headline);
-  --text-headline--line-height: var(--nova-text-headline--line-height);
-  --text-headline--letter-spacing: var(--nova-tracking-tight);
-  --text-title3: var(--nova-text-title3);
-  --text-title3--line-height: var(--nova-text-title3--line-height);
-  --text-title3--letter-spacing: var(--nova-tracking-tight);
-  --text-title2: var(--nova-text-title2);
-  --text-title2--line-height: var(--nova-text-title2--line-height);
-  --text-title2--letter-spacing: var(--nova-tracking-tight);
-  --text-title1: var(--nova-text-title1);
-  --text-title1--line-height: var(--nova-text-title1--line-height);
-  --text-title1--letter-spacing: var(--nova-tracking-tight);
+  --default-font-family: var(--nova-font-body);
+  --default-mono-font-family: var(--nova-font-mono);
 }
 
 /* The defaults below stay byte-identical to NOVA_DEFAULTS (tokens/semantic.ts), in the
@@ -110,10 +107,14 @@
   --nova-color-primary: #6D4FE0;
   --nova-color-primary-strong: #5636B8;
   --nova-color-primary-soft: #EFEAFC;
+  --nova-color-primary-ghost: #F8F5FE;
   --nova-color-on-primary: #FFFFFF;
   --nova-color-ai: #0E7490;
+  --nova-color-ai-bright: #22D3EE;
   --nova-color-ai-deep: #0B5567;
   --nova-color-ai-soft: #DDF4FA;
+  --nova-color-ai-ghost: #F6FDFF;
+  --nova-color-ai-line: #B9E6F2;
   --nova-color-good: #0B8A68;
   --nova-color-good-soft: #E3F2EC;
   --nova-color-good-deep: #07634B;
@@ -126,40 +127,49 @@
   --nova-color-info: #2563A8;
   --nova-color-info-soft: #E7EFF8;
   --nova-color-info-deep: #1A4C85;
+  --nova-color-chrome-1: #170F30;
+  --nova-color-chrome-2: #2A1B5C;
+  --nova-color-chrome-3: #3B2178;
+  --nova-color-chrome-glass: rgba(23, 15, 48, 0.60);
+  --nova-color-chrome-line: rgba(255, 255, 255, 0.12);
+  --nova-color-chrome-ink: #F1EEFB;
+  --nova-color-chrome-ink-2: rgba(241, 238, 251, 0.66);
+  --nova-color-chrome-accent: #A78BFA;
+  --nova-color-chrome-accent-soft: rgba(167, 139, 250, 0.18);
+  --nova-color-chrome-glow-2: #60A5FA;
   --nova-chart-1: #248FCC;
   --nova-chart-2: #B38A00;
   --nova-chart-3: #E75594;
   --nova-chart-4: #6C6610;
   --nova-chart-5: #A779FD;
   --nova-chart-6: #9C1B80;
-  --nova-radius-sm: 6px;
-  --nova-radius-md: 10px;
-  --nova-radius-lg: 14px;
-  --nova-radius-xl: 20px;
+  --nova-gradient-ai: linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, #6D4FE0 105%);
+  --nova-ai-mark: conic-gradient(from 0deg at 50% 50%, #EA4335 0deg, #4285F4 92deg, #34A853 184deg, #FBBC04 272deg, #EA4335 360deg);
+  --nova-radius-sm: 8px;
+  --nova-radius-md: 12px;
+  --nova-radius-lg: 18px;
+  --nova-radius-xl: 22px;
+  --nova-radius-full: 999px;
+  --nova-space-0: 2px;
+  --nova-space-1: 4px;
+  --nova-space-2: 6px;
+  --nova-space-3: 8px;
+  --nova-space-4: 10px;
+  --nova-space-5: 12px;
+  --nova-space-6: 16px;
+  --nova-space-7: 20px;
+  --nova-space-8: 24px;
+  --nova-space-9: 32px;
+  --nova-space-10: 48px;
+  --nova-shadow-hue: 262deg 45% 27%;
+  --nova-shadow-sm: 0 1px 2px hsl(var(--nova-shadow-hue) / .07), 0 2px 6px -1px hsl(var(--nova-shadow-hue) / .07);
+  --nova-shadow-md: 0 2px 4px hsl(var(--nova-shadow-hue) / .06), 0 8px 16px -4px hsl(var(--nova-shadow-hue) / .09), 0 20px 32px -10px hsl(var(--nova-shadow-hue) / .10);
+  --nova-shadow-lg: 0 4px 8px -2px hsl(var(--nova-shadow-hue) / .07), 0 12px 24px -6px hsl(var(--nova-shadow-hue) / .11), 0 28px 48px -14px hsl(var(--nova-shadow-hue) / .14);
+  --nova-shadow-glass: 0 8px 24px -8px hsl(var(--nova-shadow-hue) / .45), 0 2px 10px hsl(var(--nova-shadow-hue) / .28);
   --nova-sidebar-w: 248px;
-  --nova-font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --nova-font-display: "Google Sans Flex", system-ui, -apple-system, sans-serif;
+  --nova-font-body: "Google Sans Flex", system-ui, -apple-system, sans-serif;
   --nova-font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
-  --nova-text-micro: 11px;
-  --nova-text-micro--line-height: 14px;
-  --nova-text-caption: 13px;
-  --nova-text-caption--line-height: 18px;
-  --nova-text-callout: 15px;
-  --nova-text-callout--line-height: 20px;
-  --nova-text-body: 17px;
-  --nova-text-body--line-height: 24px;
-  --nova-text-headline: 20px;
-  --nova-text-headline--line-height: 26px;
-  --nova-text-title3: 28px;
-  --nova-text-title3--line-height: 34px;
-  --nova-text-title2: 40px;
-  --nova-text-title2--line-height: 46px;
-  --nova-text-title1: 56px;
-  --nova-text-title1--line-height: 60px;
-  --nova-tracking-tight: -0.01em;
-  --nova-elevation-1: 0 1px 2px hsl(262deg 45% 27% / 0.05), 0 2px 8px -2px hsl(262deg 45% 27% / 0.08);
-  --nova-elevation-2: 0 2px 4px hsl(262deg 45% 27% / 0.06), 0 10px 24px -6px hsl(262deg 45% 27% / 0.12);
-  --nova-elevation-3: 0 4px 8px hsl(262deg 45% 27% / 0.06), 0 20px 40px -12px hsl(262deg 45% 27% / 0.18);
-  --nova-elevation-button: 0 1px 2px hsl(262deg 45% 27% / 0.12), 0 2px 6px -2px hsl(262deg 45% 27% / 0.16);
 }
 
 /* Material: glass is the product default (no attribute needed); a hospital theme or the product can
@@ -169,19 +179,18 @@
 :root,
 [data-nova-material='glass'] {
   --nova-glass: 1;
-  --nova-surface-fill: rgb(255 255 255 / 0.55);
-  --nova-surface-filter: blur(24px) saturate(180%);
-  --nova-surface-border: rgb(255 255 255 / 0.55);
-  --nova-surface-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.7);
-  --nova-overlay-fill: rgb(255 255 255 / 0.79);
-  --nova-overlay-filter: blur(24px) saturate(180%);
+  --nova-surface-fill: rgb(255 255 255 / 0.72);
+  --nova-surface-filter: blur(14px) saturate(140%);
+  --nova-surface-border: rgb(255 255 255 / 0.5);
+  --nova-surface-shadow: var(--nova-shadow-md), inset 0 1px 0 0 rgb(255 255 255 / 0.7);
+  --nova-overlay-fill: rgb(255 255 255 / 0.83);
+  --nova-overlay-filter: blur(20px) saturate(160%);
   --nova-overlay-border: rgb(255 255 255 / 0.6);
-  --nova-overlay-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.65);
-  --nova-field-fill: rgb(255 255 255 / 0.8);
-  --nova-field-filter: blur(20px) saturate(160%);
-  --nova-chrome-opacity: 0.78;
-  --nova-chrome-filter: blur(18px) saturate(150%);
-  --nova-hero-opacity: 0.92;
+  --nova-overlay-shadow: var(--nova-shadow-md), inset 0 1px 0 0 rgb(255 255 255 / 0.65);
+  --nova-chrome-fill: linear-gradient(120deg, rgb(23 15 48 / 0.85), rgb(59 33 120 / 0.78));
+  --nova-chrome-filter: blur(16px) saturate(150%);
+  --nova-hero-fill: linear-gradient(120deg, rgb(42 27 92 / 0.92), rgb(96 165 250 / 0.55));
+  --nova-hero-base: rgb(23 15 48 / 0.9);
   --nova-hero-filter: blur(20px) saturate(160%);
 }
 
@@ -191,16 +200,15 @@
   --nova-surface-fill: var(--nova-color-surface);
   --nova-surface-filter: none;
   --nova-surface-border: var(--nova-color-border);
-  --nova-surface-shadow: 0 0 #0000;
+  --nova-surface-shadow: var(--nova-shadow-sm);
   --nova-overlay-fill: var(--nova-color-surface);
   --nova-overlay-filter: none;
   --nova-overlay-border: var(--nova-color-border);
-  --nova-overlay-shadow: 0 0 #0000;
-  --nova-field-fill: var(--nova-color-surface);
-  --nova-field-filter: none;
-  --nova-chrome-opacity: 1;
+  --nova-overlay-shadow: var(--nova-shadow-md);
+  --nova-chrome-fill: linear-gradient(120deg, var(--nova-color-chrome-1), var(--nova-color-chrome-3));
   --nova-chrome-filter: none;
-  --nova-hero-opacity: 1;
+  --nova-hero-fill: linear-gradient(120deg, var(--nova-color-chrome-2), var(--nova-color-chrome-3));
+  --nova-hero-base: var(--nova-color-chrome-2);
   --nova-hero-filter: none;
 }
 
@@ -212,16 +220,15 @@
     --nova-surface-fill: var(--nova-color-surface);
     --nova-surface-filter: none;
     --nova-surface-border: var(--nova-color-border);
-    --nova-surface-shadow: 0 0 #0000;
+    --nova-surface-shadow: var(--nova-shadow-sm);
     --nova-overlay-fill: var(--nova-color-surface);
     --nova-overlay-filter: none;
     --nova-overlay-border: var(--nova-color-border);
-    --nova-overlay-shadow: 0 0 #0000;
-    --nova-field-fill: var(--nova-color-surface);
-    --nova-field-filter: none;
-    --nova-chrome-opacity: 1;
+    --nova-overlay-shadow: var(--nova-shadow-md);
+    --nova-chrome-fill: linear-gradient(120deg, var(--nova-color-chrome-1), var(--nova-color-chrome-3));
     --nova-chrome-filter: none;
-    --nova-hero-opacity: 1;
+    --nova-hero-fill: linear-gradient(120deg, var(--nova-color-chrome-2), var(--nova-color-chrome-3));
+    --nova-hero-base: var(--nova-color-chrome-2);
     --nova-hero-filter: none;
   }
 }
@@ -234,76 +241,72 @@
     --nova-surface-fill: var(--nova-color-surface);
     --nova-surface-filter: none;
     --nova-surface-border: var(--nova-color-border);
-    --nova-surface-shadow: 0 0 #0000;
+    --nova-surface-shadow: var(--nova-shadow-sm);
     --nova-overlay-fill: var(--nova-color-surface);
     --nova-overlay-filter: none;
     --nova-overlay-border: var(--nova-color-border);
-    --nova-overlay-shadow: 0 0 #0000;
-    --nova-field-fill: var(--nova-color-surface);
-    --nova-field-filter: none;
-    --nova-chrome-opacity: 1;
+    --nova-overlay-shadow: var(--nova-shadow-md);
+    --nova-chrome-fill: linear-gradient(120deg, var(--nova-color-chrome-1), var(--nova-color-chrome-3));
     --nova-chrome-filter: none;
-    --nova-hero-opacity: 1;
+    --nova-hero-fill: linear-gradient(120deg, var(--nova-color-chrome-2), var(--nova-color-chrome-3));
+    --nova-hero-base: var(--nova-color-chrome-2);
     --nova-hero-filter: none;
   }
 }
 
-/* Continuous corners. corner-shape reshapes the curve that border-radius already draws: a squircle
-   eases the curvature in instead of starting abruptly the way a circular arc does, which is what
-   separates premium software from a default-looking UI. It is set here once, on every element and
-   pseudo-element (the property is not inherited), so every rounded-* utility and every surface
-   utility picks it up with no edit of its own, and a radius still means exactly what it says.
-   It is a progressive enhancement: a browser without corner-shape ignores the declaration and draws
-   the ordinary rounded corner, so do not delete this rule as dead weight. A true circle or capsule
-   opts out with corner-shape: round (Tailwind: [corner-shape:round]). */
+/* The prototype's page type: body text 14px on a 1.55 line, in Google Sans Flex with optical sizing,
+   so a component that sets only a size (text-[13px]) gets the prototype's line height with it. */
 @layer base {
-  *,
-  ::before,
-  ::after {
-    corner-shape: squircle;
+  body {
+    font-family: var(--nova-font-body);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--nova-color-ink);
+    background: var(--nova-color-bg);
+    font-optical-sizing: auto;
   }
 }
 
 /* Named gradients, so components, stories and future work reuse one definition of each.
 
-   Brand-derived ones (brand, chrome, aurora) are built from the hospital's own colour tokens,
-   so every hospital theme gets its own gradient with no extra work. A var() inside a custom
-   property is resolved where the property is declared and then inherited as a finished value, so
-   declared on the root alone these would stay HOS violet inside a NovaThemeProvider subtree. They are
-   therefore declared on the root and on every element that can change an input: data-nova-theme
-   carries the brand colours, data-nova-material the glass switch and the opacities.
+   Brand-derived ones (brand, sidebar, aurora) are built from the hospital's own colour tokens, so
+   every hospital theme gets its own with no extra work. A var() inside a custom property is resolved
+   where the property is declared and then inherited as a finished value, so declared on the root
+   alone these would stay HOS violet inside a NovaThemeProvider subtree. They are therefore declared
+   on the root and on every element that can change an input: data-nova-theme carries the brand
+   colours, data-nova-material the glass switch.
 
-   Chrome and aurora are material-aware (they use the chrome opacity and --nova-glass), so they are
-   ready to paint as they are. Brand stays a plain gradient: the hero lays it down at the hero
-   opacity itself, and the brand text utility paints it opaque.
-
-   Chrome deepens downward from the brand mix the legibility proof assumes (GLASS.chromeBrandShare
-   of primary-strong into GLASS.chromeBase) to the bare base. The lightest point is therefore the
-   one material.spec.ts proves, and lightening toward the bottom would read as washed out. */
+   The sidebar is the prototype's .sidebar: a deep base that deepens downward, with a violet lift
+   behind the brand (the hospital's primary at 42%, screened over the base). The aurora is the
+   prototype's four-blob mesh (body::before), tinted at the strengths the legibility proof allows. */
 /* prettier-ignore */
 :root,
 [data-nova-theme],
 [data-nova-material] {
   --nova-gradient-brand: linear-gradient(120deg, var(--nova-color-primary-strong), var(--nova-color-primary));
-  --nova-gradient-chrome: linear-gradient(180deg, color-mix(in srgb, color-mix(in srgb, var(--nova-color-primary-strong) 30%, #120C26) calc(var(--nova-chrome-opacity) * 100%), transparent), color-mix(in srgb, #120C26 calc(var(--nova-chrome-opacity) * 100%), transparent));
+  --nova-gradient-sidebar: radial-gradient(120% 42% at 0% 0%, color-mix(in srgb, var(--nova-color-primary) 42%, transparent), transparent 70%), linear-gradient(180deg, #26185A 0%, #1A0F42 42%, #150C34 100%);
   --nova-gradient-aurora:
-    radial-gradient(900px 700px at 8% -6%, color-mix(in srgb, var(--nova-color-primary) calc(10% * var(--nova-glass)), transparent), transparent 72%),
-    radial-gradient(940px 740px at 96% 4%, color-mix(in srgb, #60A5FA calc(6% * var(--nova-glass)), transparent), transparent 70%),
-    radial-gradient(980px 800px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-strong) calc(10% * var(--nova-glass)), transparent), transparent 70%),
-    radial-gradient(840px 700px at 18% 104%, color-mix(in srgb, #22D3EE calc(6% * var(--nova-glass)), transparent), transparent 70%);
+    radial-gradient(680px 520px at 8% -6%, color-mix(in srgb, var(--nova-color-primary) calc(10% * var(--nova-glass)), transparent), transparent 62%),
+    radial-gradient(720px 560px at 96% 4%, color-mix(in srgb, #60A5FA calc(6% * var(--nova-glass)), transparent), transparent 60%),
+    radial-gradient(760px 620px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-strong) calc(10% * var(--nova-glass)), transparent), transparent 60%),
+    radial-gradient(620px 520px at 18% 104%, color-mix(in srgb, #22D3EE calc(6% * var(--nova-glass)), transparent), transparent 58%);
 }
 
-/* The AI signature: bright cyan, through the AI cyan, into a fixed violet primitive (primitives.violet
-   600, copied here, never read from a theme token). It never references --nova-color-primary and is
-   declared on the root alone, so no hospital's branding can recolour the mark that tells a clinician a
-   machine wrote this. Every other gradient above follows the brand; this one must not. */
+/* Fixed gradients and textures, the same for every hospital. The AI rail runs from the prototype's
+   violet (pinned as a literal, never the brand) through the AI cyan to the bright stop. The edges are
+   .edge-premium and the KPI tile's own edge: violet into cyan, fading out. The grain is the
+   prototype's SVG noise, laid over the chrome and the hero only. */
 /* prettier-ignore */
 :root {
-  --nova-gradient-ai: linear-gradient(135deg, #22D3EE, var(--nova-color-ai), #6D4FE0);
+  --nova-gradient-ai-rail: linear-gradient(180deg, #6D4FE0 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%);
+  --nova-gradient-edge: linear-gradient(135deg, rgba(167,139,250,.55), rgba(34,211,238,.26) 60%, transparent 85%);
+  --nova-gradient-edge-kpi: linear-gradient(135deg, rgba(167,139,250,.5), rgba(34,211,238,.24) 65%, transparent 85%);
+  --nova-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E");
+  --nova-grain-hero: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* The canvas glass frosts: the brand-tinted aurora on glass, flat background on solid (--nova-glass
-   scales every tint to zero). */
+/* The canvas: the brand-tinted aurora on glass, flat background on solid (--nova-glass scales every
+   tint to zero). */
 @utility nova-canvas {
   background-color: var(--nova-color-bg);
   background-image: var(--nova-gradient-aurora);
@@ -314,14 +317,14 @@
    values and nothing else. The translucent fills are the ones the legibility proof in
    material.spec.ts covers; utilities.spec.ts pins this wiring.
 
-   Every light surface (surface, overlay, field, data) also sets the keyboard focus ring back to the
-   brand primary. The ring is an inherited custom property: the chrome and the hero turn it white for
-   their own controls, and without the reset a menu anchored in the sidebar, or a card inside the
-   hero, would draw a white ring on white. material.spec.ts proves the primary ring at 3:1 there. */
+   Every light surface also sets the keyboard focus ring back to the brand primary. The ring is an
+   inherited custom property: the chrome and the hero turn it white for their own controls, and
+   without the reset a menu anchored in the sidebar, or a card inside the hero, would draw a white
+   ring on white. material.spec.ts proves the primary ring at 3:1 there. */
 
-/* Each surface lifts at its own level of the elevation scale. A component asks for another level by
-   setting the surface's lift property (a Dialog asks for 3, a hovered card for 2). They are
-   registered as non-inherited, so a Dialog's level 3 never leaks into the cards and menus it holds. */
+/* A component asks a surface for another shadow (a hovered card lifts to shadow-lg, a Dialog asks for
+   shadow-lg) by setting its lift property. They are registered as non-inherited, so a Dialog's lift
+   never leaks into the cards and menus it holds. */
 @property --nova-surface-lift {
   syntax: '*';
   inherits: false;
@@ -337,52 +340,58 @@
   inherits: false;
 }
 
-/* The default panel. */
+/* The card: the prototype's .card (an opaque panel, a 1px --line edge, --shadow-sm). Solid under
+   either material, as the prototype keeps every card. */
+@utility nova-card {
+  --nova-focus-ring: var(--nova-color-primary);
+  background-color: var(--nova-color-surface);
+  border: 1px solid var(--nova-color-border);
+  box-shadow: var(--nova-surface-lift, var(--nova-shadow-sm));
+
+  /* A selected card or option: the edge upgrades to 2px primary and nothing else changes. */
+  &[data-selected='true'] {
+    border: 2px solid var(--nova-color-primary);
+  }
+}
+
+/* A glass panel: the prototype's .glass-panel on glass, the card on solid. */
 @utility nova-surface {
   --nova-focus-ring: var(--nova-color-primary);
   background-color: var(--nova-surface-fill);
   -webkit-backdrop-filter: var(--nova-surface-filter);
   backdrop-filter: var(--nova-surface-filter);
   border: 1px solid var(--nova-surface-border);
-  box-shadow:
-    var(--nova-surface-lift, var(--nova-elevation-1)),
-    var(--nova-surface-shadow);
+  box-shadow: var(--nova-surface-lift, var(--nova-surface-shadow));
 
-  /* A selected card or option: the edge upgrades to 2px primary, the only place 2px appears, and
-     nothing else changes (no glow, no shadow). */
   &[data-selected='true'] {
     border: 2px solid var(--nova-color-primary);
   }
 }
 
-/* Floating layers: menus, dialogs, tooltips, popovers. */
+/* Floating layers: menus, dialogs, tooltips, popovers. The prototype's .glass-card on glass. */
 @utility nova-overlay {
   --nova-focus-ring: var(--nova-color-primary);
   background-color: var(--nova-overlay-fill);
   -webkit-backdrop-filter: var(--nova-overlay-filter);
   backdrop-filter: var(--nova-overlay-filter);
   border: 1px solid var(--nova-overlay-border);
-  box-shadow:
-    var(--nova-overlay-lift, var(--nova-elevation-2)),
-    var(--nova-overlay-shadow);
+  box-shadow: var(--nova-overlay-lift, var(--nova-overlay-shadow));
 }
 
-/* Form controls. The edge is --nova-field-edge, border-control unless a state sets it: the 3:1 edge
-   material.spec.ts proves against the fill and the backdrop, so a control keeps a clear edge even
-   where the glass behind it is busy (WCAG 1.4.11). Hover, checked and invalid each set the variable,
-   so a control never fights this border with an important modifier; invalid comes last and wins. */
+/* Form controls: the prototype's .f-input, an opaque panel. The edge is --nova-field-edge,
+   border-control unless a state sets it: the 3:1 edge material.spec.ts proves against the fill and
+   the backdrop (WCAG 1.4.11). Hover, focus, checked and invalid each set the variable, so a control
+   never fights this border with an important modifier; invalid comes last and wins. */
 @utility nova-field {
   --nova-focus-ring: var(--nova-color-primary);
-  background-color: var(--nova-field-fill);
-  -webkit-backdrop-filter: var(--nova-field-filter);
-  backdrop-filter: var(--nova-field-filter);
+  background-color: var(--nova-color-surface);
   border: 1px solid var(--nova-field-edge, var(--nova-color-border-control));
 
   &:hover:where(:not(:disabled)) {
     --nova-field-edge: var(--nova-color-ink-2);
   }
 
-  /* Focused: the 1px edge turns primary; the focus ring draws outside it. */
+  /* Focused: the edge turns primary, as the prototype's .f-input:focus does. */
   &:focus {
     --nova-field-edge: var(--nova-color-primary);
   }
@@ -397,72 +406,125 @@
   }
 }
 
-/* The dark app frame (sidebar, top bar), painted with the chrome gradient; material.spec.ts proves
-   white text and the secondary ink below stay at 4.5:1 over its lightest point. Children take their
-   secondary ink from --nova-chrome-ink-2 (GLASS.chromeInk2Alpha) and a field's lift from
-   --nova-chrome-field (GLASS.chromeFieldAlpha); the proof covers the ink inside that field too.
-   The rim marks the bottom and side edges, so one utility frames either a top bar or a sidebar.
-   Where color-mix is missing the
-   gradient token is invalid, so the frame falls back to a solid brand fill rather than to nothing
-   under white text. */
+/* The top bar: the prototype's .topbar, a translucent indigo gradient with the grain laid over it
+   (opaque on solid). material.spec.ts proves white text and the secondary ink (--nova-chrome-ink-2,
+   GLASS.chromeInk2Alpha) at 4.5:1 over its lightest point, inside a field lifted by
+   --nova-chrome-field too. The prototype rings focus here in --chrome-accent, which is 2.4:1 at the
+   light end, so the ring is white. */
 /* prettier-ignore */
 @utility nova-chrome {
   --nova-focus-ring: #fff;
   --nova-chrome-ink-2: rgb(255 255 255 / 0.88);
   --nova-chrome-field: rgb(255 255 255 / 0.08);
-  background-image: var(--nova-gradient-chrome);
-  color: #fff;
-  border-bottom: 1px solid rgb(255 255 255 / 0.12);
-  border-right: 1px solid rgb(255 255 255 / 0.12);
+  background-image: var(--nova-grain), var(--nova-chrome-fill);
+  background-blend-mode: overlay, normal;
   -webkit-backdrop-filter: var(--nova-chrome-filter);
   backdrop-filter: var(--nova-chrome-filter);
-
-  @supports not (color: color-mix(in srgb, red 50%, transparent)) {
-    background-color: var(--nova-color-primary-strong);
-  }
+  border-bottom: 1px solid var(--nova-color-chrome-line);
+  box-shadow: inset 0 -1px 0 0 rgba(255,255,255,.06);
+  color: #fff;
 }
 
-/* The page-top emphasis band. The brand gradient sits on a layer behind the content, at the hero
-   opacity, so the token stays the one plain definition of the gradient. The layer composites exactly
-   as per-stop alpha would: createNovaTheme gates white text against the token's two stops at that
-   opacity over the lightest canvas, so the gradient may use no other colour. The isolation keeps the
-   layer behind the content under either material. */
+/* The sidebar: the prototype's .sidebar, opaque under either material (the prototype never frosts
+   it). Its secondary ink (--nova-sidebar-ink-2, GLASS.sidebarInk2Alpha) and the --chrome-accent focus
+   ring are proven over the violet lift for every brand. */
+/* prettier-ignore */
+@utility nova-sidebar {
+  --nova-focus-ring: var(--nova-color-chrome-accent);
+  --nova-sidebar-ink-2: rgb(241 238 251 / 0.7);
+  background-image: var(--nova-grain), var(--nova-gradient-sidebar);
+  background-blend-mode: overlay, screen, normal;
+  box-shadow: inset -1px 0 0 rgba(255,255,255,.05);
+  border-right: 1px solid var(--nova-color-chrome-line);
+  color: var(--nova-color-chrome-ink);
+}
+
+/* The page-top emphasis band: the prototype's .glass-hero, the violet-to-sky gradient over the
+   chrome glass, with the grain on top. material.spec.ts proves white text and the secondary hero ink
+   (--nova-hero-ink-2) at 4.5:1 at its light end; the isolation keeps the grain behind the content. */
 /* prettier-ignore */
 @utility nova-hero {
-  --nova-focus-ring: var(--nova-color-on-primary);
+  --nova-focus-ring: #fff;
+  --nova-hero-ink-2: rgb(255 255 255 / 0.9);
   position: relative;
   isolation: isolate;
-  color: var(--nova-color-on-primary);
+  overflow: hidden;
+  background-color: var(--nova-hero-base);
+  background-image: var(--nova-hero-fill);
   -webkit-backdrop-filter: var(--nova-hero-filter);
   backdrop-filter: var(--nova-hero-filter);
+  border: 1px solid var(--nova-color-chrome-line);
+  color: #fff;
+  box-shadow: var(--nova-shadow-glass), inset 0 1px 0 0 rgba(255,255,255,.16);
 
-  &::before {
+  &::after {
     content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
-    border-radius: inherit;
-    background-image: var(--nova-gradient-brand);
-    opacity: var(--nova-hero-opacity);
+    background-image: var(--nova-grain-hero);
+    opacity: 0.06;
+    mix-blend-mode: overlay;
     pointer-events: none;
   }
 }
 
-/* Containers for dense data (tables, KPI tiles, charts, financial figures). Never translucent, under
-   either material: glass under dense data costs legibility, so these stay opaque. Their edge is the
-   card's plain 1px soft hairline (owner decision: no gradient borders), and they rest at
-   elevation 1 like a panel. A consumer can still restyle the edge (BedGrid's status borders): this utility sorts
-   ahead of Tailwind's border utilities. */
+/* Containers for dense data (tables, KPI tiles, charts, financial figures): the prototype's card with
+   .edge-premium, never translucent under either material. The fill stays opaque and the richness sits
+   at the boundary, as a 1px violet-to-cyan edge that fades out: a masked pseudo-element whose padding
+   is the ring. A KPI tile swaps in its own edge through --nova-data-edge. */
+/* prettier-ignore */
 @utility nova-data {
   --nova-focus-ring: var(--nova-color-primary);
   position: relative;
   background-color: var(--nova-color-surface);
   border: 1px solid var(--nova-color-border);
-  box-shadow: var(--nova-data-lift, var(--nova-elevation-1));
+  box-shadow: var(--nova-data-lift, var(--nova-shadow-sm));
 
-  /* Selected: the edge upgrades to 2px primary, as on a selected panel. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: var(--nova-data-edge, var(--nova-gradient-edge));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Selected: the edge upgrades to 2px primary, as on a selected card. */
   &[data-selected='true'] {
     border: 2px solid var(--nova-color-primary);
+  }
+}
+
+/* An AI block: the prototype's .ai-block. A near-white AI wash, the AI line, no left border, and the
+   gradient rail down the left edge (a background layer, so it sits flush and follows the radius).
+   AI output is told apart by the spark and its label as well as this rail, never by colour alone.
+   Approved, it settles: a green wash, a green edge and a solid green rail. */
+/* prettier-ignore */
+@utility nova-ai-block {
+  --nova-focus-ring: var(--nova-color-primary);
+  position: relative;
+  overflow: hidden;
+  background-color: var(--nova-color-ai-ghost);
+  background-image: var(--nova-gradient-ai-rail);
+  background-repeat: no-repeat;
+  background-origin: border-box;
+  background-position: left top;
+  background-size: 3px 100%;
+  border: 1px solid var(--nova-color-ai-line);
+  border-left: none;
+  padding: var(--nova-space-6);
+  padding-left: calc(var(--nova-space-6) + 3px);
+
+  &[data-approved='true'] {
+    background-color: var(--nova-color-good-soft);
+    background-image: linear-gradient(var(--nova-color-good), var(--nova-color-good));
+    border-color: color-mix(in srgb, var(--nova-color-good) 32%, transparent);
   }
 }
 
@@ -488,13 +550,19 @@
   }
 }
 
-/* The rail that marks an AI surface: a solid 3px strip of the AI cyan down the left edge (no
-   gradient on any edge). It is a single-colour background layer, so it needs no positioning,
-   follows the surface's rounded corners, sits flush with the border, and combines with
-   nova-surface, nova-overlay or nova-data. AI output is told apart by the AiBadge spark and label
-   as well as this rail, never by colour alone. */
+/* The AI signature gradient (--ai-grad) as a fill: the spine, spark, orb and pill of the prototype. */
+@utility nova-ai-grad {
+  background-image: var(--nova-gradient-ai);
+}
+
+/* The multicolour AI mark (--ai-mark), for the mark only (the spark badge, the copilot orb). */
+@utility nova-ai-mark {
+  background-image: var(--nova-ai-mark);
+}
+
+/* The AI gradient rail alone, down the left edge of any surface: 3px, flush with the border. */
 @utility nova-ai-rail {
-  background-image: linear-gradient(var(--nova-color-ai), var(--nova-color-ai));
+  background-image: var(--nova-gradient-ai-rail);
   background-repeat: no-repeat;
   background-origin: border-box;
   background-position: left top;
