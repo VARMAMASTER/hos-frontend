@@ -30,7 +30,22 @@ export const NOVA_DEFAULTS = {
   // a dark panel there) while this stays a fill white text holds 4.5:1 on.
   '--nova-color-primary-hover': p.violet[700],
   '--nova-color-on-primary': p.white,
-  // AI signature (--ai, --ai-bright, --ai-deep, --ai-soft, --ai-ghost, --ai-line)
+  // The highlight: a second accent, used deliberately beside the brand (a gauge fill, the active
+  // tab's underline, a KPI's gradient figure, a "New" chip). For HOS Violet it is the prototype's sky,
+  // --chrome-glow-2, the far stop of every prototype brand gradient (the hero, .sb-bar, the aurora).
+  // Each member is the sky pinned to its brand twin's luminance, so it passes the brand's proofs: the
+  // highlight is a 3:1 mark on every ground (2.5:1 for #60A5FA itself on white, so it is held at the
+  // lightest value that passes), deep is text at 4.5:1 on soft, on the wash and on a panel, and hover
+  // is the mark one step further from the ground. The highlight carries no text of its own and never
+  // carries state alone. A hospital theme derives its own (theme/derive.ts).
+  '--nova-color-highlight': p.sky[600],
+  '--nova-color-highlight-soft': p.sky[50],
+  '--nova-color-highlight-deep': p.sky[800],
+  '--nova-color-highlight-hover': p.sky[800],
+  // AI signature (--ai, --ai-bright, --ai-deep, --ai-soft, --ai-ghost, --ai-line). These are HOS
+  // Violet's; a hospital theme derives its own (theme/derive.ts): the prototype's cyan while it sits
+  // far enough from the brand and every status, otherwise a hue chosen to keep clear of them, always
+  // at these luminances, so every AI contrast holds.
   '--nova-color-ai': p.cyan[700],
   '--nova-color-ai-bright': p.cyan[400],
   '--nova-color-ai-deep': p.cyan[800],
@@ -40,6 +55,11 @@ export const NOVA_DEFAULTS = {
   // The AI button's hover fill under white text (ai-deep in the prototype), for the same reason as
   // primary-hover: ai-deep is AI text, and turns light in the dark scheme.
   '--nova-color-ai-hover': p.cyan[800],
+  // The AI mark's four tints (--ai-mark's conic stops), moved with the AI hue in a hospital theme.
+  '--nova-color-ai-mark-1': p.aiMark[1],
+  '--nova-color-ai-mark-2': p.aiMark[2],
+  '--nova-color-ai-mark-3': p.aiMark[3],
+  '--nova-color-ai-mark-4': p.aiMark[4],
   // status, with the "-deep" text-on-tint pairing for each -soft fill
   '--nova-color-good': p.green[600],
   '--nova-color-good-soft': p.green[100],
@@ -93,13 +113,13 @@ export const NOVA_DEFAULTS = {
   '--nova-chart-5': p.data.lavender,
   '--nova-chart-6': p.data.plum,
   // The AI signature gradient (--ai-grad) and the multicolour AI mark (--ai-mark, the mark only:
-  // never a chip, button, panel tint or anything that carries state). The gradient's last stop is
-  // the prototype's violet pinned as a literal, never var(--nova-color-primary), so no hospital's
-  // brand can recolour the sign that a machine wrote this.
+  // never a chip, button, panel tint or anything that carries state). As in the prototype, the
+  // gradient ends in the brand (var(--teal)): the AI follows the hospital theme (owner decision,
+  // 2026-10-07). theme.css declares both here and again on every theme scope, so they re-resolve.
   '--nova-gradient-ai':
-    'linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, #6D4FE0 105%)',
+    'linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, var(--nova-color-primary) 105%)',
   '--nova-ai-mark':
-    'conic-gradient(from 0deg at 50% 50%, #EA4335 0deg, #4285F4 92deg, #34A853 184deg, #FBBC04 272deg, #EA4335 360deg)',
+    'conic-gradient(from 0deg at 50% 50%, var(--nova-color-ai-mark-1) 0deg, var(--nova-color-ai-mark-2) 92deg, var(--nova-color-ai-mark-3) 184deg, var(--nova-color-ai-mark-4) 272deg, var(--nova-color-ai-mark-1) 360deg)',
   // radii (--r-sm, --r-md, --r-lg, --r-xl, --r-full)
   '--nova-radius-sm': '8px',
   '--nova-radius-md': '12px',

@@ -47,9 +47,9 @@ export interface ChoiceCardProps
 
 // A larger option for a question that needs more than a label ("Admission type"). The whole card is
 // one <label>, so one click target, around a real radio or checkbox input; the input is named by the
-// title and described by the description. Chosen, it gets a tinted fill (a fading overlay) and a
-// primary edge, both from the checked input via :has, and the radio dot or tick itself, so the state
-// is never colour alone. It is the prototype's card (opaque under glass and solid, radius md); the
+// title and described by the description. Chosen, it gets a tinted fill (a fading overlay), a primary
+// edge with the highlight ring inside it, all from the checked input via :has, and the radio dot or
+// tick itself, so the state is never colour alone. It is the prototype's card (opaque under glass and solid, radius md); the
 // keyboard is the platform's radio and checkbox keyboard, which is why the input stays in the page.
 // The card's focus ring is the input's: it shows a ring on the dot or box.
 export const ChoiceCard = forwardRef<HTMLInputElement, ChoiceCardProps>(
@@ -113,12 +113,14 @@ export const ChoiceCard = forwardRef<HTMLInputElement, ChoiceCardProps>(
           className,
         )}
       >
-        {/* The tint is an overlay, so choosing fades it in instead of swapping the card's fill. */}
+        {/* The tint is an overlay, so choosing fades it in instead of swapping the card's fill. It
+            carries the highlight edge too (a 1px brand-to-highlight ring inside the primary
+            edge), so the two fade in together. */}
         <span
           aria-hidden="true"
           data-slot="tint"
           className={cx(
-            'nova-radius-inherit pointer-events-none absolute inset-0 bg-primary-ghost opacity-0',
+            'nova-radius-inherit nova-highlight-edge pointer-events-none absolute inset-0 bg-primary-ghost opacity-0',
             'group-has-checked:opacity-100 motion-safe:transition-opacity motion-safe:duration-200 motion-safe:ease-out',
           )}
         />

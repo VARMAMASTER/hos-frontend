@@ -94,13 +94,14 @@ describe('the allow-list a theme is applied through', () => {
     },
   } as NovaTheme;
 
-  it('is the brand-derived palette and the body font, shared with createNovaTheme, and no status, AI or chart token', () => {
+  it('is the brand-derived palette (AI included) and the body font, shared with createNovaTheme, and no status or chart token', () => {
     expect([...NOVA_THEME_VARIABLES].sort()).toEqual(
       [...Object.keys(tealPalette.light), '--nova-font-body'].sort(),
     );
     for (const name of NOVA_THEME_VARIABLES) {
-      expect(name).not.toMatch(/-(good|warn|crit|info|ai)(-|$)|chart/);
+      expect(name).not.toMatch(/-(good|warn|crit|info)(-|$)|chart/);
     }
+    expect(NOVA_THEME_VARIABLES).toContain('--nova-color-ai');
   });
 
   // A stored row carries the brand colours; everything else is rebuilt from them, so a row cannot
@@ -136,7 +137,8 @@ describe('the allow-list a theme is applied through', () => {
     ).toBe('#0F766E');
   });
 
-  it('NovaThemeProvider writes only allow-listed variables, so a forged theme cannot recolour status or AI', () => {
+  // AI is written, but as the engine derives it from the brand, never the row's own value.
+  it('NovaThemeProvider writes only allow-listed variables, so a forged theme cannot recolour status or set its own AI', () => {
     render(
       <NovaThemeProvider theme={forged}>
         <p>forged</p>
@@ -146,14 +148,15 @@ describe('the allow-list a theme is applied through', () => {
     expect(wrapper.style.getPropertyValue('--nova-color-primary')).toMatch(
       /^light-dark\(#0F766E, /,
     );
-    for (const name of [
-      '--nova-color-crit',
-      '--nova-color-ai',
-      '--nova-color-ai-deep',
-      '--nova-gradient-ai',
-    ]) {
+    for (const name of ['--nova-color-crit', '--nova-gradient-ai']) {
       expect(wrapper.style.getPropertyValue(name), name).toBe('');
     }
+    expect(wrapper.style.getPropertyValue('--nova-color-ai')).toBe(
+      `light-dark(${tealPalette.light['--nova-color-ai']}, ${tealPalette.dark['--nova-color-ai']})`,
+    );
+    expect(wrapper.style.getPropertyValue('--nova-color-ai-deep')).not.toMatch(
+      /#000000/,
+    );
   });
 
   it('applyNovaTheme writes only allow-listed variables too', () => {
@@ -164,7 +167,7 @@ describe('the allow-list a theme is applied through', () => {
         /^light-dark\(#0F766E, /,
       );
       expect(style.getPropertyValue('--nova-color-crit')).toBe('');
-      expect(style.getPropertyValue('--nova-color-ai')).toBe('');
+      expect(style.getPropertyValue('--nova-color-ai')).not.toBe('#6D4FE0');
       expect(style.getPropertyValue('--nova-gradient-ai')).toBe('');
     } finally {
       restore();

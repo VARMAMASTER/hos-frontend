@@ -115,6 +115,50 @@ describe('AiPanel', () => {
     expect(onApprove).toHaveBeenCalledTimes(1);
   });
 
+  it('takes a status for its header, in place of the default "Approved" chip', () => {
+    render(
+      <AiPanel
+        title="Discharge summary"
+        state="approved"
+        status={<span>✓ Signed · Dr. Meera Iyer</span>}
+      >
+        Body
+      </AiPanel>,
+    );
+    expect(screen.getByText('✓ Signed · Dr. Meera Iyer')).toBeTruthy();
+    expect(screen.queryByText('Approved')).toBeNull();
+  });
+
+  it('takes the badge words, so they can be translated', () => {
+    render(
+      <AiPanel title="Discharge summary" badgeLabel="AI ड्राफ्ट">
+        Body
+      </AiPanel>,
+    );
+    expect(screen.getByText('AI ड्राफ्ट')).toBeTruthy();
+  });
+
+  it('takes an id for its title, so controls elsewhere can be named by it', () => {
+    render(
+      <AiPanel title="Discharge summary" titleId="summary-title">
+        Body
+      </AiPanel>,
+    );
+    expect(document.getElementById('summary-title')?.textContent).toBe(
+      'Discharge summary',
+    );
+    expect(panel().getAttribute('aria-labelledby')).toBe('summary-title');
+  });
+
+  it('takes a different glyph for the spark (the prototype uses ₹ on a money gate)', () => {
+    render(
+      <AiPanel title="Discharge summary" spark="₹">
+        Body
+      </AiPanel>,
+    );
+    expect(panel().querySelector('.nova-ai-spark')?.textContent).toBe('₹');
+  });
+
   it('merges a custom className and passes attributes through', () => {
     render(
       <AiPanel title="Discharge summary" className="mt-4" id="summary">

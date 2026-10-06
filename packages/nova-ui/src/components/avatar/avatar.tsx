@@ -15,6 +15,11 @@ export interface AvatarProps
   // A verified person: a primary seal glyph at the corner, and the word for assistive tech.
   verified?: boolean;
   tone?: AvatarTone;
+  // A 2px highlight ring (brand into highlight) a hair outside the circle: emphasis, such as the
+  // clinician on call. The ring is a shape, present or not; say what it means with highlightLabel.
+  highlight?: boolean;
+  // Announced after the name ("On call"), for a ring that means something.
+  highlightLabel?: string;
 }
 
 // 20 (inline), 32 (the prototype's .avatar, initials at 12.5px), 40 and 48 (a list card).
@@ -63,6 +68,8 @@ export function Avatar({
   size = 'md',
   verified = false,
   tone = 'surface',
+  highlight = false,
+  highlightLabel,
   className,
   ...rest
 }: AvatarProps) {
@@ -80,6 +87,7 @@ export function Avatar({
         'relative inline-flex shrink-0 select-none items-center justify-center rounded-full font-display font-bold tracking-[.01em]',
         sizes[size],
         tones[tone],
+        highlight && 'nova-highlight-ring',
         className,
       )}
       {...rest}
@@ -128,6 +136,9 @@ export function Avatar({
           </svg>
           <VisuallyHidden>Verified</VisuallyHidden>
         </>
+      ) : null}
+      {highlight && highlightLabel ? (
+        <VisuallyHidden>{highlightLabel}</VisuallyHidden>
       ) : null}
     </span>
   );

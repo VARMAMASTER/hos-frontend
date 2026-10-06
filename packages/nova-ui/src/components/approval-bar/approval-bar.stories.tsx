@@ -49,3 +49,29 @@ function ReviewFlow() {
 
 // Press Approve: the bar goes busy, then shows who approved.
 export const Interactive: Story = { render: () => <ReviewFlow /> };
+
+function UndoFlow() {
+  const [approvedBy, setApprovedBy] = useState<string | undefined>();
+  return (
+    <>
+      <h3 id="undo-flow-title" className="mb-2 text-[13.5px] font-bold">
+        Discharge summary
+      </h3>
+      <ApprovalBar
+        labelledBy="undo-flow-title"
+        approvedBy={approvedBy}
+        approvedNote={
+          approvedBy
+            ? `Approved by ${approvedBy} — logged to the audit trail.`
+            : undefined
+        }
+        onApprove={() => setApprovedBy('Dr. Meera Iyer')}
+        onReject={() => undefined}
+        onUndo={() => setApprovedBy(undefined)}
+      />
+    </>
+  );
+}
+
+// Approve, then Undo: focus moves to Undo, and back to Approve. Each button is named with the title.
+export const WithUndo: Story = { render: () => <UndoFlow /> };

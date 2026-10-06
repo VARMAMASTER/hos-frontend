@@ -1,4 +1,5 @@
 import { GLASS, MATERIAL_LEVELS, type NovaMaterial } from '../tokens/material';
+import { AI_SHEEN_PEAK } from '../tokens/scale';
 import { NOVA_DARK } from '../tokens/scheme';
 import { NOVA_DEFAULTS } from '../tokens/semantic';
 import { contrastRatio, isHexColour, mixColours } from './contrast';
@@ -180,6 +181,53 @@ export function legibilityChecks(
     );
   }
 
+  // The highlight, through the brand's own gates. Its marks (a gauge fill, the active tab's underline,
+  // a selected edge, a selected row's rail, a milestone node, an avatar ring) and its hovered edge at
+  // 3:1 on every ground a control sits on. Its deep ink at 4.5:1 on its tint, across the wash (the
+  // brand's tint into the highlight's) and on the panels. And the gradient figure, brand into
+  // highlight, at 3:1 as large display text on an opaque tile, point by point along the gradient.
+  const highlight = hex('--nova-color-highlight');
+  const highlightDeep = hex('--nova-color-highlight-deep');
+  const highlightSoft = hex('--nova-color-highlight-soft');
+  for (const ground of grounds) {
+    check(
+      'a highlight mark (a fill, an underline, an edge or a ring)',
+      highlight,
+      ground,
+      MARK,
+      true,
+    );
+    check(
+      'a hovered highlight edge',
+      hex('--nova-color-highlight-hover'),
+      ground,
+      MARK,
+      true,
+    );
+  }
+  check('highlight text on its tint', highlightDeep, highlightSoft, TEXT, true);
+  for (let step = 0; step <= 4; step++) {
+    check(
+      'highlight text on the highlight wash',
+      highlightDeep,
+      mixColours(highlightSoft, step / 4, soft),
+      TEXT,
+      true,
+    );
+  }
+  for (const ground of [surface, surface2]) {
+    check('highlight text on a panel', highlightDeep, ground, TEXT, true);
+    for (let step = 0; step <= 10; step++) {
+      check(
+        'the highlight gradient as large display text',
+        mixColours(highlight, step / 10, primary),
+        ground,
+        MARK,
+        true,
+      );
+    }
+  }
+
   // The top bar at its lightest: its light end over white, which is what a sticky bar has under it
   // when it scrolls over the lightest thing there is. Then its search field, lifted by the field fill.
   const topbar = mixColours(chrome3, m.chromeEndAlpha, WHITE);
@@ -237,12 +285,13 @@ export function legibilityChecks(
     true,
   );
 
-  // Status and AI: fixed for every hospital, proven in both schemes on the brand's panels.
+  // Status (fixed for every hospital) and AI (derived from the brand), proven in both schemes on the
+  // brand's panels. An AI failure is the brand's to fix.
   for (const status of ['good', 'warn', 'crit', 'info', 'ai'] as const) {
     const base = hex(`--nova-color-${status}`);
     const deep = hex(`--nova-color-${status}-deep`);
     const tinted = hex(`--nova-color-${status}-soft`);
-    check(`${status} text on its tint`, deep, tinted, TEXT, false);
+    check(`${status} text on its tint`, deep, tinted, TEXT, status === 'ai');
     for (const ground of [surface, surface2]) {
       check(`${status} text on a panel`, deep, ground, TEXT, true);
       check(`a ${status} mark on a panel`, base, ground, MARK, true);
@@ -253,16 +302,25 @@ export function legibilityChecks(
     hex('--nova-color-ai-deep'),
     hex('--nova-color-ai-ghost'),
     TEXT,
-    false,
+    true,
   );
-  check('AI button text', onPrimary, hex('--nova-color-ai'), TEXT, false);
+  check('AI button text', onPrimary, hex('--nova-color-ai'), TEXT, true);
   check(
     'AI button hover fill',
     onPrimary,
     hex('--nova-color-ai-hover'),
     TEXT,
-    false,
+    true,
   );
+  check(
+    'AI button label under the sheen peak',
+    onPrimary,
+    mixColours(onPrimary, AI_SHEEN_PEAK, hex('--nova-color-ai-hover')),
+    TEXT,
+    true,
+  );
+  // The AI line (the AI block's edge) holds no contrast of its own: the block is told apart by its
+  // gradient rail, the spark and its label. The AI mark is the one AI edge, at 3:1 above.
 
   // The data palette: a thin line or a small mark at 3:1 on the card a chart sits in.
   for (const slot of [1, 2, 3, 4, 5, 6] as const) {
