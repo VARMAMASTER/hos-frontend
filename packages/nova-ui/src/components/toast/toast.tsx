@@ -98,6 +98,8 @@ export function Toaster({
   const region = 'flex w-full flex-col items-center gap-2';
   return (
     <div
+      // Dialog leaves a live region alone when it makes the page inert, so toasts are still heard.
+      data-nova-live-region=""
       className={cx(
         'pointer-events-none fixed inset-x-0 top-4 z-[60] flex flex-col items-center gap-2 px-4 font-sans',
         className,
