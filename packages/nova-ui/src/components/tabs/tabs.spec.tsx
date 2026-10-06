@@ -491,12 +491,15 @@ describe('Tabs', () => {
       expect([...tab('Claims').classList]).toEqual(
         expect.arrayContaining([
           'bg-surface',
-          'text-chrome-1',
+          // The ink flips with the scheme. The prototype's chrome-1 is a fixed dark indigo: on the
+          // dark scheme's dark surface it was dark on dark.
+          'text-ink',
           'shadow-sm',
           'ring-1',
           'ring-inset',
         ]),
       );
+      expect(tab('Claims').classList.contains('text-chrome-1')).toBe(false);
       for (const name of ['Overview', 'Notes']) {
         expect(tab(name).classList.contains('bg-surface')).toBe(false);
         expect(tab(name).classList.contains('text-ink-2')).toBe(true);

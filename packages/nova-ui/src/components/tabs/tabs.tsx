@@ -237,7 +237,7 @@ export function Tab({
         // Selected (.tab.active): a raised white chip, its hairline drawn inside and shadow-sm under it,
         // in the deepest chrome ink: a shape as well as a tint.
         selected
-          ? 'bg-surface text-chrome-1 shadow-sm ring-1 ring-inset ring-border'
+          ? 'bg-surface text-ink shadow-sm ring-1 ring-inset ring-border'
           : 'text-ink-2 hover:bg-chrome-2/6 hover:text-ink',
         className,
       )}

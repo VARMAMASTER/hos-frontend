@@ -395,6 +395,46 @@ describe('component conventions', () => {
 });
 
 // The weights are the prototype's 400 / 500 / 600 / 700 everywhere, stories included.
+// The chrome-1..3 colours are the fixed dark indigo of the sidebar and top bar: they do not flip in
+// the dark scheme. As a text colour they are dark on a dark surface there (the selected Tab was
+// exactly that). Text takes ink, ink-2, ink-3, a status or brand ink, or chrome-ink on the chrome.
+const FIXED_CHROME_TEXT = new RegExp(
+  CLASS_START + String.raw`(?:[\w-]+:)*text-chrome-[123](?![\w-])`,
+  'g',
+);
+
+describe('text colours that flip with the scheme', () => {
+  it('never sets text to a fixed chrome colour in a component', () => {
+    expect(
+      files
+        .map((file) => ({
+          path: file.path,
+          found: code(file.text).match(FIXED_CHROME_TEXT) ?? [],
+        }))
+        .filter((file) => file.found.length > 0),
+    ).toEqual([]);
+  });
+
+  it('the guard rejects text-chrome-1..3, with or without a variant, and accepts ink and chrome-ink', () => {
+    for (const bad of [
+      'text-chrome-1',
+      'hover:text-chrome-2',
+      'md:dark:text-chrome-3',
+    ]) {
+      expect(`'${bad}'`.match(FIXED_CHROME_TEXT), bad).not.toBeNull();
+    }
+    for (const good of [
+      'text-ink',
+      'text-chrome-ink',
+      'bg-chrome-1',
+      'ring-chrome-1',
+      'text-chrome-ink-2',
+    ]) {
+      expect(`'${good}'`.match(FIXED_CHROME_TEXT), good).toBeNull();
+    }
+  });
+});
+
 describe('the weights', () => {
   const srcDir = fileURLToPath(new URL('..', import.meta.url));
   const everySource = (dir: string): string[] =>
