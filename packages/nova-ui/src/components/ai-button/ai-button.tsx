@@ -93,6 +93,8 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
     const unavailable = thinking || ariaDisabled;
     // Hover, focus and press motion belongs to a button that can be pressed.
     const available = !unavailable && !rest.disabled;
+    // A natively disabled button is off: it plays no loop, burst or check animation of its own state.
+    const playing = !rest.disabled;
     const announced =
       state === 'thinking' ? thinkingLabel : state === 'done' ? doneLabel : '';
 
@@ -124,7 +126,7 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
             data-layer="clip"
             className="nova-radius-inherit pointer-events-none absolute inset-0 overflow-hidden"
           >
-            {thinking ? (
+            {thinking && playing ? (
               <span
                 data-layer="shimmer"
                 className="nova-ai-sheen motion-safe:animate-ai-shimmer motion-reduce:hidden"
@@ -136,35 +138,32 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
               />
             ) : null}
           </span>
-          {thinking ? <Orbit /> : null}
-          <span aria-hidden="true" className="relative inline-grid">
-            {/* The ✦ is always drawn: AI is never marked by colour alone. It is decoration, so it
-                is never in the accessible name. */}
-            <span
-              data-mark=""
-              aria-hidden="true"
-              className={cx(
-                'inline-block leading-none',
-                available &&
-                  'motion-safe:group-hover/ai:animate-ai-twinkle motion-safe:group-focus-visible/ai:animate-ai-twinkle',
-              )}
-            >
-              ✦
-            </span>
-            {state === 'done' ? <Burst /> : null}
-          </span>
-          {/* All three labels share one grid cell: the widest sets the width, so the button never
-              changes size between states. Only the live one is visible and in the accessible name. */}
+          {thinking && playing ? <Orbit /> : null}
+          {/* Every label carries its own ✦, so the mark and the words sit together whichever label is
+              the widest. All three labels share one grid cell: the widest sets the width, so the
+              button never changes size between states. Only the live one is visible and in the
+              accessible name. */}
           <span className="relative grid justify-items-center">
-            <Label name="idle" live={state === 'idle'}>
+            <Label name="idle" live={state === 'idle'} twinkle={available}>
               {children}
             </Label>
-            <Label name="thinking" live={thinking}>
+            <Label name="thinking" live={thinking} twinkle={false}>
               {thinkingLabel}
             </Label>
-            <Label name="done" live={state === 'done'} icon>
-              {state === 'done' ? <Check /> : <span className={checkSlot} />}
-              {doneLabel}
+            <Label
+              name="done"
+              live={state === 'done'}
+              twinkle={available}
+              burst={playing}
+            >
+              <span className="inline-flex items-center gap-1.5">
+                {state === 'done' ? (
+                  <Check animate={playing} />
+                ) : (
+                  <span className={checkSlot} />
+                )}
+                {doneLabel}
+              </span>
             </Label>
           </span>
         </button>
@@ -187,12 +186,16 @@ const checkSlot = 'inline-block size-3.5 shrink-0';
 function Label({
   name,
   live,
-  icon = false,
+  twinkle,
+  burst = false,
   children,
 }: {
   name: AiButtonState;
   live: boolean;
-  icon?: boolean;
+  // The mark twinkles on hover and keyboard focus, in the labels of a button that can be pressed.
+  twinkle: boolean;
+  // The done label bursts sparkles from its mark when it becomes the live one.
+  burst?: boolean;
   children: ReactNode;
 }) {
   return (
@@ -200,18 +203,34 @@ function Label({
       data-label={name}
       aria-hidden={live ? undefined : true}
       className={cx(
-        'col-start-1 row-start-1 whitespace-nowrap',
-        icon && 'inline-flex items-center gap-1.5',
+        'col-start-1 row-start-1 inline-flex items-center gap-2 whitespace-nowrap',
         !live && 'invisible',
       )}
     >
+      {/* The ✦ is always drawn: AI is never marked by colour alone. It is decoration, so it is never
+          in the accessible name. */}
+      <span aria-hidden="true" className="relative inline-grid">
+        <span
+          data-mark=""
+          aria-hidden="true"
+          className={cx(
+            'inline-block leading-none',
+            live &&
+              twinkle &&
+              'motion-safe:group-hover/ai:animate-ai-twinkle motion-safe:group-focus-visible/ai:animate-ai-twinkle',
+          )}
+        >
+          ✦
+        </span>
+        {live && burst ? <Burst /> : null}
+      </span>
       {children}
     </span>
   );
 }
 
 // The check arrives after the burst and settles into the label, its stroke drawing in.
-function Check() {
+function Check({ animate }: { animate: boolean }) {
   return (
     <svg
       data-check=""
@@ -222,12 +241,15 @@ function Check() {
       strokeLinecap="round"
       strokeLinejoin="round"
       focusable="false"
-      className={cx(checkSlot, 'motion-safe:animate-ai-settle')}
+      className={cx(checkSlot, animate && 'motion-safe:animate-ai-settle')}
     >
       <path
         d="M3 8.5l3.2 3.2L13 4.5"
         pathLength={1}
-        className="[stroke-dasharray:1] motion-safe:animate-ai-draw"
+        className={cx(
+          '[stroke-dasharray:1]',
+          animate && 'motion-safe:animate-ai-draw',
+        )}
       />
     </svg>
   );
@@ -239,7 +261,7 @@ function Burst() {
     <span
       aria-hidden="true"
       data-layer="burst"
-      className="pointer-events-none absolute top-1/2 left-1/2 size-0"
+      className="pointer-events-none absolute top-1/2 left-1/2 size-0 motion-reduce:hidden"
     >
       {BURST_ANGLES.map((angle, index) => (
         <span

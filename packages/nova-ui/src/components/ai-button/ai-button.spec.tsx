@@ -8,6 +8,10 @@ afterEach(() => cleanup());
 const button = (name: string | RegExp = 'Draft summary') =>
   screen.getByRole('button', { name });
 
+// The ✦ of the label that is showing.
+const liveMark = (root: Element) =>
+  root.querySelector('[data-label]:not([aria-hidden]) [data-mark]');
+
 // Every class token on the button and everything inside it.
 function classTokens(root: Element): string[] {
   return [root, ...root.querySelectorAll('*')].flatMap((element) =>
@@ -40,7 +44,7 @@ describe('AiButton: structure', () => {
       const { unmount } = render(
         <AiButton state={state}>Draft summary</AiButton>,
       );
-      expect(button(/./).querySelector('[data-mark]')?.textContent).toBe('✦');
+      expect(liveMark(button(/./))?.textContent).toBe('✦');
       const visible = button(/./).querySelector(
         '[data-label]:not([aria-hidden])',
       );
@@ -116,7 +120,7 @@ describe('AiButton: thinking', () => {
     render(<AiButton loading>Draft summary</AiButton>);
     expect(button('Thinking…').getAttribute('aria-busy')).toBe('true');
     expect(button('Thinking…').dataset['state']).toBe('thinking');
-    expect(button('Thinking…').querySelector('[data-mark]')).not.toBeNull();
+    expect(liveMark(button('Thinking…'))?.textContent).toBe('✦');
   });
 
   it('takes the thinking label as a prop, for translation', () => {
@@ -203,7 +207,7 @@ describe('AiButton: done', () => {
     render(<AiButton state="done">Draft summary</AiButton>);
     const done = button('Done');
     expect(done.dataset['state']).toBe('done');
-    expect(done.querySelector('[data-mark]')?.textContent).toBe('✦');
+    expect(liveMark(done)?.textContent).toBe('✦');
     expect(done.querySelector('[data-check]')).not.toBeNull();
     expect(done.getAttribute('aria-busy')).toBeNull();
   });
@@ -370,6 +374,33 @@ describe('AiButton: reduced motion', () => {
       expect(
         button(/./).querySelector(`[data-layer="${layer}"]`)?.classList,
       ).toContain('motion-reduce:hidden');
+    }
+  });
+
+  it('hides the burst when motion is reduced, so no stray particles are left behind', () => {
+    render(<AiButton state="done">Draft summary</AiButton>);
+    expect(
+      button('Done').querySelector('[data-layer="burst"]')?.classList,
+    ).toContain('motion-reduce:hidden');
+  });
+
+  it('plays no loop, burst or check animation while disabled', () => {
+    render(
+      <>
+        <AiButton disabled state="thinking">
+          Busy
+        </AiButton>
+        <AiButton disabled state="done">
+          Finished
+        </AiButton>
+      </>,
+    );
+    for (const root of [button('Thinking…'), button('Done')]) {
+      expect(
+        classTokens(root).filter((token) => /animate-ai-/.test(token)),
+      ).toEqual([]);
+      expect(root.querySelector('[data-layer="orbit"]')).toBeNull();
+      expect(root.querySelector('[data-layer="shimmer"]')).toBeNull();
     }
   });
 
