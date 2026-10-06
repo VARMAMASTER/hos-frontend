@@ -79,23 +79,45 @@ describe('FilterChip', () => {
     expect(screen.getByRole('button', { name: 'ICU' })).toBe(chip);
   });
 
-  it('is a caption-size pill: parchment when off, primary when on, pressing to 0.96', () => {
+  // 02-reception.html .fchip: a 12px / 600 pill, a --line-strong edge on the panel, ink-2 text; on,
+  // it fills with the brand (.is-active). The prototype's pill is the one place a pill is right.
+  it('is the prototype .fchip: a 12px pill, an outlined panel when off, brand-filled when on', () => {
     render(<FilterChip>ICU</FilterChip>);
     const chip = screen.getByRole('button', { name: 'ICU' });
     expect([...chip.classList]).toEqual(
       expect.arrayContaining([
         'rounded-full',
-        '[corner-shape:round]',
-        'text-caption',
-        'bg-surface-2',
-        'motion-safe:active:scale-[0.96]',
+        'text-[12px]',
+        'font-semibold',
+        'border-border-strong',
+        'bg-surface',
+        'text-ink-2',
+        'px-2.5',
+        'py-1.5',
       ]),
     );
     fireEvent.click(chip);
     expect([...chip.classList]).toEqual(
-      expect.arrayContaining(['bg-primary', 'text-on-primary']),
+      expect.arrayContaining([
+        'bg-primary',
+        'border-primary',
+        'text-on-primary',
+      ]),
     );
-    expect(chip.className).not.toMatch(/shadow|font-medium/);
+    expect(chip.className).not.toMatch(
+      /shadow|font-medium|corner-shape|active:scale|text-caption|bg-surface-2/,
+    );
+  });
+
+  it('turns the edge and the text brand on hover while off, like .fchip:hover', () => {
+    render(<FilterChip>ICU</FilterChip>);
+    const chip = screen.getByRole('button', { name: 'ICU' });
+    expect([...chip.classList]).toEqual(
+      expect.arrayContaining([
+        'hover:border-primary',
+        'hover:text-primary-strong',
+      ]),
+    );
   });
 
   it('forwards its ref, merges className and passes attributes through', () => {

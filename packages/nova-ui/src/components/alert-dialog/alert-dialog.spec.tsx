@@ -270,13 +270,16 @@ describe('AlertDialog layout', () => {
     expect(group().className).toContain('flex-col');
   });
 
-  it('divides the actions with hairlines', () => {
+  // hos-sim.js HOS.confirm: a footer of buttons, right-aligned with an 8px gap, not hairline rows.
+  it('right-aligns the actions with an 8px gap, and draws no hairline dividers', () => {
     setup();
-    expect(group().className).toContain('divide-x');
-    expect(group().className).toContain('divide-border');
+    expect(group().className).toContain('justify-end');
+    expect(group().className).toContain('gap-2');
+    expect(group().className).not.toMatch(/divide-|border-y/);
     cleanup();
     setup([{ label: 'A' }, { label: 'B' }, { label: 'C' }]);
-    expect(group().className).toContain('divide-y');
+    expect(group().className).toContain('gap-2');
+    expect(group().className).not.toMatch(/divide-|border-y/);
   });
 });
 
@@ -297,17 +300,41 @@ describe('AlertDialog look', () => {
       .getAllByRole('button')
       .map((button) => button.getAttribute('data-role'));
     expect(roles).toEqual(['cancel', 'default', 'destructive']);
-    expect(
-      screen.getByRole('button', { name: 'Discharge' }).className,
-    ).toContain('text-crit-deep');
   });
 
-  it('draws the default action at weight 600 and has no shadow or weight 500', () => {
+  // The prototype confirm is a .btn-ghost Cancel beside a .btn-primary Confirm; a destructive action
+  // takes the danger button. They are Nova Buttons, so they follow the Button's look.
+  it('draws each role as a Button: outline for cancel, primary for default, danger for destructive', () => {
+    setup([
+      { label: 'Cancel', role: 'cancel' },
+      { label: 'Keep' },
+      { label: 'Discharge', role: 'destructive' },
+    ]);
+    const variant = (name: string) =>
+      screen.getByRole('button', { name }).getAttribute('data-variant');
+    expect(variant('Cancel')).toBe('outline');
+    expect(variant('Keep')).toBe('primary');
+    expect(variant('Discharge')).toBe('danger');
+  });
+
+  it('stacks full-width buttons when the actions stack, and sizes them naturally in a row', () => {
+    setup();
+    for (const button of screen.getAllByRole('button')) {
+      expect(button.className).not.toContain('w-full');
+    }
+    cleanup();
+    setup([{ label: 'A' }, { label: 'B' }, { label: 'C' }]);
+    for (const button of screen.getAllByRole('button')) {
+      expect(button.className).toContain('w-full');
+    }
+  });
+
+  it('casts no shadow of its own and uses no weight 500', () => {
     setup([{ label: 'Cancel', role: 'cancel' }, { label: 'Keep' }]);
-    expect(screen.getByRole('button', { name: 'Keep' }).className).toContain(
-      'font-semibold',
+    const actions = document.querySelector('[data-alert-actions]');
+    expect(actions?.outerHTML).not.toMatch(
+      /shadow-(?:sm|md|lg|glass)|font-medium/,
     );
-    expect(alert().innerHTML).not.toMatch(/shadow|font-medium/);
   });
 
   it('has real buttons with a focus ring', () => {
