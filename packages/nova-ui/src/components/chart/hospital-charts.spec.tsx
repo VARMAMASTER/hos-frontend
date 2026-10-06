@@ -1,6 +1,27 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, within } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { OccupancyAreaChart } from './occupancy-area-chart';
+import { PatientFlowChart } from './patient-flow-chart';
 import { VitalsChart, type VitalsConfig } from './vitals-chart';
+import { WaitTimeChart } from './wait-time-chart';
+
+// Health data never reaches a log: render with the probe patient and figure, and read every console
+// call back.
+function expectNothingLogged(element: ReactElement, probes: RegExp) {
+  const spies = (['log', 'info', 'warn', 'error', 'debug'] as const).map(
+    (method) => vi.spyOn(console, method).mockImplementation(() => undefined),
+  );
+  try {
+    render(element);
+    const logged = spies
+      .flatMap((spy) => spy.mock.calls.flat())
+      .map((arg) => String(arg));
+    expect(logged.filter((text) => probes.test(text))).toEqual([]);
+  } finally {
+    spies.forEach((spy) => spy.mockRestore());
+  }
+}
 
 // jsdom has no layout and no ResizeObserver, and Recharts' ResponsiveContainer measures its parent.
 // The stub reports a fixed 600x300 box as soon as it is observed, so every chart really renders.
@@ -293,5 +314,348 @@ describe('VitalsChart', () => {
       .map((arg) => String(arg));
     expect(logged.filter((text) => /Ramesh|999/.test(text))).toEqual([]);
     spies.forEach((spy) => spy.mockRestore());
+  });
+});
+
+describe('OccupancyAreaChart', () => {
+  const week = [
+    { day: 'Mon', icu: 10, wardA: 40 },
+    { day: 'Tue', icu: 12, wardA: 46 },
+    { day: 'Wed', icu: 14, wardA: 50 },
+    { day: 'Thu', icu: 11, wardA: 44 },
+  ];
+  const props = {
+    data: week,
+    config: {
+      icu: { label: 'ICU', color: 'chart-1' },
+      wardA: { label: 'Ward A', color: 'chart-2' },
+    },
+    categoryKey: 'day',
+    seriesKeys: ['icu', 'wardA'],
+    capacity: 60,
+    ariaLabel: 'Bed occupancy this week',
+  };
+
+  it('is a named figure on an opaque data surface', () => {
+    render(<OccupancyAreaChart {...props} />);
+    expect(
+      screen
+        .getByRole('figure', { name: 'Bed occupancy this week' })
+        .classList.contains('nova-data'),
+    ).toBe(true);
+  });
+
+  it('stacks a washed area per ward', () => {
+    const { container } = render(<OccupancyAreaChart {...props} />);
+    expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(2);
+  });
+
+  it('rules the capacity in quiet ink and tints the zone above it in the critical status colour', () => {
+    const { container } = render(<OccupancyAreaChart {...props} />);
+    const rule = container.querySelector('.recharts-reference-line-line');
+    expect(rule?.getAttribute('stroke')).toBe('var(--nova-color-ink-2)');
+    const zone = container.querySelector('.recharts-reference-area-rect');
+    expect(zone?.getAttribute('fill')).toBe('var(--nova-color-crit)');
+  });
+
+  it('marks each over-capacity period with a diamond on the total', () => {
+    const { container } = render(<OccupancyAreaChart {...props} />);
+    // Wed is 64 of 60; Tue is 58, under.
+    expect(flags(container, 'data-occupancy-over')).toEqual(['Wed']);
+    expect(
+      container.querySelector('[data-occupancy-over]')?.tagName.toLowerCase(),
+    ).toBe('polygon');
+  });
+
+  it('names the wards, the capacity and the over-capacity marker in its legend', () => {
+    render(<OccupancyAreaChart {...props} />);
+    expect(
+      legendLabels(
+        screen.getByRole('figure', { name: 'Bed occupancy this week' }),
+      ),
+    ).toEqual(['ICU', 'Ward A', 'Capacity (60 beds)', 'Over capacity']);
+  });
+
+  it('carries a data table with each ward, the total and the over-capacity periods in words', () => {
+    render(<OccupancyAreaChart {...props} />);
+    expect(tableRows('Bed occupancy this week')).toEqual([
+      ['day', 'ICU', 'Ward A', 'Total'],
+      ['Mon', '10', '40', '50'],
+      ['Tue', '12', '46', '58'],
+      ['Wed', '14', '50', '64 (over capacity by 4)'],
+      ['Thu', '11', '44', '55'],
+    ]);
+  });
+
+  it('says the capacity and when it was exceeded in its description', () => {
+    render(<OccupancyAreaChart {...props} description="A busy week." />);
+    expect(
+      describedText(
+        screen.getByRole('figure', { name: 'Bed occupancy this week' }),
+      ),
+    ).toBe('A busy week. Capacity 60 beds. Over capacity on Wed.');
+  });
+
+  it('handles no data, one point and null values', () => {
+    render(<OccupancyAreaChart {...props} data={[]} />);
+    expect(tableRows('Bed occupancy this week')).toHaveLength(1);
+    cleanup();
+    const one = render(<OccupancyAreaChart {...props} data={[week[2]]} />);
+    expect(flags(one.container, 'data-occupancy-over')).toEqual(['Wed']);
+    cleanup();
+    expect(() =>
+      render(
+        <OccupancyAreaChart
+          {...props}
+          data={[
+            { day: 'Mon', icu: null, wardA: 40 },
+            { day: 'Tue', icu: 'n/a' },
+          ]}
+        />,
+      ),
+    ).not.toThrow();
+    expect(tableRows('Bed occupancy this week')[2]).toEqual([
+      'Tue',
+      'No data',
+      'No data',
+      'No data',
+    ]);
+  });
+
+  it('never logs a figure', () => {
+    expectNothingLogged(
+      <OccupancyAreaChart
+        {...props}
+        ariaLabel="Ramesh ward"
+        data={[{ day: 'Mon', icu: 999, wardA: 1 }]}
+      />,
+      /Ramesh|999/,
+    );
+  });
+});
+
+describe('PatientFlowChart', () => {
+  const days = [
+    { day: 'Mon', admitted: 12, discharged: 10, census: 52 },
+    { day: 'Tue', admitted: 9, discharged: 12, census: 49 },
+    { day: 'Wed', admitted: 14, discharged: 14, census: 49 },
+  ];
+  const props = {
+    data: days,
+    config: {
+      admitted: { label: 'Admissions', color: 'chart-1' },
+      discharged: { label: 'Discharges', color: 'chart-2' },
+      census: { label: 'Census', color: 'chart-3' },
+    },
+    categoryKey: 'day',
+    admissionsKey: 'admitted',
+    dischargesKey: 'discharged',
+    censusKey: 'census',
+    ariaLabel: 'Patient flow this week',
+  };
+
+  it('is a named figure on an opaque data surface', () => {
+    render(<PatientFlowChart {...props} />);
+    expect(
+      screen
+        .getByRole('figure', { name: 'Patient flow this week' })
+        .classList.contains('nova-data'),
+    ).toBe(true);
+  });
+
+  it('draws admissions and discharges as columns and the census as an area on its own axis', () => {
+    const { container } = render(<PatientFlowChart {...props} />);
+    expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(
+      6,
+    );
+    expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-yAxis')).toHaveLength(2);
+  });
+
+  it('names the three series in its legend', () => {
+    render(<PatientFlowChart {...props} />);
+    expect(
+      legendLabels(
+        screen.getByRole('figure', { name: 'Patient flow this week' }),
+      ),
+    ).toEqual(['Admissions', 'Discharges', 'Census']);
+  });
+
+  it('carries a data table with the net movement of each period, signed', () => {
+    render(<PatientFlowChart {...props} />);
+    expect(tableRows('Patient flow this week')).toEqual([
+      ['day', 'Admissions', 'Discharges', 'Census', 'Net'],
+      ['Mon', '12', '10', '52', '+2'],
+      ['Tue', '9', '12', '49', '−3'],
+      ['Wed', '14', '14', '49', '0'],
+    ]);
+  });
+
+  it('handles no data, one period and null values', () => {
+    render(<PatientFlowChart {...props} data={[]} />);
+    expect(tableRows('Patient flow this week')).toHaveLength(1);
+    cleanup();
+    const one = render(<PatientFlowChart {...props} data={[days[0]]} />);
+    expect(
+      one.container.querySelectorAll('.recharts-bar-rectangle'),
+    ).toHaveLength(2);
+    cleanup();
+    expect(() =>
+      render(
+        <PatientFlowChart
+          {...props}
+          data={[{ day: 'Mon', admitted: null, discharged: 4, census: null }]}
+        />,
+      ),
+    ).not.toThrow();
+    expect(tableRows('Patient flow this week')[1]).toEqual([
+      'Mon',
+      'No data',
+      '4',
+      'No data',
+      'No data',
+    ]);
+  });
+
+  it('never logs a figure', () => {
+    expectNothingLogged(
+      <PatientFlowChart
+        {...props}
+        ariaLabel="Ramesh flow"
+        data={[{ day: 'Mon', admitted: 999, discharged: 1, census: 2 }]}
+      />,
+      /Ramesh|999/,
+    );
+  });
+});
+
+describe('WaitTimeChart', () => {
+  const hours = [
+    { hour: '08:00', p50: 18, p90: 26 },
+    { hour: '09:00', p50: 24, p90: 41 },
+    { hour: '10:00', p50: 35, p90: 58 },
+    { hour: '11:00', p50: 20, p90: 29 },
+  ];
+  const props = {
+    data: hours,
+    config: {
+      p50: { label: 'Median wait', color: 'chart-1' },
+      p90: { label: '90th percentile' },
+    },
+    categoryKey: 'hour',
+    p50Key: 'p50',
+    p90Key: 'p90',
+    target: 30,
+    ariaLabel: 'ED wait time today',
+  };
+
+  it('is a named figure on an opaque data surface', () => {
+    render(<WaitTimeChart {...props} />);
+    expect(
+      screen
+        .getByRole('figure', { name: 'ED wait time today' })
+        .classList.contains('nova-data'),
+    ).toBe(true);
+  });
+
+  it('draws the median as a line over a p50 to p90 band, both in the series colour', () => {
+    const { container } = render(<WaitTimeChart {...props} />);
+    expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+    expect(
+      container.querySelector('.recharts-line-curve')?.getAttribute('stroke'),
+    ).toBe('var(--color-p50)');
+  });
+
+  it('rules the target as the prototype draws a target line: ink, dashed 4 4', () => {
+    const { container } = render(<WaitTimeChart {...props} />);
+    const rule = container.querySelector('.recharts-reference-line-line');
+    expect(rule?.getAttribute('stroke')).toBe('var(--nova-color-ink-3)');
+    expect(rule?.getAttribute('stroke-dasharray')).toBe('4 4');
+  });
+
+  it('marks a breach by shape: a triangle for the median, a diamond for the 90th percentile', () => {
+    const { container } = render(<WaitTimeChart {...props} />);
+    expect(flags(container, 'data-wait-breach')).toEqual(['p90', 'p90', 'p50']);
+    const median = container.querySelector('[data-wait-breach="p50"]');
+    expect(median?.getAttribute('data-shape')).toBe('triangle-up');
+    expect(
+      container
+        .querySelector('[data-wait-breach="p90"]')
+        ?.getAttribute('data-shape'),
+    ).toBe('diamond');
+  });
+
+  it('names the median, the band, the target and both markers in its legend', () => {
+    render(<WaitTimeChart {...props} />);
+    expect(
+      legendLabels(screen.getByRole('figure', { name: 'ED wait time today' })),
+    ).toEqual([
+      'Median wait',
+      'Median to 90th percentile',
+      'Target (30 min)',
+      'Median above target',
+      '90th percentile above target',
+    ]);
+  });
+
+  it('carries a data table with each percentile and the status in words', () => {
+    render(<WaitTimeChart {...props} />);
+    expect(tableRows('ED wait time today')).toEqual([
+      ['hour', 'Median wait', '90th percentile', 'Status'],
+      ['08:00', '18 min', '26 min', 'Within target'],
+      ['09:00', '24 min', '41 min', '90th percentile above target'],
+      ['10:00', '35 min', '58 min', 'Median above target'],
+      ['11:00', '20 min', '29 min', 'Within target'],
+    ]);
+  });
+
+  it('says the target and the breaches in its description', () => {
+    render(<WaitTimeChart {...props} />);
+    expect(
+      describedText(screen.getByRole('figure', { name: 'ED wait time today' })),
+    ).toBe(
+      'Target 30 min. Median above target at 10:00. 90th percentile above target at 09:00, 10:00.',
+    );
+  });
+
+  it('handles no data, one point and null values', () => {
+    render(<WaitTimeChart {...props} data={[]} />);
+    expect(tableRows('ED wait time today')).toHaveLength(1);
+    cleanup();
+    const one = render(<WaitTimeChart {...props} data={[hours[2]]} />);
+    expect(flags(one.container, 'data-wait-breach').sort()).toEqual([
+      'p50',
+      'p90',
+    ]);
+    cleanup();
+    expect(() =>
+      render(
+        <WaitTimeChart
+          {...props}
+          data={[
+            { hour: '08:00', p50: null, p90: 20 },
+            { hour: '09:00', p50: 12 },
+          ]}
+        />,
+      ),
+    ).not.toThrow();
+    expect(tableRows('ED wait time today')[1]).toEqual([
+      '08:00',
+      'No data',
+      '20 min',
+      'No data',
+    ]);
+  });
+
+  it('never logs a figure', () => {
+    expectNothingLogged(
+      <WaitTimeChart
+        {...props}
+        ariaLabel="Ramesh wait"
+        data={[{ hour: '08:00', p50: 999, p90: 1000 }]}
+      />,
+      /Ramesh|999/,
+    );
   });
 });

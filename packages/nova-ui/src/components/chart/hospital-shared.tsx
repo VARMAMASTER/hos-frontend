@@ -94,6 +94,7 @@ export function Marker({
   return (
     <polygon
       {...data}
+      data-shape={shape}
       points={markerPoints(shape, cx, cy, size)}
       fill={colour}
       stroke={SURFACE}
@@ -110,6 +111,39 @@ export interface DotProps {
   index?: number;
   value?: unknown;
   payload?: Record<string, unknown>;
+}
+
+// A breach marker as a ReferenceDot shape: Recharts hands over the point, the marker is drawn on it.
+export function markerShape(
+  shape: MarkerShape,
+  colour: string,
+  data: Record<`data-${string}`, string>,
+) {
+  return function ReferenceMarker(props: DotProps) {
+    if (!hasPoint(props)) {
+      return <g />;
+    }
+    return (
+      <Marker
+        {...data}
+        shape={shape}
+        cx={props.cx}
+        cy={props.cy}
+        colour={colour}
+      />
+    );
+  };
+}
+
+// A signed change: +2, −3 (a true minus sign), 0.
+export function signed(value: number, format: (n: number) => string): string {
+  if (value > 0) {
+    return `+${format(value)}`;
+  }
+  if (value < 0) {
+    return `−${format(-value)}`;
+  }
+  return format(0);
 }
 
 export function hasPoint(

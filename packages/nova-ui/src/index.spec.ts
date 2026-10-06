@@ -12,6 +12,8 @@ import type {
   KpiTileProps,
   LineChartProps,
   NavItemProps,
+  OccupancyAreaChartProps,
+  PatientFlowChartProps,
   SearchFieldProps,
   SidebarProps,
   SparklineProps,
@@ -22,6 +24,7 @@ import type {
   TopBarProps,
   VitalsChartProps,
   VitalsConfig,
+  WaitTimeChartProps,
 } from './index';
 
 // Types vanish at runtime, so the check is that this file compiles: typecheck fails the moment the
@@ -138,6 +141,9 @@ describe('@hos/nova-ui public API', () => {
     'chartColorVar',
     'ChartLegendList',
     'VitalsChart',
+    'OccupancyAreaChart',
+    'PatientFlowChart',
+    'WaitTimeChart',
     // The scheme axis, the theme engine an admin theme editor builds on, and the motion tokens.
     'NOVA_SCHEMES',
     'NOVA_DEFAULT_SCHEME',
@@ -238,6 +244,28 @@ describe('@hos/nova-ui public API', () => {
       mark: 'band',
       color: 'var(--nova-color-ink-3)',
     };
-    expect([vitals, legend]).toHaveLength(2);
+    const base = {
+      data: [{ day: 'Mon', icu: 4, admitted: 2, discharged: 1, p50: 9 }],
+      config: { icu: { label: 'ICU' } },
+      ariaLabel: 'Hospital',
+      categoryKey: 'day',
+    };
+    const occupancy: OccupancyAreaChartProps = {
+      ...base,
+      seriesKeys: ['icu'],
+      capacity: 6,
+    };
+    const flow: PatientFlowChartProps = {
+      ...base,
+      admissionsKey: 'admitted',
+      dischargesKey: 'discharged',
+    };
+    const wait: WaitTimeChartProps = {
+      ...base,
+      p50Key: 'p50',
+      p90Key: 'p90',
+      target: 30,
+    };
+    expect([vitals, legend, occupancy, flow, wait]).toHaveLength(5);
   });
 });
