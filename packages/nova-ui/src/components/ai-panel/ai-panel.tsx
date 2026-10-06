@@ -14,6 +14,16 @@ export interface AiPanelProps
   state?: AiPanelState;
   // Defaults to 2, like CardHeader.
   headingLevel?: 2 | 3 | 4;
+  // The header's status, after the badge, in place of the default "Approved" chip (AiDraftBlock's
+  // lifecycle chip: "Draft — awaiting approval", "✓ Signed · Dr. … · 10:52").
+  status?: ReactNode;
+  // The badge's words: "AI draft" while a draft and "AI-assisted" once approved, by default.
+  badgeLabel?: string;
+  // The title's id, so controls elsewhere ("Approve <title>") can be named by it.
+  titleId?: string;
+  // The spark's glyph: ✦, or ✓ once approved. The prototype gives some blocks a meaning of their
+  // own (₹ on a money gate); it is hidden from assistive technology either way.
+  spark?: ReactNode;
 }
 
 export function AiPanel({
@@ -22,10 +32,15 @@ export function AiPanel({
   footer,
   state = 'draft',
   headingLevel = 2,
+  status,
+  badgeLabel,
+  titleId: givenTitleId,
+  spark,
   className,
   ...rest
 }: AiPanelProps) {
-  const titleId = useId();
+  const ownTitleId = useId();
+  const titleId = givenTitleId ?? ownTitleId;
   const Heading = `h${headingLevel}` as const;
   return (
     // A group, not a <section>: a landmark per AI panel would crowd the landmark list. It is the
@@ -44,7 +59,7 @@ export function AiPanel({
       {/* .ai-block-h: the spark, the title in bold at 13.5px, then the badges, 8px apart. */}
       <div className="mb-2.5 flex flex-wrap items-center gap-2">
         <span aria-hidden="true" className="nova-ai-spark">
-          {state === 'approved' ? '✓' : '✦'}
+          {spark ?? (state === 'approved' ? '✓' : '✦')}
         </span>
         <Heading
           id={titleId}
@@ -53,8 +68,11 @@ export function AiPanel({
           {title}
         </Heading>
         {/* Approved is a draft no longer, but a machine still wrote it: the badge stays, in words. */}
-        <AiBadge label={state === 'draft' ? 'AI draft' : 'AI-assisted'} />
-        {state === 'approved' ? <Chip tone="good">Approved</Chip> : null}
+        <AiBadge
+          label={badgeLabel ?? (state === 'draft' ? 'AI draft' : 'AI-assisted')}
+        />
+        {status ??
+          (state === 'approved' ? <Chip tone="good">Approved</Chip> : null)}
       </div>
       <div className="text-[14px] text-ink">{children}</div>
       {/* .ai-actions: 12px below the body. */}
