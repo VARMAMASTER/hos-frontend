@@ -28,11 +28,17 @@ export const BrokenImage: Story = {
   args: { src: 'https://invalid.invalid/missing.png' },
 };
 
+export const Verified: Story = { args: { verified: true, size: 'lg' } };
+
+// 20 (inline), 32, 40 and 48 (a list card).
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex items-center gap-3">
+      <Avatar {...args} size="xs" />
       <Avatar {...args} size="sm" />
       <Avatar {...args} size="md" />
+      <Avatar {...args} size="lg" />
+      <Avatar {...args} size="lg" src={portrait} verified />
     </div>
   ),
 };
