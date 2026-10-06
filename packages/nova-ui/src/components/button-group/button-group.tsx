@@ -214,8 +214,9 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
                 width: box.width,
                 transform: `translateX(${box.left}px)`,
               }}
+              // The highlight edge rides on the indicator, so it slides with the fill.
               className={cx(
-                'pointer-events-none absolute inset-y-0 left-0 rounded-lg bg-primary',
+                'nova-highlight-edge pointer-events-none absolute inset-y-0 left-0 rounded-lg bg-primary',
                 animated &&
                   'motion-safe:transition-[transform,width] motion-safe:duration-200 motion-safe:ease-out',
               )}
@@ -321,12 +322,14 @@ export function ButtonGroupItem({
     target.click();
   }
 
+  // The indicator paints the fill and the highlight edge once it is drawn; until then (and for a
+  // pressed toggle, which has no indicator) the segment fills itself and carries the edge. An
+  // unselected segment's edge hovers to the highlight. The tick or aria state says the same.
   const fill = selected
-    ? // The indicator paints the fill once it is drawn; until then the segment fills itself.
-      group.multiple || !group.indicatorDrawn
-      ? 'rounded-lg border-primary bg-primary text-on-primary'
+    ? group.multiple || !group.indicatorDrawn
+      ? 'relative nova-highlight-edge rounded-lg border-primary bg-primary text-on-primary'
       : 'rounded-lg border-primary bg-transparent text-on-primary'
-    : 'rounded-sm border-border-control bg-surface text-ink-2 hover:bg-surface-2 hover:text-ink';
+    : 'rounded-sm border-border-control bg-surface text-ink-2 hover:border-highlight-hover hover:bg-surface-2 hover:text-ink';
 
   return (
     <button

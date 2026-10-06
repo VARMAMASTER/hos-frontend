@@ -1,8 +1,9 @@
 import type { HTMLAttributes } from 'react';
 import { cx } from '../../primitives/cx';
+import { HighlightMark } from '../chip/highlight-mark';
 
 export type TagVariant = 'solid' | 'outline';
-export type TagTone = 'neutral' | 'primary' | 'ai';
+export type TagTone = 'neutral' | 'primary' | 'ai' | 'highlight';
 
 // A Tag labels or categorises ("Offline", "Beta"). It carries no status: a Chip does that.
 export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
@@ -23,18 +24,23 @@ const styles: Record<TagVariant, Record<TagTone, string>> = {
     neutral: 'bg-chrome-1 text-chrome-ink',
     primary: 'bg-primary text-on-primary',
     ai: 'bg-ai text-on-primary',
+    // The highlight never carries white text (it is a mark), so its "solid" tag is the wash.
+    highlight: 'nova-highlight-wash gap-1 text-highlight-deep',
   },
   outline: {
     neutral: 'border border-border-strong text-ink-2',
     primary: 'border border-primary text-primary-strong',
     ai: 'border border-ai text-ai-deep',
+    highlight: 'gap-1 border border-highlight text-highlight-deep',
   },
 };
 
+// A highlight tag leads with the star marker, so it is never told apart by colour alone.
 export function Tag({
   variant = 'solid',
   tone = 'neutral',
   className,
+  children,
   ...rest
 }: TagProps) {
   return (
@@ -43,6 +49,9 @@ export function Tag({
       data-tone={tone}
       className={cx(base, styles[variant][tone], className)}
       {...rest}
-    />
+    >
+      {tone === 'highlight' ? <HighlightMark className="size-2.5" /> : null}
+      {children}
+    </span>
   );
 }

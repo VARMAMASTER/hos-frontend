@@ -29,6 +29,19 @@ describe('the legibility proof', () => {
     }
   });
 
+  // The AiButton's sheen band lightens the hover fill by AI_SHEEN_PEAK while it sweeps over the label,
+  // so white text must still hold 4.5:1 on the lightened fill, for every hospital's AI colour.
+  it('measures the AiButton label under the sheen peak, in both schemes', () => {
+    for (const scheme of SCHEMES) {
+      const names = legibilityChecks(
+        resolvePalette(scheme),
+        scheme,
+        'glass',
+      ).map((c) => c.usedBy);
+      expect(names, scheme).toContain('AI button label under the sheen peak');
+    }
+  });
+
   // HOS Violet in both schemes, on all three materials.
   it.each(SCHEMES.flatMap((s) => NOVA_MATERIALS.map((m) => [s, m] as const)))(
     'holds for HOS Violet in the %s scheme on %s',
@@ -40,6 +53,44 @@ describe('the legibility proof', () => {
       ).toEqual([]);
     },
   );
+
+  // The highlight goes through the same gates as the brand: its marks (a gauge fill, a tab underline,
+  // a selected edge, a milestone node, an avatar ring) at 3:1 on every ground, its text at 4.5:1 on
+  // its tint, its wash and a panel, and its gradient figure at 3:1 as large text, stop by stop.
+  it('measures every highlight pairing, in both schemes', () => {
+    for (const scheme of SCHEMES) {
+      const uses = new Set(
+        legibilityChecks(resolvePalette(scheme), scheme, 'glass').map(
+          (check) => `${check.usedBy}@${check.minimum}`,
+        ),
+      );
+      for (const use of [
+        'a highlight mark (a fill, an underline, an edge or a ring)@3',
+        'a hovered highlight edge@3',
+        'highlight text on its tint@4.5',
+        'highlight text on the highlight wash@4.5',
+        'highlight text on a panel@4.5',
+        'the highlight gradient as large display text@3',
+      ]) {
+        expect(uses, `${scheme}: ${use}`).toContain(use);
+      }
+    }
+  });
+
+  // The prototype's sky is 2.5:1 on white: a light highlight that bright would be refused.
+  it('would catch a failing highlight: the prototype sky as a mark on a light panel', () => {
+    const palette = {
+      ...resolvePalette('light'),
+      '--nova-color-highlight': '#60A5FA',
+    };
+    const failing = legibilityFailures(palette, 'light', 'glass').map(
+      (f) => f.usedBy,
+    );
+    expect(failing).toContain(
+      'a highlight mark (a fill, an underline, an edge or a ring)',
+    );
+    expect(failing).toContain('the highlight gradient as large display text');
+  });
 
   it('would catch a failing pair: a pale primary under white text', () => {
     const palette = {

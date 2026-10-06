@@ -8,24 +8,24 @@ The Apple adaptation that used to live here is superseded (owner decision, 2026-
 
 Nova's semantic names stay the API (`--nova-color-primary`, `bg-surface`, `text-ink-2`); every **value** is the prototype's. `tokens/semantic.ts` (`NOVA_DEFAULTS`) and `styles/theme.css` hold the same values, and `semantic.spec.ts` compares them token by token with `hos.css`.
 
-| Prototype                                                                                                                                                   | Nova token                                           | Tailwind                                                 | Value                                                            |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------- |
-| `--bg`                                                                                                                                                      | `--nova-color-bg`                                    | `bg-bg`                                                  | `#F0EFF9`                                                        |
-| `--panel`                                                                                                                                                   | `--nova-color-surface`                               | `bg-surface`                                             | `#FFFFFF`                                                        |
-| `--panel-2`                                                                                                                                                 | `--nova-color-surface-2`                             | `bg-surface-2`                                           | `#F8F7FD`                                                        |
-| `--line`                                                                                                                                                    | `--nova-color-border`                                | `border-border`                                          | `#E4E1F2`                                                        |
-| `--line-strong`                                                                                                                                             | `--nova-color-border-strong`                         | `border-border-strong`                                   | `#CFC9E6`                                                        |
-| `--ink`, `--ink-2`                                                                                                                                          | `--nova-color-ink`, `-ink-2`                         | `text-ink`, `text-ink-2`                                 | `#1A1730`, `#5B5775`                                             |
-| `--ink-3`                                                                                                                                                   | `--nova-color-ink-3`                                 | `text-ink-3`                                             | `#5D5974` (held, see below)                                      |
-| `--teal`, `--teal-strong`, `--teal-soft`, `--teal-ghost`                                                                                                    | `--nova-color-primary`, `-strong`, `-soft`, `-ghost` | `bg-primary` …                                           | `#6D4FE0`, `#5636B8`, `#EFEAFC`, `#F8F5FE`                       |
-| `--ai`, `--ai-bright`, `--ai-deep`, `--ai-soft`, `--ai-ghost`, `--ai-line`                                                                                  | `--nova-color-ai*`                                   | `bg-ai` …                                                | `#0E7490`, `#22D3EE`, `#0B5567`, `#DDF4FA`, `#F6FDFF`, `#B9E6F2` |
-| `--good`, `--warn`, `--crit`, `--info` with `-soft` and `-deep`                                                                                             | `--nova-color-good*` …                               | `bg-good-soft text-good-deep` …                          | unchanged                                                        |
-| `--chrome-1`, `-2`, `-3`, `--chrome-glass`, `--chrome-line`, `--chrome-ink`, `--chrome-ink-2`, `--chrome-accent`, `--chrome-accent-soft`, `--chrome-glow-2` | `--nova-color-chrome-*`                              | `bg-chrome-1`, `border-chrome-line`, `text-chrome-ink` … | verbatim                                                         |
-| `.tb-dot` ring `#221448`                                                                                                                                    | `--nova-color-chrome-ring`                           | `border-chrome-ring`                                     | `#221448`                                                        |
-| `--ai-grad`                                                                                                                                                 | `--nova-gradient-ai`                                 | `nova-ai-grad`                                           | cyan → AI cyan → violet (the violet pinned, never the brand)     |
-| `--ai-mark`                                                                                                                                                 | `--nova-ai-mark`                                     | `nova-ai-mark`                                           | the four-hue conic spark, on the mark only                       |
-| `--f-display`, `--f-body`, `--f-mono`                                                                                                                       | `--nova-font-display`, `-body`, `-mono`              | `font-display`, `font-sans`, `font-mono`                 | Google Sans Flex; IBM Plex Mono                                  |
-| `--sidebar-w`                                                                                                                                               | `--nova-sidebar-w`                                   |                                                          | `248px`                                                          |
+| Prototype                                                                                                                                                   | Nova token                                           | Tailwind                                                 | Value                                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `--bg`                                                                                                                                                      | `--nova-color-bg`                                    | `bg-bg`                                                  | `#F0EFF9`                                                                                 |
+| `--panel`                                                                                                                                                   | `--nova-color-surface`                               | `bg-surface`                                             | `#FFFFFF`                                                                                 |
+| `--panel-2`                                                                                                                                                 | `--nova-color-surface-2`                             | `bg-surface-2`                                           | `#F8F7FD`                                                                                 |
+| `--line`                                                                                                                                                    | `--nova-color-border`                                | `border-border`                                          | `#E4E1F2`                                                                                 |
+| `--line-strong`                                                                                                                                             | `--nova-color-border-strong`                         | `border-border-strong`                                   | `#CFC9E6`                                                                                 |
+| `--ink`, `--ink-2`                                                                                                                                          | `--nova-color-ink`, `-ink-2`                         | `text-ink`, `text-ink-2`                                 | `#1A1730`, `#5B5775`                                                                      |
+| `--ink-3`                                                                                                                                                   | `--nova-color-ink-3`                                 | `text-ink-3`                                             | `#5D5974` (held, see below)                                                               |
+| `--teal`, `--teal-strong`, `--teal-soft`, `--teal-ghost`                                                                                                    | `--nova-color-primary`, `-strong`, `-soft`, `-ghost` | `bg-primary` …                                           | `#6D4FE0`, `#5636B8`, `#EFEAFC`, `#F8F5FE`                                                |
+| `--ai`, `--ai-bright`, `--ai-deep`, `--ai-soft`, `--ai-ghost`, `--ai-line`                                                                                  | `--nova-color-ai*` (brand-derived)                   | `bg-ai` …                                                | `#0E7490`, `#22D3EE`, `#0B5567`, `#DDF4FA`, `#F6FDFF`, `#B9E6F2`                          |
+| `--good`, `--warn`, `--crit`, `--info` with `-soft` and `-deep`                                                                                             | `--nova-color-good*` …                               | `bg-good-soft text-good-deep` …                          | unchanged                                                                                 |
+| `--chrome-1`, `-2`, `-3`, `--chrome-glass`, `--chrome-line`, `--chrome-ink`, `--chrome-ink-2`, `--chrome-accent`, `--chrome-accent-soft`, `--chrome-glow-2` | `--nova-color-chrome-*`                              | `bg-chrome-1`, `border-chrome-line`, `text-chrome-ink` … | verbatim                                                                                  |
+| `.tb-dot` ring `#221448`                                                                                                                                    | `--nova-color-chrome-ring`                           | `border-chrome-ring`                                     | `#221448`                                                                                 |
+| `--ai-grad`                                                                                                                                                 | `--nova-gradient-ai`                                 | `nova-ai-grad`                                           | AI bright → AI → the brand, as the prototype's `var(--teal)` (follows the hospital theme) |
+| `--ai-mark`                                                                                                                                                 | `--nova-ai-mark`                                     | `nova-ai-mark`                                           | the four-hue conic spark, on the mark only; its tints are `--nova-color-ai-mark-1…4`      |
+| `--f-display`, `--f-body`, `--f-mono`                                                                                                                       | `--nova-font-display`, `-body`, `-mono`              | `font-display`, `font-sans`, `font-mono`                 | Google Sans Flex; IBM Plex Mono                                                           |
+| `--sidebar-w`                                                                                                                                               | `--nova-sidebar-w`                                   |                                                          | `248px`                                                                                   |
 
 Fonts load from the prototype's own Google Fonts URL (`family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=IBM+Plex+Mono:wght@500;600`) in `apps/web/index.html` and Storybook's `preview-head.html` and `manager-head.html`. The body is the prototype's: 14px on a 1.55 line with optical sizing (`theme.css`, `@layer base`), so a component that sets only a size inherits the prototype's line height.
 
@@ -64,6 +64,48 @@ Smaller utilities: `nova-card-head` (`.card-h` tint), `nova-tabbar` (`.tabbar`),
 
 Gradients are back exactly where the prototype draws them: the AI rail on AI blocks, the gradient edge on data surfaces, the chrome and hero gradients, the AI gradient and mark. A component never writes one of its own; it uses these utilities or tokens.
 
+## Highlight
+
+The owner asked for the highlighted colours, and their gradients, "in some places". The highlight is a second accent beside the brand, used deliberately. For HOS Violet it is the prototype's own sky, `--chrome-glow-2` (`#60A5FA`): the far stop of every prototype brand gradient (the hero, the `.sb-bar` fill, the aurora). On the chrome the highlight pair stays `--chrome-accent` into `--chrome-glow-2`, as the prototype draws it.
+
+| Token                          | Light (HOS Violet) | Dark      | Role                                                                |
+| ------------------------------ | ------------------ | --------- | ------------------------------------------------------------------- |
+| `--nova-color-highlight`       | `#3276C8`          | `#60A5FA` | the mark: a fill, an underline, an edge, a rail, a ring; never text |
+| `--nova-color-highlight-soft`  | `#E1EEFF`          | `#122946` | the tint under highlight text                                       |
+| `--nova-color-highlight-deep`  | `#004F9C`          | `#7AB1F5` | highlight text, 4.5:1 on its tint, the wash and a panel             |
+| `--nova-color-highlight-hover` | `#004F9C`          | `#8CBFFF` | a hovered highlight edge, one step further from the ground          |
+
+**Built, not picked.** Each member is the sky's hue and chroma pinned to the luminance of its twin in the brand family, so the highlight passes the brand's own proofs. In the dark it is `#60A5FA` itself. In the light it is held at `#3276C8`, the lightest sky that still holds 3:1 as a mark on every light ground: the prototype's sky is 2.5:1 on white. A hospital's highlight is HOS Violet's moved to its hue like every other brand colour, so it keeps the violet-to-sky step from its own brand. The chrome's sky glow (`--nova-color-chrome-glow-2`) follows the brand too, kept no lighter over the hero base than the prototype's, so the hero's text proof holds.
+
+**Gradients**, each declared on every theme and material scope and built only from the brand and highlight tokens:
+
+| Utility               | Token                            | Use                                                                                                               |
+| --------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `nova-highlight-grad` | `--nova-gradient-highlight`      | brand into highlight, 90deg: a gauge fill, the active tab's underline, a sort marker                              |
+| `nova-highlight-rail` | `--nova-gradient-highlight-rail` | the 3px rail down a selected row's first cell                                                                     |
+| `nova-highlight-edge` | `--nova-gradient-highlight-edge` | the 1px hairline of an emphasised card or a chosen option (a data surface swaps it in through `--nova-data-edge`) |
+| `nova-highlight-ring` | `--nova-gradient-highlight-edge` | a 2px ring a hair outside an avatar                                                                               |
+| `nova-highlight-wash` | `--nova-gradient-highlight-wash` | the brand's tint into the highlight's, under highlight text                                                       |
+| `nova-highlight-text` | `--nova-gradient-highlight`      | gradient text for large display figures only; the deep ink unclipped                                              |
+
+The Tailwind colours are `bg-|border-|text-highlight`, `-soft`, `-deep` and `-hover`.
+
+**Where it is used (modest and deliberate).** No gradient on an ordinary button: `.btn-primary` stays solid.
+
+- `StatGauge` fills brand into highlight, the `.sb-bar` fill extended to a panel.
+- The active `Tab` is underlined in the gradient.
+- `KpiTile highlight`: the highlight edge in place of the KPI edge, and the figure in gradient text.
+- `Chip tone="highlight"`, `Tag tone="highlight"` and `Banner tone="highlight"` (an announcement, "New in this release", announced as a status): the wash, the deep ink and a five-pointed star. The star is deliberately not the AI's four-pointed spark.
+- `ChoiceCard`: the chosen tint carries a highlight ring inside the primary edge. `ButtonGroup`: the selected segment (or its sliding indicator) carries the highlight edge, and an unselected segment hovers to `highlight-hover`.
+- `DataTable`: the highlight rail on a selected row, and a highlight underline with a deep-ink arrow on the sorted column.
+- `Timeline` items take `milestone`: a highlight node with the star and the word "Milestone".
+- `Avatar highlight`: the ring, with `highlightLabel` to say what it means.
+- `HeroBand`: its glow stop is the brand's highlight on the chrome.
+
+**Proven like the brand.** `theme/legibility.ts` gates every brand, in both schemes, on every material: the highlight and its hover as 3:1 marks on every ground; the deep ink at 4.5:1 on its tint, across the wash and on the panels; and the gradient figure at 3:1 as large text, point by point along the gradient. `tokens/material.spec.ts` adds the every-brand bounds. The highlight is never colour-only: a star, a word, a shape or an ARIA state says the same. `conventions.spec.ts` lets a component reach the highlight only through these utilities and colours: no raw `--nova-*-highlight*` variable, no opacity, no text in the bare highlight, no new `nova-highlight-*` utility.
+
+Storybook: `Design language/Highlights` shows every use (switch the toolbar), and its "Every preset, light and dark" story shows each preset in both schemes at once.
+
 ## Three independent axes
 
 A screen is the product of three settings, each switchable anywhere in the tree and each independent of the other two:
@@ -75,6 +117,48 @@ A screen is the product of three settings, each switchable anywhere in the tree 
 | Scheme         | `light` (default), `dark`, `system`        | `data-nova-scheme`, `NovaThemeProvider scheme`, `applyNovaScheme`                     |
 
 Storybook has a toolbar switch for each (Hospital theme, Material, Scheme). `Themes/Preview` shows the sidebar, top bar, hero, canvas, cards, a table and an AI block on one page; `Themes/Side by side` shows every preset at once, in both schemes.
+
+## AI follows the hospital theme
+
+Owner decision, 2026-10-07: the AI panel's colours change with the hospital theme. This reverses the earlier rule that AI was a fixed cyan.
+
+**What follows the brand.**
+
+- The AI family (`--nova-color-ai`, `-ai-deep`, `-ai-soft`, `-ai-ghost`, `-ai-line`, `-ai-hover`, light and dark).
+- The single-value `--nova-color-ai-bright`.
+- The AI mark's four tints, `--nova-color-ai-mark-1…4`.
+
+The AI gradient (`nova-ai-grad`), the AI block's rail (`nova-ai-rail`, `nova-ai-block`), the spark and the orb are built from these tokens and the brand, as the prototype's `--ai-grad` and rail are (they end in `var(--teal)`). They are declared on every theme scope, so the AI panel, the AI badge, the AI chip, the approve button, the ✦ node and the AI tints all follow through tokens. No component changed.
+
+**HOS Violet is the prototype exactly:** `#0E7490`, `#22D3EE`, `#0B5567`, `#DDF4FA`, `#F6FDFF`, `#B9E6F2`. `semantic.spec.ts` still matches `hos.css`, and the AI gradient now matches the prototype verbatim.
+
+**How the AI hue is chosen** (`theme/derive.ts`, `chooseAiHue`):
+
+1. Keep the prototype's cyan while its colours keep every floor below in both schemes.
+2. Otherwise take the hue that keeps the most distance from the brand and the four status fills: the largest smallest hue distance, nearest the cyan on a tie.
+3. Every AI colour is HOS Violet's turned to that hue and pinned back to its own luminance. Every AI contrast therefore holds: AI text on its soft and ghost tints, white on the AI fill and its hover, and the AI mark at 3:1 on a panel. `theme/legibility.ts` gates all of these for every brand.
+
+**Separation floors** (`AI_SEPARATION`). Each is measured between the AI fill and the other colour, in each scheme. Hues are on the OKLCH circle; colour distance is OKLab × 100.
+
+| From                                                                | Hue                                             | Colour distance                     | The prototype's own                              |
+| ------------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------- | ------------------------------------------------ |
+| each status fill (good 167.5°, warn 49.0°, crit 28.7°, info 253.7°) | ≥ 28°                                           | ≥ 6                                 | 30.6° light, 29.8° dark, and 7.1 / 6.5 from info |
+| the brand primary                                                   | ≥ 45° (skipped for a grey brand, chroma < 0.03) | ≥ 6                                 | 63.6°, 18.8                                      |
+| each chart series                                                   | —                                               | ≥ 10 (the chart palette's own rule) | 11.2 light, 14.1 dark                            |
+
+A brand no AI hue can serve is rejected by `createNovaTheme` with the pair and the floor, as the contrast gates reject a brand.
+
+**What the presets get:**
+
+| Preset        | AI hue            | AI fill (light / dark) |
+| ------------- | ----------------- | ---------------------- |
+| HOS Violet    | 223.1° (the cyan) | `#0E7490` / `#1F7D9A`  |
+| Rose          | 223.1° (the cyan) | `#0E7490` / `#1F7D9A`  |
+| Teal Care     | 296°              | `#72619E` / `#7B6AA7`  |
+| Clinical Blue | 210.5°            | `#007685` / `#077F90`  |
+| Slate         | 210.5°            | `#007685` / `#077F90`  |
+
+`theme/ai.spec.ts` proves the floors and the AI contrast gates for every preset and 240 brands round the hue circle (grey to vivid), in light and dark, on glass, frost and solid. `legibility.spec.ts`'s 480-brand sweep accepts every brand.
 
 ## Hospital themes
 
@@ -88,7 +172,7 @@ A hospital gives three brand colours (`primary`, `primaryStrong`, `primarySoft`)
 
 **HOS Violet is the prototype, exactly.** Its derived palette is `hos.css`, value for value, and `semantic.spec.ts` still compares every token with `os/public/assets/hos.css`.
 
-**Never tenant-overridable:** status, AI and the chart palette. A theme writes only the derived palette and the body font. `NovaThemeProvider` and `applyNovaTheme` rebuild that palette from the brand colours alone, so a stored row cannot set an ink, a canvas or a chrome colour of its own.
+**Never tenant-overridable:** status and the chart palette. The AI family is derived from the brand (see "AI follows the hospital theme"), never set by a hospital. A theme writes only the derived palette and the body font. `NovaThemeProvider` and `applyNovaTheme` rebuild that palette from the brand colours alone, so a stored row cannot set an ink, a canvas or a chrome colour of its own.
 
 **Every pairing is proven for every brand.** `theme/legibility.ts` lists every pairing Nova draws: about 140 per scheme and material. Text must reach 4.5:1; control edges, rings and marks 3:1. `createNovaTheme` runs it in both schemes, on the hospital's own material (or on all three, when the material is left to the product). A brand that fails is rejected with the colours, the ratio, what the pairing is for and where, and a suggestion that itself passes: the same hue at HOS Violet's lightness. `legibility.spec.ts` sweeps 480 brands round the hue circle, from grey to vivid and from deep to the lightest a brand may be, through both schemes and all three materials.
 
@@ -159,12 +243,15 @@ These prototype values fail an accessibility proof (`tokens/material.spec.ts`, w
 | Top-bar focus ring    | `--chrome-accent` (2.4:1)            | white                                   | 3:1                                              |
 | Aurora                | 0.22–0.30 tints                      | 0.10 brand, 0.06 accents                | ink-3 at 4.5:1 on the canvas                     |
 | Chart series          | `--c1 … c3` (the good and info hues) | the six-slot data palette               | `palette.spec.ts`: series never read as a status |
+| Highlight (light)     | `--chrome-glow-2` `#60A5FA` (2.5:1)  | `#3276C8`                               | 3:1 as a mark on every light ground              |
+| Selected tab label    | `--chrome-1`                         | `ink`                                   | chrome-1 stays dark on a dark panel              |
 
 ## Unchanged rules (enforced by tests)
 
 - Text is at least 4.5:1 and focus rings and control edges at least 3:1, proven for every hospital brand, in both schemes, on every material.
 - Status is never colour-only: a word, a glyph or a shape goes with every tone.
 - Dense data is never translucent.
-- Hospitals cannot override status, AI or chart tokens. They give brand colours and a body font, and the engine derives the rest of their palette from the brand.
+- Hospitals cannot override status or chart tokens. They give brand colours and a body font, and the engine derives the rest of their palette, the AI family included, from the brand.
+- AI is never colour-only and never mistaken for the brand or a status: the ✦ spark and a text label always go with it, and its colours keep the separation floors below for every brand.
 - Every interactive element takes its focus ring from `focusRing`; motion is off under `prefers-reduced-motion`.
 - Components compose the primitives (`cx`, `focusRing`, `Surface`, `useControllableState`).

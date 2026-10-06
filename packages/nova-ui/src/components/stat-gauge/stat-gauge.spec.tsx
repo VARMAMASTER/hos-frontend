@@ -88,8 +88,8 @@ describe('StatGauge look', () => {
     expect(track.className).toContain('rounded-full');
     expect(track.className).not.toContain('h-1.5');
     const fill = track.firstElementChild as HTMLElement;
-    // The prototype's .sb-bar fill: chrome accent into the sky glow.
-    expect(fill.className).toContain('nova-bar-grad');
+    // The prototype's .sb-bar fill, extended to a panel: the brand into the highlight.
+    expect(fill.className).toContain('nova-highlight-grad');
     expect(fill.className).not.toContain('bg-primary');
     expect(fill.className).toContain('rounded-full');
   });

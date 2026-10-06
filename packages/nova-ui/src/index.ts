@@ -1,5 +1,6 @@
 export * from './components/activity-feed/activity-feed';
 export * from './components/ai-badge/ai-badge';
+export * from './components/ai-button/ai-button';
 export * from './components/ai-class-chip/ai-class-chip';
 export * from './components/ai-class-chip/tier-card';
 export * from './components/ai-draft-block/ai-draft-block';

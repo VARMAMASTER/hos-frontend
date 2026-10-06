@@ -20,6 +20,10 @@ export interface KpiTileProps
   // A small trailing visual beside the figures, such as a Sparkline (which brings no surface of its
   // own, since the tile is already opaque). The slot is 6rem wide and sits beside the value.
   visual?: ReactNode;
+  // Emphasis for the one figure a screen leads with: the highlight edge (brand into highlight) in
+  // place of the KPI edge, and the figure in gradient text. Emphasis, not state: say in the label
+  // why it matters.
+  highlight?: boolean;
 }
 
 const trends: Record<KpiTrend, { glyph: string; label: string }> = {
@@ -59,6 +63,7 @@ export function KpiTile({
   trend,
   tone = 'default',
   visual,
+  highlight = false,
   className,
   ...rest
 }: KpiTileProps) {
@@ -68,8 +73,12 @@ export function KpiTile({
       material="data"
       radius="md"
       data-tone={tone}
+      data-highlight={highlight ? 'true' : undefined}
       className={cx(
-        'p-4 [--nova-data-edge:var(--nova-gradient-edge-kpi)]',
+        'p-4',
+        highlight
+          ? '[--nova-data-edge:var(--nova-gradient-highlight-edge)]'
+          : '[--nova-data-edge:var(--nova-gradient-edge-kpi)]',
         'transition-[transform,box-shadow] duration-150 ease-out motion-reduce:transition-none hover:[--nova-data-lift:var(--nova-shadow-lg)] motion-safe:hover:-translate-y-0.5',
         className,
       )}
@@ -78,7 +87,13 @@ export function KpiTile({
       <div className="text-[12px] font-medium text-ink-2">{label}</div>
       <div className="mt-0.5 flex items-end justify-between gap-3">
         <div className="min-w-0 font-display text-[26px] font-bold tabular-nums slashed-zero text-ink">
-          {value}
+          {/* The gradient figure is large display text (26px bold), where 3:1 is the floor the
+              legibility proof holds it to, point by point; unclipped it is the deep ink. */}
+          {highlight ? (
+            <span className="nova-highlight-text">{value}</span>
+          ) : (
+            value
+          )}
         </div>
         {visual ? (
           <div data-visual="" className="w-24 min-w-0 shrink">

@@ -94,6 +94,194 @@
   --nova-pulse-duration: var(--nova-pulse-fast);
 }
 
+/* The AI button's motion (AiButton). Playful, but only ever applied under motion-safe, so
+   prefers-reduced-motion leaves every state still: the glow, the darker thinking fill, the label and
+   the check are static and carry the meaning. Every timing is the motion tokens or a multiple of
+   one, and every colour an AI token, so a hospital's theme recolours it. */
+
+/* The mark twinkles: it swells and turns, dips under, and settles. */
+@keyframes nova-ai-twinkle {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  35% {
+    transform: scale(1.45) rotate(28deg);
+  }
+  65% {
+    transform: scale(0.92) rotate(-10deg);
+  }
+}
+
+/* One soft band of light, left of the button to right of it. */
+@keyframes nova-ai-sheen {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+/* Thinking: the same band, passing over and resting a moment before it comes round again. */
+@keyframes nova-ai-shimmer {
+  0% {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  60%,
+  100% {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+/* The idle glow swells from the still halo to the hover glow and back. */
+@keyframes nova-ai-breathe {
+  0%,
+  100% {
+    box-shadow: var(--nova-ai-halo-shadow);
+  }
+  50% {
+    box-shadow: var(--nova-ai-glow-shadow);
+  }
+}
+
+/* A sparkle circles the label: x and y each travel edge to edge and back, a quarter of a lap apart
+   (the y animation's negative delay), which draws an ellipse. */
+@keyframes nova-ai-orbit-x {
+  from {
+    left: 0%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+@keyframes nova-ai-orbit-y {
+  from {
+    top: 0%;
+  }
+  to {
+    top: 100%;
+  }
+}
+
+/* A particle leaves the centre of the mark at its own angle, and fades. */
+@keyframes nova-ai-burst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--nova-ai-angle)) translateX(0)
+      scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--nova-ai-angle))
+      translateX(var(--nova-ai-reach)) scale(0.2);
+  }
+}
+
+/* The check arrives large and turned, and settles into the label; its stroke draws in. */
+@keyframes nova-ai-settle {
+  from {
+    opacity: 0;
+    transform: scale(1.9) rotate(-24deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes nova-ai-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@utility animate-ai-twinkle {
+  animation: nova-ai-twinkle calc(var(--nova-duration-base) * 3)
+    var(--nova-ease-spring);
+}
+
+@utility animate-ai-sheen {
+  animation: nova-ai-sheen calc(var(--nova-duration-slow) * 3)
+    var(--nova-ease-standard);
+}
+
+@utility animate-ai-shimmer {
+  animation: nova-ai-shimmer calc(var(--nova-duration-slow) * 8) ease-in-out
+    infinite;
+}
+
+@utility animate-ai-breathe {
+  animation: nova-ai-breathe calc(var(--nova-duration-slow) * 14) ease-in-out
+    infinite;
+}
+
+@utility animate-ai-orbit-x {
+  animation: nova-ai-orbit-x calc(var(--nova-duration-slow) * 3) ease-in-out
+    infinite alternate;
+}
+
+@utility animate-ai-orbit-y {
+  animation: nova-ai-orbit-y calc(var(--nova-duration-slow) * 3) ease-in-out
+    infinite alternate;
+  animation-delay: calc(var(--nova-duration-slow) * -1.5);
+}
+
+@utility animate-ai-burst {
+  --nova-ai-reach: 18px;
+  animation: nova-ai-burst calc(var(--nova-duration-slow) * 3)
+    var(--nova-ease-emphasized) both;
+}
+
+/* The check holds its first frame until the burst has gone off, then settles. */
+@utility animate-ai-settle {
+  animation: nova-ai-settle calc(var(--nova-duration-slow) * 2)
+    var(--nova-ease-spring) both;
+  animation-delay: calc(var(--nova-duration-slow) * 1.5);
+}
+
+@utility animate-ai-draw {
+  animation: nova-ai-draw calc(var(--nova-duration-slow) * 2)
+    var(--nova-ease-standard) both;
+  animation-delay: calc(var(--nova-duration-slow) * 2);
+}
+
+/* The AI button's edge: a still halo (the idle button), and the glow it picks up on hover and on
+   keyboard focus. Both are shadows, not motion, so they stay under prefers-reduced-motion. Each
+   also names the pair the idle breathing swells between. */
+/* prettier-ignore */
+@utility nova-ai-halo {
+  --nova-ai-halo-shadow: 0 0 0 1px color-mix(in srgb, var(--nova-color-ai-bright) 45%, transparent), 0 0 10px 0 color-mix(in srgb, var(--nova-color-ai-bright) 30%, transparent);
+  --nova-ai-glow-shadow: 0 0 0 1px color-mix(in srgb, var(--nova-color-ai-bright) 85%, transparent), 0 0 16px 2px color-mix(in srgb, var(--nova-color-ai-bright) 55%, transparent);
+  box-shadow: var(--nova-ai-halo-shadow);
+}
+
+/* prettier-ignore */
+@utility nova-ai-glow {
+  --nova-ai-halo-shadow: 0 0 0 1px color-mix(in srgb, var(--nova-color-ai-bright) 45%, transparent), 0 0 10px 0 color-mix(in srgb, var(--nova-color-ai-bright) 30%, transparent);
+  --nova-ai-glow-shadow: 0 0 0 1px color-mix(in srgb, var(--nova-color-ai-bright) 85%, transparent), 0 0 16px 2px color-mix(in srgb, var(--nova-color-ai-bright) 55%, transparent);
+  box-shadow: var(--nova-ai-glow-shadow);
+}
+
+/* The band of light that sweeps the AI button: a strip half the button wide, parked off its left
+   edge until animate-ai-sheen or animate-ai-shimmer moves it. Its peak is a light veil over the
+   fill, kept faint enough that white text holds 4.5:1 through it (ai-button-motion.spec.ts). */
+/* prettier-ignore */
+@utility nova-ai-sheen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  pointer-events: none;
+  transform: translateX(-120%) skewX(-18deg);
+  background-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--nova-color-on-primary) 14%, transparent), transparent);
+}
+
 @theme inline {
   --color-bg: var(--nova-color-bg);
   --color-surface: var(--nova-color-surface);
@@ -110,6 +298,10 @@
   --color-primary-ghost: var(--nova-color-primary-ghost);
   --color-primary-hover: var(--nova-color-primary-hover);
   --color-on-primary: var(--nova-color-on-primary);
+  --color-highlight: var(--nova-color-highlight);
+  --color-highlight-soft: var(--nova-color-highlight-soft);
+  --color-highlight-deep: var(--nova-color-highlight-deep);
+  --color-highlight-hover: var(--nova-color-highlight-hover);
   --color-ai: var(--nova-color-ai);
   --color-ai-bright: var(--nova-color-ai-bright);
   --color-ai-deep: var(--nova-color-ai-deep);
@@ -192,6 +384,10 @@
   --nova-color-primary-ghost: #F8F5FE;
   --nova-color-primary-hover: #5636B8;
   --nova-color-on-primary: #FFFFFF;
+  --nova-color-highlight: #3276C8;
+  --nova-color-highlight-soft: #E1EEFF;
+  --nova-color-highlight-deep: #004F9C;
+  --nova-color-highlight-hover: #004F9C;
   --nova-color-ai: #0E7490;
   --nova-color-ai-bright: #22D3EE;
   --nova-color-ai-deep: #0B5567;
@@ -199,6 +395,10 @@
   --nova-color-ai-ghost: #F6FDFF;
   --nova-color-ai-line: #B9E6F2;
   --nova-color-ai-hover: #0B5567;
+  --nova-color-ai-mark-1: #EA4335;
+  --nova-color-ai-mark-2: #4285F4;
+  --nova-color-ai-mark-3: #34A853;
+  --nova-color-ai-mark-4: #FBBC04;
   --nova-color-good: #0B8A68;
   --nova-color-good-soft: #E3F2EC;
   --nova-color-good-deep: #07634B;
@@ -233,8 +433,8 @@
   --nova-chart-4: #6C6610;
   --nova-chart-5: #A779FD;
   --nova-chart-6: #9C1B80;
-  --nova-gradient-ai: linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, #6D4FE0 105%);
-  --nova-ai-mark: conic-gradient(from 0deg at 50% 50%, #EA4335 0deg, #4285F4 92deg, #34A853 184deg, #FBBC04 272deg, #EA4335 360deg);
+  --nova-gradient-ai: linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, var(--nova-color-primary) 105%);
+  --nova-ai-mark: conic-gradient(from 0deg at 50% 50%, var(--nova-color-ai-mark-1) 0deg, var(--nova-color-ai-mark-2) 92deg, var(--nova-color-ai-mark-3) 184deg, var(--nova-color-ai-mark-4) 272deg, var(--nova-color-ai-mark-1) 360deg);
   --nova-radius-sm: 8px;
   --nova-radius-md: 12px;
   --nova-radius-lg: 18px;
@@ -305,6 +505,10 @@
     --nova-color-primary-soft: light-dark(#EFEAFC, #282446);
     --nova-color-primary-ghost: light-dark(#F8F5FE, #212033);
     --nova-color-primary-hover: light-dark(#5636B8, #6241D1);
+    --nova-color-highlight: light-dark(#3276C8, #60A5FA);
+    --nova-color-highlight-soft: light-dark(#E1EEFF, #122946);
+    --nova-color-highlight-deep: light-dark(#004F9C, #7AB1F5);
+    --nova-color-highlight-hover: light-dark(#004F9C, #8CBFFF);
     --nova-color-ai: light-dark(#0E7490, #1F7D9A);
     --nova-color-ai-deep: light-dark(#0B5567, #75B7CE);
     --nova-color-ai-soft: light-dark(#DDF4FA, #022D3A);
@@ -483,7 +687,17 @@
    four-blob mesh (body::before), tinted at the strengths the legibility proof allows; its second
    brand blob is primary-hover, which is primary-strong in the light scheme and stays a deep fill in
    the dark one. The edges are .edge-premium and the KPI tile's own edge: the chrome accent into the
-   AI cyan, fading out. The bar is the prototype's .sb-bar fill. */
+   AI cyan, fading out. The bar is the prototype's .sb-bar fill, the chrome accent into the sky glow:
+   the highlight pair on the chrome. The highlight gradients are the same move on a light or dark
+   panel, the brand into the highlight: a fill (gauges, underlines, markers), a rail (a selected
+   row), an edge (an emphasised card) and the soft wash under highlight text (the brand's tint into
+   the highlight's). Each stop is proven in theme/legibility.ts.
+
+   The AI gradients follow the hospital theme too (owner decision, 2026-10-07): as in the prototype,
+   the AI gradient and the AI block's rail run between the AI colours and the brand (var(--teal)),
+   and the AI colours themselves are derived per brand, clear of the brand and every status
+   (theme/derive.ts chooseAiHue). The AI gradient and mark are also on the plain :root above
+   (NOVA_DEFAULTS), with the same values, so a page with no theme is the prototype. */
 /* prettier-ignore */
 :root,
 [data-nova-theme],
@@ -498,6 +712,13 @@
   --nova-gradient-edge: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-chrome-accent) 55%, transparent), color-mix(in srgb, var(--nova-color-ai-bright) 26%, transparent) 60%, transparent 85%);
   --nova-gradient-edge-kpi: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-chrome-accent) 50%, transparent), color-mix(in srgb, var(--nova-color-ai-bright) 24%, transparent) 65%, transparent 85%);
   --nova-gradient-bar: linear-gradient(90deg, var(--nova-color-chrome-accent), var(--nova-color-chrome-glow-2));
+  --nova-gradient-highlight: linear-gradient(90deg, var(--nova-color-primary), var(--nova-color-highlight));
+  --nova-gradient-highlight-rail: linear-gradient(180deg, var(--nova-color-primary), var(--nova-color-highlight));
+  --nova-gradient-highlight-edge: linear-gradient(135deg, var(--nova-color-primary), var(--nova-color-highlight));
+  --nova-gradient-highlight-wash: linear-gradient(90deg, var(--nova-color-primary-soft), var(--nova-color-highlight-soft));
+  --nova-gradient-ai: linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, var(--nova-color-primary) 105%);
+  --nova-gradient-ai-rail: linear-gradient(180deg, var(--nova-color-primary) 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%);
+  --nova-ai-mark: conic-gradient(from 0deg at 50% 50%, var(--nova-color-ai-mark-1) 0deg, var(--nova-color-ai-mark-2) 92deg, var(--nova-color-ai-mark-3) 184deg, var(--nova-color-ai-mark-4) 272deg, var(--nova-color-ai-mark-1) 360deg);
   --nova-tabbar-tint: color-mix(in srgb, var(--nova-color-chrome-2) 7%, transparent);
   --nova-surface-fill: color-mix(in srgb, color-mix(in srgb, var(--nova-color-surface-2) var(--nova-surface-tint), var(--nova-color-surface)) var(--nova-surface-alpha), transparent);
   --nova-surface-border: color-mix(in srgb, var(--nova-surface-rim) calc(var(--nova-glass) * 100%), var(--nova-color-border));
@@ -508,12 +729,10 @@
   --nova-hero-base: color-mix(in srgb, color-mix(in srgb, var(--nova-color-chrome-1) calc(var(--nova-glass) * 100%), var(--nova-color-chrome-2)) var(--nova-hero-base-alpha), transparent);
 }
 
-/* Fixed gradients and textures, the same for every hospital. The AI rail runs from the prototype's
-   violet (pinned as a literal, never the brand) through the AI cyan to the bright stop. The grain is
-   the prototype's SVG noise, laid over the chrome and the hero only. */
+/* Fixed textures, the same for every hospital: the prototype's SVG noise, laid over the chrome and
+   the hero only. */
 /* prettier-ignore */
 :root {
-  --nova-gradient-ai-rail: linear-gradient(180deg, #6D4FE0 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%);
   --nova-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E");
   --nova-grain-hero: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -833,4 +1052,86 @@
   background-origin: border-box;
   background-position: left top;
   background-size: 3px 100%;
+}
+
+/* The highlight: a second accent beside the brand, used deliberately and never on an ordinary button
+   (the prototype's .btn-primary stays solid). Every utility reads the scoped gradient tokens above,
+   so it follows the nearest hospital theme and the scheme; theme/legibility.ts proves each stop.
+   The highlight is a mark, never text of its own: highlight text is the deep ink (text-highlight-deep)
+   or, for a large display figure only, nova-highlight-text. */
+
+/* A fill, brand into highlight: a gauge or progress bar (extending the prototype's .sb-bar fill), the
+   active tab's underline, a sorted column's marker, a milestone. */
+@utility nova-highlight-grad {
+  background-image: var(--nova-gradient-highlight);
+}
+
+/* The 3px rail down the left edge of a selected row, flush with the border, as the AI rail is drawn. */
+@utility nova-highlight-rail {
+  background-image: var(--nova-gradient-highlight-rail);
+  background-repeat: no-repeat;
+  background-origin: border-box;
+  background-position: left top;
+  background-size: 3px 100%;
+}
+
+/* The soft wash under highlight text (a highlight chip, tag or announcement): the brand's tint into
+   the highlight's, with the highlight tint as its solid fallback. The deep ink holds 4.5:1 across it. */
+@utility nova-highlight-wash {
+  background-color: var(--nova-color-highlight-soft);
+  background-image: var(--nova-gradient-highlight-wash);
+}
+
+/* Gradient text, brand into highlight, for large display figures only (a KPI tile's value): proven at
+   3:1, the large-text floor, point by point. The solid deep ink comes first and the clip only where
+   background-clip: text is supported, so the figure is never invisible and holds 4.5:1 unclipped.
+   The gradient spans the element's own box, so use it on an inline or w-fit element. */
+@utility nova-highlight-text {
+  color: var(--nova-color-highlight-deep);
+
+  @supports (-webkit-background-clip: text) or (background-clip: text) {
+    background-image: var(--nova-gradient-highlight);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* The 1px gradient hairline of an emphasised card or a selected option, drawn as the data edge is: a
+   masked pseudo-element whose padding is the ring. The host must be positioned (relative or
+   absolute); the ring sits just inside its border. A data surface swaps it in through
+   --nova-data-edge instead. */
+/* prettier-ignore */
+@utility nova-highlight-edge {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: var(--nova-gradient-highlight-edge);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* A 2px gradient ring a hair outside a positioned host, for an avatar. */
+/* prettier-ignore */
+@utility nova-highlight-ring {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    padding: 2px;
+    border-radius: inherit;
+    background: var(--nova-gradient-highlight-edge);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
 }

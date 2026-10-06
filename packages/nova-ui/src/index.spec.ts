@@ -53,6 +53,7 @@ describe('@hos/nova-ui public API', () => {
     'CardBody',
     'CardFooter',
     'AiBadge',
+    'AiButton',
     'AiClassChip',
     'AiDraftBlock',
     'AiPanel',
