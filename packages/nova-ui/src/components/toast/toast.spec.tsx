@@ -1,0 +1,241 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
+import { clearToasts, dismissToast, showToast, Toaster } from './toast';
+
+beforeEach(() => vi.useFakeTimers());
+afterEach(() => {
+  act(() => clearToasts());
+  cleanup();
+  vi.useRealTimers();
+});
+
+const show = (...args: Parameters<typeof showToast>) => {
+  let id = 0;
+  act(() => {
+    id = showToast(...args);
+  });
+  return id;
+};
+const toasts = () => [
+  ...document.querySelectorAll<HTMLElement>('[data-toast]'),
+];
+const wait = (ms: number) => act(() => void vi.advanceTimersByTime(ms));
+
+describe('Toaster live regions', () => {
+  it('is present before any toast, so a screen reader hears the first one', () => {
+    render(<Toaster />);
+    expect(screen.getByRole('status').getAttribute('aria-live')).toBe('polite');
+    expect(screen.getByRole('alert').getAttribute('aria-live')).toBe(
+      'assertive',
+    );
+  });
+
+  it('announces info and success politely', () => {
+    render(<Toaster />);
+    show('Saved', 'info');
+    show('Discharged', 'success');
+    const status = screen.getByRole('status');
+    expect(status.textContent).toContain('Saved');
+    expect(status.textContent).toContain('Discharged');
+    expect(screen.getByRole('alert').textContent).not.toContain('Saved');
+  });
+
+  it('announces an error assertively', () => {
+    render(<Toaster />);
+    show('Could not save the chart', 'error');
+    const alert = screen.getByRole('alert');
+    expect(alert.getAttribute('aria-live')).toBe('assertive');
+    expect(alert.textContent).toContain('Could not save the chart');
+    expect(screen.getByRole('status').textContent).not.toContain('Could not');
+  });
+
+  it('does not re-announce earlier toasts when a new one arrives (aria-atomic false)', () => {
+    render(<Toaster />);
+    expect(screen.getByRole('status').getAttribute('aria-atomic')).toBe(
+      'false',
+    );
+    expect(screen.getByRole('alert').getAttribute('aria-atomic')).toBe('false');
+  });
+
+  it('defaults to info', () => {
+    render(<Toaster />);
+    show('Hello');
+    expect(screen.getByRole('status').textContent).toContain('Hello');
+  });
+
+  it('shows the variant as an icon shape as well as colour', () => {
+    render(<Toaster />);
+    show('a', 'info');
+    show('b', 'success');
+    show('c', 'error');
+    const shapes = toasts().map(
+      (toast) => toast.querySelector('svg')?.innerHTML ?? '',
+    );
+    expect(new Set(shapes).size).toBe(3);
+    expect(shapes.every(Boolean)).toBe(true);
+  });
+});
+
+describe('Toast auto-dismiss', () => {
+  it('goes away after 3500ms', () => {
+    render(<Toaster />);
+    show('Saved');
+    wait(3499);
+    expect(screen.queryByText('Saved')).not.toBeNull();
+    wait(1);
+    expect(screen.queryByText('Saved')).toBeNull();
+  });
+
+  it('takes a custom duration', () => {
+    render(<Toaster />);
+    show('Slow', 'info', { duration: 8000 });
+    wait(7999);
+    expect(screen.queryByText('Slow')).not.toBeNull();
+    wait(1);
+    expect(screen.queryByText('Slow')).toBeNull();
+  });
+
+  it('stays until dismissed when the duration is 0', () => {
+    render(<Toaster />);
+    show('Sticky', 'error', { duration: 0 });
+    wait(60_000);
+    expect(screen.queryByText('Sticky')).not.toBeNull();
+  });
+
+  it('pauses while the pointer is over it, then resumes with the time left', () => {
+    render(<Toaster />);
+    show('Saved');
+    const toast = toasts()[0] as HTMLElement;
+    wait(3000);
+    fireEvent.mouseEnter(toast);
+    wait(60_000);
+    expect(screen.queryByText('Saved')).not.toBeNull();
+    fireEvent.mouseLeave(toast);
+    wait(499);
+    expect(screen.queryByText('Saved')).not.toBeNull();
+    wait(1);
+    expect(screen.queryByText('Saved')).toBeNull();
+  });
+
+  it('pauses while focus is inside it, and resumes on blur', () => {
+    render(<Toaster />);
+    show('Saved');
+    const dismiss = screen.getByRole('button', {
+      name: 'Dismiss notification',
+    });
+    wait(1000);
+    act(() => dismiss.focus());
+    wait(60_000);
+    expect(screen.queryByText('Saved')).not.toBeNull();
+    act(() => dismiss.blur());
+    wait(2499);
+    expect(screen.queryByText('Saved')).not.toBeNull();
+    wait(1);
+    expect(screen.queryByText('Saved')).toBeNull();
+  });
+
+  it('stays paused while either the pointer or focus remains', () => {
+    render(<Toaster />);
+    show('Saved');
+    const toast = toasts()[0] as HTMLElement;
+    const dismiss = screen.getByRole('button', {
+      name: 'Dismiss notification',
+    });
+    fireEvent.mouseEnter(toast);
+    act(() => dismiss.focus());
+    fireEvent.mouseLeave(toast);
+    wait(60_000);
+    expect(screen.queryByText('Saved')).not.toBeNull();
+  });
+
+  it('times each toast on its own', () => {
+    render(<Toaster />);
+    show('First');
+    wait(2000);
+    show('Second');
+    wait(1500);
+    expect(screen.queryByText('First')).toBeNull();
+    expect(screen.queryByText('Second')).not.toBeNull();
+  });
+});
+
+describe('Toast dismissal', () => {
+  it('has a dismiss button with an accessible name that removes it', () => {
+    render(<Toaster />);
+    show('Saved');
+    const button = screen.getByRole('button', {
+      name: 'Dismiss notification',
+    });
+    expect(button.getAttribute('type')).toBe('button');
+    expect(button.querySelector('svg')?.getAttribute('aria-hidden')).toBe(
+      'true',
+    );
+    fireEvent.click(button);
+    expect(screen.queryByText('Saved')).toBeNull();
+  });
+
+  it('lets the dismiss label be translated', () => {
+    render(<Toaster dismissLabel="Close message" />);
+    show('Saved');
+    expect(screen.getByRole('button', { name: 'Close message' })).toBeTruthy();
+  });
+
+  it('dismisses on a tap anywhere on it', () => {
+    render(<Toaster />);
+    show('Saved');
+    fireEvent.click(screen.getByText('Saved'));
+    expect(screen.queryByText('Saved')).toBeNull();
+  });
+
+  it('dismisses by id', () => {
+    render(<Toaster />);
+    const id = show('Saved');
+    show('Other');
+    act(() => dismissToast(id));
+    expect(screen.queryByText('Saved')).toBeNull();
+    expect(screen.queryByText('Other')).not.toBeNull();
+  });
+
+  it('shows toasts raised before the Toaster mounted', () => {
+    show('Early');
+    render(<Toaster />);
+    expect(screen.queryByText('Early')).not.toBeNull();
+  });
+
+  it('clears its timers when the Toaster unmounts', () => {
+    const { unmount } = render(<Toaster />);
+    show('Saved');
+    unmount();
+    expect(() => wait(5000)).not.toThrow();
+  });
+});
+
+describe('Toast styling rules', () => {
+  it('uses the callout text and the lg radius, with no shadow', () => {
+    render(<Toaster />);
+    show('Saved');
+    const classes = (toasts()[0] as HTMLElement).className;
+    expect(classes).toContain('text-callout');
+    expect(classes).toContain('rounded-lg');
+    expect(classes).not.toMatch(/shadow/);
+    expect(classes).not.toContain('font-medium');
+  });
+
+  it.each([
+    ['info', 'bg-ink'],
+    ['success', 'bg-primary'],
+    ['error', 'bg-crit'],
+  ] as const)('the %s variant uses %s', (variant, fill) => {
+    render(<Toaster />);
+    show('x', variant);
+    const toast = toasts()[0] as HTMLElement;
+    expect(toast.className).toContain(fill);
+    expect(toast.dataset['variant']).toBe(variant);
+  });
+});
