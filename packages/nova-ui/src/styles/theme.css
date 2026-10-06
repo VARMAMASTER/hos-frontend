@@ -1135,3 +1135,69 @@
     pointer-events: none;
   }
 }
+
+/* ===== WhatsApp brand colours (begin) =====
+   The one exception to "theme tokens only": WhatsApp's own colours, for a thread drawn as the patient
+   sees it (WhatsAppThread, ChatBubble's whatsapp palette). Another company's brand, so no hospital
+   theme moves them. tokens/whatsapp.ts holds the same values (WHATSAPP_COLOURS) and whatsapp.spec.ts
+   compares them, proves every pairing in both schemes, and keeps every --nova-wa-* name inside this
+   block, which stays the last thing in the file. */
+@theme inline {
+  --color-wa-wall: var(--nova-wa-wall);
+  --color-wa-wall-dot: var(--nova-wa-wall-dot);
+  --color-wa-header: var(--nova-wa-header);
+  --color-wa-header-ink: var(--nova-wa-header-ink);
+  --color-wa-in: var(--nova-wa-in);
+  --color-wa-out: var(--nova-wa-out);
+  --color-wa-ink: var(--nova-wa-ink);
+  --color-wa-ink-2: var(--nova-wa-ink-2);
+  --color-wa-accent: var(--nova-wa-accent);
+  --color-wa-hover: var(--nova-wa-hover);
+  --color-wa-dot: var(--nova-wa-dot);
+}
+
+/* Light, the prototype; a browser without light-dark() keeps these. */
+/* prettier-ignore */
+:root {
+  --nova-wa-wall: #EFE7DC;
+  --nova-wa-wall-dot: #E4DACB;
+  --nova-wa-header: #075E54;
+  --nova-wa-header-ink: #FFFFFF;
+  --nova-wa-in: #FFFFFF;
+  --nova-wa-out: #D9FDD3;
+  --nova-wa-ink: #1A1730;
+  --nova-wa-ink-2: #5A6B63;
+  --nova-wa-accent: #0270A3;
+  --nova-wa-hover: #F0F7FF;
+  --nova-wa-dot: #9AA79F;
+}
+
+/* Light and dark (WhatsApp's dark theme), resolved where each colour is used, so a scheme set on any
+   subtree wins inside it, as for every other scheme token. */
+/* prettier-ignore */
+@supports (color: light-dark(#000, #fff)) {
+  :root {
+    --nova-wa-wall: light-dark(#EFE7DC, #0B141A);
+    --nova-wa-wall-dot: light-dark(#E4DACB, #172229);
+    --nova-wa-header: light-dark(#075E54, #202C33);
+    --nova-wa-header-ink: light-dark(#FFFFFF, #E9EDEF);
+    --nova-wa-in: light-dark(#FFFFFF, #202C33);
+    --nova-wa-out: light-dark(#D9FDD3, #005C4B);
+    --nova-wa-ink: light-dark(#1A1730, #E9EDEF);
+    --nova-wa-ink-2: light-dark(#5A6B63, #C2CDC9);
+    --nova-wa-accent: light-dark(#0270A3, #8AD3F2);
+    --nova-wa-hover: light-dark(#F0F7FF, #2A3942);
+    --nova-wa-dot: light-dark(#9AA79F, #8696A0);
+  }
+}
+
+/* The chat wallpaper: the wall colour under an 18px grid of 1px dots (hos.css .phone-b). */
+@utility nova-wa-wall {
+  background-color: var(--nova-wa-wall);
+  background-image: radial-gradient(
+    var(--nova-wa-wall-dot) 1px,
+    transparent 1px
+  );
+  background-size: 18px 18px;
+}
+/* ===== WhatsApp brand colours (end) ===== */
