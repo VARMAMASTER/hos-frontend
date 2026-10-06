@@ -67,6 +67,18 @@ describe('material', () => {
     expect(MATERIAL_TOKENS.solid['--nova-glass']).toBe('0');
   });
 
+  // Apple-flat elevation: depth comes from surface change, hairlines, the frost and a scrim. Glass
+  // keeps its 1px top highlight, an inset rim and not a shadow; nothing casts a drop shadow.
+  it.each(['--nova-surface-shadow', '--nova-overlay-shadow'] as const)(
+    'casts no drop shadow through %s: glass keeps only the inset top highlight, solid has none',
+    (token) => {
+      expect(MATERIAL_TOKENS.glass[token]).toMatch(
+        /^inset 0 1px 0 0 rgb\(255 255 255 \/ 0\.\d+\)$/,
+      );
+      expect(MATERIAL_TOKENS.solid[token]).toBe('none');
+    },
+  );
+
   it('builds the translucent fills from the same numbers the contrast gate uses', () => {
     expect(MATERIAL_TOKENS.glass['--nova-surface-fill']).toBe(
       `rgb(255 255 255 / ${GLASS.surfaceAlpha})`,

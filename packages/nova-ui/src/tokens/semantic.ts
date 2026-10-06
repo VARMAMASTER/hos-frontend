@@ -44,12 +44,35 @@ export const NOVA_DEFAULTS = {
   '--nova-chart-4': p.data.olive,
   '--nova-chart-5': p.data.lavender,
   '--nova-chart-6': p.data.plum,
-  '--nova-radius-sm': '8px',
-  '--nova-radius-md': '12px',
-  '--nova-radius-lg': '18px',
+  // The radius grammar (docs/design-language/README.md): sm inline and compact, md inputs and small
+  // tiles, lg cards and dialogs, xl large hero surfaces; anything that reads as an action is a pill
+  // (rounded-full). Nothing in between.
+  '--nova-radius-sm': '6px',
+  '--nova-radius-md': '10px',
+  '--nova-radius-lg': '14px',
+  '--nova-radius-xl': '20px',
   '--nova-sidebar-w': '248px',
-  '--nova-font-body':
-    '"Google Sans Flex", system-ui, -apple-system, sans-serif',
+  '--nova-font-body': '"Inter", system-ui, -apple-system, sans-serif',
   '--nova-font-mono':
     '"IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace',
+  // The type ramp. Body reading text and form input text are 17px; dense data (table cells, chips,
+  // meta lines) uses callout or caption, so tables stay scannable. Paired with the weight ladder
+  // 400 / 600 / 700 (500 is banned) and, from headline up, the tight tracking below.
+  '--nova-text-micro': '11px',
+  '--nova-text-micro--line-height': '14px',
+  '--nova-text-caption': '13px',
+  '--nova-text-caption--line-height': '18px',
+  '--nova-text-callout': '15px',
+  '--nova-text-callout--line-height': '20px',
+  '--nova-text-body': '17px',
+  '--nova-text-body--line-height': '24px',
+  '--nova-text-headline': '20px',
+  '--nova-text-headline--line-height': '26px',
+  '--nova-text-title3': '28px',
+  '--nova-text-title3--line-height': '34px',
+  '--nova-text-title2': '40px',
+  '--nova-text-title2--line-height': '46px',
+  '--nova-text-title1': '56px',
+  '--nova-text-title1--line-height': '60px',
+  '--nova-tracking-tight': '-0.01em',
 } as const satisfies Record<NovaVariable, string>;

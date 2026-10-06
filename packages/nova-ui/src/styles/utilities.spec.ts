@@ -481,6 +481,62 @@ describe('theme.css named gradients', () => {
   });
 });
 
+describe('theme.css Tailwind theme mapping', () => {
+  const stock = () => block('@theme').declarations;
+  const mapped = () => block('@theme inline').declarations;
+
+  // Apple-flat: no shadow scale exists, so shadow-sm and friends generate nothing, and Nova's old
+  // hue-tinted card and button shadows are gone.
+  it('resets the stock shadow, radius and colour scales, so only Nova tokens generate utilities', () => {
+    expect(stock()).toEqual({
+      '--color-*': 'initial',
+      '--radius-*': 'initial',
+      '--shadow-*': 'initial',
+    });
+  });
+
+  it('maps the radius grammar sm / md / lg / xl onto the Nova tokens', () => {
+    for (const step of ['sm', 'md', 'lg', 'xl']) {
+      expect(mapped()[`--radius-${step}`]).toBe(`var(--nova-radius-${step})`);
+    }
+    expect(
+      Object.keys(mapped()).filter((name) => name.startsWith('--radius-')),
+    ).toHaveLength(4);
+  });
+
+  it.each([
+    'micro',
+    'caption',
+    'callout',
+    'body',
+    'headline',
+    'title3',
+    'title2',
+    'title1',
+  ])(
+    'maps the %s step of the type ramp, with its line height, into text-* utilities',
+    (step) => {
+      expect(mapped()).toMatchObject({
+        [`--text-${step}`]: `var(--nova-text-${step})`,
+        [`--text-${step}--line-height`]: `var(--nova-text-${step}--line-height)`,
+      });
+    },
+  );
+
+  // Headlines (20px and up) tighten slightly; small text is never tightened.
+  it('tightens the tracking of headline sizes only', () => {
+    const tightened = Object.entries(mapped())
+      .filter(([name]) => name.endsWith('--letter-spacing'))
+      .map(([name, value]) => [name, value]);
+    expect(tightened).toEqual(
+      ['headline', 'title3', 'title2', 'title1'].map((step) => [
+        `--text-${step}--letter-spacing`,
+        'var(--nova-tracking-tight)',
+      ]),
+    );
+  });
+});
+
 describe('theme.css base rules', () => {
   // corner-shape is not inherited, so the rule has to reach every box. Browsers without it ignore the
   // declaration and draw plain rounded corners, which is why a refactor must not drop it as dead weight.
