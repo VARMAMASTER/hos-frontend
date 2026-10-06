@@ -41,12 +41,13 @@ const base = cx(
 // primary is .btn-primary, ai .btn-ai, ghost .btn-ghost and danger .btn-danger-ghost. outline is the
 // prototype's outlined primary (the row action): its 1px primary border is its only boundary, and
 // material.spec.ts proves the primary at 3:1 on every light surface and on the bare canvas, for every
-// hospital brand; the theme gate holds its primary-strong text on the canvas and white on its hover.
+// hospital brand. Its fill is the surface (the white of the prototype's row), so its primary-strong
+// text holds 4.5:1 wherever it is placed, the dark chrome included; white on its hover is gated.
 const variants: Record<DrawnVariant, string> = {
   primary:
     'border-transparent bg-primary text-on-primary hover:bg-primary-strong',
   outline:
-    'border-primary bg-transparent text-primary-strong hover:bg-primary hover:text-on-primary',
+    'border-primary bg-surface text-primary-strong hover:bg-primary hover:text-on-primary',
   ghost: 'border-border-strong bg-surface text-ink hover:bg-surface-2',
   danger: 'border-border-strong bg-surface text-crit hover:bg-surface-2',
   ai: 'border-transparent bg-ai text-on-primary hover:bg-ai-deep',

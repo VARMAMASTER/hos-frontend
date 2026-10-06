@@ -86,6 +86,16 @@ describe('Button', () => {
     expect(button.classList.contains('border-border-strong')).toBe(false);
   });
 
+  // The prototype's outlined row action is transparent on a white row; Nova fills it with the
+  // surface (the same white there), so its primary-strong text keeps 4.5:1 wherever it is placed,
+  // the dark top bar and sidebar included.
+  it('fills the outline variant with the surface, so its text never lands on the dark chrome', () => {
+    render(<Button variant="outline">Edit</Button>);
+    const button = screen.getByRole('button', { name: 'Edit' });
+    expect(button.classList.contains('bg-surface')).toBe(true);
+    expect(button.classList.contains('bg-transparent')).toBe(false);
+  });
+
   it('keeps secondary as a deprecated alias that renders the outline button', () => {
     render(<Button variant="secondary">Edit</Button>);
     const button = screen.getByRole('button', { name: 'Edit' });

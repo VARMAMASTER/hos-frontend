@@ -140,7 +140,7 @@ describe('Radio', () => {
   });
 });
 
-describe('Radio, Apple-refined', () => {
+describe('Radio, the prototype form control', () => {
   it('gives the row a 44px minimum touch target and the prototype 13.5px label text', () => {
     render(<Radio name="triage" label="Ramesh consents" />);
     const control = screen.getByLabelText('Ramesh consents');

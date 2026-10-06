@@ -10,7 +10,7 @@ type Story = StoryObj<typeof meta>;
 
 export const AllTones: Story = {
   render: () => (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       <Chip>Pending</Chip>
       <Chip tone="good">Filed</Chip>
       <Chip tone="warn">Query raised</Chip>
