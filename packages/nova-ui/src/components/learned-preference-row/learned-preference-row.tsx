@@ -1,0 +1,228 @@
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type HTMLAttributes,
+  type ReactNode,
+} from 'react';
+import { cx } from '../../primitives/cx';
+import { useControllableState } from '../../primitives/use-controllable-state';
+import { VisuallyHidden } from '../../primitives/visually-hidden';
+import { Button } from '../button/button';
+import { Switch } from '../switch/switch';
+import { Textarea } from '../textarea/textarea';
+
+export interface LearnedPreferenceRowLabels {
+  on: string;
+  off: string;
+  nowDoes: string;
+  wouldDo: string;
+  idle: string;
+  correct: string;
+  correctionLabel: string;
+  save: string;
+  cancel: string;
+}
+
+export const LEARNED_PREFERENCE_ROW_LABELS: Readonly<LearnedPreferenceRowLabels> =
+  {
+    on: 'ON',
+    off: 'OFF',
+    nowDoes: 'Now does automatically:',
+    wouldDo: 'What it would do:',
+    idle: 'Currently doing nothing.',
+    correct: 'Correct this',
+    correctionLabel: 'What should it do instead?',
+    save: 'Save correction',
+    cancel: 'Cancel',
+  };
+
+export interface LearnedPreferenceRowProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'role'> {
+  // What the agent learned, as a sentence. It names the row and its switch.
+  learned: string;
+  // The evidence: "Learned from 6 corrections you made in 30 days."
+  why: ReactNode;
+  // What it now does because of it.
+  does: ReactNode;
+  // Said in place of `why` while it is off ("You switched this off on 04 Jul, after…").
+  whenOff?: ReactNode;
+  enabled?: boolean;
+  defaultEnabled?: boolean;
+  onEnabledChange?: (enabled: boolean) => void;
+  // "Correct this" as a callback (open the caller's own editor)…
+  onCorrect?: () => void;
+  // …or an inline editor, whose text is sent here and then forgotten.
+  onSubmitCorrection?: (correction: string) => void;
+  labels?: Partial<LearnedPreferenceRowLabels>;
+  // The language of the learned text and its explanation (te, hi, en).
+  contentLang?: string;
+}
+
+// One thing an AI agent has learned about a clinician (03-doctor.html, My AI Team): what it learned,
+// why (the evidence), what it now does, an ON/OFF switch, and "Correct this". A system that quietly
+// learns habits and never shows the list is unsettling, so every learned behaviour is a row that can
+// be read, corrected or switched off. Off, the row dims to the quiet inks (never below their proven
+// contrast) and says it is doing nothing.
+export function LearnedPreferenceRow({
+  learned,
+  why,
+  does,
+  whenOff,
+  enabled,
+  defaultEnabled = true,
+  onEnabledChange,
+  onCorrect,
+  onSubmitCorrection,
+  labels,
+  contentLang,
+  className,
+  ...rest
+}: LearnedPreferenceRowProps) {
+  const words = { ...LEARNED_PREFERENCE_ROW_LABELS, ...labels };
+  const titleId = useId();
+  const [on, setOn] = useControllableState({
+    value: enabled,
+    defaultValue: defaultEnabled,
+    onChange: onEnabledChange,
+  });
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState('');
+  const boxRef = useRef<HTMLTextAreaElement>(null);
+  const correctRef = useRef<HTMLButtonElement>(null);
+  const wasEditing = useRef(false);
+
+  // Opening the editor puts the caret in it; closing it puts focus back on "Correct this".
+  useEffect(() => {
+    if (editing) boxRef.current?.focus();
+    else if (wasEditing.current) correctRef.current?.focus();
+    wasEditing.current = editing;
+  }, [editing]);
+
+  const inline = onSubmitCorrection !== undefined;
+  const correction = draft.trim();
+
+  function close() {
+    setDraft('');
+    setEditing(false);
+  }
+
+  return (
+    <div
+      role="group"
+      aria-labelledby={titleId}
+      data-enabled={on ? 'true' : 'false'}
+      className={cx(
+        // The prototype's .learn-row: the line edge, panel-2, 10px by 12px. Off, it drops to the
+        // panel and the quiet inks instead of the prototype's 55% opacity, which would take its text
+        // below 4.5:1.
+        'rounded-md border border-border px-3 py-2.5',
+        on ? 'bg-surface-2' : 'border-dashed bg-surface',
+        className,
+      )}
+      {...rest}
+    >
+      <div className="flex items-start justify-between gap-2.5">
+        <p
+          lang={contentLang}
+          className={cx(
+            'flex min-w-0 items-start gap-2 text-[13px] font-semibold',
+            on ? 'text-ink' : 'text-ink-2',
+          )}
+        >
+          <span aria-hidden="true" className="text-ai">
+            ✦
+          </span>
+          <span id={titleId} data-learned="">
+            {learned}
+          </span>
+        </p>
+        <span
+          aria-hidden="true"
+          data-state=""
+          className={cx(
+            'shrink-0 text-[11.5px] font-bold',
+            on ? 'text-ai-deep' : 'text-ink-3',
+          )}
+        >
+          {on ? words.on : words.off}
+        </span>
+      </div>
+      <p
+        lang={contentLang}
+        className="mt-1 text-[12px] leading-relaxed text-ink-2"
+      >
+        {!on && whenOff ? whenOff : why}
+      </p>
+      <p
+        lang={contentLang}
+        className={cx(
+          'mt-1.5 text-[12.5px] leading-relaxed',
+          on ? 'text-ink' : 'text-ink-3',
+        )}
+      >
+        <span className="font-semibold">
+          {on ? words.nowDoes : words.wouldDo}
+        </span>{' '}
+        {does}
+        {on ? null : (
+          <>
+            {' '}
+            <span className="font-semibold">{words.idle}</span>
+          </>
+        )}
+      </p>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <Switch
+          checked={on}
+          onCheckedChange={setOn}
+          label={<VisuallyHidden>{learned}</VisuallyHidden>}
+        />
+        {inline || onCorrect ? (
+          <Button
+            ref={correctRef}
+            variant="ghost"
+            size="sm"
+            aria-describedby={titleId}
+            aria-expanded={inline ? editing : undefined}
+            onClick={() => {
+              if (inline) setEditing(!editing);
+              else onCorrect?.();
+            }}
+          >
+            {words.correct}
+          </Button>
+        ) : null}
+      </div>
+      {inline && editing ? (
+        <div className="mt-2 flex flex-col gap-2">
+          <Textarea
+            ref={boxRef}
+            label={words.correctionLabel}
+            lang={contentLang}
+            rows={2}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+          />
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button variant="ghost" size="sm" onClick={close}>
+              {words.cancel}
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              aria-disabled={correction === '' ? true : undefined}
+              onClick={() => {
+                onSubmitCorrection?.(correction);
+                close();
+              }}
+            >
+              {words.save}
+            </Button>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
