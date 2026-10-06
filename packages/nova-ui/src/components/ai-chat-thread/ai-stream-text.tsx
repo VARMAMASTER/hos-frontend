@@ -5,7 +5,6 @@ import {
   useState,
   type HTMLAttributes,
 } from 'react';
-import { cx } from '../../primitives/cx';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 import { SafeMarkdown } from './safe-markdown';
 import { useLoopMotion, useMotionAllowed } from './use-ai-motion';
