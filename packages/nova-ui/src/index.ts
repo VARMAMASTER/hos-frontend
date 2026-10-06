@@ -83,6 +83,13 @@ export * from './primitives/use-controllable-state';
 export * from './primitives/visually-hidden';
 export * from './theme/contrast';
 export * from './theme/create-theme';
+export {
+  deriveNovaPalette,
+  suggestNovaBrand,
+  type BrandColours,
+  type NovaPalette,
+} from './theme/derive';
+export { legibilityFailures, type LegibilityCheck } from './theme/legibility';
 export * from './theme/theme-provider';
 export {
   GLASS,
@@ -92,4 +99,11 @@ export {
   NOVA_MATERIALS,
   type NovaMaterial,
 } from './tokens/material';
+export { MOTION_DURATIONS_MS, MOTION_EASINGS } from './tokens/scale';
+export {
+  isNovaScheme,
+  NOVA_DEFAULT_SCHEME,
+  NOVA_SCHEMES,
+  type NovaScheme,
+} from './tokens/scheme';
 export { NOVA_DEFAULTS, type NovaVariable } from './tokens/semantic';

@@ -108,10 +108,30 @@ describe('Button', () => {
     render(<Button variant="danger">Discharge</Button>);
     const button = screen.getByRole('button', { name: 'Discharge' });
     expect(button.dataset['variant']).toBe('danger');
-    for (const name of ['bg-surface', 'border-border-strong', 'text-crit']) {
+    for (const name of [
+      'bg-surface',
+      'border-border-strong',
+      'text-crit-deep',
+    ]) {
       expect(button.classList.contains(name), name).toBe(true);
     }
   });
+
+  // Hover fills and danger text come from tokens that hold their contrast in the dark scheme too;
+  // primary-strong, ai-deep and plain crit fall below 4.5:1 there.
+  it.each([
+    ['primary', 'hover:bg-primary-hover', 'hover:bg-primary-strong'],
+    ['ai', 'hover:bg-ai-hover', 'hover:bg-ai-deep'],
+    ['danger', 'text-crit-deep', 'text-crit'],
+  ] as const)(
+    'the %s variant uses %s, legible in both schemes',
+    (variant, want, not) => {
+      render(<Button variant={variant}>Go</Button>);
+      const button = screen.getByRole('button', { name: 'Go' });
+      expect(button.classList.contains(want), want).toBe(true);
+      expect(button.classList.contains(not), not).toBe(false);
+    },
+  );
 
   // The prototype's .btn-ghost: a white button, the strong hairline, ink text.
   it('draws the ghost variant as the prototype ghost button', () => {

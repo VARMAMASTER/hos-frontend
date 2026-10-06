@@ -45,12 +45,12 @@ const base = cx(
 // text holds 4.5:1 wherever it is placed, the dark chrome included; white on its hover is gated.
 const variants: Record<DrawnVariant, string> = {
   primary:
-    'border-transparent bg-primary text-on-primary hover:bg-primary-strong',
+    'border-transparent bg-primary text-on-primary hover:bg-primary-hover',
   outline:
     'border-primary bg-surface text-primary-strong hover:bg-primary hover:text-on-primary',
   ghost: 'border-border-strong bg-surface text-ink hover:bg-surface-2',
-  danger: 'border-border-strong bg-surface text-crit hover:bg-surface-2',
-  ai: 'border-transparent bg-ai text-on-primary hover:bg-ai-deep',
+  danger: 'border-border-strong bg-surface text-crit-deep hover:bg-surface-2',
+  ai: 'border-transparent bg-ai text-on-primary hover:bg-ai-hover',
 };
 
 const AI_SPARK = "before:content-['✦'_/_'']";

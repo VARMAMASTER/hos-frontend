@@ -132,6 +132,15 @@ describe('@hos/nova-ui public API', () => {
     'NOVA_CHART_PALETTE',
     'Sparkline',
     'chartColorVar',
+    // The scheme axis, the theme engine an admin theme editor builds on, and the motion tokens.
+    'NOVA_SCHEMES',
+    'NOVA_DEFAULT_SCHEME',
+    'isNovaScheme',
+    'deriveNovaPalette',
+    'suggestNovaBrand',
+    'legibilityFailures',
+    'MOTION_DURATIONS_MS',
+    'MOTION_EASINGS',
   ])('exports %s from the barrel', (name) => {
     expect(nova).toHaveProperty(name);
   });
