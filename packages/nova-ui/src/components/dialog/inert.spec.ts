@@ -126,4 +126,57 @@ describe('inertOutside', () => {
     expect(app.hasAttribute('inert')).toBe(false);
     expect(first.hasAttribute('inert')).toBe(false);
   });
+
+  describe('live regions', () => {
+    const live = (parent: Element = document.body) => {
+      const region = document.createElement('div');
+      region.setAttribute('data-nova-live-region', '');
+      parent.appendChild(region);
+      return region;
+    };
+
+    it('leaves a live region that is a sibling of the layer alone', () => {
+      const app = element('app');
+      const region = live();
+      const keep = element('keep');
+      inertOutside(keep);
+      expect(app.hasAttribute('inert')).toBe(true);
+      expect(region.hasAttribute('inert')).toBe(false);
+    });
+
+    it('leaves a live region alone when it sits inside the page root, and inerts the rest of that root', () => {
+      const root = element('root');
+      const content = document.createElement('main');
+      const region = live(root);
+      root.prepend(content);
+      const keep = element('keep');
+      const release = inertOutside(keep);
+      expect(root.hasAttribute('inert')).toBe(false);
+      expect(content.hasAttribute('inert')).toBe(true);
+      expect(region.hasAttribute('inert')).toBe(false);
+      release();
+      expect(content.hasAttribute('inert')).toBe(false);
+    });
+
+    it('finds a live region nested several levels down', () => {
+      const root = element('root');
+      const shell = document.createElement('div');
+      const sidebar = document.createElement('nav');
+      shell.appendChild(sidebar);
+      const region = live(shell);
+      root.appendChild(shell);
+      inertOutside(element('keep'));
+      expect(root.hasAttribute('inert')).toBe(false);
+      expect(shell.hasAttribute('inert')).toBe(false);
+      expect(sidebar.hasAttribute('inert')).toBe(true);
+      expect(region.hasAttribute('inert')).toBe(false);
+    });
+
+    it('still inerts a root with no live region as one piece', () => {
+      const root = element('root');
+      root.appendChild(document.createElement('main'));
+      inertOutside(element('keep'));
+      expect(root.hasAttribute('inert')).toBe(true);
+    });
+  });
 });

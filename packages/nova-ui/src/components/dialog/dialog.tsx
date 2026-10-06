@@ -30,6 +30,13 @@ export interface DialogProps {
   className?: string;
   // The close button's accessible name. Translate it, or make it specific.
   closeLabel?: string;
+  // 'alertdialog' is for a confirmation the user must answer by choosing an action (Discharge
+  // patient?): assistive technology treats it as interrupting. The default is a plain dialog.
+  role?: 'dialog' | 'alertdialog';
+  // Leaves out the corner close button, so the way out is the dialog's own actions (and Escape).
+  hideClose?: boolean;
+  // Merged onto the panel after `className`, so a caller can set the width it wants.
+  panelClassName?: string;
 }
 
 // The open dialogs, bottom to top. Only the top one answers the keyboard, so Escape closes one
@@ -91,6 +98,9 @@ function DialogLayer({
   children,
   className,
   closeLabel = 'Close',
+  role = 'dialog',
+  hideClose = false,
+  panelClassName,
 }: Omit<DialogProps, 'open' | 'defaultOpen' | 'onClose'> & {
   onClose: () => void;
 }) {
@@ -182,7 +192,7 @@ function DialogLayer({
         ref={panelRef}
         material="overlay"
         radius="lg"
-        role="dialog"
+        role={role}
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
@@ -190,6 +200,7 @@ function DialogLayer({
         className={cx(
           'relative flex max-h-full w-full max-w-lg flex-col outline-none motion-safe:animate-dialog-in [--nova-overlay-lift:var(--nova-elevation-3)]',
           className,
+          panelClassName,
         )}
       >
         <div className="flex items-start justify-between gap-4 px-6 pt-5">
@@ -203,29 +214,31 @@ function DialogLayer({
               </p>
             ) : null}
           </div>
-          <button
-            ref={closeRef}
-            type="button"
-            aria-label={closeLabel}
-            onClick={() => onClose()}
-            className={cx(
-              '-mr-2 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-surface-2',
-              focusRing,
-            )}
-          >
-            <svg
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              aria-hidden="true"
-              focusable="false"
-              className="h-4 w-4"
+          {hideClose ? null : (
+            <button
+              ref={closeRef}
+              type="button"
+              aria-label={closeLabel}
+              onClick={() => onClose()}
+              className={cx(
+                '-mr-2 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-surface-2',
+                focusRing,
+              )}
             >
-              <path d="M5 5l10 10M15 5L5 15" />
-            </svg>
-          </button>
+              <svg
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                aria-hidden="true"
+                focusable="false"
+                className="h-4 w-4"
+              >
+                <path d="M5 5l10 10M15 5L5 15" />
+              </svg>
+            </button>
+          )}
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4 text-sm text-ink">
           {children}

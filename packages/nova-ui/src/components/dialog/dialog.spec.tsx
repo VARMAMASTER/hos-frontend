@@ -8,6 +8,7 @@ import {
   screen,
 } from '@testing-library/react';
 import { Menu, MenuItem } from '../menu/menu';
+import { clearToasts, showToast, Toaster } from '../toast/toast';
 import { Tooltip } from '../tooltip/tooltip';
 import { createNovaTheme } from '../../theme/create-theme';
 import { applyNovaTheme, NovaThemeProvider } from '../../theme/theme-provider';
@@ -731,5 +732,120 @@ describe('Dialog inside a themed subtree', () => {
     } finally {
       restore();
     }
+  });
+});
+
+describe('Dialog role', () => {
+  it('is a dialog by default', () => {
+    render(<Dialog open onClose={() => undefined} title="Hi" />);
+    expect(screen.getByRole('dialog')).toBeTruthy();
+    expect(screen.queryByRole('alertdialog')).toBeNull();
+  });
+
+  it('can be an alertdialog, still labelled by its title and described by its description', () => {
+    render(
+      <Dialog
+        open
+        onClose={() => undefined}
+        role="alertdialog"
+        title="Discharge patient?"
+        description="This closes the episode."
+      />,
+    );
+    const alert = screen.getByRole('alertdialog', {
+      name: 'Discharge patient?',
+    });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(alert.getAttribute('aria-modal')).toBe('true');
+    expect(alert.getAttribute('aria-describedby')).toBeTruthy();
+  });
+});
+
+describe('Dialog hideClose', () => {
+  it('shows the close button by default', () => {
+    render(<Dialog open onClose={() => undefined} title="Hi" />);
+    expect(screen.getByRole('button', { name: 'Close' })).toBeTruthy();
+  });
+
+  it('leaves out the close button when hideClose is set, but Escape still closes', () => {
+    const onClose = vi.fn();
+    render(
+      <Dialog
+        open
+        onClose={onClose}
+        hideClose
+        title="Hi"
+        footer={<button type="button">OK</button>}
+      />,
+    );
+    expect(screen.queryByRole('button', { name: 'Close' })).toBeNull();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+    press('Escape');
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Dialog panelClassName', () => {
+  it('adds its classes to the panel, next to the existing className', () => {
+    render(
+      <Dialog
+        open
+        onClose={() => undefined}
+        title="Hi"
+        className="from-class"
+        panelClassName="max-w-[280px]!"
+      />,
+    );
+    const classes = dialog().classList;
+    expect(classes).toContain('max-w-[280px]!');
+    expect(classes).toContain('from-class');
+    expect(classes).toContain('relative');
+  });
+});
+
+describe('Dialog and live regions', () => {
+  afterEach(() => act(() => clearToasts()));
+
+  it('keeps a toast region neither inert nor hidden while it is open, so "Save failed" is announced', () => {
+    render(
+      <div id="app">
+        <main>
+          <button type="button">Page</button>
+        </main>
+        <Toaster />
+      </div>,
+    );
+    render(<Dialog open onClose={() => undefined} title="Discharge" />);
+    act(() => void showToast('Save failed', 'error'));
+    const region = document.querySelector('[data-nova-live-region]');
+    expect(region).not.toBeNull();
+    for (
+      let node: Element | null = region;
+      node && node !== document.body;
+      node = node.parentElement
+    ) {
+      expect(node.hasAttribute('inert')).toBe(false);
+      expect(node.getAttribute('aria-hidden')).not.toBe('true');
+    }
+    expect(screen.getByRole('alert').textContent).toContain('Save failed');
+    // The rest of the page is still inert.
+    expect(
+      screen
+        .getByRole('button', { name: 'Page', hidden: true })
+        .closest('main')
+        ?.hasAttribute('inert'),
+    ).toBe(true);
+  });
+
+  it('inerts the toast region again as normal content once nothing marks it as live', () => {
+    render(
+      <div>
+        <p>Plain page text</p>
+      </div>,
+    );
+    render(<Dialog open onClose={() => undefined} title="Discharge" />);
+    expect(
+      screen.getByText('Plain page text').closest('[inert]'),
+    ).not.toBeNull();
   });
 });
