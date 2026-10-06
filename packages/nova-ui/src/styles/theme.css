@@ -17,6 +17,18 @@
      motion-safe, so prefers-reduced-motion turns them off. */
   --animate-dialog-in: nova-dialog-in 180ms ease-out;
   --animate-fade-in: nova-fade-in 180ms ease-out;
+  /* The heartbeat (StatusDot and LiveDot pulse): a soft ring that expands and fades behind the dot,
+     and a two-beat lub-dub on the dot. Two named cadences, picked with the pulse-slow and
+     pulse-fast utilities below (the slow one when neither is set). Components apply both
+     animations under motion-safe, so prefers-reduced-motion leaves a plain dot. */
+  --nova-pulse-slow: 1400ms;
+  --nova-pulse-fast: 900ms;
+  --animate-heartbeat: nova-heartbeat
+    var(--nova-pulse-duration, var(--nova-pulse-slow)) var(--nova-ease-standard)
+    infinite;
+  --animate-pulse-ring: nova-pulse-ring
+    var(--nova-pulse-duration, var(--nova-pulse-slow)) var(--nova-ease-standard)
+    infinite;
 }
 
 /* A dialog scales in from 0.94 with a fade. */
@@ -31,6 +43,48 @@
   from {
     opacity: 0;
   }
+}
+
+/* Lub-dub: a firm first beat, a lighter second, then a rest for the remainder of the cycle. */
+@keyframes nova-heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.3);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.2);
+  }
+  56% {
+    transform: scale(1);
+  }
+}
+
+/* The ring leaves with the first beat, grows to a few times the dot, and is gone before the rest. */
+@keyframes nova-pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  70%,
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+/* The heartbeat's cadence: --nova-pulse-duration feeds animate-heartbeat and animate-pulse-ring. */
+@utility pulse-slow {
+  --nova-pulse-duration: var(--nova-pulse-slow);
+}
+
+@utility pulse-fast {
+  --nova-pulse-duration: var(--nova-pulse-fast);
 }
 
 @theme inline {

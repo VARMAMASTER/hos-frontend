@@ -31,6 +31,7 @@ export * from './components/filter-chip/filter-chip';
 export * from './components/hero-band/hero-band';
 export * from './components/icon-tile/icon-tile';
 export * from './components/kpi-tile/kpi-tile';
+export * from './components/live-dot/live-dot';
 export * from './components/menu/menu';
 export * from './components/notification-bell/notification-bell';
 export * from './components/otp-input/otp-input';

@@ -1,8 +1,13 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
+import {
+  StatusDotMark,
+  statusDotRow,
+  type StatusDotPulse,
+  type StatusDotTone,
+} from './status-dot-mark';
 
-// No `ai` tone: AI output is marked by AiBadge (a spark and a text label), never by a bare dot.
-export type StatusDotTone = 'good' | 'warn' | 'crit' | 'info' | 'neutral';
+export type { StatusDotPulse, StatusDotTone };
 
 export interface StatusDotProps
   extends Omit<HTMLAttributes<HTMLSpanElement>, 'children'> {
@@ -10,30 +15,23 @@ export interface StatusDotProps
   // Mandatory: a bare coloured dot is colour-only signalling, which fails for colour-blind users
   // and in greyscale print.
   label: ReactNode;
+  // A heartbeat on the dot (a soft ring that expands and fades, a two-beat lub-dub), for LIVE or
+  // URGENT states only: a critical alert, a patient monitored live, an active queue. A page of
+  // pulsing dots has none that stand out. The meaning is always in the label, never in the motion,
+  // and under prefers-reduced-motion the dot is still. true is slow (about 1.4s); 'fast' about 0.9s.
+  pulse?: StatusDotPulse;
 }
 
-const dots: Record<StatusDotTone, string> = {
-  good: 'bg-good',
-  warn: 'bg-warn',
-  crit: 'bg-crit',
-  info: 'bg-info',
-  neutral: 'bg-ink-3',
-};
-
-export function StatusDot({ tone, label, className, ...rest }: StatusDotProps) {
+export function StatusDot({
+  tone,
+  label,
+  pulse = false,
+  className,
+  ...rest
+}: StatusDotProps) {
   return (
-    <span
-      data-tone={tone}
-      className={cx(
-        'inline-flex items-center gap-1.5 text-[13px] text-ink',
-        className,
-      )}
-      {...rest}
-    >
-      <span
-        aria-hidden="true"
-        className={cx('size-[7px] shrink-0 rounded-full', dots[tone])}
-      />
+    <span data-tone={tone} className={cx(statusDotRow, className)} {...rest}>
+      <StatusDotMark tone={tone} pulse={pulse} />
       {label}
     </span>
   );

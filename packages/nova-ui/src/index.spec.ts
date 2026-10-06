@@ -75,6 +75,7 @@ describe('@hos/nova-ui public API', () => {
     'TopBar',
     'Pagination',
     'StatusDot',
+    'LiveDot',
     'Table',
     'TableBody',
     'TableCell',
