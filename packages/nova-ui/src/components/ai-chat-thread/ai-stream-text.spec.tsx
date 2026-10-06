@@ -77,15 +77,24 @@ describe('AiStreamText under reduced motion', () => {
     expect(onComplete).toHaveBeenCalledWith(ANSWER);
   });
 
-  it('holds an async stream back until it completes, saying it is writing, then renders it whole', async () => {
+  // Reduced motion removes the animation, not the text: a long answer must not stay invisible until
+  // it ends. Chunks show as they arrive, with no caret and no typewriter pacing; assistive technology
+  // still hears one "writing" status instead of the partial text, then the whole answer once.
+  it('shows an async stream as it arrives, without a caret, and keeps the partial text from assistive technology', async () => {
     const stream = gatedStream(['Ramesh ', 'is stable.']);
     const { container } = render(<AiStreamText stream={stream.iterable} />);
     expect(screen.getByText('HOS AI is writing…')).toBeTruthy();
     await stream.release(0);
-    expect(container.textContent).not.toContain('Ramesh');
+    await act(async () => undefined);
+    expect(container.textContent).toContain('Ramesh');
+    expect(container.querySelector('[data-caret]')).toBeNull();
+    expect(
+      container.querySelector('[aria-hidden="true"]')?.textContent,
+    ).toContain('Ramesh');
     await stream.release(1);
     await act(async () => undefined);
     expect(container.textContent).toBe('Ramesh is stable.');
+    expect(container.querySelector('[aria-hidden="true"]')).toBeNull();
     expect(screen.queryByText('HOS AI is writing…')).toBeNull();
   });
 });

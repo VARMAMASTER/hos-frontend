@@ -28,8 +28,7 @@ export interface AiStreamTextProps
   revealIntervalMs?: number;
   onComplete?: (text: string) => void;
   onError?: (error: unknown) => void;
-  // Said to assistive technology while the text arrives (and shown, under reduced motion, in place
-  // of the partial text). Translatable.
+  // Said to assistive technology while the text arrives, in place of the partial text. Translatable.
   writingLabel?: string;
   // The language of the answer (te, hi, en …).
   lang?: string;
@@ -111,8 +110,9 @@ function Caret() {
 // one short status ("HOS AI is writing…") is there instead, so a screen reader never reads the
 // answer word by word; when it completes, the whole answer is mounted as a new node, which the
 // conversation's polite log announces once. The caret shows only when motion is welcome. Under
-// reduced motion nothing animates in: a string renders whole at once, and an async stream says it is
-// writing until it is complete, then renders whole. Nothing here logs or stores the text.
+// reduced motion nothing animates in: a string renders whole at once, and an async stream's chunks
+// show as they arrive (a long answer is never invisible until it ends), without a caret or pacing.
+// Nothing here logs or stores the text.
 export function AiStreamText({
   stream,
   text,
@@ -232,21 +232,14 @@ export function AiStreamText({
     : phase;
 
   if (state === 'streaming') {
-    if (!motion) {
-      return (
-        <div
-          lang={lang}
-          className={cx('text-[12.5px] font-semibold text-ai-deep', className)}
-          {...rest}
-        >
-          {writingLabel}
-        </div>
-      );
-    }
     return (
       <div className={className} {...rest}>
         <div key="streaming" aria-hidden="true" lang={lang}>
-          <SafeMarkdown text={value} partial tail={<Caret />} />
+          <SafeMarkdown
+            text={value}
+            partial
+            tail={motion ? <Caret /> : undefined}
+          />
         </div>
         <VisuallyHidden>{writingLabel}</VisuallyHidden>
       </div>
