@@ -6,6 +6,7 @@ import type {
   BarChartProps,
   CardProps,
   ChartConfig,
+  ChartLegendItem,
   DonutChartProps,
   HeroBandProps,
   KpiTileProps,
@@ -19,6 +20,8 @@ import type {
   TabProps,
   TabsProps,
   TopBarProps,
+  VitalsChartProps,
+  VitalsConfig,
 } from './index';
 
 // Types vanish at runtime, so the check is that this file compiles: typecheck fails the moment the
@@ -133,6 +136,8 @@ describe('@hos/nova-ui public API', () => {
     'NOVA_CHART_PALETTE',
     'Sparkline',
     'chartColorVar',
+    'ChartLegendList',
+    'VitalsChart',
     // The scheme axis, the theme engine an admin theme editor builds on, and the motion tokens.
     'NOVA_SCHEMES',
     'NOVA_DEFAULT_SCHEME',
@@ -149,6 +154,13 @@ describe('@hos/nova-ui public API', () => {
   it('keeps the chart folder own context out of the barrel', () => {
     expect(nova).not.toHaveProperty('ChartContext');
   });
+
+  it.each(['ChartFigure', 'ChartPlot', 'Marker', 'niceCeiling'])(
+    'keeps the chart folder internal %s out of the barrel',
+    (name) => {
+      expect(nova).not.toHaveProperty(name);
+    },
+  );
 
   // Raw hex is for the token layer only; app code takes colour from the semantic tokens.
   it('keeps the raw primitive palette out of the barrel', () => {
@@ -206,5 +218,26 @@ describe('@hos/nova-ui public API', () => {
       valueKey: 'n',
     };
     expect([bar, line, area, spark, donut]).toHaveLength(5);
+  });
+
+  it('exports the prop types of the hospital charts (checked by tsc)', () => {
+    const vitalsConfig: VitalsConfig = {
+      hr: { label: 'Heart rate', unit: 'bpm', normal: { min: 60, max: 100 } },
+    };
+    const vitals: VitalsChartProps = {
+      data: [{ time: '06:00', hr: 72 }],
+      config: vitalsConfig,
+      ariaLabel: 'Vitals',
+      categoryKey: 'time',
+      seriesKeys: ['hr'],
+      now: '06:00',
+    };
+    const legend: ChartLegendItem = {
+      key: 'normal',
+      label: 'Normal range',
+      mark: 'band',
+      color: 'var(--nova-color-ink-3)',
+    };
+    expect([vitals, legend]).toHaveLength(2);
   });
 });

@@ -19,6 +19,7 @@ export * from './components/chart/donut-chart';
 export * from './components/chart/line-chart';
 export * from './components/chart/palette';
 export * from './components/chart/sparkline';
+export * from './components/chart/vitals-chart';
 export * from './components/checkbox/checkbox';
 export * from './components/chip/chip';
 export * from './components/chip/tone-label';
@@ -61,6 +62,7 @@ export {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
+  ChartLegendList,
   ChartTooltip,
   ChartTooltipContent,
   chartColorVar,
@@ -70,6 +72,9 @@ export {
   type ChartConfigEntry,
   type ChartContainerProps,
   type ChartLegendContentProps,
+  type ChartLegendItem,
+  type ChartLegendListProps,
+  type ChartLegendMark,
   type ChartTooltipContentProps,
 } from './components/chart/chart';
 export type {
