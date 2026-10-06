@@ -5,15 +5,18 @@ import { Sidebar } from './sidebar';
 afterEach(() => cleanup());
 
 describe('Sidebar', () => {
-  it('is the dark app chrome', () => {
+  it('is the dark app chrome: the prototype sidebar, opaque under either material', () => {
     const { container } = render(
       <Sidebar>
         <a href="/home">Home</a>
       </Sidebar>,
     );
     const root = container.firstElementChild as HTMLElement;
-    expect(root.classList.contains('nova-chrome')).toBe(true);
-    expect(root.dataset['surface']).toBe('chrome');
+    expect(root.classList.contains('nova-sidebar')).toBe(true);
+    expect(root.dataset['surface']).toBe('sidebar');
+    expect([...root.classList]).toEqual(
+      expect.arrayContaining(['px-3', 'py-5', 'gap-1']),
+    );
     // A frame, not a card: its edges are straight.
     expect(root.classList.contains('rounded-none')).toBe(true);
     expect(root.classList.contains('flex')).toBe(true);
@@ -101,7 +104,7 @@ describe('Sidebar', () => {
     );
     const root = container.firstElementChild as HTMLElement;
     expect(root.classList.contains('extra')).toBe(true);
-    expect(root.classList.contains('nova-chrome')).toBe(true);
+    expect(root.classList.contains('nova-sidebar')).toBe(true);
     expect(root.dataset['testid']).toBe('side');
   });
 });

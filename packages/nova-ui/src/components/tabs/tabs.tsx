@@ -13,7 +13,6 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
-import { Surface } from '../../primitives/surface';
 import { useControllableState } from '../../primitives/use-controllable-state';
 
 interface TabsContextValue {
@@ -133,19 +132,18 @@ export function Tabs({
 
 export type TabListProps = HTMLAttributes<HTMLDivElement>;
 
-// The rail is a glass panel rather than a brand tint over the bare canvas: the unselected tabs'
-// secondary ink is then text on a surface, which material.spec.ts proves at 4.5:1 for every brand.
+// The prototype's .tabbar: an opaque rail (the canvas with a faint chrome tint, nova-tabbar), 6px of
+// padding and 2px between tabs (its 14px radius is off the --r-* scale, so md). material.spec.ts
+// proves the unselected tabs' secondary ink on it.
 export function TabList({ className, ...rest }: TabListProps) {
   // Fails fast outside <Tabs>, as its tabs would.
   useTabs('TabList');
   return (
-    <Surface
-      material="surface"
-      radius="lg"
+    <div
       {...rest}
       role="tablist"
       className={cx(
-        'inline-flex max-w-full items-center gap-1 overflow-x-auto p-1',
+        'nova-tabbar inline-flex max-w-full items-center gap-0.5 overflow-x-auto rounded-md p-1.5',
         className,
       )}
     />
@@ -157,9 +155,10 @@ export interface TabProps
   value: string;
 }
 
-// `isolate` keeps the selected chip (a Surface behind the label) inside the tab.
+// The prototype's .tab: 13px semibold, 8px by 16px, 6px between its parts (its 10px radius is off the
+// --r-* scale, so sm).
 const tab =
-  'relative isolate inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-callout font-semibold transition-colors duration-150 ease-out motion-reduce:transition-none disabled:pointer-events-none disabled:opacity-50';
+  'relative inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-sm px-4 py-2 text-[13px] font-semibold transition-[color,background-color,box-shadow] duration-150 ease-out motion-reduce:transition-none disabled:pointer-events-none disabled:opacity-50';
 
 const NAVIGATION_KEYS = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
 
@@ -235,11 +234,11 @@ export function Tab({
       className={cx(
         tab,
         focusRing,
-        // Selected: the raised chip behind the label and a brand bar under it, a shape as well as a
-        // tint, since the chip alone barely stands off the glass rail.
+        // Selected (.tab.active): a raised white chip, its hairline drawn inside and shadow-sm under it,
+        // in the deepest chrome ink: a shape as well as a tint.
         selected
-          ? 'text-ink after:absolute after:inset-x-3 after:bottom-0.5 after:h-0.5 after:rounded-full after:bg-primary'
-          : 'text-ink-2 hover:text-ink',
+          ? 'bg-surface text-chrome-1 shadow-sm ring-1 ring-inset ring-border'
+          : 'text-ink-2 hover:bg-chrome-2/6 hover:text-ink',
         className,
       )}
       onClick={(event) => {
@@ -248,16 +247,6 @@ export function Tab({
       }}
       onKeyDown={handleKeyDown}
     >
-      {/* Behind the label, not around it: the tab stays one stable element, so keyboard focus
-          survives the selection moving. */}
-      {selected ? (
-        <Surface
-          material="surface"
-          radius="md"
-          aria-hidden="true"
-          className="absolute inset-0 -z-10"
-        />
-      ) : null}
       {children}
     </button>
   );

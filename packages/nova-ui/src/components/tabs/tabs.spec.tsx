@@ -470,31 +470,35 @@ describe('Tabs', () => {
   });
 
   describe('look', () => {
-    // The rail is a glass panel, not a brand tint over the bare canvas: text on a panel is what
-    // material.spec.ts proves at 4.5:1 for every brand, so the unselected tabs' secondary ink holds.
-    it('draws the list as a rounded rail on the surface material', () => {
+    // The prototype's .tabbar: opaque, so the unselected tabs' secondary ink is text on the tinted
+    // canvas, which material.spec.ts proves at 4.5:1.
+    it('draws the list as the prototype tab rail', () => {
       render(<Harness />);
       const list = screen.getByRole('tablist');
-      expect(list.getAttribute('data-surface')).toBe('surface');
-      expect(list.classList.contains('nova-surface')).toBe(true);
-      expect(list.classList.contains('rounded-lg')).toBe(true);
+      expect([...list.classList]).toEqual(
+        expect.arrayContaining([
+          'nova-tabbar',
+          'rounded-md',
+          'p-1.5',
+          'gap-0.5',
+        ]),
+      );
       expect(list.className).not.toMatch(/bg-primary/);
     });
 
-    it('gives the selected tab a surface chip and the strong ink, and the others the secondary ink', () => {
+    it('raises the selected tab as a white chip with its hairline and shadow, and gives the others the secondary ink', () => {
       render(<Harness initial="claims" />);
-      // The chip is a Surface behind the label, so the tab itself keeps its identity (and its
-      // focus) when the selection moves.
-      const chip = (name: string) => tab(name).querySelector('[data-surface]');
-      expect(chip('Claims')?.getAttribute('data-surface')).toBe('surface');
-      expect(tab('Claims').classList.contains('text-ink')).toBe(true);
-      // A brand bar under the selected label: selection is a shape, not only a tint.
-      expect(tab('Claims').classList.contains('after:bg-primary')).toBe(true);
-      expect(tab('Overview').classList.contains('after:bg-primary')).toBe(
-        false,
+      expect([...tab('Claims').classList]).toEqual(
+        expect.arrayContaining([
+          'bg-surface',
+          'text-chrome-1',
+          'shadow-sm',
+          'ring-1',
+          'ring-inset',
+        ]),
       );
       for (const name of ['Overview', 'Notes']) {
-        expect(chip(name)).toBeNull();
+        expect(tab(name).classList.contains('bg-surface')).toBe(false);
         expect(tab(name).classList.contains('text-ink-2')).toBe(true);
       }
     });
@@ -513,19 +517,23 @@ describe('Tabs', () => {
   });
 });
 
-describe('Tabs, Apple-refined', () => {
-  it('sets every tab label at 600 on the callout step, with a quick ease-out transition', () => {
+describe('Tabs, the prototype .tab', () => {
+  it('sets every tab label at 13px semibold on 8px by 16px, with a quick ease-out transition', () => {
     render(<Harness />);
     for (const name of ['Overview', 'Claims', 'Notes']) {
       expect([...tab(name).classList]).toEqual(
         expect.arrayContaining([
-          'text-callout',
+          'text-[13px]',
           'font-semibold',
+          'px-4',
+          'py-2',
           'duration-150',
           'ease-out',
         ]),
       );
-      expect(tab(name).className).not.toMatch(/text-sm|font-medium/);
+      expect(tab(name).className).not.toMatch(
+        /text-sm|font-medium|corner-shape/,
+      );
     }
   });
 });

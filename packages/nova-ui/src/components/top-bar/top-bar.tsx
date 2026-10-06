@@ -11,8 +11,9 @@ export interface TopBarProps extends HTMLAttributes<HTMLElement> {
   children?: ReactNode;
 }
 
-// A frame, not a card, so its corners are straight.
-const bar = 'rounded-none sticky top-0 z-20 flex items-center gap-4 px-6 py-3';
+// The prototype's .topbar: a frame, not a card, so its corners are straight; 12px by 24px of padding,
+// 16px between its parts, sticky above the page.
+const bar = 'rounded-none sticky top-0 z-50 flex items-center gap-4 px-6 py-3';
 
 export function TopBar({
   search,
@@ -29,7 +30,7 @@ export function TopBar({
       {...rest}
     >
       {search ? (
-        <div role="search" className="min-w-0 max-w-lg flex-1">
+        <div role="search" className="min-w-0 max-w-[440px] flex-1">
           {search}
         </div>
       ) : null}

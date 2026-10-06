@@ -180,7 +180,7 @@ describe('Dialog semantics', () => {
   it('lifts the panel at elevation 3, the top of the scale', () => {
     render(<Dialog open onClose={() => undefined} title="Hi" />);
     expect(dialog().classList).toContain(
-      '[--nova-overlay-lift:var(--nova-elevation-3)]',
+      '[--nova-overlay-lift:var(--nova-shadow-lg)]',
     );
   });
 });

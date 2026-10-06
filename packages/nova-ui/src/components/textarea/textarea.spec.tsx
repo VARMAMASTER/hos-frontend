@@ -88,7 +88,7 @@ describe('Textarea, Apple-refined', () => {
     render(<Textarea label="Notes" />);
     const field = screen.getByLabelText('Notes');
     expect([...field.classList]).toEqual(
-      expect.arrayContaining(['text-body', 'px-4', 'py-3', 'rounded-md']),
+      expect.arrayContaining(['text-[13.5px]', 'px-2.5', 'py-2', 'rounded-sm']),
     );
     expect(field.className).not.toMatch(/text-sm/);
   });

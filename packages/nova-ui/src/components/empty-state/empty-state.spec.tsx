@@ -60,9 +60,9 @@ describe('EmptyState', () => {
     );
     const root = container.firstElementChild as HTMLElement;
     expect(root.classList.contains('text-center')).toBe(true);
-    expect(root.classList.contains('rounded-lg')).toBe(true);
+    expect(root.classList.contains('rounded-md')).toBe(true);
     expect(
-      screen.getByText('Try another filter.').classList.contains('text-ink-3'),
+      screen.getByText('Try another filter.').classList.contains('text-ink-2'),
     ).toBe(true);
   });
 
@@ -72,8 +72,8 @@ describe('EmptyState', () => {
   });
 });
 
-describe('EmptyState, Apple-refined', () => {
-  it('centres a 44px icon, a 600 title3 heading and a body-size line capped at 320px, padded 64', () => {
+describe('EmptyState, in the prototype vocabulary', () => {
+  it('centres a 40px icon, the prototype h2 (17px semibold) and a 13px line capped at 320px, padded 48', () => {
     render(
       <EmptyState
         title="No beds free"
@@ -83,17 +83,17 @@ describe('EmptyState, Apple-refined', () => {
     );
     const heading = screen.getByRole('heading', { name: 'No beds free' });
     expect([...heading.classList]).toEqual(
-      expect.arrayContaining(['text-title3', 'font-semibold']),
+      expect.arrayContaining(['text-[17px]', 'font-semibold']),
     );
     const body = screen.getByText('Ramesh is first on the waitlist.');
     expect([...body.classList]).toEqual(
-      expect.arrayContaining(['text-body', 'max-w-80']),
+      expect.arrayContaining(['text-[13px]', 'max-w-80']),
     );
     const root = heading.parentElement as HTMLElement;
     expect([...root.classList]).toEqual(
-      expect.arrayContaining(['py-16', 'items-center', 'text-center']),
+      expect.arrayContaining(['py-12', 'items-center', 'text-center']),
     );
     const icon = screen.getByTestId('icon').parentElement as HTMLElement;
-    expect(icon.classList).toContain('[&_svg]:size-11');
+    expect(icon.classList).toContain('[&_svg]:size-10');
   });
 });

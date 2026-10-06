@@ -141,22 +141,22 @@ describe('Radio', () => {
 });
 
 describe('Radio, Apple-refined', () => {
-  it('gives the row a 44px minimum touch target and body-size label text', () => {
+  it('gives the row a 44px minimum touch target and the prototype 13.5px label text', () => {
     render(<Radio name="triage" label="Ramesh consents" />);
     const control = screen.getByLabelText('Ramesh consents');
     const row = control.closest('div') as HTMLElement;
     expect(row.classList).toContain('min-h-11');
     const label = screen.getByText('Ramesh consents');
-    expect(label.classList).toContain('text-body');
+    expect(label.classList).toContain('text-[13.5px]');
     expect(label.className).not.toMatch(/text-sm/);
   });
 });
 
 describe('Radio shape', () => {
-  it('stays a true circle despite the global squircle corners', () => {
+  it('is a circle with a plain border-radius, as every prototype corner is', () => {
     render(<Radio name="triage" label="Red" />);
-    expect(screen.getByLabelText('Red').classList).toContain(
-      '[corner-shape:round]',
-    );
+    const input = screen.getByLabelText('Red');
+    expect(input.classList).toContain('rounded-full');
+    expect(input.className).not.toMatch(/corner-shape/);
   });
 });

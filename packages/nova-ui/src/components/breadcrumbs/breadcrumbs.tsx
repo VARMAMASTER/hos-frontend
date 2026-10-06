@@ -26,7 +26,7 @@ function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
     <a
       href={item.href}
       className={cx(
-        'rounded-sm text-primary-strong underline-offset-4 hover:underline',
+        'rounded-sm text-ink-2 underline-offset-4 hover:text-primary-strong hover:underline',
         focusRing,
       )}
     >
@@ -39,13 +39,15 @@ export function Breadcrumbs({ items, ...rest }: BreadcrumbsProps) {
   if (items.length === 0) return null;
   return (
     <nav aria-label="Breadcrumb" {...rest}>
-      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-callout text-ink-3">
+      {/* The prototype's .crumb-bar trail: 12.5px on a 1.4 line, 6px apart; links in the secondary
+          ink, the current page semibold in full ink, the separators in small-print ink. */}
+      <ol className="flex flex-wrap items-center gap-1.5 text-[12.5px] leading-[1.4] text-ink-3">
         {items.map((item, index) => {
           const current = index === items.length - 1;
           return (
             <li
               key={`${index}-${item.label}`}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1.5"
             >
               <Crumb item={item} current={current} />
               {current ? null : <span aria-hidden="true">/</span>}

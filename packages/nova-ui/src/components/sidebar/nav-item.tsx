@@ -21,13 +21,17 @@ export type NavItemButtonProps = NavItemOwnProps & {
 
 export type NavItemProps = NavItemAnchorProps | NavItemButtonProps;
 
-// White on the chrome is `on-primary` (the stock `white` is removed from the theme). Resting text
-// reads the chrome's secondary ink, which material.spec.ts proves is 4.5:1 for every brand.
+// The prototype's .nav a: 13.5px at 500, 8px by 10px, 10px between icon and label (its 10px radius
+// is off the --r-* scale, so sm). Resting text reads the chrome's secondary ink, which
+// material.spec.ts proves is 4.5:1 for every brand; hover lifts the row with a faint white and
+// whitens the text. Active is the chrome accent's soft fill with its 1px inner ring, white and
+// semibold, so it is marked by weight as well as colour.
 const base =
-  'flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-callout font-semibold transition-colors';
+  'flex w-full cursor-pointer items-center gap-2.5 rounded-sm px-2.5 py-2 text-left text-[13.5px] font-medium transition-colors';
 const resting =
-  'text-[color:var(--nova-chrome-ink-2)] hover:bg-on-primary/10 hover:text-on-primary focus-visible:bg-on-primary/10 focus-visible:text-on-primary';
-const current = 'bg-primary/40 text-on-primary';
+  'text-[color:var(--nova-chrome-ink-2)] hover:bg-chrome-ink/5 hover:text-on-primary focus-visible:bg-chrome-ink/5 focus-visible:text-on-primary';
+const current =
+  'bg-chrome-accent-soft font-semibold text-on-primary ring-1 ring-inset ring-chrome-accent/35';
 
 function classes(active: boolean, className: string | undefined): string {
   return cx(base, focusRing, active ? current : resting, className);
@@ -39,7 +43,7 @@ function Content({ icon, children }: { icon: ReactNode; children: ReactNode }) {
       {icon ? (
         <span
           aria-hidden="true"
-          className="flex size-5 shrink-0 items-center justify-center"
+          className="flex size-6 shrink-0 items-center justify-center"
         >
           {icon}
         </span>

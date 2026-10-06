@@ -38,9 +38,13 @@ export interface WorkspaceSwitcherProps
   hint?: ReactNode;
 }
 
+// The prototype's .ws-switch: a faint white lift with a white rim, 8px by 10px, radius md; open, it
+// takes the chrome accent's soft fill and rim. Inside, the .ws-cur-l eyebrow (9.5px capitals), the
+// workspace in the display face at 13.5px semibold, and the chevron.
 const triggerClasses =
-  'group flex w-full items-center gap-3 rounded-md border border-primary-soft/25 bg-primary/20 ' +
-  'px-3 py-2 text-left text-on-primary hover:bg-primary/30 aria-expanded:bg-primary/40';
+  'group flex w-full items-center gap-2 rounded-md border border-chrome-ink/15 bg-chrome-ink/5 ' +
+  'px-2.5 py-2 text-left text-on-primary transition-colors hover:border-chrome-ink/20 hover:bg-chrome-ink/10 ' +
+  'aria-expanded:border-chrome-accent/45 aria-expanded:bg-chrome-accent-soft';
 
 // The workspace menu of the sidebar. It is Menu, with radio items in labelled groups: the keyboard,
 // focus and dismissal behaviour is Menu's own, so the two can never disagree. The menu is an
@@ -68,13 +72,19 @@ export function WorkspaceSwitcher({
           <button type="button" className={cx(triggerClasses, focusRing)}>
             <span className="min-w-0 flex-1">
               <VisuallyHidden>Current workspace:</VisuallyHidden>{' '}
-              <span className="block truncate text-callout font-semibold">
+              <span
+                aria-hidden="true"
+                className="block text-[9.5px] font-semibold tracking-[.09em] uppercase text-(color:--nova-chrome-ink-2)"
+              >
+                Workspace
+              </span>
+              <span className="block truncate font-display text-[13.5px] font-semibold">
                 {current.name}
               </span>
               {current.label ? (
                 <>
                   {' '}
-                  <span className="block truncate text-caption text-(color:--nova-chrome-ink-2)">
+                  <span className="block truncate text-[11px] text-(color:--nova-chrome-ink-2)">
                     {current.label}
                   </span>
                 </>

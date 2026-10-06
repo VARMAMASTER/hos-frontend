@@ -24,9 +24,11 @@ export interface SearchFieldProps
 // label is visually hidden, so the placeholder is the only visible one. White is `on-primary`: the stock `white` is removed from
 // the theme. The shared focus ring is the brand's; the white rim turning solid keeps focus visible
 // on the dark chrome, where the brand alone would not be.
+// It is the prototype's .topbar-search: 13px type, 8px by 10px, a faint white rim (its 10px radius
+// is off the --r-* scale, so sm); focused, the rim turns the chrome accent.
 const field =
-  'h-10 w-full rounded-md border border-on-primary/25 bg-(--nova-chrome-field) text-callout text-on-primary [color-scheme:dark] ' +
-  'placeholder:text-[color:var(--nova-chrome-ink-2)] focus-visible:border-on-primary ' +
+  'w-full rounded-sm border border-chrome-ink/15 bg-(--nova-chrome-field) py-2 text-[13px] text-on-primary [color-scheme:dark] ' +
+  'placeholder:text-[color:var(--nova-chrome-ink-2)] focus-visible:border-chrome-accent/60 ' +
   'disabled:pointer-events-none disabled:opacity-50';
 
 const adornment =
@@ -60,7 +62,10 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
           <VisuallyHidden>{label}</VisuallyHidden>
         </label>
         {icon ? (
-          <span aria-hidden="true" className={cx(adornment, 'left-4')}>
+          <span
+            aria-hidden="true"
+            className={cx(adornment, 'left-2.5 [&_svg]:size-[15px]')}
+          >
             {icon}
           </span>
         ) : null}
@@ -73,17 +78,17 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
           className={cx(
             field,
             focusRing,
-            icon ? 'pl-12' : 'pl-3',
-            shortcutHint ? 'pr-16' : 'pr-3',
+            icon ? 'pl-8' : 'pl-2.5',
+            shortcutHint ? 'pr-12' : 'pr-2.5',
             className,
           )}
         />
         {shortcutHint ? (
-          <span
-            aria-hidden="true"
-            className={cx(adornment, 'right-4 text-caption')}
-          >
-            {shortcutHint}
+          <span aria-hidden="true" className={cx(adornment, 'right-2.5')}>
+            {/* The prototype's kbd hint: IBM Plex Mono at 10.5px on a faint white key. */}
+            <span className="rounded-sm border border-chrome-ink/20 bg-chrome-ink/10 px-1.5 py-px font-mono text-[10.5px]">
+              {shortcutHint}
+            </span>
           </span>
         ) : null}
       </div>

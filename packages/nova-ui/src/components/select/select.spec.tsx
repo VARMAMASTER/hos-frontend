@@ -204,7 +204,7 @@ describe('Select, Apple-refined', () => {
     render(<Select label="Ward" options={[{ value: 'a', label: 'A' }]} />);
     const select = screen.getByLabelText('Ward');
     expect([...select.classList]).toEqual(
-      expect.arrayContaining(['text-body', 'pl-4', 'py-3', 'rounded-md']),
+      expect.arrayContaining(['text-[13.5px]', 'pl-2.5', 'py-2', 'rounded-sm']),
     );
     expect(select.className).not.toMatch(/\bh-10\b|text-sm/);
   });

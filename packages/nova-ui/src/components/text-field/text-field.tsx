@@ -15,8 +15,10 @@ export interface TextFieldProps
   trailingIcon?: ReactNode;
 }
 
+// The prototype's .f-input: 13.5px, 8px by 10px, an opaque panel (its 9px radius is off the --r-*
+// scale, so sm).
 const base = cx(
-  'nova-field peer block w-full rounded-md py-3 text-body text-ink placeholder:text-ink-3 transition-colors',
+  'nova-field peer block w-full rounded-sm py-2 text-[13.5px] text-ink placeholder:text-ink-3 transition-colors',
   focusRing,
   'disabled:cursor-not-allowed disabled:opacity-50',
 );
@@ -24,7 +26,7 @@ const base = cx(
 // The edge (3:1 at rest, ink-2 on hover, crit when aria-invalid) is nova-field's own: see theme.css.
 
 const iconSlot =
-  'pointer-events-none absolute flex text-ink-3 peer-disabled:opacity-50 [&_svg]:size-4.5';
+  'pointer-events-none absolute flex text-ink-3 peer-disabled:opacity-50 [&_svg]:size-4';
 
 // `className` styles the wrapper (the field as a block in a layout); everything else goes to the <input>.
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -63,19 +65,19 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
               data-invalid={field['aria-invalid'] ? 'true' : undefined}
               className={cx(
                 base,
-                leadingIcon ? 'pl-12' : 'pl-4',
-                trailingIcon ? 'pr-12' : 'pr-4',
+                leadingIcon ? 'pl-8' : 'pl-2.5',
+                trailingIcon ? 'pr-8' : 'pr-2.5',
               )}
               {...rest}
               {...field}
             />
             {leadingIcon ? (
-              <span aria-hidden="true" className={`${iconSlot} left-4`}>
+              <span aria-hidden="true" className={`${iconSlot} left-2.5`}>
                 {leadingIcon}
               </span>
             ) : null}
             {trailingIcon ? (
-              <span aria-hidden="true" className={`${iconSlot} right-4`}>
+              <span aria-hidden="true" className={`${iconSlot} right-2.5`}>
                 {trailingIcon}
               </span>
             ) : null}

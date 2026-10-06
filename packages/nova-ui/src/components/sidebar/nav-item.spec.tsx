@@ -48,7 +48,7 @@ describe('NavItem', () => {
     ).toBe(false);
   });
 
-  it('styles the active item with the brand fill and white text, and a resting one with the chrome secondary ink', () => {
+  it('styles the active item as the prototype .nav a.active (the accent soft fill, its inner ring, white semibold) and a resting one in the chrome secondary ink', () => {
     render(
       <>
         <NavItem href="/a" active>
@@ -59,15 +59,31 @@ describe('NavItem', () => {
     );
     const active = screen.getByRole('link', { name: 'Active' });
     const resting = screen.getByRole('link', { name: 'Resting' });
-    expect(active.classList.contains('bg-primary/40')).toBe(true);
-    expect(active.classList.contains('text-on-primary')).toBe(true);
+    for (const name of [
+      'bg-chrome-accent-soft',
+      'text-on-primary',
+      'font-semibold',
+      'ring-1',
+      'ring-inset',
+      'ring-chrome-accent/35',
+    ]) {
+      expect(active.classList.contains(name), name).toBe(true);
+    }
     // Resting reads the chrome's secondary ink and lifts to white on hover.
-    expect(resting.classList.contains('bg-primary/40')).toBe(false);
+    expect(resting.classList.contains('bg-chrome-accent-soft')).toBe(false);
+    expect([...resting.classList]).toEqual(
+      expect.arrayContaining([
+        'text-[13.5px]',
+        'font-medium',
+        'px-2.5',
+        'py-2',
+      ]),
+    );
     expect(resting.className).toContain('--nova-chrome-ink-2');
     expect(resting.classList.contains('hover:text-on-primary')).toBe(true);
     // The shared brand ring is weak on the dark chrome, so keyboard focus also lifts the item the
     // way hover does.
-    expect(resting.classList.contains('focus-visible:bg-on-primary/10')).toBe(
+    expect(resting.classList.contains('focus-visible:bg-chrome-ink/5')).toBe(
       true,
     );
     expect(resting.classList.contains('focus-visible:text-on-primary')).toBe(

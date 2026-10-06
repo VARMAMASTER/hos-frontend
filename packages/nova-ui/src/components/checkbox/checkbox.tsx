@@ -89,7 +89,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         <label
           htmlFor={id}
           className={cx(
-            'flex min-h-11 items-center py-2 text-body text-ink',
+            'flex min-h-11 items-center py-2 text-[13.5px] text-ink',
             disabled ? 'cursor-not-allowed' : 'cursor-pointer',
           )}
         >

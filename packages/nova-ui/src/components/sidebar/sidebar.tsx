@@ -12,10 +12,11 @@ export interface SidebarProps
   children: ReactNode;
 }
 
-// A frame, not a card, so its corners are straight. Stacked above the page below md, it is only
-// pinned to the viewport (and scrolls on its own) once it sits beside the content.
+// The prototype's .sidebar: a frame, not a card, so its corners are straight; 20px by 12px of
+// padding and 4px between its parts. Stacked above the page below md, it is only pinned to the
+// viewport (and scrolls on its own) once it sits beside the content.
 const frame =
-  'rounded-none flex flex-col gap-6 p-4 md:sticky md:top-0 md:h-screen md:overflow-y-auto';
+  'rounded-none flex flex-col gap-1 px-3 py-5 md:sticky md:top-0 md:h-screen md:overflow-y-auto';
 
 export function Sidebar({
   brand,
@@ -26,13 +27,15 @@ export function Sidebar({
   ...rest
 }: SidebarProps) {
   return (
-    <Surface material="chrome" className={cx(frame, className)} {...rest}>
-      {brand ? <div className="px-2 pt-1">{brand}</div> : null}
-      <nav aria-label={navLabel} className="flex flex-col gap-1">
+    <Surface material="sidebar" className={cx(frame, className)} {...rest}>
+      {/* .brand: 4px 8px 16px around the lockup. */}
+      {brand ? <div className="px-2 pt-1 pb-4">{brand}</div> : null}
+      <nav aria-label={navLabel} className="flex flex-col">
         {children}
       </nav>
       {footer ? (
-        <div className="mt-auto border-t border-on-primary/12 pt-4">
+        // .sidebar-foot: pinned to the bottom, 12px 10px 4px, under the chrome line.
+        <div className="mt-auto border-t border-chrome-line px-2.5 pt-3 pb-1">
           {footer}
         </div>
       ) : null}

@@ -17,7 +17,8 @@ export interface TableProps extends HTMLAttributes<HTMLTableElement> {
   caption: ReactNode;
 }
 
-// The frame is the data material: opaque under both materials, edged with a 1px soft hairline.
+// The frame is the data material: opaque under both materials, the card hairline with the prototype's
+// gradient edge, radius md. The table inside is the prototype's: 13px, cells 10px by 16px.
 // Glass behind a column of numbers costs legibility, so never swap it for a translucent surface.
 // The hairline is the frame's border, so the frame itself must not scroll; the scroller sits inside it.
 // className styles the frame (placement, spacing); every other attribute describes the <table>
@@ -25,7 +26,7 @@ export interface TableProps extends HTMLAttributes<HTMLTableElement> {
 export function Table({ caption, className, children, ...rest }: TableProps) {
   const captionId = useId();
   return (
-    <Surface material="data" className={className}>
+    <Surface material="data" radius="md" className={className}>
       {/* A scroll container needs a tab stop, or keyboard users cannot scroll a wide table; naming
           it makes that stop announce as the table it scrolls. */}
       <div
@@ -35,7 +36,7 @@ export function Table({ caption, className, children, ...rest }: TableProps) {
         className={cx('overflow-x-auto nova-radius-inherit', focusRing)}
       >
         <table
-          className="w-full border-collapse text-left text-callout text-ink"
+          className="w-full border-collapse text-left text-[13px] text-ink"
           {...rest}
         >
           <caption id={captionId}>
@@ -55,7 +56,7 @@ export function TableHead({
   return (
     <thead
       className={cx(
-        'border-b border-border-strong bg-surface-2 text-ink-2',
+        'border-b border-border bg-surface-2 text-ink-2',
         className,
       )}
       {...rest}
@@ -76,7 +77,7 @@ export function TableRow({
   className,
   ...rest
 }: HTMLAttributes<HTMLTableRowElement>) {
-  return <tr className={cx('hover:bg-surface-2', className)} {...rest} />;
+  return <tr className={cx('hover:bg-primary-ghost', className)} {...rest} />;
 }
 
 const alignments: Record<TableAlign, string> = {
@@ -85,12 +86,13 @@ const alignments: Record<TableAlign, string> = {
   right: 'text-right',
 };
 
-// Digits only line up when they are monospaced and share an edge, so a numeric column gets both.
+// Digits only line up when they share a width and an edge, so a numeric column gets the prototype's
+// tabular, slashed-zero numerals and a right edge.
 // An explicit align still wins over the numeric default.
 function columnClasses(align: TableAlign | undefined, numeric: boolean) {
   return cx(
     alignments[align ?? (numeric ? 'right' : 'left')],
-    numeric && 'font-mono',
+    numeric && 'tabular-nums slashed-zero',
   );
 }
 
@@ -114,9 +116,12 @@ export function TableHeaderCell({
     <th
       scope={scope}
       className={cx(
-        'px-4 py-3',
-        // A row header is body text that labels its row; a column header is a small caption.
-        scope === 'row' ? 'font-semibold' : 'text-caption font-semibold',
+        'px-4 py-2.5',
+        // A row header is body text that labels its row; a column header is the prototype's thead
+        // th: 11px semibold capitals, tracked .06em.
+        scope === 'row'
+          ? 'font-semibold'
+          : 'text-[11px] font-semibold uppercase tracking-[.06em]',
         columnClasses(align, numeric),
         className,
       )}
@@ -141,7 +146,7 @@ export function TableCell({
 }: TableCellProps) {
   return (
     <td
-      className={cx('px-4 py-3', columnClasses(align, numeric), className)}
+      className={cx('px-4 py-2.5', columnClasses(align, numeric), className)}
       {...rest}
     />
   );

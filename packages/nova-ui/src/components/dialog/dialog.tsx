@@ -205,18 +205,21 @@ function DialogLayer({
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
         className={cx(
-          'relative flex max-h-full w-full flex-col outline-none motion-safe:animate-dialog-in [--nova-overlay-lift:var(--nova-elevation-3)]',
+          'relative flex max-h-full w-full flex-col outline-none motion-safe:animate-dialog-in [--nova-overlay-lift:var(--nova-shadow-lg)]',
           sizes[size],
           className,
         )}
       >
-        <div className="flex items-start justify-between gap-4 px-6 pt-5">
+        <div className="flex items-start justify-between gap-3 px-5 pt-4">
           <div className="min-w-0">
-            <h2 id={titleId} className="text-headline font-semibold text-ink">
+            <h2
+              id={titleId}
+              className="font-display text-[17px] font-semibold tracking-h2 text-ink"
+            >
               {title}
             </h2>
             {description ? (
-              <p id={descriptionId} className="mt-1 text-callout text-ink-2">
+              <p id={descriptionId} className="mt-0.5 text-[13px] text-ink-2">
                 {description}
               </p>
             ) : null}
@@ -247,11 +250,11 @@ function DialogLayer({
             </button>
           )}
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4 text-body text-ink">
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 text-[14px] text-ink">
           {children}
         </div>
         {footer ? (
-          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border px-6 py-4">
+          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border px-5 py-3">
             {footer}
           </div>
         ) : null}

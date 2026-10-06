@@ -51,18 +51,20 @@ export function FieldShell({
   const describedby =
     cx(describedBy, hasHint && hintId, hasError && errorId) || undefined;
 
+  // The prototype's label.f-label (12px semibold in the secondary ink, 4px above the control) and its
+  // .tiny small print for the hint and the error.
   return (
     <div className={cx('flex flex-col', className)}>
       {/* The asterisk sits beside the <label>, not inside it, so the accessible name stays the
           label text; the control's own `required` attribute is what assistive tech announces. */}
       <div className="flex items-baseline gap-1">
-        <label htmlFor={id} className="text-callout font-semibold text-ink">
+        <label htmlFor={id} className="text-[12px] font-semibold text-ink-2">
           {label}
         </label>
         {required ? (
           <span
             aria-hidden="true"
-            className="text-callout font-semibold text-crit-deep"
+            className="text-[12px] font-semibold text-crit-deep"
           >
             *
           </span>
@@ -76,7 +78,7 @@ export function FieldShell({
         })}
       </div>
       {hasHint ? (
-        <p id={hintId} className="mt-1 text-caption text-ink-3">
+        <p id={hintId} className="mt-1 text-[12px] text-ink-2">
           {hint}
         </p>
       ) : null}
@@ -86,7 +88,7 @@ export function FieldShell({
         {hasError ? (
           <p
             id={errorId}
-            className="mt-1 flex items-start gap-2 text-caption font-semibold text-crit-deep"
+            className="mt-1 flex items-start gap-1.5 text-[12px] font-semibold text-crit-deep"
           >
             <ErrorIcon />
             {error}
@@ -109,7 +111,7 @@ function ErrorIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
-      className="mt-px size-4 shrink-0"
+      className="mt-0.5 size-3.5 shrink-0"
     >
       <circle cx="10" cy="10" r="7.25" />
       <path d="M10 6v4.5M10 13.5h.01" />

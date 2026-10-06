@@ -45,7 +45,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
           onChange={disabled ? undefined : onChange}
           // nova-field draws the 3:1 edge and turns it primary when checked; checked fills too.
           className={cx(
-            'nova-field peer h-5 w-5 appearance-none rounded-full [corner-shape:round]',
+            'nova-field peer h-5 w-5 appearance-none rounded-full',
             'checked:bg-primary',
             focusRing,
             'disabled:cursor-not-allowed',
@@ -66,7 +66,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
       <label
         htmlFor={id}
         className={cx(
-          'flex min-h-11 items-center py-2 text-body text-ink',
+          'flex min-h-11 items-center py-2 text-[13.5px] text-ink',
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
         )}
       >

@@ -114,19 +114,21 @@ describe('SearchField', () => {
     );
     const plain = screen.getByRole('searchbox', { name: 'Plain' });
     const decorated = screen.getByRole('searchbox', { name: 'Decorated' });
-    expect(plain.classList.contains('pl-3')).toBe(true);
-    expect(plain.classList.contains('pr-3')).toBe(true);
-    expect(decorated.classList.contains('pl-12')).toBe(true);
-    expect(decorated.classList.contains('pr-16')).toBe(true);
+    expect(plain.classList.contains('pl-2.5')).toBe(true);
+    expect(plain.classList.contains('pr-2.5')).toBe(true);
+    expect(decorated.classList.contains('pl-8')).toBe(true);
+    expect(decorated.classList.contains('pr-12')).toBe(true);
   });
 
-  it('is drawn for the dark chrome: translucent white fill and rim, the shared focus ring, secondary-ink placeholder', () => {
+  it('is drawn for the dark chrome as the prototype .topbar-search: faint white fill and rim, the shared focus ring, secondary-ink placeholder', () => {
     render(<SearchField label="Search patients" />);
     const input = screen.getByRole('searchbox');
     for (const name of [
       'bg-(--nova-chrome-field)',
       'border',
-      'border-on-primary/25',
+      'border-chrome-ink/15',
+      'text-[13px]',
+      'py-2',
       ...focusRing.split(' '),
       'placeholder:text-[color:var(--nova-chrome-ink-2)]',
     ]) {

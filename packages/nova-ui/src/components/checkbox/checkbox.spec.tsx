@@ -119,13 +119,13 @@ describe('Checkbox', () => {
 });
 
 describe('Checkbox, Apple-refined', () => {
-  it('gives the row a 44px minimum touch target and body-size label text', () => {
+  it('gives the row a 44px minimum touch target and the prototype 13.5px label text', () => {
     render(<Checkbox label="Ramesh consents" />);
     const control = screen.getByLabelText('Ramesh consents');
     const row = control.closest('div') as HTMLElement;
     expect(row.classList).toContain('min-h-11');
     const label = screen.getByText('Ramesh consents');
-    expect(label.classList).toContain('text-body');
+    expect(label.classList).toContain('text-[13.5px]');
     expect(label.className).not.toMatch(/text-sm/);
   });
 });

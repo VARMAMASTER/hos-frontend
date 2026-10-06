@@ -72,8 +72,8 @@ describe('Table', () => {
     renderResults();
     const column = screen.getByText('Test');
     const row = screen.getByText('Haemoglobin');
-    expect(column.classList.contains('text-caption')).toBe(true);
-    expect(row.classList.contains('text-caption')).toBe(false);
+    expect(column.classList.contains('text-[11px]')).toBe(true);
+    expect(row.classList.contains('text-[11px]')).toBe(false);
     expect(row.classList.contains('font-semibold')).toBe(true);
   });
 
@@ -94,25 +94,25 @@ describe('Table', () => {
     expect(header.getAttribute('colspan')).toBe('2');
   });
 
-  it('sets numeric columns in the mono font, right-aligned, so digits line up', () => {
+  it('sets numeric columns in tabular numerals, right-aligned, so digits line up', () => {
     renderResults();
     for (const cell of [
       screen.getByText('Result (g/dL)'),
       screen.getByText('13.4'),
       screen.getByText('8'),
     ]) {
-      expect(cell.classList.contains('font-mono')).toBe(true);
+      expect(cell.classList.contains('tabular-nums')).toBe(true);
       expect(cell.classList.contains('text-right')).toBe(true);
     }
   });
 
-  it('leaves text columns in the sans font, left-aligned by default', () => {
+  it('leaves text columns in proportional numerals, left-aligned by default', () => {
     renderResults();
     for (const cell of [
       screen.getByText('Test'),
       screen.getByText('Ferritin'),
     ]) {
-      expect(cell.classList.contains('font-mono')).toBe(false);
+      expect(cell.classList.contains('tabular-nums')).toBe(false);
       expect(cell.classList.contains('text-left')).toBe(true);
     }
   });
@@ -140,7 +140,7 @@ describe('Table', () => {
     const leftNumeric = screen.getByText('left-numeric');
     expect(leftNumeric.classList.contains('text-left')).toBe(true);
     expect(leftNumeric.classList.contains('text-right')).toBe(false);
-    expect(leftNumeric.classList.contains('font-mono')).toBe(true);
+    expect(leftNumeric.classList.contains('tabular-nums')).toBe(true);
   });
 
   it('keeps wide tables inside a horizontal scroll container', () => {
@@ -149,7 +149,7 @@ describe('Table', () => {
     const scroller = frame.firstElementChild as HTMLElement;
     expect(scroller.classList.contains('overflow-x-auto')).toBe(true);
     expect(scroller.firstElementChild?.tagName).toBe('TABLE');
-    expect(frame.classList.contains('rounded-lg')).toBe(true);
+    expect(frame.classList.contains('rounded-md')).toBe(true);
   });
 
   it('does not scroll the frame itself, so the data material rim stays put', () => {

@@ -36,20 +36,21 @@ export interface SectionNavProps
   ariaLabel: string;
 }
 
-// Built for the dark chrome: secondary text from the custom property nova-chrome sets, full text in
-// on-primary (white). Hover and active tint with the translucent brand colour, never with white,
-// so white text keeps its contrast on the chrome for every brand.
+// The prototype's .sec-item, built for the dark chrome: 13.5px at 500, 8px by 10px, 10px between a
+// bare 18px glyph and the label (its 9px radius is off the --r-* scale, so sm). Secondary text
+// comes from the custom property the chrome sets; hover lifts the row with a faint white.
 const itemBase =
-  'relative flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-callout font-normal';
+  'relative flex w-full items-center gap-2.5 rounded-sm px-2.5 py-2 text-left text-[13.5px] font-medium transition-colors';
 
 const itemIdle =
-  'text-(color:--nova-chrome-ink-2) hover:bg-primary/20 hover:text-on-primary';
+  'text-(color:--nova-chrome-ink-2) hover:bg-chrome-ink/5 hover:text-on-primary';
 
-// Active is bold and gets a rail on its left edge as well as a tint, so it is not marked by colour.
+// Active is semibold on the accent tint and gets the prototype's rail on its left edge (2.5px by
+// 17px of chrome accent, 6px outside the row), so it is not marked by colour alone.
 const itemActive =
-  'bg-primary/30 font-semibold text-on-primary ' +
-  'before:absolute before:top-1/2 before:left-0.5 before:h-4 before:w-[3px] ' +
-  'before:-translate-y-1/2 before:rounded-full before:bg-primary-soft';
+  'bg-chrome-accent/14 font-semibold text-on-primary [&_[data-icon]]:text-chrome-accent ' +
+  'before:absolute before:top-1/2 before:-left-1.5 before:h-[17px] before:w-[2.5px] ' +
+  'before:-translate-y-1/2 before:rounded-full before:bg-chrome-accent';
 
 const itemDisabled = 'cursor-not-allowed opacity-50';
 
@@ -61,6 +62,7 @@ function ItemContent({ item }: { item: SectionNavItem }) {
       {item.icon ? (
         <span
           aria-hidden="true"
+          data-icon=""
           className="grid size-[18px] shrink-0 place-items-center [&>svg]:size-[17px]"
         >
           {item.icon}
@@ -70,7 +72,7 @@ function ItemContent({ item }: { item: SectionNavItem }) {
       {hasBadge ? (
         <>
           {' '}
-          <span className="shrink-0 rounded-full bg-primary/40 px-2 py-px text-micro font-bold text-on-primary">
+          <span className="shrink-0 rounded-full bg-chrome-ink/15 px-1.5 py-px text-[10px] font-bold text-chrome-ink">
             {item.badge}
             {/* The space is its own text node: name computation trims the text inside a span. */}{' '}
             <VisuallyHidden>{item.badgeLabel}</VisuallyHidden>
@@ -90,7 +92,7 @@ export function SectionNav({
 }: SectionNavProps) {
   return (
     <nav {...rest} aria-label={ariaLabel} className={className}>
-      <ul className="flex flex-col gap-px">
+      <ul className="flex flex-col gap-px px-1.5">
         {items.map((item) => {
           const disabled = item.disabled === true;
           const current = item.active && !disabled ? 'page' : undefined;

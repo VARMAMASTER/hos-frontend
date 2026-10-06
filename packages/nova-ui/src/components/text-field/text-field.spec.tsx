@@ -261,48 +261,48 @@ describe('TextField icons', () => {
   it('makes room for each icon only when it is present', () => {
     const { rerender } = render(<TextField label="Search" />);
     const plain = screen.getByLabelText('Search').classList;
-    expect([...plain]).toEqual(expect.arrayContaining(['pl-4', 'pr-4']));
-    expect(plain).not.toContain('pl-12');
+    expect([...plain]).toEqual(expect.arrayContaining(['pl-2.5', 'pr-2.5']));
+    expect(plain).not.toContain('pl-8');
     rerender(
       <TextField label="Search" leadingIcon={<svg />} trailingIcon={<svg />} />,
     );
     const withIcons = screen.getByLabelText('Search').classList;
-    expect([...withIcons]).toEqual(expect.arrayContaining(['pl-12', 'pr-12']));
-    expect(withIcons).not.toContain('pl-4');
+    expect([...withIcons]).toEqual(expect.arrayContaining(['pl-8', 'pr-8']));
+    expect(withIcons).not.toContain('pl-2.5');
     expect(withIcons).not.toContain('pr-4');
   });
 });
 
-describe('TextField, Apple-refined', () => {
-  it('sets the label at 600 callout, the field at body 17 padded 16 x 12 on radius md, and the hint at caption', () => {
+describe('TextField, the prototype .f-label and .f-input', () => {
+  it('sets the label at 12px semibold, the field at 13.5px padded 10 x 8, and the hint at 12px', () => {
     render(<TextField label="Patient" hint="As on the ID card" />);
     const label = screen.getByText('Patient');
     expect([...label.classList]).toEqual(
-      expect.arrayContaining(['text-callout', 'font-semibold']),
+      expect.arrayContaining(['text-[12px]', 'font-semibold']),
     );
     const input = screen.getByLabelText('Patient');
     expect([...input.classList]).toEqual(
-      expect.arrayContaining(['text-body', 'py-3', 'rounded-md']),
+      expect.arrayContaining(['text-[13.5px]', 'py-2', 'rounded-sm']),
     );
     expect(input.className).not.toMatch(/\bh-10\b|text-sm/);
     expect(screen.getByText('As on the ID card').classList).toContain(
-      'text-caption',
+      'text-[12px]',
     );
   });
 
-  it('draws the error line at caption in crit', () => {
+  it('draws the error line at 12px in crit', () => {
     render(<TextField label="Patient" error="Enter the full name of Ramesh" />);
     const error = screen.getByText('Enter the full name of Ramesh');
     expect([...error.classList]).toEqual(
-      expect.arrayContaining(['text-caption', 'text-crit-deep']),
+      expect.arrayContaining(['text-[12px]', 'text-crit-deep']),
     );
   });
 
-  it('sizes the decorative icons at 18px', () => {
+  it('sizes the decorative icons at 16px', () => {
     render(
       <TextField label="Search" leadingIcon={<svg data-testid="lead" />} />,
     );
     const slot = screen.getByTestId('lead').parentElement as HTMLElement;
-    expect(slot.classList).toContain('[&_svg]:size-4.5');
+    expect(slot.classList).toContain('[&_svg]:size-4');
   });
 });

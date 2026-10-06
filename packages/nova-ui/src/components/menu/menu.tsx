@@ -268,14 +268,15 @@ export function Menu({
           material="overlay"
           radius="lg"
           className={cx(
-            'absolute top-full z-40 mt-2 max-h-[70vh] overflow-y-auto p-2',
+            // The prototype's .ws-menu: 6px of padding, at most 70% of the viewport tall.
+            'absolute top-full z-40 mt-1 max-h-[70vh] overflow-y-auto p-1.5',
             fullWidth ? 'inset-x-0' : 'left-0 min-w-48',
           )}
         >
           {header ? (
             <div
               id={headerId}
-              className="px-3 pt-2 pb-1 text-caption text-ink-3"
+              className="px-2 pt-1.5 pb-2 text-[10.5px] text-ink-3"
             >
               {header}
             </div>
@@ -311,7 +312,7 @@ export function MenuGroup({ label, children, ...rest }: MenuGroupProps) {
     <div {...rest} role="group" aria-labelledby={labelId}>
       <div
         id={labelId}
-        className="px-3 pt-3 pb-1 text-micro font-bold tracking-wide text-ink-3 uppercase"
+        className="px-2 pt-2 pb-1 text-[9.5px] font-bold tracking-[.09em] text-ink-3 uppercase"
       >
         {label}
       </div>
@@ -329,8 +330,10 @@ export interface MenuItemProps
   description?: ReactNode;
 }
 
+// The prototype's .ws-item: 13px at 500, 8px all round, 8px between its parts (its 9px radius is off
+// the --r-* scale, so sm).
 const item = cx(
-  'flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-callout text-ink transition-colors',
+  'flex w-full items-center gap-2 rounded-sm p-2 text-left text-[13px] font-medium text-ink transition-colors',
   'hover:bg-primary-soft focus:bg-primary-soft',
   focusRing,
   'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
@@ -379,7 +382,7 @@ const Item = forwardRef<
       ) : (
         <span className="min-w-0 flex-1">
           <span className="block truncate">{children}</span>{' '}
-          <span className="block truncate text-caption font-normal text-ink-3">
+          <span className="block truncate text-[11px] font-normal text-ink-3">
             {description}
           </span>
         </span>
