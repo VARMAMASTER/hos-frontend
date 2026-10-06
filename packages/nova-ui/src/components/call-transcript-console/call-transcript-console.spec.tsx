@@ -224,6 +224,16 @@ describe('CallTranscriptConsole: states', () => {
     ).toBe('Live');
   });
 
+  it('shows the typing dots during a replay too, with the replay controls', () => {
+    const { container } = render(
+      <Console state="replaying" typing typingLabel="AI agent is speaking" />,
+    );
+    expect(
+      container.querySelector('[data-chat-bubble][data-typing="true"]'),
+    ).not.toBeNull();
+    expect(screen.getByRole('button', { name: 'Pause replay' })).toBeTruthy();
+  });
+
   it('pauses and resumes a replay', () => {
     const onPausedChange = vi.fn();
     render(<Console state="replaying" onPausedChange={onPausedChange} />);

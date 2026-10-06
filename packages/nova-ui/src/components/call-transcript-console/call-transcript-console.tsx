@@ -114,6 +114,9 @@ export interface CallTranscriptConsoleProps
   // Play (from idle) and Replay (once ended) start a replay; the caller plays the turns.
   onPlay?: () => void;
   onReplay?: () => void;
+  // A turn is being transcribed (or replayed): the typing dots, in any state. The typing state
+  // always shows them.
+  typing?: boolean;
   // While typing: which side is speaking (in, the AI, by default) and who, in words.
   typingSide?: 'in' | 'out';
   typingLabel?: string;
@@ -146,6 +149,7 @@ export function CallTranscriptConsole({
   onPausedChange,
   onPlay,
   onReplay,
+  typing = false,
   typingSide = 'in',
   typingLabel,
   children,
@@ -346,7 +350,7 @@ export function CallTranscriptConsole({
         )}
       >
         {children}
-        {state === 'typing' ? (
+        {typing || state === 'typing' ? (
           <ChatBubble
             direction={typingSide}
             typing
