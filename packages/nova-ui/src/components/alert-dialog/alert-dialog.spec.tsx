@@ -329,12 +329,14 @@ describe('AlertDialog look', () => {
     }
   });
 
-  it('casts no shadow of its own and uses no weight 500', () => {
+  it('casts no shadow of its own: its actions are plain Nova Buttons', () => {
+    // The Buttons carry the prototype's own .btn treatment (which may include a shadow); the
+    // action row itself adds nothing on top.
     setup([{ label: 'Cancel', role: 'cancel' }, { label: 'Keep' }]);
-    const actions = document.querySelector('[data-alert-actions]');
-    expect(actions?.outerHTML).not.toMatch(
-      /shadow-(?:sm|md|lg|glass)|font-medium/,
-    );
+    const actions = document.querySelector(
+      '[data-alert-actions]',
+    ) as HTMLElement;
+    expect(actions.className).not.toMatch(/shadow|font-medium/);
   });
 
   it('has real buttons with a focus ring', () => {

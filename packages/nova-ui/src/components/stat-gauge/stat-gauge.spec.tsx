@@ -81,14 +81,16 @@ describe('StatGauge look', () => {
   });
 
   // hos.css .sb-bar: a 5px track with a full radius, filled with a full-radius bar.
-  it('has the prototype 5px track (.sb-bar) with a primary fill', () => {
+  it('has the prototype 5px track (.sb-bar) with its gradient fill', () => {
     render(<StatGauge label="L" value={25} />);
     const track = screen.getByRole('meter');
     expect(track.className).toContain('h-[5px]');
     expect(track.className).toContain('rounded-full');
     expect(track.className).not.toContain('h-1.5');
     const fill = track.firstElementChild as HTMLElement;
-    expect(fill.className).toContain('bg-primary');
+    // The prototype's .sb-bar fill: chrome accent into the sky glow.
+    expect(fill.className).toContain('nova-bar-grad');
+    expect(fill.className).not.toContain('bg-primary');
     expect(fill.className).toContain('rounded-full');
   });
 

@@ -81,6 +81,9 @@ describe('NotificationBell badge', () => {
     expect(badge.className).toContain('h-4');
     expect(badge.className).toContain('min-w-4');
     expect(badge.className).toContain('border-2');
+    // The .tb-dot ring is the chrome's own dark, not the ink colour.
+    expect(badge.className).toContain('border-chrome-ring');
+    expect(badge.className).not.toContain('border-ink');
     expect(badge.className).toContain('-right-[3px]');
     expect(badge.className).not.toMatch(/shadow|font-medium|text-micro/);
   });

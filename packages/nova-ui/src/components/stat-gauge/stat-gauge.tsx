@@ -66,7 +66,7 @@ export function StatGauge({
         className="mt-2 h-[5px] w-full overflow-hidden rounded-full bg-border"
       >
         <div
-          className="h-full rounded-full bg-primary motion-safe:transition-[width] motion-safe:duration-200"
+          className="h-full rounded-full nova-bar-grad motion-safe:transition-[width] motion-safe:duration-200"
           style={{ width: `${percent}%` }}
         />
       </div>

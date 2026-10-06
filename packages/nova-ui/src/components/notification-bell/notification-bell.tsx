@@ -72,7 +72,7 @@ export const NotificationBell = forwardRef<
           aria-hidden="true"
           // .tb-dot: 16px tall, crit, 9.5px bold white, a 2px ring, 3px past the corner. The ring is
           // the chrome's colour in the prototype (#221448); ink is the nearest dark token.
-          className="absolute -right-[3px] -top-[3px] inline-flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-ink bg-crit px-0.5 text-[9.5px] font-bold text-on-primary"
+          className="absolute -right-[3px] -top-[3px] inline-flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-chrome-ring bg-crit px-0.5 text-[9.5px] font-bold text-on-primary"
         >
           {shown}
         </span>
