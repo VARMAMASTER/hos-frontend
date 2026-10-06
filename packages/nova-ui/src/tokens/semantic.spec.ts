@@ -67,3 +67,44 @@ describe('the Apple-refined token set', () => {
     expect(NOVA_DEFAULTS['--nova-tracking-tight']).toBe('-0.01em');
   });
 });
+
+// Owner decision: a subtle, premium lift. Four levels, soft and low-opacity, tinted to the Nova
+// violet shadow hue and never neutral black.
+describe('the elevation scale', () => {
+  it.each([
+    '--nova-elevation-1',
+    '--nova-elevation-2',
+    '--nova-elevation-3',
+    '--nova-elevation-button',
+  ] as const)(
+    'declares %s as a violet-tinted, low-opacity drop shadow',
+    (token) => {
+      const value = NOVA_DEFAULTS[token];
+      const layers = value.split(/,(?![^(]*\))/).map((layer) => layer.trim());
+      expect(layers.length).toBeGreaterThanOrEqual(2);
+      for (const layer of layers) {
+        expect(layer).toMatch(/hsl\(262deg 45% 27% \/ 0\.\d+\)$/);
+        const alpha = Number(/\/ (0\.\d+)\)$/.exec(layer)?.[1]);
+        expect(alpha).toBeGreaterThan(0);
+        expect(alpha).toBeLessThanOrEqual(0.2);
+        expect(layer).not.toMatch(/inset/);
+      }
+      expect(value).not.toMatch(/#000|rgb\(0 0 0|black/);
+    },
+  );
+
+  it('rises in strength from level 1 to level 3', () => {
+    const maxAlpha = (token: keyof typeof NOVA_DEFAULTS) =>
+      Math.max(
+        ...[...NOVA_DEFAULTS[token].matchAll(/\/ (0\.\d+)\)/g)].map((m) =>
+          Number(m[1]),
+        ),
+      );
+    expect(maxAlpha('--nova-elevation-1')).toBeLessThan(
+      maxAlpha('--nova-elevation-2'),
+    );
+    expect(maxAlpha('--nova-elevation-2')).toBeLessThan(
+      maxAlpha('--nova-elevation-3'),
+    );
+  });
+});

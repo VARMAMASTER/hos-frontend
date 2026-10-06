@@ -128,6 +128,26 @@ describe('Card, Apple-refined', () => {
     expect(screen.getByText('still').className).not.toMatch(/scale/);
   });
 
+  it.each([
+    ['panel', 'surface'],
+    ['data', 'data'],
+  ] as const)(
+    'steps an interactive %s card from elevation 1 to 2 on hover, with no transition under reduced motion',
+    (variant, token) => {
+      render(
+        <Card variant={variant} interactive>
+          hover me
+        </Card>,
+      );
+      const card = screen.getByText('hover me');
+      expect(card.classList).toContain(
+        `hover:[--nova-${token}-lift:var(--nova-elevation-2)]`,
+      );
+      expect(card.classList).toContain('motion-reduce:transition-none');
+      expect(card.className).toMatch(/transition-\[[^\]]*box-shadow/);
+    },
+  );
+
   it.each(['panel', 'data'] as const)(
     'marks a selected %s card for the 2px primary border theme.css draws, and nothing else',
     (variant) => {

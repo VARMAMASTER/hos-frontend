@@ -75,4 +75,16 @@ export const NOVA_DEFAULTS = {
   '--nova-text-title1': '56px',
   '--nova-text-title1--line-height': '60px',
   '--nova-tracking-tight': '-0.01em',
+  // The elevation scale: a subtle, premium lift, soft and low-opacity, tinted to the Nova violet
+  // shadow hue (never neutral black). 1: resting cards, panels and data surfaces. 2: menus,
+  // popovers, tooltips, toasts, a hovered interactive card. 3: dialogs and sheets. button: the
+  // filled buttons only. Not tenant-overridable. Components never invent a shadow.
+  '--nova-elevation-1':
+    '0 1px 2px hsl(262deg 45% 27% / 0.05), 0 2px 8px -2px hsl(262deg 45% 27% / 0.08)',
+  '--nova-elevation-2':
+    '0 2px 4px hsl(262deg 45% 27% / 0.06), 0 10px 24px -6px hsl(262deg 45% 27% / 0.12)',
+  '--nova-elevation-3':
+    '0 4px 8px hsl(262deg 45% 27% / 0.06), 0 20px 40px -12px hsl(262deg 45% 27% / 0.18)',
+  '--nova-elevation-button':
+    '0 1px 2px hsl(262deg 45% 27% / 0.12), 0 2px 6px -2px hsl(262deg 45% 27% / 0.16)',
 } as const satisfies Record<NovaVariable, string>;

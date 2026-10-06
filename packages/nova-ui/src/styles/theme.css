@@ -59,6 +59,11 @@
   --radius-md: var(--nova-radius-md);
   --radius-lg: var(--nova-radius-lg);
   --radius-xl: var(--nova-radius-xl);
+  /* The elevation scale is the only shadow scale: shadow-elevation-1 | 2 | 3 | button. */
+  --shadow-elevation-1: var(--nova-elevation-1);
+  --shadow-elevation-2: var(--nova-elevation-2);
+  --shadow-elevation-3: var(--nova-elevation-3);
+  --shadow-elevation-button: var(--nova-elevation-button);
   --font-sans: var(--nova-font-body);
   --font-mono: var(--nova-font-mono);
   /* The type ramp as text-micro … text-title1, each with its own line height. Headline sizes and up
@@ -148,6 +153,10 @@
   --nova-text-title1: 56px;
   --nova-text-title1--line-height: 60px;
   --nova-tracking-tight: -0.01em;
+  --nova-elevation-1: 0 1px 2px hsl(262deg 45% 27% / 0.05), 0 2px 8px -2px hsl(262deg 45% 27% / 0.08);
+  --nova-elevation-2: 0 2px 4px hsl(262deg 45% 27% / 0.06), 0 10px 24px -6px hsl(262deg 45% 27% / 0.12);
+  --nova-elevation-3: 0 4px 8px hsl(262deg 45% 27% / 0.06), 0 20px 40px -12px hsl(262deg 45% 27% / 0.18);
+  --nova-elevation-button: 0 1px 2px hsl(262deg 45% 27% / 0.12), 0 2px 6px -2px hsl(262deg 45% 27% / 0.16);
 }
 
 /* Material: glass is the product default (no attribute needed); a hospital theme or the product can
@@ -179,11 +188,11 @@
   --nova-surface-fill: var(--nova-color-surface);
   --nova-surface-filter: none;
   --nova-surface-border: var(--nova-color-border);
-  --nova-surface-shadow: none;
+  --nova-surface-shadow: 0 0 #0000;
   --nova-overlay-fill: var(--nova-color-surface);
   --nova-overlay-filter: none;
   --nova-overlay-border: var(--nova-color-border);
-  --nova-overlay-shadow: none;
+  --nova-overlay-shadow: 0 0 #0000;
   --nova-field-fill: var(--nova-color-surface);
   --nova-field-filter: none;
   --nova-chrome-opacity: 1;
@@ -200,11 +209,11 @@
     --nova-surface-fill: var(--nova-color-surface);
     --nova-surface-filter: none;
     --nova-surface-border: var(--nova-color-border);
-    --nova-surface-shadow: none;
+    --nova-surface-shadow: 0 0 #0000;
     --nova-overlay-fill: var(--nova-color-surface);
     --nova-overlay-filter: none;
     --nova-overlay-border: var(--nova-color-border);
-    --nova-overlay-shadow: none;
+    --nova-overlay-shadow: 0 0 #0000;
     --nova-field-fill: var(--nova-color-surface);
     --nova-field-filter: none;
     --nova-chrome-opacity: 1;
@@ -222,11 +231,11 @@
     --nova-surface-fill: var(--nova-color-surface);
     --nova-surface-filter: none;
     --nova-surface-border: var(--nova-color-border);
-    --nova-surface-shadow: none;
+    --nova-surface-shadow: 0 0 #0000;
     --nova-overlay-fill: var(--nova-color-surface);
     --nova-overlay-filter: none;
     --nova-overlay-border: var(--nova-color-border);
-    --nova-overlay-shadow: none;
+    --nova-overlay-shadow: 0 0 #0000;
     --nova-field-fill: var(--nova-color-surface);
     --nova-field-filter: none;
     --nova-chrome-opacity: 1;
@@ -307,6 +316,24 @@
    their own controls, and without the reset a menu anchored in the sidebar, or a card inside the
    hero, would draw a white ring on white. material.spec.ts proves the primary ring at 3:1 there. */
 
+/* Each surface lifts at its own level of the elevation scale. A component asks for another level by
+   setting the surface's lift property (a Dialog asks for 3, a hovered card for 2). They are
+   registered as non-inherited, so a Dialog's level 3 never leaks into the cards and menus it holds. */
+@property --nova-surface-lift {
+  syntax: '*';
+  inherits: false;
+}
+
+@property --nova-overlay-lift {
+  syntax: '*';
+  inherits: false;
+}
+
+@property --nova-data-lift {
+  syntax: '*';
+  inherits: false;
+}
+
 /* The default panel. */
 @utility nova-surface {
   --nova-focus-ring: var(--nova-color-primary);
@@ -314,7 +341,9 @@
   -webkit-backdrop-filter: var(--nova-surface-filter);
   backdrop-filter: var(--nova-surface-filter);
   border: 1px solid var(--nova-surface-border);
-  box-shadow: var(--nova-surface-shadow);
+  box-shadow:
+    var(--nova-surface-lift, var(--nova-elevation-1)),
+    var(--nova-surface-shadow);
 
   /* A selected card or option: the edge upgrades to 2px primary, the only place 2px appears, and
      nothing else changes (no glow, no shadow). */
@@ -330,7 +359,9 @@
   -webkit-backdrop-filter: var(--nova-overlay-filter);
   backdrop-filter: var(--nova-overlay-filter);
   border: 1px solid var(--nova-overlay-border);
-  box-shadow: var(--nova-overlay-shadow);
+  box-shadow:
+    var(--nova-overlay-lift, var(--nova-elevation-2)),
+    var(--nova-overlay-shadow);
 }
 
 /* Form controls. The edge is --nova-field-edge, border-control unless a state sets it: the 3:1 edge
@@ -416,14 +447,15 @@
 
 /* Containers for dense data (tables, KPI tiles, charts, financial figures). Never translucent, under
    either material: glass under dense data costs legibility, so these stay opaque. Their edge is the
-   card's plain 1px soft hairline: no gradient, no rim, no shadow (owner decision: no gradient
-   borders). A consumer can still restyle the edge (BedGrid's status borders): this utility sorts
+   card's plain 1px soft hairline (owner decision: no gradient borders), and they rest at
+   elevation 1 like a panel. A consumer can still restyle the edge (BedGrid's status borders): this utility sorts
    ahead of Tailwind's border utilities. */
 @utility nova-data {
   --nova-focus-ring: var(--nova-color-primary);
   position: relative;
   background-color: var(--nova-color-surface);
   border: 1px solid var(--nova-color-border);
+  box-shadow: var(--nova-data-lift, var(--nova-elevation-1));
 
   /* Selected: the edge upgrades to 2px primary, as on a selected panel. */
   &[data-selected='true'] {

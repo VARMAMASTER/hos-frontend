@@ -49,9 +49,10 @@ export const GLASS = {
   chromeFieldAlpha: 0.08,
 } as const;
 
-// Elevation is flat, the Apple way: depth comes from surface change, 1px hairlines, the glass frost
-// and a scrim behind modals, never from a drop shadow. Glass keeps its 1px top highlight, which is
-// an inset rim on the panel's own edge, not a shadow cast onto what lies beneath.
+// The surface utilities lift every panel and overlay with the elevation scale (--nova-elevation-*),
+// under glass and solid alike. The material adds only its own layer to that shadow list: glass its
+// 1px top highlight (an inset rim on the panel's own edge), solid a transparent no-op, so the list
+// stays valid.
 export const MATERIAL_TOKENS = {
   glass: {
     '--nova-glass': '1',
@@ -75,11 +76,11 @@ export const MATERIAL_TOKENS = {
     '--nova-surface-fill': 'var(--nova-color-surface)',
     '--nova-surface-filter': 'none',
     '--nova-surface-border': 'var(--nova-color-border)',
-    '--nova-surface-shadow': 'none',
+    '--nova-surface-shadow': '0 0 #0000',
     '--nova-overlay-fill': 'var(--nova-color-surface)',
     '--nova-overlay-filter': 'none',
     '--nova-overlay-border': 'var(--nova-color-border)',
-    '--nova-overlay-shadow': 'none',
+    '--nova-overlay-shadow': '0 0 #0000',
     '--nova-field-fill': 'var(--nova-color-surface)',
     '--nova-field-filter': 'none',
     '--nova-chrome-opacity': '1',

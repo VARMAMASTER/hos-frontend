@@ -38,7 +38,12 @@ export function Card({
       data-selected={selected ? 'true' : undefined}
       className={cx(
         interactive &&
-          'cursor-pointer transition-transform duration-150 ease-out motion-reduce:transition-none motion-safe:active:scale-[0.98]',
+          'cursor-pointer transition-[transform,box-shadow] duration-150 ease-out motion-reduce:transition-none motion-safe:active:scale-[0.98]',
+        // A hovered interactive card rises from elevation 1 to 2.
+        interactive &&
+          (variant === 'data'
+            ? 'hover:[--nova-data-lift:var(--nova-elevation-2)]'
+            : 'hover:[--nova-surface-lift:var(--nova-elevation-2)]'),
         className,
       )}
       {...rest}

@@ -112,14 +112,45 @@ describe('theme.css utilities', () => {
     ['nova-surface', 'surface'],
     ['nova-overlay', 'overlay'],
   ])(
-    '%s draws its fill, frost, rim and shadow from the %s material tokens',
+    '%s draws its fill, frost and rim from the %s material tokens',
     (name, token) => {
       expect(utility(name).declarations).toMatchObject({
         'background-color': `var(--nova-${token}-fill)`,
         'backdrop-filter': `var(--nova-${token}-filter)`,
         '-webkit-backdrop-filter': `var(--nova-${token}-filter)`,
         border: `1px solid var(--nova-${token}-border)`,
-        'box-shadow': `var(--nova-${token}-shadow)`,
+      });
+    },
+  );
+
+  // The lift comes from the elevation scale, under glass and solid alike, with the material's own
+  // layer (the glass top highlight) on top. A component that needs another level sets the
+  // utility's non-inherited lift property (a Dialog asks for level 3; a hovered card for level 2).
+  it.each([
+    ['nova-surface', 'surface', 1],
+    ['nova-overlay', 'overlay', 2],
+  ] as const)(
+    '%s lifts at elevation %s unless its lift property asks for another level',
+    (name, token, level) => {
+      expect(utility(name).declarations['box-shadow']).toBe(
+        `var(--nova-${token}-lift, var(--nova-elevation-${level})), var(--nova-${token}-shadow)`,
+      );
+    },
+  );
+
+  it('nova-data lifts at elevation 1 too, unless its lift property asks for another level', () => {
+    expect(utility('nova-data').declarations['box-shadow']).toBe(
+      'var(--nova-data-lift, var(--nova-elevation-1))',
+    );
+  });
+
+  // Registered as non-inherited, so a Dialog's level 3 never leaks into the cards and menus it holds.
+  it.each(['--nova-surface-lift', '--nova-overlay-lift', '--nova-data-lift'])(
+    'registers %s as a non-inherited property',
+    (name) => {
+      expect(block(`@property ${name}`).declarations).toEqual({
+        syntax: "'*'",
+        inherits: 'false',
       });
     },
   );
@@ -492,18 +523,29 @@ describe('theme.css Tailwind theme mapping', () => {
   const stock = () => block('@theme').declarations;
   const mapped = () => block('@theme inline').declarations;
 
-  // Apple-flat: no shadow scale exists, so shadow-sm and friends generate nothing, and Nova's old
-  // hue-tinted card and button shadows are gone.
+  // The stock shadow scale is gone, so shadow-sm and friends generate nothing; the only shadows are
+  // the elevation tokens.
   it('resets the stock shadow, radius and colour scales, so only Nova tokens generate utilities', () => {
     expect(stock()).toMatchObject({
       '--color-*': 'initial',
       '--radius-*': 'initial',
       '--shadow-*': 'initial',
     });
-    // No shadow scale is declared back after the reset.
     expect(
       Object.keys(stock()).filter((name) => /^--shadow-(?!\*)/.test(name)),
     ).toEqual([]);
+  });
+
+  it('maps the elevation scale, and nothing else, into shadow-elevation-* utilities', () => {
+    const shadows = Object.entries(mapped()).filter(([name]) =>
+      name.startsWith('--shadow-'),
+    );
+    expect(shadows).toEqual(
+      ['1', '2', '3', 'button'].map((level) => [
+        `--shadow-elevation-${level}`,
+        `var(--nova-elevation-${level})`,
+      ]),
+    );
   });
 
   it('maps the radius grammar sm / md / lg / xl onto the Nova tokens', () => {

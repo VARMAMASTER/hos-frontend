@@ -165,6 +165,13 @@ describe('Dialog semantics', () => {
     const scrim = layer.querySelector('[aria-hidden="true"]') as HTMLElement;
     expect(scrim.classList).toContain('motion-safe:animate-fade-in');
   });
+
+  it('lifts the panel at elevation 3, the top of the scale', () => {
+    render(<Dialog open onClose={() => undefined} title="Hi" />);
+    expect(dialog().classList).toContain(
+      '[--nova-overlay-lift:var(--nova-elevation-3)]',
+    );
+  });
 });
 
 describe('Dialog uncontrolled', () => {

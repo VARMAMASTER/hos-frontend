@@ -26,7 +26,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 type DrawnVariant = Exclude<ButtonVariant, 'secondary'>;
 
 // The pill CTA (docs/design-language/README.md): the shape carries the emphasis, so the label stays
-// at 400, and there is never a shadow or a gradient. It presses to 0.95, only when motion is welcome.
+// at 400, and there is never a gradient. The filled variants carry the subtle button elevation;
+// outline and ghost stay flat. It presses to 0.95, only when motion is welcome.
 const base = cx(
   // A true capsule opts out of the global squircle, which would flatten its ends into a rounded
   // rectangle. Every variant has a 1px border (transparent unless it is the outline's edge), so a row
@@ -46,12 +47,13 @@ const base = cx(
 // (ghost).
 const variants: Record<DrawnVariant, string> = {
   primary:
-    'border-transparent bg-primary text-on-primary hover:bg-primary-strong',
+    'border-transparent bg-primary text-on-primary hover:bg-primary-strong shadow-elevation-button',
   outline:
     'border-primary bg-surface text-primary-strong hover:bg-primary-soft',
   ghost: 'border-transparent text-primary-strong hover:bg-primary-soft',
-  danger: 'border-transparent bg-crit text-on-primary hover:bg-crit-deep',
-  ai: 'border-transparent bg-ai text-on-primary hover:bg-ai-deep',
+  danger:
+    'border-transparent bg-crit text-on-primary hover:bg-crit-deep shadow-elevation-button',
+  ai: 'border-transparent bg-ai text-on-primary hover:bg-ai-deep shadow-elevation-button',
 };
 
 const AI_SPARK = "before:content-['✦'_/_'']";

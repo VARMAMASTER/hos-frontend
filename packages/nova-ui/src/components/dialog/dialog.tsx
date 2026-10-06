@@ -188,7 +188,7 @@ function DialogLayer({
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
         className={cx(
-          'relative flex max-h-full w-full max-w-lg flex-col outline-none motion-safe:animate-dialog-in',
+          'relative flex max-h-full w-full max-w-lg flex-col outline-none motion-safe:animate-dialog-in [--nova-overlay-lift:var(--nova-elevation-3)]',
           className,
         )}
       >

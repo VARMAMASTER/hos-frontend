@@ -152,13 +152,30 @@ describe('Button', () => {
     );
 
     it.each(['primary', 'outline', 'ghost', 'danger', 'ai'] as const)(
-      'paints the %s variant with no shadow and no gradient',
+      'paints the %s variant with no gradient',
       (variant) => {
         render(<Button variant={variant}>Go</Button>);
         const { className } = screen.getByRole('button', { name: 'Go' });
-        expect(className).not.toMatch(/shadow|gradient/);
+        expect(className).not.toMatch(/gradient/);
       },
     );
+
+    // A subtle lift on the filled pills only; outline and ghost stay flat.
+    it.each([
+      ['primary', true],
+      ['danger', true],
+      ['ai', true],
+      ['outline', false],
+      ['ghost', false],
+    ] as const)('lifts the %s variant: %s', (variant, lifted) => {
+      render(<Button variant={variant}>Go</Button>);
+      const button = screen.getByRole('button', { name: 'Go' });
+      expect(button.classList.contains('shadow-elevation-button')).toBe(lifted);
+      const shadows = [...button.classList].filter((name) =>
+        /shadow/.test(name),
+      );
+      expect(shadows).toEqual(lifted ? ['shadow-elevation-button'] : []);
+    });
 
     it('presses to scale(0.95), only when the user has not asked for reduced motion', () => {
       render(<Button>Go</Button>);

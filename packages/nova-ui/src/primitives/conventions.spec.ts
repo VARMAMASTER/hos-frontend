@@ -24,6 +24,12 @@ const files = sourceFiles(componentsDir).map((path) => ({
   text: readFileSync(path, 'utf8'),
 }));
 
+// Any shadow that is not an elevation class: a stock or arbitrary shadow utility, an inset or drop
+// shadow, or a box-shadow declaration (CSS or a style object). Naming box-shadow as a property to
+// transition is fine.
+const SHADOW_OFFENCE =
+  /(?<![\w-])(?:inset-|drop-)?shadow(?:-(?!(?:elevation-(?:1|2|3|button)|none)\b)|(?=['"`\s]))|box-?shadow['"]?\s*:/i;
+
 const offenders = (pattern: RegExp) =>
   files.filter((file) => pattern.test(file.text)).map((file) => file.path);
 
@@ -82,12 +88,41 @@ describe('component conventions', () => {
     expect(offenders(/backdrop-(?:filter|blur)/)).toEqual([]);
   });
 
-  // Elevation is flat (docs/design-language/README.md): depth comes from surface change, hairlines,
-  // the glass frost and a scrim. The glass rim highlight lives in the material tokens, not here.
-  it('never casts a shadow: no shadow-* utility and no box-shadow', () => {
+  // Elevation comes only from the --nova-elevation-* tokens (through the surface utilities, or the
+  // shadow-elevation-* classes); a component never invents a shadow.
+  it('casts no shadow of its own: only shadow-elevation-1|2|3|button or shadow-none', () => {
+    // Comments are prose ("never a shadow"), so only the code is policed.
+    const code = (text: string) =>
+      text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
     expect(
-      offenders(/\b(?:inset-|drop-)?shadow-(?!none\b)|box-?shadow/i),
+      files
+        .filter((file) => SHADOW_OFFENCE.test(code(file.text)))
+        .map((file) => file.path),
     ).toEqual([]);
+  });
+
+  it('the shadow guard rejects a stock or arbitrary shadow and accepts the elevation classes', () => {
+    for (const bad of [
+      "'shadow-lg'",
+      "'hover:shadow-sm'",
+      "'shadow-[0_1px_2px_black]'",
+      "'shadow'",
+      '{ boxShadow: "0 0 4px" }',
+      "'inset-shadow-sm'",
+      "'drop-shadow-md'",
+    ]) {
+      expect(SHADOW_OFFENCE.test(bad), bad).toBe(true);
+    }
+    for (const good of [
+      "'shadow-elevation-1'",
+      "'hover:shadow-elevation-2'",
+      "'shadow-elevation-button'",
+      "'shadow-none'",
+      "'[--nova-overlay-lift:var(--nova-elevation-3)]'",
+      "'transition-[transform,box-shadow]'",
+    ]) {
+      expect(SHADOW_OFFENCE.test(good), good).toBe(false);
+    }
   });
 
   // Owner decision: no gradient on any border, edge, rim or button. Gradients live only in the

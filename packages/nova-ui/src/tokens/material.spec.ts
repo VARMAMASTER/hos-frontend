@@ -67,15 +67,16 @@ describe('material', () => {
     expect(MATERIAL_TOKENS.solid['--nova-glass']).toBe('0');
   });
 
-  // Apple-flat elevation: depth comes from surface change, hairlines, the frost and a scrim. Glass
-  // keeps its 1px top highlight, an inset rim and not a shadow; nothing casts a drop shadow.
+  // The lift is the elevation scale's, applied by the surface utilities under both materials. The
+  // material adds only its own layer: glass keeps its 1px top highlight (an inset rim, not a
+  // shadow), solid adds a transparent no-op so the utility's shadow list stays valid.
   it.each(['--nova-surface-shadow', '--nova-overlay-shadow'] as const)(
-    'casts no drop shadow through %s: glass keeps only the inset top highlight, solid has none',
+    'adds only the material layer through %s: the glass top highlight, or nothing on solid',
     (token) => {
       expect(MATERIAL_TOKENS.glass[token]).toMatch(
         /^inset 0 1px 0 0 rgb\(255 255 255 \/ 0\.\d+\)$/,
       );
-      expect(MATERIAL_TOKENS.solid[token]).toBe('none');
+      expect(MATERIAL_TOKENS.solid[token]).toBe('0 0 #0000');
     },
   );
 

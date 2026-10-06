@@ -55,11 +55,17 @@ These files are copies of the project skill `.claude/skills/apple-design-system`
   | `xl`   | 20px  | large hero surfaces                                             |
   | `pill` | full  | anything that reads as an action: buttons, filter chips, search |
 
-  Nothing in between. Corners stay continuous (Nova's global `corner-shape: squircle`, the web equivalent of `borderCurve: 'continuous'`). True circles (avatars, switch thumbs, dots) opt out with `[corner-shape:round]`.
+  Nothing in between. Corners stay continuous (Nova's global `corner-shape: squircle`, the web equivalent of `borderCurve: 'continuous'`). True circles (avatars, switch thumbs, dots) and capsules (pill buttons, chips, the switch track) opt out with `[corner-shape:round]`: the squircle would flatten a pill's ends into a rounded rectangle.
 
-## Borders and elevation (flat, Apple-style)
+## Borders and elevation
 
-- **No shadow on cards, buttons, inputs, chips, menus or dialogs.** Depth comes from surface change, 1px hairlines, the glass material's blur, and a scrim behind modals. Remove Nova's hue-tinted card and button shadows, and the glass surfaces' drop shadows. Glass keeps its frosted fill, its blur and its 1px white rim / top inset highlight; that highlight is a rim, not a shadow.
+- **A subtle, premium lift** (owner decision, 2026-10-06). Four levels, soft and low-opacity, tinted to the Nova violet shadow hue (262deg 45% 27%), never neutral black:
+  - `--nova-elevation-1`: resting cards, panels and data surfaces (`nova-surface`, `nova-data`);
+  - `--nova-elevation-2`: menus, popovers, tooltips and toasts (`nova-overlay`), and an interactive card on hover;
+  - `--nova-elevation-3`: dialogs and sheets;
+  - `--nova-elevation-button`: the filled buttons (primary, danger, ai) only. Outline and ghost buttons, inputs and chips stay flat.
+- Elevation comes only from the --nova-elevation-\* tokens; components never invent a shadow.
+- Depth also comes from surface change, 1px hairlines, the glass material's blur, and a scrim behind modals. Glass and solid both lift; glass adds its 1px white rim / top inset highlight. The accessibility fallbacks (reduced transparency, more contrast) keep the lift: it does not affect legibility.
 - Two border widths only:
   - 1px for default edges;
   - 2px `primary` only on a _selected_ card or option.
@@ -90,7 +96,7 @@ These files are copies of the project skill `.claude/skills/apple-design-system`
     - disabled: opacity 0.5;
     - `loading`: a spinner replaces the label, keeping the width, with `aria-busy`;
     - `fullWidth`.
-  - No shadow, no gradient.
+  - No gradient. The filled variants carry `--nova-elevation-button`; outline and ghost stay flat.
 - **Input:**
   - label 600 at `callout`;
   - field radius `md`, padding 16 × 12, text `body` 17, placeholder in muted ink;
@@ -98,10 +104,10 @@ These files are copies of the project skill `.claude/skills/apple-design-system`
   - helper line in `caption`; the error line in crit.
   - Edge: the 3:1 rule above. Selects follow the same spec.
 - **Card:**
-  - radius `lg`, 1px hairline, padding 20, gap 8, no shadow;
+  - radius `lg`, 1px hairline, padding 20, gap 8, elevation 1;
   - title 600 at `headline` 20, supporting copy at `callout` / `caption`;
   - optional footer row with `space-between`;
-  - interactive cards press to `scale(0.98)`; a selected card gets a 2px primary border and nothing else.
+  - interactive cards press to `scale(0.98)` and rise to elevation 2 on hover; a selected card gets a 2px primary border and nothing else.
   - On glass, the panel variant keeps its frosted fill.
 - **Chip:** pill, padding 8 × 2, `caption` 13. Two kinds:
   - Status tone chips keep the -soft / -deep pairs and a leading icon or word. They are never colour-only.
@@ -119,7 +125,7 @@ These files are copies of the project skill `.claude/skills/apple-design-system`
 ## New components from the catalog
 
 - **Toast (`Toaster` + `showToast(message, variant)`):**
-  - top-centred, radius `lg`, no shadow;
+  - top-centred, radius `lg`, elevation 2;
   - variants: `info` on near-black, `success` on primary, `error` on crit;
   - white `callout` text, auto-dismiss at 3500ms, tap to dismiss, `role="status"` / `aria-live`.
 - **OtpInput:**
@@ -128,7 +134,7 @@ These files are copies of the project skill `.claude/skills/apple-design-system`
   - the active box gets a primary edge; error gets a crit edge plus the shake animation (reduced-motion: no shake).
   - It serves login by mobile OTP.
 - **AlertDialog:**
-  - a centred confirm on Nova's Dialog: max-width 280, radius `lg`, scrim, no shadow;
+  - a centred confirm on Nova's Dialog: max-width 280, radius `lg`, scrim, elevation 3 (from Dialog);
   - title 600 at `headline`, message at `callout`;
   - a button row divided by hairlines (two side by side; one, or three or more, stacked);
   - cancel / destructive / default roles.
@@ -142,4 +148,4 @@ These files are copies of the project skill `.claude/skills/apple-design-system`
 Status is never colour-only. Text is at least 4.5:1, every brand proven. Focus rings and control edges are at least 3:1. Dense data is never translucent. Tenants cannot override status or AI. Components compose the primitives. `conventions.spec.ts` gains:
 
 - no `font-medium` (weight 500 is banned);
-- no shadow utilities on components.
+- no shadow on components other than the `shadow-elevation-*` classes and the surface utilities' elevation.
