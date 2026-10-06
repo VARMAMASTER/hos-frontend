@@ -1,4 +1,5 @@
 export * from './components/activity-feed/activity-feed';
+export * from './components/ai-action-feed/ai-action-feed';
 export * from './components/ai-badge/ai-badge';
 export * from './components/ai-button/ai-button';
 export * from './components/ai-chat-thread/ai-chat-thread';
@@ -16,9 +17,11 @@ export * from './components/ai-copilot-dock/use-copilot-shortcut';
 export * from './components/ai-draft-block/ai-draft-block';
 export * from './components/ai-panel/ai-panel';
 export * from './components/ai-progress-steps/ai-progress-steps';
+export * from './components/ai-quality-scorecard/ai-quality-scorecard';
 export * from './components/ai-source-line/ai-source-line';
 export * from './components/ai-source-line/why-trail';
 export * from './components/alert-dialog/alert-dialog';
+export * from './components/algorithm-change-gate/algorithm-change-gate';
 export * from './components/app-shell/app-shell';
 export * from './components/approval-bar/approval-bar';
 export * from './components/avatar/avatar';
@@ -53,9 +56,12 @@ export * from './components/dialog/dialog';
 export * from './components/divider/divider';
 export * from './components/empty-state/empty-state';
 export * from './components/filter-chip/filter-chip';
+export * from './components/fleet-kill-switch/fleet-kill-switch';
+export * from './components/fleet-kill-switch/reason-dialog';
 export * from './components/hero-band/hero-band';
 export * from './components/icon-tile/icon-tile';
 export * from './components/kpi-tile/kpi-tile';
+export * from './components/learned-preference-row/learned-preference-row';
 export * from './components/live-dot/live-dot';
 export * from './components/menu/menu';
 export * from './components/notification-bell/notification-bell';
@@ -82,6 +88,7 @@ export * from './components/timeline/timeline';
 export * from './components/toast/toast';
 export * from './components/tooltip/tooltip';
 export * from './components/top-bar/top-bar';
+export * from './components/worker-card/worker-card';
 export * from './components/module-switcher/module-switcher';
 export {
   ChartContainer,
