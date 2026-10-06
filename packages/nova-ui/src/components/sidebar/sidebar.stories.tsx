@@ -1,20 +1,16 @@
-import type { ReactNode } from 'react';
-import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
+import { useState, type ReactNode } from 'react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Avatar } from '../avatar/avatar';
+import { Button } from '../button/button';
 import { NavItem } from './nav-item';
+import { NavSection } from './nav-section';
 import { Sidebar } from './sidebar';
-
-const fixedWidth: Decorator = (Story) => (
-  <div className="w-62">
-    <Story />
-  </div>
-);
 
 const meta = {
   title: 'Components/Sidebar',
   component: Sidebar,
   // The sidebar is as tall as the viewport from md up, so give it the whole canvas.
   parameters: { layout: 'fullscreen' },
-  decorators: [fixedWidth],
 } satisfies Meta<typeof Sidebar>;
 
 export default meta;
@@ -63,45 +59,107 @@ const items = (
     >
       Patients
     </NavItem>
-    <NavItem
-      href="#claims"
-      icon={
-        <Icon>
-          <path d="M5.5 3h6L15 6.5V16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 .5-1z" />
-          <path d="M7.5 11h5M7.5 14h3.5" />
-        </Icon>
-      }
-    >
-      Claims
-    </NavItem>
-    <NavItem
-      href="#settings"
-      icon={
-        <Icon>
-          <path d="M4 6h8M15 6h1M4 14h1M8 14h8" />
-          <circle cx="13.5" cy="6" r="1.6" />
-          <circle cx="6.5" cy="14" r="1.6" />
-        </Icon>
-      }
-    >
-      Settings
-    </NavItem>
+    <NavSection label="Revenue">
+      <NavItem
+        href="#claims"
+        badge={12}
+        icon={
+          <Icon>
+            <path d="M5.5 3h6L15 6.5V16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 .5-1z" />
+            <path d="M7.5 11h5M7.5 14h3.5" />
+          </Icon>
+        }
+      >
+        Claims
+      </NavItem>
+      <NavItem
+        href="#settings"
+        icon={
+          <Icon>
+            <path d="M4 6h8M15 6h1M4 14h1M8 14h8" />
+            <circle cx="13.5" cy="6" r="1.6" />
+            <circle cx="6.5" cy="14" r="1.6" />
+          </Icon>
+        }
+      >
+        Settings
+      </NavItem>
+    </NavSection>
   </>
 );
 
-export const Default: Story = {
-  args: {
-    brand: <span className="text-[14px] font-semibold">Acme Hospital</span>,
-    footer: (
-      <div className="text-[13px]">
-        <p className="font-semibold">Dr. Anita Rao</p>
-        <p className="text-[color:var(--nova-chrome-ink-2)]">Cardiology</p>
-      </div>
-    ),
-    children: items,
-  },
+// The hospital block and the user footer each have a small form for the rail: the logo mark and the
+// avatar.
+const brand = (
+  <span className="flex items-center gap-2.5">
+    <span className="grid size-9 place-items-center rounded-md bg-primary font-display text-[14px] font-bold text-on-primary">
+      AH
+    </span>
+    <span className="font-display text-[16px] font-bold text-on-primary">
+      Acme Hospital
+    </span>
+  </span>
+);
+const logoMark = (
+  <span
+    role="img"
+    aria-label="Acme Hospital"
+    className="grid size-9 place-items-center rounded-md bg-primary font-display text-[14px] font-bold text-on-primary"
+  >
+    AH
+  </span>
+);
+const footer = (
+  <div className="flex items-center gap-2.5 text-[13px]">
+    <Avatar name="Anita Rao" tone="chrome" />
+    <div className="min-w-0">
+      <p className="font-semibold text-on-primary">Dr. Anita Rao</p>
+      <p className="text-[color:var(--nova-chrome-ink-2)]">Cardiology</p>
+    </div>
+  </div>
+);
+const avatar = <Avatar name="Anita Rao" tone="chrome" />;
+
+const common = {
+  brand,
+  collapsedBrand: logoMark,
+  footer,
+  collapsedFooter: avatar,
+  children: items,
 };
 
-export const NavOnly: Story = {
-  args: { children: items },
+// Expanded is the prototype's sidebar. The toggle in its header, or Ctrl/Cmd+B, collapses it.
+export const Expanded: Story = { args: common };
+
+// The icon rail: icons only, each item still named, with its label as a tooltip on hover and focus.
+export const Collapsed: Story = { args: { ...common, defaultCollapsed: true } };
+
+export const NavOnly: Story = { args: { children: items } };
+
+function ControlledDemo() {
+  const [collapsed, setCollapsed] = useState(false);
+  return (
+    <div className="flex min-h-screen items-start gap-6">
+      <Sidebar
+        {...common}
+        collapsed={collapsed}
+        onCollapsedChange={setCollapsed}
+      />
+      <div className="flex flex-col gap-3 p-6 text-[13px] text-ink">
+        <p>
+          The sidebar is <strong>{collapsed ? 'collapsed' : 'expanded'}</strong>
+          .
+        </p>
+        <Button size="sm" onClick={() => setCollapsed(!collapsed)}>
+          {collapsed ? 'Expand from outside' : 'Collapse from outside'}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// Controlled: the caller owns the state, and a button outside the sidebar drives it too.
+export const ControlledToggle: Story = {
+  args: common,
+  render: () => <ControlledDemo />,
 };

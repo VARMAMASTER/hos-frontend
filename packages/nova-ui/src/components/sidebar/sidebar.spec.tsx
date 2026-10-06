@@ -68,15 +68,27 @@ describe('Sidebar', () => {
     expect(footerWrapper.classList.contains('border-t')).toBe(true);
   });
 
-  it('renders no brand or footer wrapper when neither is given', () => {
+  it('renders no brand or footer wrapper when neither is given: only the header with the toggle, and the nav', () => {
     const { container } = render(
       <Sidebar>
         <a href="/home">Home</a>
       </Sidebar>,
     );
     const root = container.firstElementChild as HTMLElement;
-    expect(root.children).toHaveLength(1);
-    expect(root.firstElementChild?.tagName).toBe('NAV');
+    expect(root.children).toHaveLength(2);
+    expect(root.children[0]?.querySelector('button')).toBeTruthy();
+    expect(root.children[1]?.tagName).toBe('NAV');
+  });
+
+  it('stacks full width below md and takes the sidebar width token from md up', () => {
+    const { container } = render(
+      <Sidebar>
+        <a href="/home">Home</a>
+      </Sidebar>,
+    );
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.classList.contains('w-full')).toBe(true);
+    expect(root.classList.contains('md:w-[var(--nova-sidebar-w)]')).toBe(true);
   });
 
   it('stays pinned full height from md up, scrolling on its own when the nav is long', () => {
