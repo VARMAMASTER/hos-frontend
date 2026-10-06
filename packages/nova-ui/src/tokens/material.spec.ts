@@ -79,6 +79,31 @@ describe('material', () => {
     },
   );
 
+  // Glass must read as glass: visibly translucent panels over a frosted, colour-rich backdrop. Each
+  // alpha is the most transparent value the legibility proofs below still pass with (the overlay is
+  // held at 0.79 by the proof for ink-3 on an overlay anchored in the dark chrome).
+  it('keeps glass visibly translucent, as transparent as the legibility proofs allow', () => {
+    expect(GLASS.surfaceAlpha).toBeLessThanOrEqual(0.65);
+    expect(GLASS.overlayAlpha).toBeLessThanOrEqual(0.79);
+    expect(GLASS.fieldAlpha).toBeLessThanOrEqual(0.85);
+  });
+
+  it('frosts panels, overlays and fields with a strong blur and a saturation boost', () => {
+    for (const token of [
+      '--nova-surface-filter',
+      '--nova-overlay-filter',
+      '--nova-field-filter',
+    ] as const) {
+      const filter = MATERIAL_TOKENS.glass[token];
+      const blur = Number(/blur\((\d+)px\)/.exec(filter)?.[1]);
+      const saturate = Number(/saturate\((\d+)%\)/.exec(filter)?.[1]);
+      expect(blur, token).toBeGreaterThanOrEqual(20);
+      expect(blur, token).toBeLessThanOrEqual(24);
+      expect(saturate, token).toBeGreaterThanOrEqual(160);
+      expect(saturate, token).toBeLessThanOrEqual(180);
+    }
+  });
+
   it('builds the translucent fills from the same numbers the contrast gate uses', () => {
     expect(MATERIAL_TOKENS.glass['--nova-surface-fill']).toBe(
       `rgb(255 255 255 / ${GLASS.surfaceAlpha})`,

@@ -139,16 +139,16 @@
 :root,
 [data-nova-material='glass'] {
   --nova-glass: 1;
-  --nova-surface-fill: rgb(255 255 255 / 0.78);
-  --nova-surface-filter: blur(14px) saturate(140%);
+  --nova-surface-fill: rgb(255 255 255 / 0.55);
+  --nova-surface-filter: blur(24px) saturate(180%);
   --nova-surface-border: rgb(255 255 255 / 0.55);
   --nova-surface-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.7);
-  --nova-overlay-fill: rgb(255 255 255 / 0.84);
-  --nova-overlay-filter: blur(20px) saturate(160%);
+  --nova-overlay-fill: rgb(255 255 255 / 0.79);
+  --nova-overlay-filter: blur(24px) saturate(180%);
   --nova-overlay-border: rgb(255 255 255 / 0.6);
   --nova-overlay-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.65);
-  --nova-field-fill: rgb(255 255 255 / 0.88);
-  --nova-field-filter: blur(8px);
+  --nova-field-fill: rgb(255 255 255 / 0.8);
+  --nova-field-filter: blur(20px) saturate(160%);
   --nova-chrome-opacity: 0.78;
   --nova-chrome-filter: blur(18px) saturate(150%);
   --nova-hero-opacity: 0.92;
@@ -257,10 +257,10 @@
   --nova-gradient-brand: linear-gradient(120deg, var(--nova-color-primary-strong), var(--nova-color-primary));
   --nova-gradient-chrome: linear-gradient(180deg, color-mix(in srgb, color-mix(in srgb, var(--nova-color-primary-strong) 30%, #120C26) calc(var(--nova-chrome-opacity) * 100%), transparent), color-mix(in srgb, #120C26 calc(var(--nova-chrome-opacity) * 100%), transparent));
   --nova-gradient-aurora:
-    radial-gradient(680px 520px at 8% -6%, color-mix(in srgb, var(--nova-color-primary) calc(10% * var(--nova-glass)), transparent), transparent 62%),
-    radial-gradient(720px 560px at 96% 4%, color-mix(in srgb, #60A5FA calc(6% * var(--nova-glass)), transparent), transparent 60%),
-    radial-gradient(760px 620px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-strong) calc(10% * var(--nova-glass)), transparent), transparent 60%),
-    radial-gradient(620px 520px at 18% 104%, color-mix(in srgb, #22D3EE calc(6% * var(--nova-glass)), transparent), transparent 58%);
+    radial-gradient(900px 700px at 8% -6%, color-mix(in srgb, var(--nova-color-primary) calc(10% * var(--nova-glass)), transparent), transparent 72%),
+    radial-gradient(940px 740px at 96% 4%, color-mix(in srgb, #60A5FA calc(6% * var(--nova-glass)), transparent), transparent 70%),
+    radial-gradient(980px 800px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-strong) calc(10% * var(--nova-glass)), transparent), transparent 70%),
+    radial-gradient(840px 700px at 18% 104%, color-mix(in srgb, #22D3EE calc(6% * var(--nova-glass)), transparent), transparent 70%);
   --nova-gradient-edge: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-primary) 55%, transparent), rgb(34 211 238 / 0.26), transparent);
 }
 
