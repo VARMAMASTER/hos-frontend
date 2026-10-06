@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { contrastRatio, mixColours } from '../../theme/contrast';
 import { resolvePalette } from '../../theme/legibility';
+import { AI_SHEEN_PEAK } from '../../tokens/scale';
 
 const css = readFileSync(
   fileURLToPath(new URL('../../styles/theme.css', import.meta.url)),
@@ -139,6 +140,8 @@ describe('theme.css AiButton motion', () => {
     );
     expect(percent).not.toBeNull();
     const alpha = Number(percent?.[1]) / 100;
+    // The legibility proof for every brand reads this constant, so the CSS must paint exactly it.
+    expect(alpha).toBe(AI_SHEEN_PEAK);
     for (const scheme of ['light', 'dark'] as const) {
       const palette = resolvePalette(scheme);
       const lit = mixColours(

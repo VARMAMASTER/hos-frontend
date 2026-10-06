@@ -64,6 +64,11 @@ export const MOTION_EASINGS = {
   emphasized: 'cubic-bezier(0.05, 0.7, 0.1, 1)',
 } as const;
 
+// How far the AiButton's sheen band lightens the AI hover fill at its peak (theme.css paints exactly
+// this; ai-button-motion.spec.ts compares them). The legibility proof holds white label text at 4.5:1
+// on the lightened fill for every hospital's AI colour.
+export const AI_SHEEN_PEAK = 0.14;
+
 export const MOTION_DURATIONS_MS = { fast: 150, base: 200, slow: 240 } as const;
 
 export const EASE_UTILITIES = Object.keys(MOTION_EASINGS).map(
