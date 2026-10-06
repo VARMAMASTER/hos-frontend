@@ -248,6 +248,15 @@ export function Tab({
       onKeyDown={handleKeyDown}
     >
       {children}
+      {/* The active tab's underline: brand into highlight, under the label. The raised chip and
+          aria-selected carry the state; this only adds the accent. */}
+      {selected ? (
+        <span
+          aria-hidden="true"
+          data-slot="indicator"
+          className="nova-highlight-grad pointer-events-none absolute inset-x-4 bottom-1 h-0.5 rounded-full"
+        />
+      ) : null}
     </button>
   );
 }

@@ -1,8 +1,10 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { HighlightMark } from '../chip/highlight-mark';
 
-export type BannerTone = 'info' | 'good' | 'warn' | 'crit' | 'ai';
+// highlight is an announcement ("New in this release"): emphasis, never a status.
+export type BannerTone = 'info' | 'good' | 'warn' | 'crit' | 'ai' | 'highlight';
 
 export interface BannerProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'role'> {
@@ -26,6 +28,9 @@ const tones: Record<BannerTone, string> = {
   warn: 'bg-warn-soft text-warn-deep',
   crit: 'bg-crit-soft text-crit-deep',
   ai: 'bg-ai-soft text-ai-deep',
+  // The highlight wash under its deep ink, with the 1px highlight edge (positioned for its ring).
+  highlight:
+    'relative nova-highlight-wash nova-highlight-edge text-highlight-deep',
 };
 
 // Something wrong or about to go wrong interrupts a screen reader (alert); news and confirmations
@@ -36,6 +41,7 @@ const roles: Record<BannerTone, 'alert' | 'status'> = {
   info: 'status',
   good: 'status',
   ai: 'status',
+  highlight: 'status',
 };
 
 export function Banner({
@@ -94,9 +100,10 @@ export function Banner({
   );
 }
 
-// A different shape per tone (circle-i, circle-tick, triangle, octagon, the AI spark), so the tone never
-// depends on colour alone.
+// A different shape per tone (circle-i, circle-tick, triangle, octagon, the AI spark, the highlight
+// star), so the tone never depends on colour alone.
 function ToneIcon({ tone }: { tone: BannerTone }) {
+  if (tone === 'highlight') return <HighlightMark className="size-4" />;
   return (
     <svg
       viewBox="0 0 20 20"

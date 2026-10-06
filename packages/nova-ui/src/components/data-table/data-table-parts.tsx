@@ -61,18 +61,19 @@ export function MoreIcon() {
 }
 
 // The sort indicator is an arrow, and each state has its own shape: up for ascending, down for
-// descending, a faint pair of chevrons for sortable-but-idle.
+// descending, a faint pair of chevrons for sortable-but-idle. An active arrow is in the deep highlight
+// ink (4.5:1 on the header), the sorted column's marker.
 export function SortIcon({ direction }: { direction: SortDirection | null }) {
   if (direction === 'asc') {
     return (
-      <Icon data-sort="asc" className="size-3.5 shrink-0">
+      <Icon data-sort="asc" className="size-3.5 shrink-0 text-highlight-deep">
         <path d="M10 16V4M5 9l5-5 5 5" />
       </Icon>
     );
   }
   if (direction === 'desc') {
     return (
-      <Icon data-sort="desc" className="size-3.5 shrink-0">
+      <Icon data-sort="desc" className="size-3.5 shrink-0 text-highlight-deep">
         <path d="M10 4v12M5 11l5 5 5-5" />
       </Icon>
     );
@@ -101,13 +102,22 @@ export function SortButton({
       type="button"
       onClick={onClick}
       className={cx(
-        '-mx-1 inline-flex items-center gap-1.5 rounded-sm px-1 uppercase transition-colors hover:text-ink',
+        'relative -mx-1 inline-flex items-center gap-1.5 rounded-sm px-1 uppercase transition-colors hover:text-ink',
         direction ? 'text-ink' : 'text-ink-2',
         focusRing,
       )}
     >
       <span>{children}</span>
       <SortIcon direction={direction} />
+      {/* The sorted column's marker: a highlight underline. aria-sort on the th and the arrow's
+          shape carry the state. */}
+      {direction ? (
+        <span
+          aria-hidden="true"
+          data-slot="sort-marker"
+          className="nova-highlight-grad pointer-events-none absolute inset-x-1 -bottom-0.5 h-0.5 rounded-full"
+        />
+      ) : null}
     </button>
   );
 }

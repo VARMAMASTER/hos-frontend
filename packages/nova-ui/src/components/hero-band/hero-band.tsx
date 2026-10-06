@@ -12,9 +12,11 @@ export interface HeroBandProps
 }
 
 // The page-top band: the prototype's .page-head.glass-hero. White text on the violet-to-sky glass
-// (nova-hero), 20px by 24px of padding, radius xl, the title as the prototype h1 (23px semibold) and
-// the description at 13px in the hero's secondary ink, which material.spec.ts proves at 4.5:1 at the
-// gradient's light end. The actions sit at the bottom right.
+// (nova-hero), whose sky glow stop is the hospital's own highlight on the chrome (chrome-glow-2,
+// derived per brand and never lighter there than the prototype's, so the text proof holds). 20px by
+// 24px of padding, radius xl, the title as the prototype h1 (23px semibold) and the description at
+// 13px in the hero's secondary ink, which material.spec.ts proves at 4.5:1 at the gradient's light
+// end. The actions sit at the bottom right.
 export function HeroBand({
   title,
   description,
