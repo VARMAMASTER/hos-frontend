@@ -40,7 +40,7 @@ export interface MenuProps
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  // A line above the items ("Switch workspace"). It sits outside role="menu", which may only hold
+  // A line above the items ("Switch module"). It sits outside role="menu", which may only hold
   // items and groups, and describes the menu.
   header?: ReactNode;
   // The menu spans the width of the wrapper (and the wrapper is a block), as a switcher in a
@@ -71,7 +71,7 @@ function focusEntry(menu: HTMLElement | null, edge: 'first' | 'last') {
   (target ?? menu)?.focus();
 }
 
-// The WAI-ARIA menu button pattern, and the one menu implementation in Nova: WorkspaceSwitcher and
+// The WAI-ARIA menu button pattern, and the one menu implementation in Nova: ModuleSwitcher and
 // every other menu are built on it, so they share focus-on-open, the arrow keys, Home and End,
 // Enter and Space, Escape, Tab, outside presses and disabled items.
 //

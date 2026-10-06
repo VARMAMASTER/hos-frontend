@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
-import { focusRing } from '../../primitives/focus-ring';
+import { Button, type ButtonVariant } from '../button/button';
 import { Dialog } from '../dialog/dialog';
 
 // cancel backs out and changes nothing; default is the ordinary way forward; destructive removes or
@@ -43,16 +43,18 @@ function safestAction(actions: AlertAction[]): number {
   return best;
 }
 
-const roleStyles: Record<AlertActionRole, string> = {
-  cancel: 'text-primary-strong',
-  default: 'font-semibold text-primary-strong',
-  destructive: 'text-crit-deep',
+// hos-sim.js HOS.confirm: a ghost Cancel beside a primary Confirm. The prototype's ghost button (a
+// panel fill with a line border) is Nova's outline; a destructive action takes the danger button.
+const roleVariants: Record<AlertActionRole, ButtonVariant> = {
+  cancel: 'outline',
+  default: 'primary',
+  destructive: 'danger',
 };
 
-// A centred confirmation for when the user must choose (Discharge patient?). It is Nova's Dialog
-// with role="alertdialog", so it is portalled, modal, traps focus, closes on Escape and returns focus
-// to what opened it. There is no corner X: an alert is answered by one of its actions. Use a Toast
-// for a confirmation that needs no answer.
+// A confirmation for when the user must choose (Discharge patient?), after the prototype's
+// HOS.confirm. It is Nova's Dialog with role="alertdialog", so it is portalled, modal, traps focus,
+// closes on Escape and returns focus to what opened it. There is no corner X: an alert is answered by
+// one of its actions. Use a Toast for a confirmation that needs no answer.
 export function AlertDialog({
   open,
   onClose,
@@ -105,30 +107,27 @@ function AlertActions({
       data-alert-actions=""
       data-layout={layout}
       className={cx(
-        // No overflow clip: it would cut off the focus ring of the buttons inside.
-        'border-y border-border divide-border',
-        layout === 'row' ? 'flex flex-row divide-x' : 'flex flex-col divide-y',
+        // The prototype's footer: the buttons right-aligned, an 8px gap (.hos-dialog-f). No overflow
+        // clip: it would cut off the focus ring of the buttons inside.
+        'flex gap-2',
+        layout === 'row' ? 'flex-row flex-wrap justify-end' : 'flex-col',
       )}
     >
       {actions.map((action, index) => {
         const role = action.role ?? 'default';
         return (
-          <button
+          <Button
             key={`${index}-${action.label}`}
-            type="button"
             data-role={role}
+            variant={roleVariants[role]}
+            fullWidth={layout === 'stack'}
             onClick={() => {
               action.onSelect?.();
               onClose();
             }}
-            className={cx(
-              'min-h-11 flex-1 px-4 py-3 text-body transition-colors hover:bg-surface-2',
-              roleStyles[role],
-              focusRing,
-            )}
           >
             {action.label}
-          </button>
+          </Button>
         );
       })}
     </div>

@@ -69,12 +69,23 @@ describe('NotificationBell badge', () => {
     expect(screen.getByRole('button').textContent).toBe('');
   });
 
-  it('is a crit pill with the count as text, so it is not colour-only', () => {
+  // hos.css .tb-ico .tb-dot: 16px tall, crit, 9.5px bold white, a 2px ring in the chrome colour,
+  // pinned 3px past the button's top right corner.
+  it('is the prototype .tb-dot: a crit pill with the count as text, so it is not colour-only', () => {
     render(<NotificationBell count={7} />);
     const badge = screen.getByText('7');
     expect(badge.className).toContain('bg-crit');
     expect(badge.className).toContain('rounded-full');
-    expect(badge.className).not.toMatch(/shadow|font-medium/);
+    expect(badge.className).toContain('text-[9.5px]');
+    expect(badge.className).toContain('font-bold');
+    expect(badge.className).toContain('h-4');
+    expect(badge.className).toContain('min-w-4');
+    expect(badge.className).toContain('border-2');
+    // The .tb-dot ring is the chrome's own dark, not the ink colour.
+    expect(badge.className).toContain('border-chrome-ring');
+    expect(badge.className).not.toContain('border-ink');
+    expect(badge.className).toContain('-right-[3px]');
+    expect(badge.className).not.toMatch(/shadow|font-medium|text-micro/);
   });
 });
 
@@ -86,10 +97,18 @@ describe('NotificationBell behaviour', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('is at least 44px square to tap', () => {
+  // hos.css .tb-ico: a 34px square icon button with a 9px radius (--r-sm here) and a hairline edge,
+  // translucent on the chrome, and a 16px glyph.
+  it('is the prototype .tb-ico: 34px square, a hairline edge, a 16px glyph', () => {
     render(<NotificationBell count={1} />);
-    const classes = screen.getByRole('button').className;
-    expect(classes).toContain('h-11');
-    expect(classes).toContain('w-11');
+    const button = screen.getByRole('button');
+    const classes = button.className;
+    expect(classes).toContain('h-[34px]');
+    expect(classes).toContain('w-[34px]');
+    expect(classes).toContain('rounded-sm');
+    expect(classes).not.toContain('rounded-full');
+    expect(classes).toContain('border');
+    expect(classes).not.toMatch(/shadow|font-medium|h-11|w-11/);
+    expect(button.querySelector('svg')?.getAttribute('class')).toContain('h-4');
   });
 });

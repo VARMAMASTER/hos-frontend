@@ -1,6 +1,7 @@
+import { useEffect } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from '../button/button';
-import { showToast, Toaster } from './toast';
+import { clearToasts, showToast, Toaster } from './toast';
 
 const meta = {
   title: 'Components/Toast',
@@ -51,3 +52,19 @@ export const StaysUntilDismissed: Story = {
     </>
   ),
 };
+
+// All three variants at once, kept up, for looking at the stack the way the prototype stacks them.
+function Stack() {
+  useEffect(() => {
+    clearToasts();
+    showToast('Vitals saved to the chart', 'info', { duration: 0 });
+    showToast('Patient discharged', 'success', { duration: 0 });
+    showToast('Could not reach the lab system. Try again.', 'error', {
+      duration: 0,
+    });
+    return clearToasts;
+  }, []);
+  return <Toaster />;
+}
+
+export const Stacked: Story = { render: () => <Stack /> };

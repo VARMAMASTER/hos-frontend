@@ -80,19 +80,48 @@ describe('StatGauge look', () => {
     ).toBe('50%');
   });
 
-  it('has a 6px track with a primary fill, and the ramp type classes', () => {
+  // hos.css .sb-bar: a 5px track with a full radius, filled with a full-radius bar.
+  it('has the prototype 5px track (.sb-bar) with its gradient fill', () => {
     render(<StatGauge label="L" value={25} />);
-    expect(screen.getByRole('meter').className).toContain('h-1.5');
-    expect(
-      (screen.getByRole('meter').firstElementChild as HTMLElement).className,
-    ).toContain('bg-primary');
-    expect(screen.getByText('25%').className).toContain('text-headline');
-    expect(screen.getByText('L').className).toContain('text-caption');
+    const track = screen.getByRole('meter');
+    expect(track.className).toContain('h-[5px]');
+    expect(track.className).toContain('rounded-full');
+    expect(track.className).not.toContain('h-1.5');
+    const fill = track.firstElementChild as HTMLElement;
+    // The prototype's .sb-bar fill: chrome accent into the sky glow.
+    expect(fill.className).toContain('nova-bar-grad');
+    expect(fill.className).not.toContain('bg-primary');
+    expect(fill.className).toContain('rounded-full');
   });
 
-  it('uses no shadow and no weight 500', () => {
-    const { container } = render(<StatGauge label="L" value={25} />);
-    expect(container.innerHTML).not.toMatch(/shadow|font-medium/);
+  // hos.css .kpi: the label at 12px / 500 in ink-2 (.kpi-l), the figure at 26px / 700 (.kpi-v), on a
+  // --r-md card with a line border, 16px padding and --shadow-sm.
+  it('is the prototype .kpi: a 12px label, a 26px bold figure, shadow-sm on an md card', () => {
+    const { container } = render(
+      <StatGauge label="L" value={25} data-testid="g" />,
+    );
+    const label = screen.getByText('L');
+    expect(label.className).toContain('text-[12px]');
+    expect(label.className).toContain('font-medium');
+    expect(label.className).toContain('text-ink-2');
+    const figure = screen.getByText('25%');
+    expect(figure.className).toContain('text-[26px]');
+    expect(figure.className).toContain('font-bold');
+    expect(figure.className).toContain('tabular-nums');
+    const root = screen.getByTestId('g');
+    expect(root.className).toContain('rounded-md');
+    expect(root.className).toContain('shadow-sm');
+    expect(root.className).toContain('p-4');
+    expect(root.className).toContain('border-border');
+    expect(container.innerHTML).not.toMatch(
+      /text-(?:headline|caption)|shadow-elevation|rounded-lg/,
+    );
+  });
+
+  it('reads the label before the figure, like the .kpi tile', () => {
+    render(<StatGauge label="L" value={25} data-testid="g" />);
+    const text = screen.getByTestId('g').textContent;
+    expect(text?.indexOf('L')).toBeLessThan(text?.indexOf('25%') ?? -1);
   });
 
   it('merges className and passes attributes to the root', () => {

@@ -132,9 +132,11 @@ describe('theme.css utilities', () => {
   // The prototype's .card: an opaque panel, a 1px --line edge and --shadow-sm, under either material.
   it('nova-card is the prototype card, opaque under either material', () => {
     const card = utility('nova-card');
+    // The edge is a custom property, so a tinted tile (a bed's status edge) sets one variable
+    // instead of fighting the utility's border shorthand, which a Tailwind border colour loses to.
     expect(card.declarations).toMatchObject({
       'background-color': 'var(--nova-color-surface)',
-      border: '1px solid var(--nova-color-border)',
+      border: '1px solid var(--nova-card-edge, var(--nova-color-border))',
       'box-shadow': 'var(--nova-surface-lift, var(--nova-shadow-sm))',
     });
     expect(JSON.stringify(card)).not.toMatch(

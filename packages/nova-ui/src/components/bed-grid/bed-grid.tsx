@@ -33,11 +33,20 @@ export interface BedGridProps
 // blocked bed is neutral and dashed (not red) because red is kept for clinical urgency. The tint
 // replaces the data surface's white fill, and the border marks the cell's edge.
 const statusStyles: Record<BedStatus, { cell: string; word: string }> = {
-  free: { cell: 'border-good/15 bg-good-soft', word: 'text-good-deep' },
-  occupied: { cell: 'border-info/15 bg-info-soft', word: 'text-info-deep' },
-  cleaning: { cell: 'border-warn/15 bg-warn-soft', word: 'text-warn-deep' },
+  free: {
+    cell: 'bg-good-soft [--nova-card-edge:color-mix(in_srgb,var(--nova-color-good)_18%,transparent)]',
+    word: 'text-good-deep',
+  },
+  occupied: {
+    cell: 'bg-info-soft [--nova-card-edge:color-mix(in_srgb,var(--nova-color-info)_18%,transparent)]',
+    word: 'text-info-deep',
+  },
+  cleaning: {
+    cell: 'bg-warn-soft [--nova-card-edge:color-mix(in_srgb,var(--nova-color-warn)_18%,transparent)]',
+    word: 'text-warn-deep',
+  },
   blocked: {
-    cell: 'border-dashed border-border-strong bg-surface-2',
+    cell: 'border-dashed bg-surface-2 [--nova-card-edge:var(--nova-color-border-strong)]',
     word: 'text-ink-2',
   },
 };
@@ -119,7 +128,7 @@ export function BedGrid({
           radius="sm"
           data-status={bed.status}
           className={cx(
-            'border text-[11px] [--nova-surface-lift:none]',
+            'text-[11px] [--nova-surface-lift:none]',
             statusStyles[bed.status].cell,
             !onSelect && 'min-h-16 p-2',
             onSelect &&
