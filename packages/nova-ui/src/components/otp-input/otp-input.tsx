@@ -115,26 +115,35 @@ export function OtpInput({
 
   return (
     <div className={cx('flex flex-col gap-1', className)}>
-      <label htmlFor={inputId} className="text-callout font-semibold text-ink">
+      {/* label.f-label: 12px, weight 600, ink-2. */}
+      <label htmlFor={inputId} className="text-[12px] font-semibold text-ink-2">
         {label}
       </label>
       <div ref={boxesRef} className="relative w-full">
         <div aria-hidden="true" className="flex w-full gap-2">
           {Array.from({ length }, (_, index) => {
             const active = focused && !disabled && index === activeIndex;
+            const filled = index < code.length;
             return (
               <div
                 key={index}
                 data-otp-box=""
                 data-active={active ? 'true' : undefined}
                 className={cx(
-                  // Fluid: the boxes share the row and shrink to fit it (min-w-0), staying square and capped at 56px.
-                  'flex aspect-square max-w-14 min-w-0 flex-1 basis-0 items-center justify-center rounded-md border bg-surface text-title3 font-semibold text-ink',
+                  // 01-login.html .otp-box: 44 x 50, a 1.5px edge, IBM Plex Mono 600 (20px: the nearest
+                  // hos.css size to the page's 19px), the row gap is --space-3. The boxes share the row and
+                  // shrink to fit it (min-w-0), capped at the prototype's 44px; the radius is --r-sm for
+                  // the prototype's 10px. The empty edge is the control edge (3:1), not --line-strong.
+                  'flex h-[50px] max-w-11 min-w-0 flex-1 basis-0 items-center justify-center rounded-sm border-[1.5px] font-mono text-[20px] font-semibold',
                   error
                     ? 'border-crit'
-                    : active
+                    : active || filled
                       ? 'border-primary'
                       : 'border-border-control',
+                  // .otp-box.filled: the brand edge, a brand tint and brand text.
+                  filled && !error
+                    ? 'bg-primary-soft text-primary-strong'
+                    : 'bg-surface text-ink',
                   active &&
                     (error ? 'ring-2 ring-crit' : 'ring-2 ring-primary'),
                   disabled && 'opacity-50',
@@ -178,12 +187,12 @@ export function OtpInput({
         />
       </div>
       {hint ? (
-        <p id={hintId} className="text-caption text-ink-2">
+        <p id={hintId} className="text-[12px] text-ink-2">
           {hint}
         </p>
       ) : null}
       {error ? (
-        <p id={errorId} role="alert" className="text-caption text-crit-deep">
+        <p id={errorId} role="alert" className="text-[12px] text-crit-deep">
           {error}
         </p>
       ) : null}

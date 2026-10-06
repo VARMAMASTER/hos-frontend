@@ -15,9 +15,9 @@ export interface FilterChipProps
   onPressedChange?: (pressed: boolean) => void;
 }
 
-// A filter toggle (docs/design-language/README.md): a caption-size pill, parchment when off and the
-// brand primary when on, pressing to 0.96. A <button aria-pressed>, so Space and Enter toggle it with
-// no key handling here. On also shows a tick: the state never rests on colour alone.
+// A filter toggle, the prototype's .fchip (02-reception.html): a 12px / 600 pill with a line-strong
+// edge on the panel when off, and the brand fill when on. A <button aria-pressed>, so Space and Enter
+// toggle it with no key handling here. On also shows a tick: the state never rests on colour alone.
 export const FilterChip = forwardRef<HTMLButtonElement, FilterChipProps>(
   function FilterChip(
     {
@@ -50,11 +50,13 @@ export const FilterChip = forwardRef<HTMLButtonElement, FilterChipProps>(
         type="button"
         aria-pressed={isOn}
         className={cx(
-          'inline-flex min-h-8 cursor-pointer items-center gap-1 rounded-full [corner-shape:round] border px-3 py-1 text-caption font-semibold',
-          'transition-[color,background-color,border-color,transform] duration-150 ease-out motion-reduce:transition-none motion-safe:active:scale-[0.96]',
+          // .fchip: 1px edge, 12px / 600, padding 6px 10px (--space-2 --space-4), a full radius; the
+          // tick takes a 6px gap (--space-2).
+          'inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[12px] font-semibold',
+          'transition-[color,background-color,border-color] duration-150 ease-out motion-reduce:transition-none',
           isOn
-            ? 'border-primary bg-primary text-on-primary hover:border-primary-strong hover:bg-primary-strong'
-            : 'border-border bg-surface-2 text-ink hover:bg-primary-soft',
+            ? 'border-primary bg-primary text-on-primary'
+            : 'border-border-strong bg-surface text-ink-2 hover:border-primary hover:text-primary-strong',
           focusRing,
           'disabled:pointer-events-none disabled:opacity-50',
           className,

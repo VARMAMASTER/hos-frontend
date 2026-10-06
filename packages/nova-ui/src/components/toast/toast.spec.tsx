@@ -83,12 +83,13 @@ describe('Toaster live regions', () => {
 });
 
 describe('Toast elevation', () => {
-  it('lifts every toast at elevation 2, like the other overlays', () => {
+  // The prototype's .hos-toast sits at --shadow-md (sim.css), like the other raised surfaces.
+  it('lifts every toast at shadow-md, like the prototype', () => {
     render(<Toaster />);
     show('a', 'info');
     show('b', 'error');
     for (const toast of toasts()) {
-      expect(toast.classList).toContain('shadow-elevation-2');
+      expect(toast.classList).toContain('shadow-md');
     }
   });
 });
@@ -228,25 +229,50 @@ describe('Toast dismissal', () => {
 });
 
 describe('Toast styling rules', () => {
-  it('uses the callout text and the lg radius, and no shadow but elevation 2', () => {
+  // sim.css .hos-toast: 13px, --r-md, a 1px line border with a 3px coloured left edge, --shadow-md.
+  it('is the prototype toast: 13px, the md radius, a coloured left edge, and no shadow but shadow-md', () => {
     render(<Toaster />);
     show('Saved');
     const classes = (toasts()[0] as HTMLElement).className;
-    expect(classes).toContain('text-callout');
-    expect(classes).toContain('rounded-lg');
-    expect(classes.match(/\S*shadow\S*/g)).toEqual(['shadow-elevation-2']);
+    expect(classes).toContain('text-[13px]');
+    expect(classes).toContain('rounded-md');
+    expect(classes).toContain('bg-surface');
+    expect(classes).toContain('border-l-[3px]');
+    expect(classes.match(/\S*shadow\S*/g)).toEqual(['shadow-md']);
     expect(classes).not.toContain('font-medium');
+    expect(classes).not.toMatch(
+      /text-(?:callout|body|caption)|shadow-elevation/,
+    );
+  });
+
+  it('draws the message at weight 600, like the prototype <b>', () => {
+    render(<Toaster />);
+    show('Saved');
+    expect(screen.getByText('Saved').className).toContain('font-semibold');
   });
 
   it.each([
-    ['info', 'bg-ink'],
-    ['success', 'bg-primary'],
-    ['error', 'bg-crit'],
-  ] as const)('the %s variant uses %s', (variant, fill) => {
+    ['info', 'border-l-primary', 'bg-primary'],
+    ['success', 'border-l-good', 'bg-good'],
+    ['error', 'border-l-crit', 'bg-crit'],
+  ] as const)(
+    'the %s variant has a %s edge and a %s icon tile',
+    (variant, edge, tile) => {
+      render(<Toaster />);
+      show('x', variant);
+      const toast = toasts()[0] as HTMLElement;
+      expect(toast.className).toContain(edge);
+      expect(toast.querySelector('svg')?.parentElement?.className).toContain(
+        tile,
+      );
+      expect(toast.dataset['variant']).toBe(variant);
+    },
+  );
+
+  it('sits bottom right, like the prototype .hos-toasts', () => {
     render(<Toaster />);
-    show('x', variant);
-    const toast = toasts()[0] as HTMLElement;
-    expect(toast.className).toContain(fill);
-    expect(toast.dataset['variant']).toBe(variant);
+    const host = screen.getByRole('status').parentElement as HTMLElement;
+    expect(host.className).toContain('bottom-5');
+    expect(host.className).toContain('right-5');
   });
 });
