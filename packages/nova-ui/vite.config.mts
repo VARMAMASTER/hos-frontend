@@ -8,8 +8,9 @@ import * as path from 'path';
 import type { Plugin } from 'vite';
 
 // Resolved from the consumer's node_modules, never bundled: React (and its subpaths) is a peer, and
-// Recharts and react-is are ordinary dependencies the app installs once.
-const EXTERNAL = /^(?:react|react-dom|recharts|react-is)(?:\/|$)/;
+// Recharts, react-is and Tiptap are ordinary dependencies the app installs once.
+const EXTERNAL =
+  /^(?:react|react-dom|recharts|react-is|@tiptap\/[^/]+)(?:\/|$)/;
 
 // theme.css is the package's other half: the tokens, the material utilities and the Tailwind
 // @theme mapping every component's classes rely on. It ships as dist/theme.css (exported as
