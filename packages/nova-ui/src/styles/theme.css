@@ -23,12 +23,6 @@
      animations under motion-safe, so prefers-reduced-motion leaves a plain dot. */
   --nova-pulse-slow: 1400ms;
   --nova-pulse-fast: 900ms;
-  --animate-heartbeat: nova-heartbeat
-    var(--nova-pulse-duration, var(--nova-pulse-slow)) var(--nova-ease-standard)
-    infinite;
-  --animate-pulse-ring: nova-pulse-ring
-    var(--nova-pulse-duration, var(--nova-pulse-slow)) var(--nova-ease-standard)
-    infinite;
 }
 
 /* A dialog scales in from 0.94 with a fade. */
@@ -76,6 +70,19 @@
     transform: scale(2.8);
     opacity: 0;
   }
+}
+
+/* The animations are utilities rather than --animate-* theme variables: a theme variable is
+   resolved once on :root, where --nova-pulse-duration is unset, but a utility takes the value of the
+   element it sits on, so pulse-slow and pulse-fast can pick the cadence per dot. */
+@utility animate-heartbeat {
+  animation: nova-heartbeat var(--nova-pulse-duration, var(--nova-pulse-slow))
+    var(--nova-ease-standard) infinite;
+}
+
+@utility animate-pulse-ring {
+  animation: nova-pulse-ring var(--nova-pulse-duration, var(--nova-pulse-slow))
+    var(--nova-ease-standard) infinite;
 }
 
 /* The heartbeat's cadence: --nova-pulse-duration feeds animate-heartbeat and animate-pulse-ring. */

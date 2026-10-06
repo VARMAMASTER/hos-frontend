@@ -60,7 +60,7 @@ const pulses = [
 
 function PulseGrid() {
   return (
-    <div className="grid grid-cols-[auto_repeat(4,max-content)] items-center gap-x-8 gap-y-3">
+    <div className="grid w-fit grid-cols-[auto_repeat(4,max-content)] items-center gap-x-8 gap-y-3">
       <span />
       {pulses.map(({ name }) => (
         <span key={name} className="text-[12px] font-semibold text-ink-2">
