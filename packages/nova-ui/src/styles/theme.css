@@ -6,6 +6,24 @@
   --color-*: initial;
   --radius-*: initial;
   --shadow-*: initial;
+  /* Motion is quiet and quick: entrances 150-240ms ease-out. Components apply these under
+     motion-safe, so prefers-reduced-motion turns them off. */
+  --animate-dialog-in: nova-dialog-in 180ms ease-out;
+  --animate-fade-in: nova-fade-in 180ms ease-out;
+}
+
+/* A dialog scales in from 0.94 with a fade. */
+@keyframes nova-dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
+
+@keyframes nova-fade-in {
+  from {
+    opacity: 0;
+  }
 }
 
 @theme inline {
@@ -298,6 +316,12 @@
   backdrop-filter: var(--nova-surface-filter);
   border: 1px solid var(--nova-surface-border);
   box-shadow: var(--nova-surface-shadow);
+
+  /* A selected card or option: the edge upgrades to 2px primary, the only place 2px appears, and
+     nothing else changes (no glow, no shadow). */
+  &[data-selected='true'] {
+    border: 2px solid var(--nova-color-primary);
+  }
 }
 
 /* Floating layers: menus, dialogs, tooltips, popovers. */
@@ -323,6 +347,11 @@
 
   &:hover:where(:not(:disabled)) {
     --nova-field-edge: var(--nova-color-ink-2);
+  }
+
+  /* Focused: the 1px edge turns primary; the focus ring draws outside it. */
+  &:focus {
+    --nova-field-edge: var(--nova-color-primary);
   }
 
   &:checked,
@@ -409,6 +438,12 @@
     mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     mask-composite: exclude;
     pointer-events: none;
+  }
+
+  /* Selected: the rim becomes a 2px primary edge, as on a selected panel. */
+  &[data-selected='true']::before {
+    padding: 2px;
+    background: var(--nova-color-primary);
   }
 }
 

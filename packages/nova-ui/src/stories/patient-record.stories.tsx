@@ -192,7 +192,7 @@ function PatientRecord() {
       <HeroBand
         title="Asha Rao"
         description="58 years · Female · UHID HOS-004217 · Ward 4B, bed 12"
-        actions={<Button variant="secondary">Print summary</Button>}
+        actions={<Button variant="outline">Print summary</Button>}
       />
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -299,7 +299,7 @@ function PatientRecord() {
               title="No imaging this admission"
               description="Studies appear here once radiology has reported them."
               action={
-                <Button variant="secondary" size="sm">
+                <Button variant="outline" size="sm">
                   Request imaging
                 </Button>
               }

@@ -51,7 +51,7 @@ export function Pagination({
       <ol className="flex flex-wrap items-center gap-1">
         <li>
           <Button
-            variant="secondary"
+            variant="outline"
             size="sm"
             disabled={current <= 1}
             onClick={() => goTo(current - 1)}
@@ -84,7 +84,7 @@ export function Pagination({
         )}
         <li>
           <Button
-            variant="secondary"
+            variant="outline"
             size="sm"
             disabled={current >= count}
             onClick={() => goTo(current + 1)}

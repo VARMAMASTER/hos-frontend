@@ -86,4 +86,50 @@ describe('Avatar', () => {
     rerender(<Avatar name="Asha Rao" size="sm" />);
     expect(root.dataset['size']).toBe('sm');
   });
+
+  it.each([
+    ['xs', 'size-5'],
+    ['sm', 'size-8'],
+    ['md', 'size-10'],
+    ['lg', 'size-12'],
+  ] as const)('draws the %s size as %s (20 / 32 / 40 / 48px)', (size, box) => {
+    const { container } = render(<Avatar name="Asha Rao" size={size} />);
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.dataset['size']).toBe(size);
+    expect(root.classList.contains(box)).toBe(true);
+  });
+
+  it('fills with the soft surface and sets the initials at 600 in muted ink', () => {
+    const { container } = render(<Avatar name="Asha Rao" />);
+    const root = container.firstElementChild as HTMLElement;
+    expect([...root.classList]).toEqual(
+      expect.arrayContaining(['bg-surface-2', 'text-ink-2', 'font-semibold']),
+    );
+    expect(root.className).not.toMatch(/font-medium/);
+  });
+
+  it('marks a verified person with a primary glyph and says so in words', () => {
+    const { container, rerender } = render(<Avatar name="Asha Rao" />);
+    expect(container.querySelector('[data-verified]')).toBeNull();
+    expect(screen.queryByText('Verified')).toBeNull();
+    rerender(<Avatar name="Asha Rao" verified />);
+    const glyph = container.querySelector('[data-verified]');
+    expect(glyph?.getAttribute('aria-hidden')).toBe('true');
+    expect(glyph?.classList.contains('text-primary')).toBe(true);
+    expect(screen.getByText('Verified').classList.contains('sr-only')).toBe(
+      true,
+    );
+    // The name is still announced once, by itself.
+    expect(screen.getByRole('img', { name: 'Asha Rao' })).toBeTruthy();
+  });
+
+  it('keeps the photo a true circle when the frame no longer clips it', () => {
+    const { container } = render(
+      <Avatar name="Asha Rao" src="/photos/asha.png" verified />,
+    );
+    const image = container.querySelector('img') as HTMLImageElement;
+    expect([...image.classList]).toEqual(
+      expect.arrayContaining(['rounded-full', '[corner-shape:round]']),
+    );
+  });
 });

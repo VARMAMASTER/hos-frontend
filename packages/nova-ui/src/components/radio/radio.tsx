@@ -29,12 +29,12 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   return (
     <div
       className={cx(
-        'inline-flex items-start gap-3',
+        'inline-flex min-h-11 items-start gap-3',
         disabled && 'opacity-50',
         className,
       )}
     >
-      <span className="relative flex h-5 w-5 shrink-0">
+      <span className="relative mt-3 flex h-5 w-5 shrink-0">
         <input
           ref={ref}
           type="radio"
@@ -45,7 +45,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
           onChange={disabled ? undefined : onChange}
           // nova-field draws the 3:1 edge and turns it primary when checked; checked fills too.
           className={cx(
-            'nova-field peer h-5 w-5 appearance-none rounded-full',
+            'nova-field peer h-5 w-5 appearance-none rounded-full [corner-shape:round]',
             'checked:bg-primary',
             focusRing,
             'disabled:cursor-not-allowed',
@@ -66,7 +66,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
       <label
         htmlFor={id}
         className={cx(
-          'text-sm text-ink',
+          'py-2.5 text-body text-ink',
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
         )}
       >

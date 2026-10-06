@@ -16,7 +16,7 @@ export interface TextFieldProps
 }
 
 const base = cx(
-  'nova-field peer block h-10 w-full rounded-md text-sm text-ink placeholder:text-ink-3 transition-colors',
+  'nova-field peer block w-full rounded-md py-3 text-body text-ink placeholder:text-ink-3 transition-colors',
   focusRing,
   'disabled:cursor-not-allowed disabled:opacity-50',
 );
@@ -24,7 +24,7 @@ const base = cx(
 // The edge (3:1 at rest, ink-2 on hover, crit when aria-invalid) is nova-field's own: see theme.css.
 
 const iconSlot =
-  'pointer-events-none absolute flex text-ink-3 peer-disabled:opacity-50';
+  'pointer-events-none absolute flex text-ink-3 peer-disabled:opacity-50 [&_svg]:size-4.5';
 
 // `className` styles the wrapper (the field as a block in a layout); everything else goes to the <input>.
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -63,19 +63,19 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
               data-invalid={field['aria-invalid'] ? 'true' : undefined}
               className={cx(
                 base,
-                leadingIcon ? 'pl-10' : 'pl-3',
-                trailingIcon ? 'pr-10' : 'pr-3',
+                leadingIcon ? 'pl-10.5' : 'pl-4',
+                trailingIcon ? 'pr-10.5' : 'pr-4',
               )}
               {...rest}
               {...field}
             />
             {leadingIcon ? (
-              <span aria-hidden="true" className={`${iconSlot} left-3`}>
+              <span aria-hidden="true" className={`${iconSlot} left-4`}>
                 {leadingIcon}
               </span>
             ) : null}
             {trailingIcon ? (
-              <span aria-hidden="true" className={`${iconSlot} right-3`}>
+              <span aria-hidden="true" className={`${iconSlot} right-4`}>
                 {trailingIcon}
               </span>
             ) : null}

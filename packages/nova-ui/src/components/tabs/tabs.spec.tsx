@@ -512,3 +512,20 @@ describe('Tabs', () => {
     });
   });
 });
+
+describe('Tabs, Apple-refined', () => {
+  it('sets every tab label at 600 on the callout step, with a quick ease-out transition', () => {
+    render(<Harness />);
+    for (const name of ['Overview', 'Claims', 'Notes']) {
+      expect([...tab(name).classList]).toEqual(
+        expect.arrayContaining([
+          'text-callout',
+          'font-semibold',
+          'duration-150',
+          'ease-out',
+        ]),
+      );
+      expect(tab(name).className).not.toMatch(/text-sm|font-medium/);
+    }
+  });
+});

@@ -261,6 +261,8 @@ describe('the keyboard focus ring on light surfaces holds 3:1 for every hospital
       darkestChrome,
     ],
     ['an opaque data surface', 1, darkestCanvas],
+    // The outline button's 1px primary border is its only boundary, and it may sit on the page.
+    ['the bare canvas (also the outline button edge)', 0, darkestCanvas],
   ])('on %s', (_, alpha, backdrop) => {
     expect(
       contrastRatio(lightestPrimary, mixColours(white, alpha, backdrop)),

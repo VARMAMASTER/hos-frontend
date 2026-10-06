@@ -27,12 +27,14 @@ const tones: Record<ChipTone, string> = {
   ai: 'bg-ai-soft text-ai-deep',
 };
 
+// A status or label chip: a caption-size pill, padded 8 x 2, its label at 600. A toned chip keeps
+// the accessible -soft / -deep pair and always carries a word (or an icon), never colour alone.
 export function Chip({ tone = 'neutral', className, ...rest }: ChipProps) {
   return (
     <span
       data-tone={tone}
       className={cx(
-        'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold',
+        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-caption font-semibold',
         tones[tone],
         className,
       )}

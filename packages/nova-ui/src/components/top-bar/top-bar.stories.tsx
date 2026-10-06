@@ -27,7 +27,7 @@ export const Default: Story = {
     actions: (
       <>
         <Chip tone="ai">3 AI drafts</Chip>
-        <Button variant="secondary" size="sm">
+        <Button variant="outline" size="sm">
           New admission
         </Button>
       </>
@@ -44,7 +44,7 @@ export const WithMiddleContent: Story = {
     search,
     children: <p className="text-sm font-semibold">Ward 4B</p>,
     actions: (
-      <Button variant="secondary" size="sm">
+      <Button variant="outline" size="sm">
         Handover
       </Button>
     ),

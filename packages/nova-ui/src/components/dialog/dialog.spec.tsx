@@ -155,6 +155,16 @@ describe('Dialog semantics', () => {
     const scrim = layer.querySelector('[aria-hidden="true"]') as HTMLElement;
     expect(scrim.className).toContain('bg-ink/40');
   });
+
+  // Quiet motion: the panel scales in from 0.94 with a fade and the scrim fades, only when motion
+  // is welcome.
+  it('scales the panel in from 0.94 and fades the scrim, both off under reduced motion', () => {
+    render(<Dialog open onClose={() => undefined} title="Hi" />);
+    expect(dialog().classList).toContain('motion-safe:animate-dialog-in');
+    const layer = dialog().parentElement as HTMLElement;
+    const scrim = layer.querySelector('[aria-hidden="true"]') as HTMLElement;
+    expect(scrim.classList).toContain('motion-safe:animate-fade-in');
+  });
 });
 
 describe('Dialog uncontrolled', () => {

@@ -13,7 +13,7 @@ function MenuDemo() {
   return (
     <div className="flex min-h-56 items-start gap-4">
       <Menu
-        trigger={<Button variant="secondary">Actions</Button>}
+        trigger={<Button variant="outline">Actions</Button>}
         open={open}
         onOpenChange={setOpen}
       >

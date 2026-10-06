@@ -82,3 +82,14 @@ describe('Textarea', () => {
     expect(field.closest('.max-w-md')).not.toBeNull();
   });
 });
+
+describe('Textarea, Apple-refined', () => {
+  it('follows the input spec: body 17, padded 16 x 12, radius md', () => {
+    render(<Textarea label="Notes" />);
+    const field = screen.getByLabelText('Notes');
+    expect([...field.classList]).toEqual(
+      expect.arrayContaining(['text-body', 'px-4', 'py-3', 'rounded-md']),
+    );
+    expect(field.className).not.toMatch(/text-sm/);
+  });
+});

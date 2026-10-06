@@ -23,6 +23,7 @@ export * from './components/chip/tone-label';
 export * from './components/dialog/dialog';
 export * from './components/divider/divider';
 export * from './components/empty-state/empty-state';
+export * from './components/filter-chip/filter-chip';
 export * from './components/hero-band/hero-band';
 export * from './components/icon-tile/icon-tile';
 export * from './components/kpi-tile/kpi-tile';

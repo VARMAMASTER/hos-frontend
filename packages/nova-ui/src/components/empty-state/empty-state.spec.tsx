@@ -71,3 +71,29 @@ describe('EmptyState', () => {
     expect(screen.getByRole('status')).toBeTruthy();
   });
 });
+
+describe('EmptyState, Apple-refined', () => {
+  it('centres a 44px icon, a 600 title3 heading and a body-size line capped at 320px, padded 64', () => {
+    render(
+      <EmptyState
+        title="No beds free"
+        description="Ramesh is first on the waitlist."
+        icon={<svg data-testid="icon" />}
+      />,
+    );
+    const heading = screen.getByRole('heading', { name: 'No beds free' });
+    expect([...heading.classList]).toEqual(
+      expect.arrayContaining(['text-title3', 'font-semibold']),
+    );
+    const body = screen.getByText('Ramesh is first on the waitlist.');
+    expect([...body.classList]).toEqual(
+      expect.arrayContaining(['text-body', 'max-w-80']),
+    );
+    const root = heading.parentElement as HTMLElement;
+    expect([...root.classList]).toEqual(
+      expect.arrayContaining(['py-16', 'items-center', 'text-center']),
+    );
+    const icon = screen.getByTestId('icon').parentElement as HTMLElement;
+    expect(icon.classList).toContain('[&_svg]:size-11');
+  });
+});

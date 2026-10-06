@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
-import { Card, CardBody, CardHeader } from './card';
+import { Card, CardBody, CardFooter, CardHeader } from './card';
 
 afterEach(() => cleanup());
 
@@ -77,6 +77,72 @@ describe('Card variant', () => {
       expect(card.classList.contains('rounded-lg')).toBe(true);
       expect(card.classList.contains('max-w-xl')).toBe(true);
       expect(card.id).toBe('claims');
+    },
+  );
+});
+
+describe('Card, Apple-refined', () => {
+  it('sets the title at 600 on the headline step and the supporting copy on callout', () => {
+    render(<CardHeader title="Ward 4B" description="12 of 18 beds" />);
+    const title = screen.getByRole('heading', { name: 'Ward 4B' });
+    expect([...title.classList]).toEqual(
+      expect.arrayContaining(['text-headline', 'font-semibold']),
+    );
+    expect(screen.getByText('12 of 18 beds').classList).toContain(
+      'text-callout',
+    );
+  });
+
+  it('pads the header, body and footer by 20 and lays the footer out space-between', () => {
+    render(
+      <Card>
+        <CardHeader title="Claims" />
+        <CardBody>body</CardBody>
+        <CardFooter>
+          <span>3 open</span>
+          <button type="button">View</button>
+        </CardFooter>
+      </Card>,
+    );
+    const header = screen
+      .getByRole('heading', { name: 'Claims' })
+      .closest('.p-5');
+    expect(header).not.toBeNull();
+    expect(screen.getByText('body').classList).toContain('p-5');
+    const footer = screen.getByText('3 open').parentElement as HTMLElement;
+    expect([...footer.classList]).toEqual(
+      expect.arrayContaining(['flex', 'justify-between', 'p-5', 'border-t']),
+    );
+  });
+
+  it('presses an interactive card to scale(0.98), only when motion is welcome', () => {
+    render(
+      <>
+        <Card interactive>pressable</Card>
+        <Card>still</Card>
+      </>,
+    );
+    const pressable = screen.getByText('pressable');
+    expect(pressable.classList).toContain('motion-safe:active:scale-[0.98]');
+    expect(pressable.dataset['interactive']).toBe('true');
+    expect(screen.getByText('still').className).not.toMatch(/scale/);
+  });
+
+  it.each(['panel', 'data'] as const)(
+    'marks a selected %s card for the 2px primary border theme.css draws, and nothing else',
+    (variant) => {
+      render(
+        <>
+          <Card variant={variant} selected>
+            chosen
+          </Card>
+          <Card variant={variant}>other</Card>
+        </>,
+      );
+      const chosen = screen.getByText('chosen');
+      expect(chosen.dataset['selected']).toBe('true');
+      expect(chosen.className).not.toMatch(/shadow|ring-|border-2/);
+      expect(screen.getByText('other').dataset['selected']).toBeUndefined();
     },
   );
 });

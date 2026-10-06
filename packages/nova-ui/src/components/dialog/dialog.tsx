@@ -176,7 +176,7 @@ function DialogLayer({
       <div
         aria-hidden="true"
         onMouseDown={(event) => event.preventDefault()}
-        className="absolute inset-0 bg-ink/40"
+        className="absolute inset-0 bg-ink/40 motion-safe:animate-fade-in"
       />
       <Surface
         ref={panelRef}
@@ -188,7 +188,7 @@ function DialogLayer({
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
         className={cx(
-          'relative flex max-h-full w-full max-w-lg flex-col outline-none',
+          'relative flex max-h-full w-full max-w-lg flex-col outline-none motion-safe:animate-dialog-in',
           className,
         )}
       >

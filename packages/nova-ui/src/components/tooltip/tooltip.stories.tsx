@@ -13,7 +13,7 @@ const meta = {
   component: Tooltip,
   args: {
     content: 'Needs a second clinician to sign off',
-    children: <Button variant="secondary">Discharge</Button>,
+    children: <Button variant="outline">Discharge</Button>,
   },
   // Room for the tooltip on either side of the trigger.
   decorators: [roomAround],

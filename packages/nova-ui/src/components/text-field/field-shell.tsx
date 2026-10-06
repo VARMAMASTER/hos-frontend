@@ -56,19 +56,19 @@ export function FieldShell({
       {/* The asterisk sits beside the <label>, not inside it, so the accessible name stays the
           label text; the control's own `required` attribute is what assistive tech announces. */}
       <div className="flex items-baseline gap-1">
-        <label htmlFor={id} className="text-sm font-semibold text-ink">
+        <label htmlFor={id} className="text-callout font-semibold text-ink">
           {label}
         </label>
         {required ? (
           <span
             aria-hidden="true"
-            className="text-sm font-semibold text-crit-deep"
+            className="text-callout font-semibold text-crit-deep"
           >
             *
           </span>
         ) : null}
       </div>
-      <div className="mt-1.5">
+      <div className="mt-1">
         {children({
           id,
           'aria-invalid': hasError ? true : undefined,
@@ -76,7 +76,7 @@ export function FieldShell({
         })}
       </div>
       {hasHint ? (
-        <p id={hintId} className="mt-1.5 text-xs text-ink-3">
+        <p id={hintId} className="mt-1 text-caption text-ink-3">
           {hint}
         </p>
       ) : null}
@@ -86,7 +86,7 @@ export function FieldShell({
         {hasError ? (
           <p
             id={errorId}
-            className="mt-1.5 flex items-start gap-1.5 text-xs font-semibold text-crit-deep"
+            className="mt-1 flex items-start gap-1.5 text-caption font-semibold text-crit-deep"
           >
             <ErrorIcon />
             {error}
@@ -109,7 +109,7 @@ function ErrorIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
-      className="mt-px h-4 w-4 shrink-0"
+      className="mt-px size-4 shrink-0"
     >
       <circle cx="10" cy="10" r="7.25" />
       <path d="M10 6v4.5M10 13.5h.01" />

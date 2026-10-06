@@ -73,7 +73,7 @@ export function ApprovalBar({
           </Button>
           {onEdit ? (
             <Button
-              variant="secondary"
+              variant="outline"
               aria-disabled={busy || undefined}
               onClick={() => onEdit()}
             >

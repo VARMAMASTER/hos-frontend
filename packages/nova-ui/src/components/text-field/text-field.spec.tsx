@@ -261,14 +261,50 @@ describe('TextField icons', () => {
   it('makes room for each icon only when it is present', () => {
     const { rerender } = render(<TextField label="Search" />);
     const plain = screen.getByLabelText('Search').classList;
-    expect([...plain]).toEqual(expect.arrayContaining(['pl-3', 'pr-3']));
-    expect(plain).not.toContain('pl-10');
+    expect([...plain]).toEqual(expect.arrayContaining(['pl-4', 'pr-4']));
+    expect(plain).not.toContain('pl-10.5');
     rerender(
       <TextField label="Search" leadingIcon={<svg />} trailingIcon={<svg />} />,
     );
     const withIcons = screen.getByLabelText('Search').classList;
-    expect([...withIcons]).toEqual(expect.arrayContaining(['pl-10', 'pr-10']));
-    expect(withIcons).not.toContain('pl-3');
-    expect(withIcons).not.toContain('pr-3');
+    expect([...withIcons]).toEqual(
+      expect.arrayContaining(['pl-10.5', 'pr-10.5']),
+    );
+    expect(withIcons).not.toContain('pl-4');
+    expect(withIcons).not.toContain('pr-4');
+  });
+});
+
+describe('TextField, Apple-refined', () => {
+  it('sets the label at 600 callout, the field at body 17 padded 16 x 12 on radius md, and the hint at caption', () => {
+    render(<TextField label="Patient" hint="As on the ID card" />);
+    const label = screen.getByText('Patient');
+    expect([...label.classList]).toEqual(
+      expect.arrayContaining(['text-callout', 'font-semibold']),
+    );
+    const input = screen.getByLabelText('Patient');
+    expect([...input.classList]).toEqual(
+      expect.arrayContaining(['text-body', 'py-3', 'rounded-md']),
+    );
+    expect(input.className).not.toMatch(/\bh-10\b|text-sm/);
+    expect(screen.getByText('As on the ID card').classList).toContain(
+      'text-caption',
+    );
+  });
+
+  it('draws the error line at caption in crit', () => {
+    render(<TextField label="Patient" error="Enter the full name of Ramesh" />);
+    const error = screen.getByText('Enter the full name of Ramesh');
+    expect([...error.classList]).toEqual(
+      expect.arrayContaining(['text-caption', 'text-crit-deep']),
+    );
+  });
+
+  it('sizes the decorative icons at 18px', () => {
+    render(
+      <TextField label="Search" leadingIcon={<svg data-testid="lead" />} />,
+    );
+    const slot = screen.getByTestId('lead').parentElement as HTMLElement;
+    expect(slot.classList).toContain('[&_svg]:size-4.5');
   });
 });

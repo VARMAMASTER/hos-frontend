@@ -124,6 +124,20 @@ describe('theme.css utilities', () => {
     },
   );
 
+  // A selected card or option upgrades its edge to 2px primary, the only place 2px appears.
+  it('nova-surface upgrades a selected panel to a 2px primary border', () => {
+    expect(
+      utility('nova-surface').nested["&[data-selected='true']"]?.declarations,
+    ).toEqual({ border: '2px solid var(--nova-color-primary)' });
+  });
+
+  it('nova-data turns a selected container rim into a 2px primary edge', () => {
+    expect(
+      utility('nova-data').nested["&[data-selected='true']::before"]
+        ?.declarations,
+    ).toEqual({ padding: '2px', background: 'var(--nova-color-primary)' });
+  });
+
   // The edge is a custom property, so a control states hover, invalid or checked by setting one
   // variable instead of fighting the utility's border with an important modifier. Unset, it is
   // border-control, which material.spec.ts proves at 3:1 against the fill and the backdrop.
@@ -137,15 +151,20 @@ describe('theme.css utilities', () => {
     });
   });
 
-  it('nova-field sets its own edge for hover, checked and invalid, with invalid winning as the last rule', () => {
+  it('nova-field sets its own edge for hover, focus, checked and invalid, with invalid winning as the last rule', () => {
     const { nested } = utility('nova-field');
     expect(Object.keys(nested)).toEqual([
       '&:hover:where(:not(:disabled))',
+      '&:focus',
       "&:checked, &[aria-checked='true']",
       "&[aria-invalid='true']",
     ]);
     expect(nested['&:hover:where(:not(:disabled))']?.declarations).toEqual({
       '--nova-field-edge': 'var(--nova-color-ink-2)',
+    });
+    // Focused: the 1px edge turns primary (the focus ring draws outside it).
+    expect(nested['&:focus']?.declarations).toEqual({
+      '--nova-field-edge': 'var(--nova-color-primary)',
     });
     expect(nested["&:checked, &[aria-checked='true']"]?.declarations).toEqual({
       '--nova-field-edge': 'var(--nova-color-primary)',
@@ -488,11 +507,15 @@ describe('theme.css Tailwind theme mapping', () => {
   // Apple-flat: no shadow scale exists, so shadow-sm and friends generate nothing, and Nova's old
   // hue-tinted card and button shadows are gone.
   it('resets the stock shadow, radius and colour scales, so only Nova tokens generate utilities', () => {
-    expect(stock()).toEqual({
+    expect(stock()).toMatchObject({
       '--color-*': 'initial',
       '--radius-*': 'initial',
       '--shadow-*': 'initial',
     });
+    // No shadow scale is declared back after the reset.
+    expect(
+      Object.keys(stock()).filter((name) => /^--shadow-(?!\*)/.test(name)),
+    ).toEqual([]);
   });
 
   it('maps the radius grammar sm / md / lg / xl onto the Nova tokens', () => {
@@ -544,5 +567,20 @@ describe('theme.css base rules', () => {
     expect(block('@layer base').nested['*, ::before, ::after']).toMatchObject({
       declarations: { 'corner-shape': 'squircle' },
     });
+  });
+});
+
+describe('theme.css motion', () => {
+  it('defines the dialog entrance (scale from 0.94 with a fade) and the scrim fade, quick and ease-out', () => {
+    expect(block('@theme').declarations).toMatchObject({
+      '--animate-dialog-in': 'nova-dialog-in 180ms ease-out',
+      '--animate-fade-in': 'nova-fade-in 180ms ease-out',
+    });
+    expect(
+      block('@keyframes nova-dialog-in').nested['from']?.declarations,
+    ).toEqual({ opacity: '0', transform: 'scale(0.94)' });
+    expect(
+      block('@keyframes nova-fade-in').nested['from']?.declarations,
+    ).toEqual({ opacity: '0' });
   });
 });

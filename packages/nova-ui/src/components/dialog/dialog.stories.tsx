@@ -20,7 +20,7 @@ function ConfirmDemo() {
         description="This closes the current episode and notifies the family."
         footer={
           <>
-            <Button variant="secondary" onClick={() => setOpen(false)}>
+            <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
             <Button onClick={() => setOpen(false)}>Discharge</Button>
@@ -42,7 +42,7 @@ function FormDemo() {
         title="Progress note"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setOpen(false)}>
+            <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
             <Button onClick={() => setOpen(false)}>Save note</Button>

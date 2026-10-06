@@ -11,7 +11,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = { args: { variant: 'primary' } };
-export const Secondary: Story = { args: { variant: 'secondary' } };
+export const Outline: Story = { args: { variant: 'outline' } };
 export const Ghost: Story = { args: { variant: 'ghost' } };
 export const Ai: Story = { args: { variant: 'ai', children: 'Draft with AI' } };
 export const Small: Story = { args: { size: 'sm' } };

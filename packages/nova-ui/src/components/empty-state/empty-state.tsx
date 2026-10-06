@@ -27,21 +27,21 @@ export function EmptyState({
   return (
     <Card
       className={cx(
-        'flex flex-col items-center gap-3 px-6 py-10 text-center',
+        'flex flex-col items-center gap-4 px-6 py-16 text-center',
         className,
       )}
       {...rest}
     >
       {icon ? (
-        <div aria-hidden="true" className="text-ink-3">
+        <div aria-hidden="true" className="text-ink-3 [&_svg]:size-11">
           {icon}
         </div>
       ) : null}
-      <Heading className="text-base font-semibold text-ink">{title}</Heading>
+      <Heading className="text-title3 font-semibold text-ink">{title}</Heading>
       {description ? (
-        <p className="max-w-prose text-sm text-ink-3">{description}</p>
+        <p className="max-w-80 text-body text-ink-3">{description}</p>
       ) : null}
-      {action ? <div className="mt-1">{action}</div> : null}
+      {action ? <div className="mt-2">{action}</div> : null}
     </Card>
   );
 }

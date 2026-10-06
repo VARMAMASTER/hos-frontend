@@ -16,7 +16,7 @@ export interface TextareaProps
 // Same contract and the same label / hint / error markup as TextField (through FieldShell); only
 // the element and its sizing differ.
 const base = cx(
-  'nova-field block min-h-20 w-full resize-y rounded-md px-3 py-2 text-sm text-ink placeholder:text-ink-3 transition-colors',
+  'nova-field block min-h-24 w-full resize-y rounded-md px-4 py-3 text-body text-ink placeholder:text-ink-3 transition-colors',
   focusRing,
   'disabled:cursor-not-allowed disabled:opacity-50',
 );

@@ -107,7 +107,7 @@ export function AdmissionForm() {
             </Tooltip>
             <Menu
               trigger={
-                <Button size="sm" variant="secondary">
+                <Button size="sm" variant="outline">
                   More
                 </Button>
               }
@@ -145,7 +145,7 @@ export function AdmissionForm() {
               tone="warn"
               title="Penicillin allergy on file"
               action={
-                <Button size="sm" variant="secondary">
+                <Button size="sm" variant="outline">
                   Review
                 </Button>
               }
@@ -257,7 +257,7 @@ export function AdmissionForm() {
         }.`}
         footer={
           <>
-            <Button variant="secondary" onClick={() => setConfirmOpen(false)}>
+            <Button variant="outline" onClick={() => setConfirmOpen(false)}>
               Go back
             </Button>
             <Button

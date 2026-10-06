@@ -17,7 +17,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const WithAction: Story = {
-  args: { action: <Button variant="secondary">Order a test</Button> },
+  args: { action: <Button variant="outline">Order a test</Button> },
 };
 
 export const WithIcon: Story = {

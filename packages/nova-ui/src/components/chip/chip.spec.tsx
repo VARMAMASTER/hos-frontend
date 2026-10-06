@@ -17,4 +17,19 @@ describe('Chip', () => {
       expect(screen.getByText(tone).dataset['tone']).toBe(tone);
     },
   );
+
+  it('is a caption-size pill with the 8 x 2 padding and a 600 label', () => {
+    render(<Chip tone="warn">Warning</Chip>);
+    const chip = screen.getByText('Warning');
+    expect([...chip.classList]).toEqual(
+      expect.arrayContaining([
+        'rounded-full',
+        'px-2',
+        'py-0.5',
+        'text-caption',
+        'font-semibold',
+      ]),
+    );
+    expect(chip.className).not.toMatch(/text-xs|shadow/);
+  });
 });

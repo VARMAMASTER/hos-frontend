@@ -198,3 +198,14 @@ describe('Select element', () => {
     expect(select.closest('.max-w-xs')).not.toBeNull();
   });
 });
+
+describe('Select, Apple-refined', () => {
+  it('follows the input spec: body 17, padded 16 x 12, radius md', () => {
+    render(<Select label="Ward" options={[{ value: 'a', label: 'A' }]} />);
+    const select = screen.getByLabelText('Ward');
+    expect([...select.classList]).toEqual(
+      expect.arrayContaining(['text-body', 'pl-4', 'py-3', 'rounded-md']),
+    );
+    expect(select.className).not.toMatch(/\bh-10\b|text-sm/);
+  });
+});

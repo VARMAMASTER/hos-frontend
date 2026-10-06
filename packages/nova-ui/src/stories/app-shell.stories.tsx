@@ -210,7 +210,7 @@ function ShellPage() {
         actions={
           <>
             <Chip tone="ai">3 AI drafts</Chip>
-            <Button variant="secondary" size="sm">
+            <Button variant="outline" size="sm">
               New admission
             </Button>
           </>

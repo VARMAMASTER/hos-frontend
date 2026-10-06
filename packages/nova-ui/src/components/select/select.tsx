@@ -27,7 +27,7 @@ export interface SelectProps
 }
 
 const base = cx(
-  'nova-field peer block h-10 w-full appearance-none rounded-md pl-3 pr-10 text-sm text-ink transition-colors',
+  'nova-field peer block w-full appearance-none rounded-md py-3 pl-4 pr-11 text-body text-ink transition-colors',
   focusRing,
   'disabled:cursor-not-allowed disabled:opacity-50',
 );
@@ -102,7 +102,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               strokeLinejoin="round"
               aria-hidden="true"
               focusable="false"
-              className="pointer-events-none absolute right-3 h-4 w-4 text-ink-3 peer-disabled:opacity-50"
+              className="pointer-events-none absolute right-4 size-4.5 text-ink-3 peer-disabled:opacity-50"
             >
               <path d="M5 8l5 5 5-5" />
             </svg>

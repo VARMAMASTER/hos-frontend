@@ -74,7 +74,7 @@ function DismissibleBanner() {
       From Monday, visiting is 5 pm to 7 pm.
     </Banner>
   ) : (
-    <Button variant="secondary" onClick={() => setShown(true)}>
+    <Button variant="outline" onClick={() => setShown(true)}>
       Show the notice again
     </Button>
   );

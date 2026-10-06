@@ -185,3 +185,41 @@ describe('Switch element', () => {
     expect(toggle.closest('.mt-4')).not.toBeNull();
   });
 });
+
+describe('Switch, iOS-style', () => {
+  it('is a pill track with a white circular thumb in both states', () => {
+    render(<Switch label="Ramesh SMS" />);
+    const track = screen.getByRole('switch');
+    expect([...track.classList]).toEqual(
+      expect.arrayContaining(['rounded-full', 'h-7', 'w-12']),
+    );
+    const thumb = track.querySelector('span') as HTMLElement;
+    expect([...thumb.classList]).toEqual(
+      expect.arrayContaining([
+        'bg-on-primary',
+        'rounded-full',
+        '[corner-shape:round]',
+        'size-6',
+      ]),
+    );
+    expect(thumb.className).not.toMatch(/bg-ink-3/);
+  });
+
+  // The off track is filled with the 3:1 control ink, so the track is its own boundary and the white
+  // thumb reads on it (4.8:1); on fills with the primary.
+  it('fills the off track with the control ink and the on track with the primary', () => {
+    render(<Switch label="Ramesh SMS" />);
+    const track = screen.getByRole('switch');
+    expect(track.classList).toContain(
+      '[--nova-field-fill:var(--nova-color-border-control)]',
+    );
+    expect(track.classList).toContain('aria-checked:bg-primary');
+  });
+
+  it('gives the row a 44px minimum touch target and body-size label text', () => {
+    render(<Switch label="Ramesh SMS" />);
+    const row = screen.getByRole('switch').parentElement as HTMLElement;
+    expect(row.classList).toContain('min-h-11');
+    expect(screen.getByText('Ramesh SMS').classList).toContain('text-body');
+  });
+});
