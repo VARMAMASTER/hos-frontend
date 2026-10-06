@@ -9,7 +9,8 @@ import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 import { Avatar } from '../avatar/avatar';
-import type { ChipTone } from '../chip/chip';
+import { Chip, type ChipTone } from '../chip/chip';
+import { HighlightMark } from '../chip/highlight-mark';
 import { ToneLabel } from '../chip/tone-label';
 import { EmptyState } from '../empty-state/empty-state';
 import {
@@ -50,6 +51,10 @@ export interface TimelineItem {
   // "i", a dot, or the AI spark). An svg, sized to the node.
   icon?: ReactNode;
   actor?: TimelineActor;
+  // A milestone (admitted, operated, discharged): its node is drawn in the highlight with the star,
+  // and the word "Milestone" stands beside the title, so it is never told by colour alone. Its tone,
+  // if any, still shows as its word.
+  milestone?: boolean;
   // What opens under the event on a "Details" disclosure button.
   details?: ReactNode;
   defaultExpanded?: boolean;
@@ -256,6 +261,7 @@ function Event({
   grouped: boolean;
 }) {
   const tone = item.tone ?? 'neutral';
+  const milestone = item.milestone === true;
   const compact = density === 'compact';
   const titleId = useId();
   const buttonId = useId();
@@ -282,19 +288,29 @@ function Event({
         <span
           data-marker=""
           data-tone={tone}
+          data-milestone={milestone ? 'true' : undefined}
           className={cx(
             'flex shrink-0 items-center justify-center rounded-full',
             nodeSizes[density],
-            tone === 'ai'
-              ? cx(
-                  // AI is never marked by colour alone: its node carries the spark.
-                  'nova-ai-grad leading-none text-on-primary',
-                  compact ? 'text-[10px]' : 'text-[12px]',
-                )
-              : nodeTones[tone],
+            milestone
+              ? 'border border-highlight bg-highlight-soft text-highlight-deep'
+              : tone === 'ai'
+                ? cx(
+                    // AI is never marked by colour alone: its node carries the spark.
+                    'nova-ai-grad leading-none text-on-primary',
+                    compact ? 'text-[10px]' : 'text-[12px]',
+                  )
+                : nodeTones[tone],
           )}
         >
-          {item.icon ?? (tone === 'ai' ? '✦' : <Glyph name={glyphs[tone]} />)}
+          {item.icon ??
+            (milestone ? (
+              <HighlightMark />
+            ) : tone === 'ai' ? (
+              '✦'
+            ) : (
+              <Glyph name={glyphs[tone]} />
+            ))}
         </span>
       </div>
       <div className={cx('min-w-0 flex-1', compact ? 'pt-0' : 'pt-0.5')}>
@@ -308,6 +324,7 @@ function Event({
           )}
         >
           <ToneLabel tone={tone} />
+          {milestone ? <Chip tone="highlight">Milestone</Chip> : null}
           <span id={titleId}>{item.title}</span>
         </div>
         {item.description ? (

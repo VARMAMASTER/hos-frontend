@@ -54,8 +54,8 @@ export function StatGauge({
       <p className="mt-0.5 text-[26px] font-bold tabular-nums slashed-zero text-ink">
         {text}
       </p>
-      {/* .sb-bar: a 5px track, a full radius, an 8px gap above. The fill is the brand colour: the
-          prototype's violet-to-blue bar gradient has no Nova utility yet. */}
+      {/* .sb-bar: a 5px track, a full radius, an 8px gap above. The fill extends the prototype's
+          .sb-bar gradient to a panel: the brand into the highlight (nova-highlight-grad). */}
       <div
         role="meter"
         aria-labelledby={labelId}
@@ -66,7 +66,7 @@ export function StatGauge({
         className="mt-2 h-[5px] w-full overflow-hidden rounded-full bg-border"
       >
         <div
-          className="h-full rounded-full nova-bar-grad motion-safe:transition-[width] motion-safe:duration-200"
+          className="h-full rounded-full nova-highlight-grad motion-safe:transition-[width] motion-safe:duration-200"
           style={{ width: `${percent}%` }}
         />
       </div>

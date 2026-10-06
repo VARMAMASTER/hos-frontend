@@ -87,7 +87,9 @@ describe('createNovaTheme', () => {
     ).toThrow(/all three/);
   });
 
-  it('never lets a theme recolour status or AI tokens, even straight from a database row', () => {
+  // AI follows the brand now (ai.spec.ts), but only as the engine derives it: a row's own AI colour
+  // is ignored like its own status colour.
+  it('never lets a theme recolour status tokens, or set an AI colour of its own, even straight from a database row', () => {
     const row = JSON.parse(
       JSON.stringify({
         name: 'Sneaky',
@@ -100,9 +102,15 @@ describe('createNovaTheme', () => {
       ...Object.keys(theme.cssVariables),
       ...Object.keys(theme.darkVariables ?? {}),
     ]) {
-      expect(name).not.toMatch(/-(good|warn|crit|info|ai)(-|$)|chart/);
+      expect(name).not.toMatch(/-(good|warn|crit|info)(-|$)|chart/);
       expect(NOVA_THEME_VARIABLES).toContain(name);
     }
+    expect(theme.cssVariables['--nova-color-ai']).not.toBe('#FF00FF');
+    expect(theme.cssVariables['--nova-color-ai']).toBe(
+      createNovaTheme({ name: 'Teal', brand: tealCare }).cssVariables[
+        '--nova-color-ai'
+      ],
+    );
   });
 
   describe('material (glass, frost or solid)', () => {

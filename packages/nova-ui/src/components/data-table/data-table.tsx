@@ -627,6 +627,9 @@ export function DataTable<Row>({
                           className={cx(
                             SELECT_COLUMN,
                             stickyFirstColumn && 'left-0',
+                            // A selected row's accent: the highlight rail down its first cell,
+                            // beside the checked box and aria-selected, which say the same.
+                            selectedSet.has(id) && 'nova-highlight-rail',
                           )}
                         >
                           <SelectBox

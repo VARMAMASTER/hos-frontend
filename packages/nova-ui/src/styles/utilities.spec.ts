@@ -498,6 +498,87 @@ describe('theme.css utilities', () => {
     });
   });
 
+  // The highlight, as utilities over the scoped gradient tokens: no component writes a gradient.
+  describe('the highlight utilities', () => {
+    const clip =
+      '@supports (-webkit-background-clip: text) or (background-clip: text)';
+
+    it('nova-highlight-grad fills with brand into highlight (a gauge, an underline, a marker)', () => {
+      expect(utility('nova-highlight-grad').declarations).toEqual({
+        'background-image': 'var(--nova-gradient-highlight)',
+      });
+    });
+
+    it('nova-highlight-rail paints a 3px brand-to-highlight rail down the left edge (a selected row)', () => {
+      expect(utility('nova-highlight-rail').declarations).toEqual({
+        'background-image': 'var(--nova-gradient-highlight-rail)',
+        'background-repeat': 'no-repeat',
+        'background-origin': 'border-box',
+        'background-position': 'left top',
+        'background-size': '3px 100%',
+      });
+    });
+
+    it("nova-highlight-wash lays the brand's tint into the highlight's under highlight text", () => {
+      expect(utility('nova-highlight-wash').declarations).toEqual({
+        'background-color': 'var(--nova-color-highlight-soft)',
+        'background-image': 'var(--nova-gradient-highlight-wash)',
+      });
+    });
+
+    // Gradient text for large display figures only: a solid deep ink first (4.5:1 wherever the clip
+    // is unsupported), the clip only inside a support query.
+    it('nova-highlight-text sets the solid deep ink first and clips the gradient only where supported', () => {
+      const text = utility('nova-highlight-text');
+      expect(Object.keys(text.declarations)[0]).toBe('color');
+      expect(text.declarations['color']).toBe(
+        'var(--nova-color-highlight-deep)',
+      );
+      expect(text.declarations).not.toHaveProperty('background-image');
+      expect(text.nested[clip]?.declarations).toEqual({
+        'background-image': 'var(--nova-gradient-highlight)',
+        '-webkit-background-clip': 'text',
+        'background-clip': 'text',
+        color: 'transparent',
+      });
+    });
+
+    // The 1px gradient hairline of an emphasised card, drawn as the data edge is: a masked ring on
+    // a pseudo-element of a positioned host.
+    it('nova-highlight-edge draws a masked 1px brand-to-highlight ring inside a positioned host', () => {
+      expect(
+        utility('nova-highlight-edge').nested['&::before']?.declarations,
+      ).toEqual({
+        content: "''",
+        position: 'absolute',
+        inset: '0',
+        padding: '1px',
+        'border-radius': 'inherit',
+        background: 'var(--nova-gradient-highlight-edge)',
+        '-webkit-mask':
+          'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+        '-webkit-mask-composite': 'xor',
+        mask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+        'mask-composite': 'exclude',
+        'pointer-events': 'none',
+      });
+    });
+
+    it('nova-highlight-ring draws a 2px ring a hair outside a positioned host (an avatar)', () => {
+      expect(
+        utility('nova-highlight-ring').nested['&::before']?.declarations,
+      ).toMatchObject({
+        content: "''",
+        position: 'absolute',
+        inset: '-3px',
+        padding: '2px',
+        'border-radius': 'inherit',
+        background: 'var(--nova-gradient-highlight-edge)',
+        'pointer-events': 'none',
+      });
+    });
+  });
+
   it('nova-ai-rail paints the 3px AI gradient rail down the left edge, flush with the border', () => {
     expect(utility('nova-ai-rail').declarations).toEqual({
       'background-image': 'var(--nova-gradient-ai-rail)',
@@ -525,6 +606,13 @@ describe('theme.css named gradients', () => {
     '--nova-gradient-edge',
     '--nova-gradient-edge-kpi',
     '--nova-gradient-bar',
+    '--nova-gradient-highlight',
+    '--nova-gradient-highlight-rail',
+    '--nova-gradient-highlight-edge',
+    '--nova-gradient-highlight-wash',
+    '--nova-gradient-ai',
+    '--nova-gradient-ai-rail',
+    '--nova-ai-mark',
     '--nova-tabbar-tint',
     ...Object.keys(MATERIAL_FILLS),
   ])(
@@ -535,11 +623,15 @@ describe('theme.css named gradients', () => {
     },
   );
 
-  it.each(['--nova-gradient-ai', '--nova-gradient-ai-rail'])(
-    'declares %s on :root alone, so no theme or material scope can re-resolve it',
+  // The AI gradient and mark are on the plain :root too (NOVA_DEFAULTS, compared with hos.css), with
+  // the same value, so the page with no theme is the prototype byte for byte.
+  it.each(['--nova-gradient-ai', '--nova-ai-mark'])(
+    'keeps %s on :root as NOVA_DEFAULTS declares it, the same value the scopes re-resolve',
     (name) => {
-      expect(fixed().filter((d) => name in d)).toHaveLength(1);
-      expect(scoped()).not.toHaveProperty(name);
+      expect(fixedValue(name)).toBe(
+        NOVA_DEFAULTS[name as keyof typeof NOVA_DEFAULTS],
+      );
+      expect(scoped()[name]).toBe(fixedValue(name));
     },
   );
 
@@ -585,24 +677,41 @@ describe('theme.css named gradients', () => {
     );
   });
 
+  // Every highlight gradient is built from the brand and highlight tokens and nothing else, so it
+  // follows the nearest theme and, through light-dark(), the scheme.
+  it('builds the highlight gradients from the brand and highlight tokens alone', () => {
+    expect(scoped()).toMatchObject({
+      '--nova-gradient-highlight':
+        'linear-gradient(90deg, var(--nova-color-primary), var(--nova-color-highlight))',
+      '--nova-gradient-highlight-rail':
+        'linear-gradient(180deg, var(--nova-color-primary), var(--nova-color-highlight))',
+      '--nova-gradient-highlight-edge':
+        'linear-gradient(135deg, var(--nova-color-primary), var(--nova-color-highlight))',
+      '--nova-gradient-highlight-wash':
+        'linear-gradient(90deg, var(--nova-color-primary-soft), var(--nova-color-highlight-soft))',
+    });
+  });
+
+  // The AI follows the hospital theme (owner decision 2026-10-07): the prototype's own --ai-grad and
+  // rail end in var(--teal), the brand, and the AI colours themselves are brand-derived (ai.spec.ts).
   describe('the AI gradients', () => {
-    it('--nova-gradient-ai runs 135deg from the bright cyan through the AI cyan into the pinned violet', () => {
-      expect(fixedValue('--nova-gradient-ai')).toBe(
-        `linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, ${primitives.violet[600]} 105%)`,
+    it('--nova-gradient-ai is the prototype --ai-grad: the bright stop through the AI colour into the brand', () => {
+      expect(scoped()['--nova-gradient-ai']).toBe(
+        'linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, var(--nova-color-primary) 105%)',
       );
     });
 
-    it('--nova-gradient-ai-rail runs down from the pinned violet through the AI cyan to the bright stop', () => {
-      expect(fixedValue('--nova-gradient-ai-rail')).toBe(
-        `linear-gradient(180deg, ${primitives.violet[600]} 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%)`,
+    it('--nova-gradient-ai-rail is the prototype .ai-block rail: down from the brand through the AI colour to the bright stop', () => {
+      expect(scoped()['--nova-gradient-ai-rail']).toBe(
+        'linear-gradient(180deg, var(--nova-color-primary) 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%)',
       );
     });
 
-    it('never reference the brand, so no hospital can recolour the mark that says a machine wrote this', () => {
-      for (const name of ['--nova-gradient-ai', '--nova-gradient-ai-rail']) {
-        expect(fixedValue(name), name).not.toBe('');
-        expect(fixedValue(name), name).not.toMatch(/--nova-color-primary/);
-      }
+    it('--nova-ai-mark is the prototype conic mark, its four tints as tokens', () => {
+      expect(scoped()['--nova-ai-mark']).toBe(
+        'conic-gradient(from 0deg at 50% 50%, var(--nova-color-ai-mark-1) 0deg, var(--nova-color-ai-mark-2) 92deg, var(--nova-color-ai-mark-3) 184deg, var(--nova-color-ai-mark-4) 272deg, var(--nova-color-ai-mark-1) 360deg)',
+      );
+      expect(primitives.violet[600]).toBe('#6D4FE0');
     });
   });
 
@@ -648,13 +757,22 @@ describe('theme.css named gradients', () => {
       },
     });
 
-    it('a wildly different brand leaves the AI gradients exactly as they were', () => {
+    it('the AI gradients and mark follow the brand: its own stop, and its own AI colours when the cyan sits too close', () => {
       for (const name of ['--nova-gradient-ai', '--nova-gradient-ai-rail']) {
         const original = resolve(name);
         expect(original).toContain('#22D3EE');
-        expect(resolve(name, rose)).toBe(original);
-        expect(resolve(name, teal)).toBe(original);
+        expect(original).toContain('#6D4FE0');
+        // Rose keeps the cyan (far from its hue), and the gradient ends in rose.
+        expect(resolve(name, rose)).toContain('#22D3EE');
+        expect(resolve(name, rose)).toContain('#9D174D');
+        // Teal is too close to the cyan: its AI moves away, gradient and all.
+        expect(resolve(name, teal)).not.toContain('#22D3EE');
+        expect(resolve(name, teal)).toContain(
+          teal.cssVariables['--nova-color-ai'] ?? '',
+        );
       }
+      expect(resolve('--nova-ai-mark')).toContain('#EA4335');
+      expect(resolve('--nova-ai-mark', teal)).not.toContain('#EA4335');
     });
 
     it('while --nova-gradient-brand follows the brand', () => {
@@ -672,15 +790,26 @@ describe('theme.css named gradients', () => {
     // The owner's report: a preset "looked as if it did nothing", because only the primary family
     // followed the brand. Everything built from a brand-derived colour must now leave HOS violet.
     it('and so do the aurora, the sidebar, the top bar, the hero, the edges and the panels, with none of the default violet left in them', () => {
+      // The aurora's two accent blobs are fixed hues the canvas proof is built on (GLASS.canvasAccents),
+      // never a brand colour, even though the sky one is also the prototype's highlight.
+      const fixedHues = GLASS.canvasAccents.map((hue) => hue.toUpperCase());
       const violet = Object.keys(rose.cssVariables)
         .map((token) => NOVA_DEFAULTS[token as keyof typeof NOVA_DEFAULTS])
-        .filter((value) => /^#/.test(value) && value !== '#FFFFFF');
+        .filter(
+          (value) =>
+            /^#/.test(value) &&
+            value !== '#FFFFFF' &&
+            !fixedHues.includes(value.toUpperCase()),
+        );
       expect(violet).toContain('#170F30');
       for (const name of [
         '--nova-gradient-aurora',
         '--nova-gradient-sidebar',
         '--nova-gradient-edge',
         '--nova-gradient-bar',
+        '--nova-gradient-highlight',
+        '--nova-gradient-highlight-edge',
+        '--nova-gradient-highlight-wash',
         '--nova-tabbar-tint',
         '--nova-chrome-fill',
         '--nova-hero-fill',
@@ -699,6 +828,18 @@ describe('theme.css named gradients', () => {
       );
       expect(resolve('--nova-gradient-sidebar', rose)).toContain(
         rose.cssVariables['--nova-color-sidebar-lift'],
+      );
+      // The hero's glow stop and the .sb-bar fill end in the brand's own highlight glow.
+      const glow = rose.cssVariables['--nova-color-chrome-glow-2'] ?? '';
+      expect(glow).not.toBe('#60A5FA');
+      for (const name of ['--nova-hero-fill', '--nova-gradient-bar']) {
+        expect(resolve(name, rose), name).toContain(glow);
+        expect(resolve(name, rose).toUpperCase(), name).not.toContain(
+          '#60A5FA',
+        );
+      }
+      expect(resolve('--nova-gradient-highlight', rose)).toBe(
+        `linear-gradient(90deg, #9D174D, ${rose.cssVariables['--nova-color-highlight']})`,
       );
     });
   });
@@ -750,6 +891,15 @@ describe('theme.css Tailwind theme mapping', () => {
       'var(--nova-color-chrome-ring)',
     );
     expect(NOVA_DEFAULTS['--nova-color-chrome-ring']).toBe('#221448');
+  });
+
+  it('maps the highlight family, so a component writes bg-highlight-soft or text-highlight-deep', () => {
+    expect(mapped()).toMatchObject({
+      '--color-highlight': 'var(--nova-color-highlight)',
+      '--color-highlight-soft': 'var(--nova-color-highlight-soft)',
+      '--color-highlight-deep': 'var(--nova-color-highlight-deep)',
+      '--color-highlight-hover': 'var(--nova-color-highlight-hover)',
+    });
   });
 
   it('maps no named text sizes', () => {

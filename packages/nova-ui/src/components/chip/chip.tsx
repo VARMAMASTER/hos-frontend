@@ -8,6 +8,7 @@ import {
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
+import { HighlightMark } from './highlight-mark';
 
 export type ChipTone = 'neutral' | 'good' | 'warn' | 'crit' | 'info' | 'ai';
 
@@ -22,8 +23,12 @@ export const TONE_WORDS: Readonly<Record<ChipTone, string | null>> = {
   ai: 'AI',
 };
 
+// A chip's look: a status tone, or the highlight, which is emphasis ("New", "Featured") and not a
+// status, so it has no tone word and is not a ChipTone the timeline or the feed can carry.
+export type ChipStyleTone = ChipTone | 'highlight';
+
 export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
-  tone?: ChipTone;
+  tone?: ChipStyleTone;
   // A leading glyph, hidden from assistive technology: the chip's text carries the meaning.
   icon?: ReactNode;
   // A leading avatar or photo. It is not hidden, so a named image is still announced.
@@ -38,13 +43,16 @@ export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
   removeLabel?: string;
 }
 
-const tones: Record<ChipTone, string> = {
+const tones: Record<ChipStyleTone, string> = {
   neutral: 'border border-border bg-surface-2 text-ink-2',
   good: 'bg-good-soft text-good-deep',
   warn: 'bg-warn-soft text-warn-deep',
   crit: 'bg-crit-soft text-crit-deep',
   info: 'bg-info-soft text-info-deep',
   ai: 'border border-ai-line bg-ai-soft text-ai-deep',
+  // The highlight wash (the brand's tint into the highlight's) under the deep highlight ink, with
+  // the star marker unless the chip brings its own icon.
+  highlight: 'nova-highlight-wash text-highlight-deep',
 };
 
 // The text of a chip's content, for naming its remove button and its group.
@@ -92,6 +100,8 @@ export function Chip({
 }: ChipProps) {
   const removable = onRemove !== undefined;
   const name = textOf(children);
+  const leading =
+    icon ?? (tone === 'highlight' ? <HighlightMark /> : undefined);
 
   function handleKeyDown(event: KeyboardEvent<HTMLSpanElement>) {
     onKeyDown?.(event);
@@ -137,13 +147,13 @@ export function Chip({
         <svg {...glyph} className="size-3 shrink-0">
           <path d="M4.5 10.5l3.5 3.5 7.5-8" />
         </svg>
-      ) : icon ? (
+      ) : leading ? (
         <span
           aria-hidden="true"
           data-slot="icon"
           className="inline-flex shrink-0 items-center [&_svg]:size-3"
         >
-          {icon}
+          {leading}
         </span>
       ) : null}
       {children}

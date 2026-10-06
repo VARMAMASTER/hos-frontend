@@ -8,6 +8,8 @@ import { isHexColour } from './contrast';
 import {
   BRAND_CHROME_TOKENS,
   BRAND_SCHEME_TOKENS,
+  aiSeparationFailures,
+  chooseAiHue,
   deriveNovaPalette,
   suggestNovaBrand,
   type NovaPalette,
@@ -54,11 +56,12 @@ const BRAND_COLOURS = {
 
 const FONT_BODY = '--nova-font-body';
 
-// The only variables a hospital theme writes: its brand-derived palette (theme/derive.ts) and the
-// body font. Status, AI and chart tokens are never tenant-overridable. applyNovaTheme and
-// NovaThemeProvider write nothing else, and they rebuild the palette from the brand colours alone, so
-// a theme that skipped createNovaTheme (a database row cast to NovaTheme) can neither recolour
-// critical or AI nor set an ink, a canvas or a chrome colour of its own.
+// The only variables a hospital theme writes: its brand-derived palette (theme/derive.ts), which
+// includes the AI family (owner decision, 2026-10-07), and the body font. Status and chart tokens are
+// never tenant-overridable. applyNovaTheme and NovaThemeProvider write nothing else, and they rebuild
+// the palette from the brand colours alone, so a theme that skipped createNovaTheme (a database row
+// cast to NovaTheme) can neither recolour critical nor set an ink, a canvas, a chrome or an AI colour
+// of its own.
 export const NOVA_THEME_VARIABLES: readonly NovaVariable[] = Object.freeze([
   ...BRAND_SCHEME_TOKENS,
   ...BRAND_CHROME_TOKENS,
@@ -211,6 +214,22 @@ export function createNovaTheme(input: NovaThemeInput): NovaTheme {
         if (failure !== undefined) {
           throw rejection(name, failure, scheme, each, primary);
         }
+      }
+    }
+    // The AI must stay recognisable: clear of the brand and of every status by the documented
+    // distance (AI_SEPARATION), in both schemes. A brand no AI hue can serve is rejected, like a brand
+    // that fails a contrast gate.
+    const ai = chooseAiHue(primary);
+    for (const scheme of ['light', 'dark'] as const) {
+      const [failure] = aiSeparationFailures(
+        resolvePalette(scheme, palette),
+        scheme,
+      );
+      if (failure !== undefined || !ai.feasible) {
+        const where = scheme === 'light' ? '' : ` (${scheme} scheme)`;
+        throw new NovaThemeError(
+          `Theme "${name}": no AI colour keeps clear of this brand and the status colours${where}: ${failure?.reason ?? 'every hue is too close'}. Choose a brand colour of another hue.`,
+        );
       }
     }
     for (const token of [...BRAND_SCHEME_TOKENS, ...BRAND_CHROME_TOKENS]) {
