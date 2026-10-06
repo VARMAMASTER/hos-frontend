@@ -5,6 +5,7 @@ import { Tag } from './tag';
 afterEach(() => cleanup());
 
 describe('Tag', () => {
+  // The prototype's .tag-offline: the darkest chrome with light ink, IBM Plex Mono at 10.5px.
   it('is a solid, neutral label by default', () => {
     render(<Tag>Offline</Tag>);
     const tag = screen.getByText('Offline');
@@ -12,12 +13,20 @@ describe('Tag', () => {
       'solid',
       'neutral',
     ]);
-    expect(tag.classList.contains('bg-ink-2')).toBe(true);
-    expect(tag.classList.contains('text-surface')).toBe(true);
+    for (const name of [
+      'bg-chrome-1',
+      'text-chrome-ink',
+      'font-mono',
+      'text-[10.5px]',
+      'px-2',
+      'py-0.5',
+    ]) {
+      expect(tag.classList.contains(name), name).toBe(true);
+    }
   });
 
   it.each([
-    ['solid', 'neutral', ['bg-ink-2', 'text-surface']],
+    ['solid', 'neutral', ['bg-chrome-1', 'text-chrome-ink']],
     ['solid', 'primary', ['bg-primary', 'text-on-primary']],
     ['solid', 'ai', ['bg-ai', 'text-on-primary']],
     ['outline', 'neutral', ['border-border-strong', 'text-ink-2']],

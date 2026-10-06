@@ -37,12 +37,15 @@ function initialsOf(name: string): string {
   return letters.join('').toUpperCase();
 }
 
-const row = 'flex min-w-0 items-center gap-3';
+// The prototype's .brand: a 36px mark (its 11px radius is off the --r-* scale, so md), 10px to the
+// name in the display face at 16px bold, and the 11px sub line on a 1.3 line in the chrome's
+// secondary ink.
+const row = 'flex min-w-0 items-center gap-2.5';
 const markBox = 'grid size-9 shrink-0 place-items-center rounded-md';
 const nameClass =
-  'block truncate text-body font-bold leading-tight text-on-primary';
+  'block truncate font-display text-[16px] font-bold text-on-primary';
 const subClass =
-  'block truncate text-caption leading-snug text-(color:--nova-chrome-ink-2)';
+  'block truncate text-[11px] leading-[1.3] text-(color:--nova-chrome-ink-2)';
 
 export function BrandMark({
   name,
@@ -60,7 +63,7 @@ export function BrandMark({
     logo === undefined ? (
       <span
         aria-hidden="true"
-        className={`${markBox} bg-primary text-callout font-bold tracking-tight text-on-primary`}
+        className={`${markBox} bg-primary font-display text-[14px] font-bold text-on-primary`}
       >
         {initialsOf(name)}
       </span>

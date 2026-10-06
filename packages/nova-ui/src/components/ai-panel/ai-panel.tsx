@@ -1,5 +1,4 @@
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
-import { cx } from '../../primitives/cx';
 import { Surface } from '../../primitives/surface';
 import { AiBadge } from '../ai-badge/ai-badge';
 import { Chip } from '../chip/chip';
@@ -29,34 +28,37 @@ export function AiPanel({
   const titleId = useId();
   const Heading = `h${headingLevel}` as const;
   return (
-    // A group, not a <section>: a landmark per AI panel would crowd the landmark list. The ai rail is
-    // the draft styling: an approved panel drops it, and says so in words.
+    // A group, not a <section>: a landmark per AI panel would crowd the landmark list. It is the
+    // prototype's .ai-block: the near-white AI wash and the gradient rail while it is a draft; once
+    // approved it settles to green (theme.css), and says so in words.
     <Surface
-      material="surface"
+      material="ai-block"
+      radius="md"
       role="group"
       aria-labelledby={titleId}
       data-state={state}
-      className={cx(
-        'overflow-hidden',
-        state === 'draft' && 'nova-ai-rail',
-        className,
-      )}
+      data-approved={state === 'approved' ? 'true' : undefined}
+      className={className}
       {...rest}
     >
-      <div className="flex items-start justify-between gap-4 px-6 py-4">
-        <Heading id={titleId} className="text-headline font-semibold text-ink">
+      {/* .ai-block-h: the spark, the title in bold at 13.5px, then the badges, 8px apart. */}
+      <div className="mb-2.5 flex flex-wrap items-center gap-2">
+        <span aria-hidden="true" className="nova-ai-spark">
+          {state === 'approved' ? '✓' : '✦'}
+        </span>
+        <Heading
+          id={titleId}
+          className="font-display text-[13.5px] font-bold text-ink"
+        >
           {title}
         </Heading>
         {/* Approved is a draft no longer, but a machine still wrote it: the badge stays, in words. */}
-        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-          <AiBadge label={state === 'draft' ? 'AI draft' : 'AI-assisted'} />
-          {state === 'approved' ? <Chip tone="good">Approved</Chip> : null}
-        </div>
+        <AiBadge label={state === 'draft' ? 'AI draft' : 'AI-assisted'} />
+        {state === 'approved' ? <Chip tone="good">Approved</Chip> : null}
       </div>
-      <div className="px-6 pb-4 text-callout text-ink">{children}</div>
-      {footer ? (
-        <div className="border-t border-border px-6 py-3">{footer}</div>
-      ) : null}
+      <div className="text-[14px] text-ink">{children}</div>
+      {/* .ai-actions: 12px below the body. */}
+      {footer ? <div className="mt-3">{footer}</div> : null}
     </Surface>
   );
 }

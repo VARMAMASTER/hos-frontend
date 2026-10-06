@@ -73,10 +73,11 @@ describe('Avatar', () => {
     );
   });
 
-  it('stays a true circle despite the global squircle corners', () => {
+  it('is a circle with a plain border-radius, as every prototype corner is', () => {
     const { container } = render(<Avatar name="Asha Rao" />);
     const root = container.firstElementChild as HTMLElement;
-    expect(root.classList.contains('[corner-shape:round]')).toBe(true);
+    expect(root.classList.contains('rounded-full')).toBe(true);
+    expect(root.className).not.toMatch(/corner-shape/);
   });
 
   it('defaults to md and exposes the size it was given', () => {
@@ -99,13 +100,36 @@ describe('Avatar', () => {
     expect(root.classList.contains(box)).toBe(true);
   });
 
-  it('fills with the soft surface and sets the initials at 600 in muted ink', () => {
+  // The prototype's .avatar: initials at 700 in the display face, tracked .01em.
+  it('fills with the soft surface and sets the initials bold in the display face, in muted ink', () => {
     const { container } = render(<Avatar name="Asha Rao" />);
     const root = container.firstElementChild as HTMLElement;
+    expect(root.dataset['tone']).toBe('surface');
     expect([...root.classList]).toEqual(
-      expect.arrayContaining(['bg-surface-2', 'text-ink-2', 'font-semibold']),
+      expect.arrayContaining([
+        'bg-surface-2',
+        'text-ink-2',
+        'font-bold',
+        'font-display',
+      ]),
     );
-    expect(root.className).not.toMatch(/font-medium/);
+  });
+
+  it('draws the chrome tone as the prototype top-bar avatar: a faint white fill and rim, light initials', () => {
+    const { container } = render(
+      <Avatar name="Swapna Reddy" size="sm" tone="chrome" />,
+    );
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.dataset['tone']).toBe('chrome');
+    expect([...root.classList]).toEqual(
+      expect.arrayContaining([
+        'size-8',
+        'text-[12.5px]',
+        'bg-chrome-ink/15',
+        'border-chrome-ink/35',
+        'text-chrome-ink',
+      ]),
+    );
   });
 
   it('marks a verified person with a primary glyph and says so in words', () => {
@@ -123,13 +147,13 @@ describe('Avatar', () => {
     expect(screen.getByRole('img', { name: 'Asha Rao' })).toBeTruthy();
   });
 
-  it('keeps the photo a true circle when the frame no longer clips it', () => {
+  it('keeps the photo a circle when the frame no longer clips it', () => {
     const { container } = render(
       <Avatar name="Asha Rao" src="/photos/asha.png" verified />,
     );
     const image = container.querySelector('img') as HTMLImageElement;
     expect([...image.classList]).toEqual(
-      expect.arrayContaining(['rounded-full', '[corner-shape:round]']),
+      expect.arrayContaining(['rounded-full', 'object-cover']),
     );
   });
 });

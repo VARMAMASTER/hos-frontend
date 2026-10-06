@@ -11,9 +11,10 @@ export interface HeroBandProps
   headingLevel?: 1 | 2;
 }
 
-// The page-top band. Its text is white on the brand gradient (nova-hero). The description stays
-// full-strength white — a dimmed white fails 4.5:1 at the gradient's light end — and takes its
-// lower rank from size and weight instead. An ink token would sit dark on the brand.
+// The page-top band: the prototype's .page-head.glass-hero. White text on the violet-to-sky glass
+// (nova-hero), 20px by 24px of padding, radius xl, the title as the prototype h1 (23px semibold) and
+// the description at 13px in the hero's secondary ink, which material.spec.ts proves at 4.5:1 at the
+// gradient's light end. The actions sit at the bottom right.
 export function HeroBand({
   title,
   description,
@@ -25,21 +26,30 @@ export function HeroBand({
 }: HeroBandProps) {
   const Heading = `h${headingLevel}` as const;
   return (
-    <Surface material="hero" className={cx('p-6 md:p-8', className)} {...rest}>
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <Surface
+      material="hero"
+      radius="xl"
+      className={cx('px-6 py-5', className)}
+      {...rest}
+    >
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
-          <Heading className="text-title3 font-semibold">{title}</Heading>
+          <Heading className="font-display text-[23px] font-semibold tracking-h1">
+            {title}
+          </Heading>
           {description ? (
-            <p className="mt-2 text-body font-normal text-on-primary">
+            <p className="mt-0.5 text-[13px] text-(color:--nova-hero-ink-2)">
               {description}
             </p>
           ) : null}
         </div>
         {actions ? (
-          <div className="flex shrink-0 items-center gap-2">{actions}</div>
+          <div className="flex shrink-0 flex-wrap items-center gap-2.5">
+            {actions}
+          </div>
         ) : null}
       </div>
-      {children ? <div className="mt-6">{children}</div> : null}
+      {children ? <div className="mt-5">{children}</div> : null}
     </Surface>
   );
 }

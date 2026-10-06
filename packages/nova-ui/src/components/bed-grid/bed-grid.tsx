@@ -33,9 +33,9 @@ export interface BedGridProps
 // blocked bed is neutral and dashed (not red) because red is kept for clinical urgency. The tint
 // replaces the data surface's white fill, and the border marks the cell's edge.
 const statusStyles: Record<BedStatus, { cell: string; word: string }> = {
-  free: { cell: 'border-good/40 bg-good-soft', word: 'text-good-deep' },
-  occupied: { cell: 'border-info/40 bg-info-soft', word: 'text-info-deep' },
-  cleaning: { cell: 'border-warn/40 bg-warn-soft', word: 'text-warn-deep' },
+  free: { cell: 'border-good/15 bg-good-soft', word: 'text-good-deep' },
+  occupied: { cell: 'border-info/15 bg-info-soft', word: 'text-info-deep' },
+  cleaning: { cell: 'border-warn/15 bg-warn-soft', word: 'text-warn-deep' },
   blocked: {
     cell: 'border-dashed border-border-strong bg-surface-2',
     word: 'text-ink-2',
@@ -63,13 +63,11 @@ function BedContent({ bed }: { bed: Bed }) {
     <>
       <span aria-hidden="true" className="block">
         <span className="flex flex-wrap items-baseline justify-between gap-x-2">
-          <span className="font-mono text-caption font-semibold text-ink">
-            {bed.label}
-          </span>
+          <span className="font-mono text-[10px] text-ink-3">{bed.label}</span>
           {/* The status word is the cue; colour only backs it up. */}
           <span
             className={cx(
-              'text-micro font-bold tracking-wide uppercase',
+              'text-[10px] font-bold tracking-[.04em] uppercase',
               statusStyles[bed.status].word,
             )}
           >
@@ -77,12 +75,12 @@ function BedContent({ bed }: { bed: Bed }) {
           </span>
         </span>
         {patient ? (
-          <span className="mt-1 block truncate text-callout font-semibold text-ink">
+          <span className="mt-0.5 block truncate text-[12px] font-semibold text-ink">
             {patient}
           </span>
         ) : null}
         {bed.ward ? (
-          <span className="block truncate text-caption text-ink-2">
+          <span className="block truncate text-[11px] text-ink-2">
             {bed.ward}
           </span>
         ) : null}
@@ -104,31 +102,35 @@ export function BedGrid({
       {...rest}
       aria-label={ariaLabel}
       className={cx(
-        'grid grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-2',
+        // The prototype's .bed-grid: 96px cells, 8px apart.
+        'grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2',
         className,
       )}
     >
       {beds.map((bed) => (
-        // Every cell is an opaque data surface: bed status is clinical, so it must stay legible
-        // under glass. The list item carries the surface and the status; a button, when there is
-        // one, fills it.
+        // Every cell is the prototype's .bed: an opaque tile (bed status is clinical, so it must stay
+        // legible under glass) with no resting shadow, 11px type, 8px of padding, 64px tall (its 10px
+        // radius is off the --r-* scale, so sm). A selectable bed lifts 2px to shadow-lg on hover.
+        // The list item carries the surface and the status; a button, when there is one, fills it.
         <Surface
           key={bed.id}
           as="li"
-          material="data"
-          radius="md"
+          material="card"
+          radius="sm"
           data-status={bed.status}
           className={cx(
-            'border',
+            'border text-[11px] [--nova-surface-lift:none]',
             statusStyles[bed.status].cell,
-            !onSelect && 'min-h-16 p-3',
+            !onSelect && 'min-h-16 p-2',
+            onSelect &&
+              'transition-[transform,box-shadow] duration-150 ease-out motion-reduce:transition-none hover:[--nova-surface-lift:var(--nova-shadow-lg)] motion-safe:hover:-translate-y-0.5',
           )}
         >
           {onSelect ? (
             <button
               type="button"
               className={cx(
-                'block min-h-16 w-full cursor-pointer nova-radius-inherit p-3 text-left hover:bg-ink/5 motion-safe:active:scale-[0.98] motion-safe:transition-transform',
+                'block min-h-16 w-full cursor-pointer nova-radius-inherit p-2 text-left',
                 focusRing,
               )}
               onClick={() => onSelect(bed.id)}

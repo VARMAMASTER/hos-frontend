@@ -63,11 +63,11 @@ describe('Timeline', () => {
   });
 
   it.each([
-    ['neutral', 'bg-ink-3'],
-    ['good', 'bg-good'],
-    ['warn', 'bg-warn'],
-    ['crit', 'bg-crit'],
-    ['info', 'bg-info'],
+    ['neutral', 'border-primary'],
+    ['good', 'border-good'],
+    ['warn', 'border-warn'],
+    ['crit', 'border-crit'],
+    ['info', 'border-info'],
     ['ai', 'bg-ai'],
   ] as const)(
     'maps the %s tone to the %s marker class',
@@ -81,10 +81,12 @@ describe('Timeline', () => {
     },
   );
 
-  it('keeps every marker a true circle despite the global squircle corners', () => {
+  it('draws every marker as a circle, the prototype ring on the panel', () => {
     const { container } = render(<Timeline items={history} />);
     for (const marker of markers(container)) {
-      expect(marker.classList.contains('[corner-shape:round]')).toBe(true);
+      expect([...marker.classList]).toEqual(
+        expect.arrayContaining(['rounded-full', 'size-2.5', 'bg-surface']),
+      );
     }
   });
 

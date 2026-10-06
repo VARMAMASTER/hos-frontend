@@ -52,19 +52,23 @@ describe('HeroBand', () => {
     );
     const root = screen.getByTestId('hero');
     expect(root.classList.contains('nova-hero')).toBe(true);
-    expect(root.classList.contains('rounded-lg')).toBe(true);
-    expect(root.classList.contains('p-6')).toBe(true);
+    // The prototype's .page-head.glass-hero: radius xl, 20px by 24px.
+    expect(root.classList.contains('rounded-xl')).toBe(true);
+    expect(root.classList.contains('px-6')).toBe(true);
+    expect(root.classList.contains('py-5')).toBe(true);
     expect(root.classList.contains('max-w-3xl')).toBe(true);
     expect(root.id).toBe('today');
   });
 
-  // Only full-strength white clears 4.5:1 across the whole brand gradient: a 70% white measured
-  // 3.2–3.7:1 at the gradient's light end, on glass and on solid. Hierarchy comes from size and
-  // weight instead of opacity.
-  it('keeps the description full-strength white on the brand gradient, never dimmed, never an ink token', () => {
+  // The prototype dims the description to 68% white, which is 3:1 at the sky end of the gradient.
+  // It takes the hero's own secondary ink instead, which material.spec.ts proves at 4.5:1 there.
+  it('sets the description in the hero secondary ink the proof covers, never an ad-hoc dimmed white or an ink token', () => {
     render(<HeroBand title="Today" description="Admissions and discharges" />);
     const description = screen.getByText('Admissions and discharges');
-    expect(description.classList.contains('text-on-primary')).toBe(true);
+    expect(
+      description.classList.contains('text-(color:--nova-hero-ink-2)'),
+    ).toBe(true);
+    expect(description.classList.contains('text-[13px]')).toBe(true);
     expect(
       Array.from(description.classList).some((name) =>
         name.startsWith('text-on-primary/'),

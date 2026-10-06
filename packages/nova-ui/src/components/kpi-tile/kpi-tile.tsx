@@ -28,12 +28,13 @@ const trends: Record<KpiTrend, { glyph: string; label: string }> = {
   flat: { glyph: '→', label: 'Unchanged' },
 };
 
-// The -deep status ink on its -soft fill, like Chip; neutral uses the surface tokens.
+// The prototype's .kpi-d: the delta is text in the -deep status ink (the pairing that holds 4.5:1 on
+// the panel); neutral is the small-print ink.
 const deltaTones: Record<KpiTone, string> = {
-  default: 'border border-border bg-surface-2 text-ink-2',
-  good: 'bg-good-soft text-good-deep',
-  warn: 'bg-warn-soft text-warn-deep',
-  crit: 'bg-crit-soft text-crit-deep',
+  default: 'text-ink-3',
+  good: 'text-good-deep',
+  warn: 'text-warn-deep',
+  crit: 'text-crit-deep',
 };
 
 // A delta of 0 is a real figure, so only the empty ReactNodes count as absent.
@@ -46,8 +47,11 @@ function hasContent(node: ReactNode): boolean {
   );
 }
 
-// A headline number. It is nova-data, so it stays opaque under glass: these are financial and
-// clinical figures, and translucency would cost legibility.
+// A headline number: the prototype's .kpi. It is nova-data with the KPI tile's own gradient edge, so
+// it stays opaque under glass (these are financial and clinical figures, and translucency would cost
+// legibility). 16px of padding, a 12px label at 500, the figure at 26px bold in the display face with
+// tabular, slashed-zero numerals, and the delta at 11.5px semibold. It lifts 2px to shadow-lg on
+// hover, only when motion is welcome.
 export function KpiTile({
   label,
   value,
@@ -62,13 +66,18 @@ export function KpiTile({
   return (
     <Surface
       material="data"
+      radius="md"
       data-tone={tone}
-      className={cx('p-5', className)}
+      className={cx(
+        'p-4 [--nova-data-edge:var(--nova-gradient-edge-kpi)]',
+        'transition-[transform,box-shadow] duration-150 ease-out motion-reduce:transition-none hover:[--nova-data-lift:var(--nova-shadow-lg)] motion-safe:hover:-translate-y-0.5',
+        className,
+      )}
       {...rest}
     >
-      <div className="text-callout text-ink-3">{label}</div>
-      <div className="mt-1 flex items-end justify-between gap-3">
-        <div className="min-w-0 font-mono text-title3 font-semibold text-ink">
+      <div className="text-[12px] font-medium text-ink-2">{label}</div>
+      <div className="mt-0.5 flex items-end justify-between gap-3">
+        <div className="min-w-0 font-display text-[26px] font-bold tabular-nums slashed-zero text-ink">
           {value}
         </div>
         {visual ? (
@@ -82,7 +91,7 @@ export function KpiTile({
           data-delta=""
           data-trend={trend}
           className={cx(
-            'mt-3 flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-caption font-semibold',
+            'mt-0.5 flex w-fit items-center gap-1 text-[11.5px] font-semibold',
             deltaTones[tone],
           )}
         >

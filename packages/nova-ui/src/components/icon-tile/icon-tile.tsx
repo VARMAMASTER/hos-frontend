@@ -18,21 +18,22 @@ export interface IconTileProps
   label?: string;
 }
 
+// The prototype's .ic: a 24px tile (its 7px radius is off the --r-* scale, so sm), a 10px bold
+// monogram in the display face, a 15px glyph.
 const base =
-  'inline-grid shrink-0 place-items-center rounded-sm border font-semibold tracking-tight';
+  'inline-grid shrink-0 place-items-center rounded-sm border font-display font-bold tracking-[.01em]';
 
-// The chrome tone is a faint brand-tinted tile (a translucent primary, never a translucent white,
-// so white text keeps its contrast on the chrome for every brand). Its glyph takes the chrome's
-// secondary ink from the custom property `nova-chrome` sets.
+// chrome is .ic on the dark chrome: a faint white lift and rim. Its glyph is the full chrome ink: the
+// prototype's --chrome-ink-2 falls below 4.5:1 over the lift on the sidebar's lightest point. ai is
+// .ic-ai.
 const tones: Record<IconTileTone, string> = {
-  chrome:
-    'border-primary-soft/25 bg-primary/25 text-(color:--nova-chrome-ink-2)',
-  ai: 'border-ai/30 bg-ai-soft text-ai-deep',
+  chrome: 'border-chrome-ink/15 bg-chrome-ink/5 text-chrome-ink',
+  ai: 'border-ai-line bg-ai-soft text-ai-deep',
 };
 
 const sizes: Record<IconTileSize, string> = {
-  sm: 'size-6 text-micro [&_svg]:size-4',
-  md: 'size-8 text-caption [&_svg]:size-5',
+  sm: 'size-6 text-[10px] [&_svg]:size-[15px]',
+  md: 'size-8 text-[12px] [&_svg]:size-5',
 };
 
 export function IconTile({

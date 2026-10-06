@@ -317,9 +317,9 @@ describe('DonutChart', () => {
   it('shows the total in the centre', () => {
     render(<DonutChart {...props} />);
     const figure = screen.getByRole('figure', { name: 'Payer mix' });
-    const centre = figure.querySelector('svg tspan.font-mono');
+    const centre = figure.querySelector('svg tspan.font-display');
     expect(centre?.textContent).toBe('240');
-    expect(figure.querySelector('svg tspan.fill-ink-3')?.textContent).toBe(
+    expect(figure.querySelector('svg tspan.fill-ink-2')?.textContent).toBe(
       'Total',
     );
   });
@@ -333,10 +333,10 @@ describe('DonutChart', () => {
       />,
     );
     const figure = screen.getByRole('figure', { name: 'Payer mix' });
-    expect(figure.querySelector('svg tspan.font-mono')?.textContent).toBe(
+    expect(figure.querySelector('svg tspan.font-display')?.textContent).toBe(
       '240 pts',
     );
-    expect(figure.querySelector('svg tspan.fill-ink-3')?.textContent).toBe(
+    expect(figure.querySelector('svg tspan.fill-ink-2')?.textContent).toBe(
       'Patients',
     );
   });

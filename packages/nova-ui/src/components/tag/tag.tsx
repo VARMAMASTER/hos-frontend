@@ -10,15 +10,17 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
   tone?: TagTone;
 }
 
+// The prototype's .tag-offline: IBM Plex Mono at 10.5px, padded 2px by 8px (its 6px radius is off the
+// --r-* scale, so sm).
 const base =
   'inline-flex items-center whitespace-nowrap rounded-sm border px-2 py-0.5 ' +
-  'font-mono text-micro leading-4 font-semibold';
+  'font-mono text-[10.5px] font-semibold';
 
 // Every pairing below puts the text token on the fill (or on the surface behind an outline) that
 // the theme engine already gates at 4.5:1, so a tag stays legible in every hospital theme.
 const styles: Record<TagVariant, Record<TagTone, string>> = {
   solid: {
-    neutral: 'border-transparent bg-ink-2 text-surface',
+    neutral: 'border-transparent bg-chrome-1 text-chrome-ink',
     primary: 'border-transparent bg-primary text-on-primary',
     ai: 'border-transparent bg-ai text-on-primary',
   },

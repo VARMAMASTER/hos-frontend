@@ -3,6 +3,8 @@ import { cx } from '../../primitives/cx';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg';
+// surface is for light content; chrome is the prototype's .avatar on the dark top bar or sidebar.
+export type AvatarTone = 'surface' | 'chrome';
 
 export interface AvatarProps
   extends Omit<HTMLAttributes<HTMLSpanElement>, 'children'> {
@@ -12,14 +14,20 @@ export interface AvatarProps
   size?: AvatarSize;
   // A verified person: a primary seal glyph at the corner, and the word for assistive tech.
   verified?: boolean;
+  tone?: AvatarTone;
 }
 
-// 20 (inline), 32, 40 and 48 (a list card), each with its initials on the ramp.
+// 20 (inline), 32 (the prototype's .avatar, initials at 12.5px), 40 and 48 (a list card).
 const sizes: Record<AvatarSize, string> = {
-  xs: 'size-5 text-micro',
-  sm: 'size-8 text-caption',
-  md: 'size-10 text-callout',
-  lg: 'size-12 text-body',
+  xs: 'size-5 text-[10px]',
+  sm: 'size-8 text-[12.5px]',
+  md: 'size-10 text-[14px]',
+  lg: 'size-12 text-[16px]',
+};
+
+const tones: Record<AvatarTone, string> = {
+  surface: 'bg-surface-2 text-ink-2',
+  chrome: 'border border-chrome-ink/35 bg-chrome-ink/15 text-chrome-ink',
 };
 
 const glyphSizes: Record<AvatarSize, string> = {
@@ -54,6 +62,7 @@ export function Avatar({
   src,
   size = 'md',
   verified = false,
+  tone = 'surface',
   className,
   ...rest
 }: AvatarProps) {
@@ -64,11 +73,13 @@ export function Avatar({
   return (
     <span
       data-size={size}
+      data-tone={tone}
       className={cx(
-        // A true circle: the soft surface fill, initials at 600 in muted ink. The frame does not
+        // The prototype's .avatar: a circle, initials at 700 in the display face. The frame does not
         // clip, so the verified glyph can sit on its edge; the photo rounds itself.
-        'relative inline-flex shrink-0 select-none items-center justify-center rounded-full [corner-shape:round] bg-surface-2 font-semibold text-ink-2',
+        'relative inline-flex shrink-0 select-none items-center justify-center rounded-full font-display font-bold tracking-[.01em]',
         sizes[size],
+        tones[tone],
         className,
       )}
       {...rest}
@@ -77,7 +88,7 @@ export function Avatar({
         <img
           src={src}
           alt={name}
-          className="size-full rounded-full object-cover [corner-shape:round]"
+          className="size-full rounded-full object-cover"
           onError={() => setFailedSrc(src)}
         />
       ) : (

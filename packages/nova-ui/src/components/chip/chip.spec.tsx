@@ -18,19 +18,20 @@ describe('Chip', () => {
     },
   );
 
-  it('is a caption-size pill with the 8 x 2 padding and a 600 label', () => {
+  it('is the prototype .chip: an 11.5px semibold pill padded 8 x 2, 6px between its parts', () => {
     render(<Chip tone="warn">Warning</Chip>);
     const chip = screen.getByText('Warning');
     expect([...chip.classList]).toEqual(
       expect.arrayContaining([
         'rounded-full',
-        '[corner-shape:round]',
         'px-2',
         'py-0.5',
-        'text-caption',
+        'gap-1.5',
+        'whitespace-nowrap',
+        'text-[11.5px]',
         'font-semibold',
       ]),
     );
-    expect(chip.className).not.toMatch(/text-xs|shadow/);
+    expect(chip.className).not.toMatch(/text-xs|shadow|corner-shape/);
   });
 });

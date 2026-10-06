@@ -14,12 +14,22 @@ describe('KpiTile', () => {
     expect(screen.getByText('+12%')).toBeTruthy();
   });
 
-  it('shows the value in the mono font at a large size, under a quiet label', () => {
+  // The prototype's .kpi-v and .kpi-l.
+  it('shows the value at 26px bold in the display face with tabular numerals, under a 12px label at 500', () => {
     render(<KpiTile label="Beds free" value="14" />);
     const value = classesOf(screen.getByText('14'));
-    expect(value).toContain('font-mono');
-    expect(value).toContain('text-title3');
-    expect(classesOf(screen.getByText('Beds free'))).toContain('text-ink-3');
+    for (const name of [
+      'font-display',
+      'text-[26px]',
+      'font-bold',
+      'tabular-nums',
+      'slashed-zero',
+    ]) {
+      expect(value).toContain(name);
+    }
+    expect(classesOf(screen.getByText('Beds free'))).toEqual(
+      expect.arrayContaining(['text-[12px]', 'font-medium', 'text-ink-2']),
+    );
   });
 
   it('renders a value of zero rather than dropping it', () => {
@@ -27,12 +37,20 @@ describe('KpiTile', () => {
     expect(screen.getByText('0')).toBeTruthy();
   });
 
-  it('is an opaque, rounded, padded data tile', () => {
+  // The prototype's .kpi: radius md, 16px of padding, its own gradient edge, lifting on hover.
+  it('is an opaque, rounded, padded data tile with the KPI gradient edge', () => {
     render(<KpiTile label="Beds free" value="14" data-testid="tile" />);
     const tile = classesOf(screen.getByTestId('tile'));
-    expect(tile).toContain('nova-data');
-    expect(tile).toContain('rounded-lg');
-    expect(tile.some((name) => /^p-\d/.test(name))).toBe(true);
+    for (const name of [
+      'nova-data',
+      'rounded-md',
+      'p-4',
+      '[--nova-data-edge:var(--nova-gradient-edge-kpi)]',
+      'hover:[--nova-data-lift:var(--nova-shadow-lg)]',
+      'motion-safe:hover:-translate-y-0.5',
+    ]) {
+      expect(tile).toContain(name);
+    }
     expect(tile).not.toContain('nova-surface');
   });
 
@@ -67,10 +85,10 @@ describe('KpiTile', () => {
 describe('KpiTile tone', () => {
   // The delta sits on the -soft fill in the -deep ink of its status; neutral uses the surface tokens.
   const expected = {
-    default: ['bg-surface-2', 'text-ink-2'],
-    good: ['bg-good-soft', 'text-good-deep'],
-    warn: ['bg-warn-soft', 'text-warn-deep'],
-    crit: ['bg-crit-soft', 'text-crit-deep'],
+    default: ['text-ink-3'],
+    good: ['text-good-deep'],
+    warn: ['text-warn-deep'],
+    crit: ['text-crit-deep'],
   } as const;
 
   it('is neutral by default', () => {
@@ -86,7 +104,7 @@ describe('KpiTile tone', () => {
   });
 
   it.each(['default', 'good', 'warn', 'crit'] as const)(
-    'maps the %s tone to its soft fill and deep ink, and colours nothing else',
+    'maps the %s tone to its text ink (the prototype .kpi-d), and fills nothing',
     (tone) => {
       render(
         <KpiTile
@@ -98,13 +116,11 @@ describe('KpiTile tone', () => {
         />,
       );
       expect(screen.getByTestId('tile').dataset['tone']).toBe(tone);
-      const [fill, ink] = expected[tone];
+      const [ink] = expected[tone];
       const delta = classesOf(screen.getByText('+4'));
-      // text-caption is the size, not a colour.
-      expect(delta.filter((name) => name.startsWith('bg-'))).toEqual([fill]);
-      expect(delta.filter((name) => /^text-(?!caption$)/.test(name))).toEqual([
-        ink,
-      ]);
+      // text-[11.5px] is the size, not a colour.
+      expect(delta.filter((name) => name.startsWith('bg-'))).toEqual([]);
+      expect(delta.filter((name) => /^text-(?!\[)/.test(name))).toEqual([ink]);
     },
   );
 });
@@ -157,14 +173,13 @@ describe('KpiTile trend', () => {
     );
     expect(screen.getByText('↑')).toBeTruthy();
     const delta = classesOf(screen.getByText('3'));
-    expect(delta).toContain('bg-crit-soft');
     expect(delta).toContain('text-crit-deep');
   });
 
   it('does not colour the delta from the trend alone', () => {
     render(<KpiTile label="Claims" value="31" delta="12%" trend="up" />);
     const delta = classesOf(screen.getByText('12%'));
-    expect(delta).toContain('bg-surface-2');
+    expect(delta).toContain('text-ink-3');
     expect(delta.some((name) => name.includes('good'))).toBe(false);
   });
 });

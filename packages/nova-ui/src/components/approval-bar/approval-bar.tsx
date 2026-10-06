@@ -66,6 +66,7 @@ export function ApprovalBar({
         <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="ai"
+            size="sm"
             aria-disabled={busy || undefined}
             onClick={() => onApprove()}
           >
@@ -73,7 +74,8 @@ export function ApprovalBar({
           </Button>
           {onEdit ? (
             <Button
-              variant="outline"
+              variant="ghost"
+              size="sm"
               aria-disabled={busy || undefined}
               onClick={() => onEdit()}
             >
@@ -82,7 +84,8 @@ export function ApprovalBar({
           ) : null}
           {onReject ? (
             <Button
-              variant="ghost"
+              variant="danger"
+              size="sm"
               aria-disabled={busy || undefined}
               onClick={() => onReject()}
             >
@@ -99,7 +102,7 @@ export function ApprovalBar({
         role="status"
         tabIndex={approvedBy ? -1 : undefined}
         className={cx(
-          'w-fit rounded-sm text-callout font-semibold text-good-deep',
+          'w-fit rounded-sm text-[12.5px] text-good-deep',
           focusRing,
         )}
       >

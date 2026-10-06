@@ -276,18 +276,18 @@ describe('BedGrid', () => {
     ).toBe(true);
   });
 
-  it('builds every cell on the opaque data surface, so clinical status stays legible under glass', () => {
+  it('builds every cell on the opaque prototype card surface, so clinical status stays legible under glass', () => {
     render(<BedGrid beds={beds} ariaLabel="Beds" />);
     for (const cell of screen.getAllByRole('listitem')) {
-      expect(cell.dataset['surface']).toBe('data');
-      expect(cell.classList.contains('nova-data')).toBe(true);
+      expect(cell.dataset['surface']).toBe('card');
+      expect(cell.classList.contains('nova-card')).toBe(true);
     }
   });
 
   it('keeps the same surface and status on the list item when the cell is a button', () => {
     render(<BedGrid beds={beds} onSelect={() => undefined} ariaLabel="Beds" />);
     const [first] = screen.getAllByRole('listitem');
-    expect(first.dataset['surface']).toBe('data');
+    expect(first.dataset['surface']).toBe('card');
     expect(first.dataset['status']).toBe('occupied');
   });
 

@@ -2,7 +2,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
 
-export type BannerTone = 'info' | 'good' | 'warn' | 'crit';
+export type BannerTone = 'info' | 'good' | 'warn' | 'crit' | 'ai';
 
 export interface BannerProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'role'> {
@@ -25,6 +25,7 @@ const tones: Record<BannerTone, string> = {
   good: 'bg-good-soft text-good-deep',
   warn: 'bg-warn-soft text-warn-deep',
   crit: 'bg-crit-soft text-crit-deep',
+  ai: 'bg-ai-soft text-ai-deep',
 };
 
 // Something wrong or about to go wrong interrupts a screen reader (alert); news and confirmations
@@ -34,6 +35,7 @@ const roles: Record<BannerTone, 'alert' | 'status'> = {
   warn: 'alert',
   info: 'status',
   good: 'status',
+  ai: 'status',
 };
 
 export function Banner({
@@ -51,7 +53,8 @@ export function Banner({
       role={roles[tone]}
       data-tone={tone}
       className={cx(
-        'flex items-start gap-3 rounded-lg px-4 py-3',
+        // The prototype's .banner: 13px at 500, 10px by 16px, radius md, 10px between its parts.
+        'flex items-center gap-2.5 rounded-md px-4 py-2.5 text-[13px] font-medium',
         tones[tone],
         className,
       )}
@@ -59,8 +62,8 @@ export function Banner({
     >
       <ToneIcon tone={tone} />
       <div className="min-w-0 flex-1">
-        <p className="text-callout font-semibold">{title}</p>
-        {children ? <div className="mt-1 text-callout">{children}</div> : null}
+        <p className="font-semibold">{title}</p>
+        {children ? <div className="mt-0.5">{children}</div> : null}
       </div>
       {action ? <div className="shrink-0 self-center">{action}</div> : null}
       {onDismiss ? (
@@ -69,7 +72,7 @@ export function Banner({
           aria-label={dismissLabel}
           onClick={() => onDismiss()}
           className={cx(
-            '-mr-1 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-surface/60',
+            '-my-1 -mr-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-surface/60',
             focusRing,
           )}
         >
@@ -91,7 +94,7 @@ export function Banner({
   );
 }
 
-// A different shape per tone (circle-i, circle-tick, triangle, octagon), so the tone never
+// A different shape per tone (circle-i, circle-tick, triangle, octagon, the AI spark), so the tone never
 // depends on colour alone.
 function ToneIcon({ tone }: { tone: BannerTone }) {
   return (
@@ -104,7 +107,7 @@ function ToneIcon({ tone }: { tone: BannerTone }) {
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
-      className="mt-0.5 h-5 w-5 shrink-0"
+      className="size-4 shrink-0"
     >
       {tone === 'info' ? (
         <>
@@ -123,6 +126,9 @@ function ToneIcon({ tone }: { tone: BannerTone }) {
           <path d="M10 3.25l7.25 12.75H2.75z" />
           <path d="M10 8.5v3.5M10 14.25h.01" />
         </>
+      ) : null}
+      {tone === 'ai' ? (
+        <path d="M10 2.5l1.9 5.6 5.6 1.9-5.6 1.9-1.9 5.6-1.9-5.6L2.5 10l5.6-1.9z" />
       ) : null}
       {tone === 'crit' ? (
         <>

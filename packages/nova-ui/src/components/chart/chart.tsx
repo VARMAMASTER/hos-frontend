@@ -119,7 +119,7 @@ export function ChartContainer({
         role="figure"
         aria-label={ariaLabel}
         aria-describedby={description ? descriptionId : undefined}
-        className={cx(!bare && 'p-4', 'text-caption', className)}
+        className={cx(!bare && 'p-4', 'text-[12px]', className)}
         style={{ ...vars, ...style } as CSSProperties}
       >
         {description ? (
@@ -218,7 +218,7 @@ export function ChartTooltipContent({
       material="overlay"
       radius="md"
       role="tooltip"
-      className={cx('grid min-w-32 gap-1 px-3 py-2 text-caption', className)}
+      className={cx('grid min-w-32 gap-1 px-2.5 py-2 text-[12px]', className)}
     >
       {showHeading ? (
         <div className="font-semibold text-ink">{heading}</div>
@@ -294,7 +294,8 @@ export function ChartLegendContent({
   return (
     <ul
       className={cx(
-        'flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-3 text-caption',
+        // The prototype's .chart-legend: 12px secondary ink, 16px between entries.
+        'flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-3 text-[12px]',
         className,
       )}
     >
@@ -307,7 +308,7 @@ export function ChartLegendContent({
           return (
             <li
               key={`${key}-${index}`}
-              className="flex items-center gap-2 text-ink-2"
+              className="flex items-center gap-1.5 text-ink-2"
             >
               {Icon ? (
                 <Icon />

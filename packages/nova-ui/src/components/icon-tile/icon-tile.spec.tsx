@@ -75,13 +75,20 @@ describe('IconTile', () => {
     expect(tile.classList.contains('size-8')).toBe(true);
   });
 
-  it('takes its secondary colour from the chrome custom property on the chrome tone', () => {
+  // The prototype's .ic glyph is --chrome-ink-2, which falls below 4.5:1 over the tile's own white
+  // lift on the sidebar's lightest point, so the glyph takes the full chrome ink.
+  it('sets the chrome tone as the prototype .ic: a faint white lift and rim, the glyph in the chrome ink', () => {
     render(<IconTile>Ph</IconTile>);
-    expect(
-      screen
-        .getByText('Ph')
-        .classList.contains('text-(color:--nova-chrome-ink-2)'),
-    ).toBe(true);
+    expect([...screen.getByText('Ph').classList]).toEqual(
+      expect.arrayContaining([
+        'bg-chrome-ink/5',
+        'border-chrome-ink/15',
+        'text-chrome-ink',
+        'size-6',
+        'text-[10px]',
+        'font-bold',
+      ]),
+    );
   });
 
   it('holds an svg glyph', () => {

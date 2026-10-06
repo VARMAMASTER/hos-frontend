@@ -25,42 +25,39 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 type DrawnVariant = Exclude<ButtonVariant, 'secondary'>;
 
-// The pill CTA (docs/design-language/README.md): the shape carries the emphasis, so the label stays
-// at 400, and there is never a gradient. The filled variants carry the subtle button elevation;
-// outline and ghost stay flat. It presses to 0.95, only when motion is welcome.
+// The prototype's .btn (os/public/assets/hos.css): a 13px semibold label, 8px by 16px of padding, an
+// 8px radius (the prototype's own 9px is off its --r-* scale) and a 1px border, transparent unless the
+// variant draws one, so a row of mixed variants shares one height. It lifts to shadow-md on hover and
+// presses down 1px to shadow-sm, only when motion is welcome.
 const base = cx(
-  // A true capsule opts out of the global squircle, which would flatten its ends into a rounded
-  // rectangle. Every variant has a 1px border (transparent unless it is the outline's edge), so a row
-  // of mixed variants shares one height.
-  'relative inline-flex items-center justify-center rounded-full [corner-shape:round] border font-normal',
-  'transition-[color,background-color,border-color,transform] duration-150 ease-out motion-reduce:transition-none',
-  'motion-safe:active:scale-95 aria-disabled:active:scale-100 aria-busy:active:scale-100',
+  'relative inline-flex items-center justify-center rounded-sm border font-semibold',
+  'transition-[color,background-color,border-color,box-shadow,transform] duration-150 ease-out motion-reduce:transition-none',
+  'hover:shadow-md motion-safe:active:translate-y-px active:shadow-sm aria-disabled:active:translate-y-0 aria-busy:active:translate-y-0',
   focusRing,
   'disabled:pointer-events-none disabled:opacity-50',
   'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
 );
 
-// The outline's 1px primary border is its only boundary: material.spec.ts proves the primary at 3:1
-// on every light surface and on the bare canvas, for every hospital brand. Its own fill is the
-// surface (Apple's canvas), so its primary-strong text holds 4.5:1 anywhere it is placed, the dark
-// chrome included; the theme gate also holds that text on primary-soft (hover) and the canvas
-// (ghost).
+// primary is .btn-primary, ai .btn-ai, ghost .btn-ghost and danger .btn-danger-ghost. outline is the
+// prototype's outlined primary (the row action): its 1px primary border is its only boundary, and
+// material.spec.ts proves the primary at 3:1 on every light surface and on the bare canvas, for every
+// hospital brand; the theme gate holds its primary-strong text on the canvas and white on its hover.
 const variants: Record<DrawnVariant, string> = {
   primary:
-    'border-transparent bg-primary text-on-primary hover:bg-primary-strong shadow-elevation-button',
+    'border-transparent bg-primary text-on-primary hover:bg-primary-strong',
   outline:
-    'border-primary bg-surface text-primary-strong hover:bg-primary-soft',
-  ghost: 'border-transparent text-primary-strong hover:bg-primary-soft',
-  danger:
-    'border-transparent bg-crit text-on-primary hover:bg-crit-deep shadow-elevation-button',
-  ai: 'border-transparent bg-ai text-on-primary hover:bg-ai-deep shadow-elevation-button',
+    'border-primary bg-transparent text-primary-strong hover:bg-primary hover:text-on-primary',
+  ghost: 'border-border-strong bg-surface text-ink hover:bg-surface-2',
+  danger: 'border-border-strong bg-surface text-crit hover:bg-surface-2',
+  ai: 'border-transparent bg-ai text-on-primary hover:bg-ai-deep',
 };
 
 const AI_SPARK = "before:content-['✦'_/_'']";
 
+// md is .btn, sm is .btn-sm (6px by 10px, 12px type; its 7px radius is off-scale too).
 const sizes: Record<ButtonSize, string> = {
-  sm: 'px-4 py-2 text-callout',
-  md: 'px-6 py-3 text-body',
+  sm: 'px-2.5 py-1.5 text-[12px]',
+  md: 'px-4 py-2 text-[13px]',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

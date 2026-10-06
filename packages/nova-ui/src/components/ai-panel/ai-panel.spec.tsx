@@ -44,11 +44,15 @@ describe('AiPanel', () => {
     ).toBeTruthy();
   });
 
-  it('is a surface of the panel material, with the AI rail in draft', () => {
+  // The prototype's .ai-block: the AI wash and the gradient rail come from the ai-block surface.
+  it('is the prototype AI block, headed by the spark', () => {
     render(<AiPanel title="Discharge summary">Body</AiPanel>);
-    expect(panel().classList.contains('nova-surface')).toBe(true);
-    expect(panel().dataset['surface']).toBe('surface');
-    expect(panel().classList.contains('nova-ai-rail')).toBe(true);
+    expect(panel().classList.contains('nova-ai-block')).toBe(true);
+    expect(panel().dataset['surface']).toBe('ai-block');
+    expect(panel().dataset['approved']).toBeUndefined();
+    const spark = panel().querySelector('.nova-ai-spark');
+    expect(spark?.textContent).toBe('✦');
+    expect(spark?.getAttribute('aria-hidden')).toBe('true');
   });
 
   it('shows the AI badge in draft: a spark and the text "AI draft"', () => {
@@ -76,8 +80,9 @@ describe('AiPanel', () => {
       </AiPanel>,
     );
     expect(screen.queryByText('AI draft')).toBeNull();
-    expect(panel().classList.contains('nova-ai-rail')).toBe(false);
-    expect(panel().classList.contains('nova-surface')).toBe(true);
+    // The block settles to green (theme.css) and its spark turns to a tick.
+    expect(panel().dataset['approved']).toBe('true');
+    expect(panel().querySelector('.nova-ai-spark')?.textContent).toBe('✓');
   });
 
   it('still says an AI produced it once approved: provenance outlives the draft', () => {
@@ -117,7 +122,7 @@ describe('AiPanel', () => {
       </AiPanel>,
     );
     expect(panel().classList.contains('mt-4')).toBe(true);
-    expect(panel().classList.contains('nova-surface')).toBe(true);
+    expect(panel().classList.contains('nova-ai-block')).toBe(true);
     expect(panel().id).toBe('summary');
   });
 });

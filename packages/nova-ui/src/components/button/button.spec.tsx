@@ -93,12 +93,23 @@ describe('Button', () => {
     expect(button.classList.contains('border-primary')).toBe(true);
   });
 
-  it('draws the danger variant as a crit fill with white text', () => {
+  // The prototype's .btn-danger-ghost: a white button, the strong hairline, crit text.
+  it('draws the danger variant as the prototype danger-ghost: crit text on a white button', () => {
     render(<Button variant="danger">Discharge</Button>);
     const button = screen.getByRole('button', { name: 'Discharge' });
     expect(button.dataset['variant']).toBe('danger');
-    expect(button.classList.contains('bg-crit')).toBe(true);
-    expect(button.classList.contains('text-on-primary')).toBe(true);
+    for (const name of ['bg-surface', 'border-border-strong', 'text-crit']) {
+      expect(button.classList.contains(name), name).toBe(true);
+    }
+  });
+
+  // The prototype's .btn-ghost: a white button, the strong hairline, ink text.
+  it('draws the ghost variant as the prototype ghost button', () => {
+    render(<Button variant="ghost">Cancel</Button>);
+    const button = screen.getByRole('button', { name: 'Cancel' });
+    for (const name of ['bg-surface', 'border-border-strong', 'text-ink']) {
+      expect(button.classList.contains(name), name).toBe(true);
+    }
   });
 
   // Generated content with empty alternative text: the spark is seen, never read, and the
@@ -117,8 +128,8 @@ describe('Button', () => {
     expect(screen.getByText('Plain').className).not.toMatch(/content-/);
   });
 
-  describe('Apple pill CTA', () => {
-    it('is a pill with a regular-weight label: the shape, not the weight, carries emphasis', () => {
+  describe('the prototype .btn', () => {
+    it('is a 13px semibold label on 8px by 16px, and the sm size a 12px label on 6px by 10px', () => {
       render(
         <>
           <Button>Admit</Button>
@@ -128,20 +139,20 @@ describe('Button', () => {
       const md = screen.getByRole('button', { name: 'Admit' });
       const sm = screen.getByRole('button', { name: 'Hold' });
       for (const button of [md, sm]) {
-        // A true capsule: the global squircle would flatten the ends into a rounded rectangle.
-        expect(button.classList.contains('rounded-full')).toBe(true);
-        expect(button.classList.contains('[corner-shape:round]')).toBe(true);
-        expect(button.classList.contains('font-normal')).toBe(true);
-        expect(button.className).not.toMatch(/font-(?:medium|semibold|bold)/);
+        expect(button.classList.contains('rounded-sm')).toBe(true);
+        expect(button.classList.contains('font-semibold')).toBe(true);
+        expect(button.className).not.toMatch(/corner-shape|rounded-full/);
       }
       expect([...md.classList]).toEqual(
-        expect.arrayContaining(['px-6', 'py-3', 'text-body']),
+        expect.arrayContaining(['px-4', 'py-2', 'text-[13px]']),
       );
-      expect(sm.classList.contains('text-callout')).toBe(true);
+      expect([...sm.classList]).toEqual(
+        expect.arrayContaining(['px-2.5', 'py-1.5', 'text-[12px]']),
+      );
     });
 
-    // Every variant carries a 1px border (transparent unless it is the outline's edge), so a row of
-    // mixed variants shares one height.
+    // Every variant carries a 1px border (transparent unless it draws one), so a row of mixed
+    // variants shares one height.
     it.each(['primary', 'outline', 'ghost', 'danger', 'ai'] as const)(
       'gives the %s variant a 1px border, so every variant is the same height',
       (variant) => {
@@ -152,7 +163,7 @@ describe('Button', () => {
     );
 
     it.each(['primary', 'outline', 'ghost', 'danger', 'ai'] as const)(
-      'paints the %s variant with no gradient',
+      'fills the %s variant with a flat colour, as the prototype does',
       (variant) => {
         render(<Button variant={variant}>Go</Button>);
         const { className } = screen.getByRole('button', { name: 'Go' });
@@ -160,30 +171,26 @@ describe('Button', () => {
       },
     );
 
-    // A subtle lift on the filled pills only; outline and ghost stay flat.
-    it.each([
-      ['primary', true],
-      ['danger', true],
-      ['ai', true],
-      ['outline', false],
-      ['ghost', false],
-    ] as const)('lifts the %s variant: %s', (variant, lifted) => {
-      render(<Button variant={variant}>Go</Button>);
-      const button = screen.getByRole('button', { name: 'Go' });
-      expect(button.classList.contains('shadow-elevation-button')).toBe(lifted);
-      const shadows = [...button.classList].filter((name) =>
-        /shadow/.test(name),
-      );
-      expect(shadows).toEqual(lifted ? ['shadow-elevation-button'] : []);
-    });
+    // .btn:hover lifts to --shadow-md and .btn:active settles to --shadow-sm, for every variant.
+    it.each(['primary', 'outline', 'ghost', 'danger', 'ai'] as const)(
+      'lifts the %s variant to shadow-md on hover and settles it to shadow-sm when pressed',
+      (variant) => {
+        render(<Button variant={variant}>Go</Button>);
+        const button = screen.getByRole('button', { name: 'Go' });
+        const shadows = [...button.classList].filter((name) =>
+          /^(?:[\w-]+:)*shadow-/.test(name),
+        );
+        expect(shadows).toEqual(['hover:shadow-md', 'active:shadow-sm']);
+      },
+    );
 
-    it('presses to scale(0.95), only when the user has not asked for reduced motion', () => {
+    it('presses down 1px, only when the user has not asked for reduced motion', () => {
       render(<Button>Go</Button>);
       const button = screen.getByRole('button', { name: 'Go' });
-      expect(button.classList.contains('motion-safe:active:scale-95')).toBe(
-        true,
-      );
-      expect(button.classList.contains('active:scale-95')).toBe(false);
+      expect(
+        button.classList.contains('motion-safe:active:translate-y-px'),
+      ).toBe(true);
+      expect(button.classList.contains('active:translate-y-px')).toBe(false);
     });
 
     it('stretches to its container with fullWidth', () => {

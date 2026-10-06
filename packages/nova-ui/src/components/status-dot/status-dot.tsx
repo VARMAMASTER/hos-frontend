@@ -25,17 +25,14 @@ export function StatusDot({ tone, label, className, ...rest }: StatusDotProps) {
     <span
       data-tone={tone}
       className={cx(
-        'inline-flex items-center gap-2 text-callout text-ink',
+        'inline-flex items-center gap-1.5 text-[13px] text-ink',
         className,
       )}
       {...rest}
     >
       <span
         aria-hidden="true"
-        className={cx(
-          'size-2 shrink-0 rounded-full [corner-shape:round]',
-          dots[tone],
-        )}
+        className={cx('size-[7px] shrink-0 rounded-full', dots[tone])}
       />
       {label}
     </span>

@@ -32,11 +32,12 @@ describe('StatusDot', () => {
     expect(screen.getByText(tone).dataset['tone']).toBe(tone);
   });
 
-  it('keeps its dot a true circle despite the global squircle corners', () => {
+  it('draws the prototype .dot: a 7px circle', () => {
     render(<StatusDot tone="good" label="Stable" />);
-    expect(dotOf('Stable')?.classList.contains('[corner-shape:round]')).toBe(
-      true,
-    );
+    const dot = dotOf('Stable');
+    expect(dot?.classList.contains('size-[7px]')).toBe(true);
+    expect(dot?.classList.contains('rounded-full')).toBe(true);
+    expect(dot?.className).not.toMatch(/corner-shape/);
   });
 
   it('requires a label, and has no AI tone', () => {
