@@ -52,6 +52,7 @@ export * from './components/data-table/data-table';
 export * from './components/dialog/dialog';
 export * from './components/divider/divider';
 export * from './components/empty-state/empty-state';
+export * from './components/extracted-values-review/extracted-values-review';
 export * from './components/filter-chip/filter-chip';
 export * from './components/hero-band/hero-band';
 export * from './components/icon-tile/icon-tile';
