@@ -69,24 +69,44 @@ describe('FilterChip', () => {
     expect(onPressedChange).not.toHaveBeenCalled();
   });
 
-  // Pressed is a filled primary pill and a tick, so the state never rests on colour alone.
-  it('shows a decorative tick only while pressed, outside the accessible name', () => {
+  // Pressed is a filled primary pill and a tick, so the state never rests on colour alone. The tick
+  // is always in the DOM (it slides in rather than popping), hidden and collapsed while off.
+  it('slides a decorative tick in at the leading edge when pressed, outside the accessible name', () => {
     render(<FilterChip>ICU</FilterChip>);
     const chip = screen.getByRole('button', { name: 'ICU' });
-    expect(chip.querySelector('svg')).toBeNull();
+    const tick = chip.querySelector('svg') as SVGElement;
+    const slot = tick.parentElement as HTMLElement;
+    expect(chip.firstElementChild).toBe(slot);
+    expect(tick.getAttribute('aria-hidden')).toBe('true');
+    expect(slot.dataset['state']).toBe('off');
+    expect([...slot.classList]).toEqual(
+      expect.arrayContaining(['max-w-0', 'opacity-0', '-translate-x-2']),
+    );
     fireEvent.click(chip);
-    expect(chip.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+    expect(slot.dataset['state']).toBe('on');
+    expect([...slot.classList]).toEqual(
+      expect.arrayContaining(['max-w-4', 'opacity-100', 'translate-x-0']),
+    );
+    expect([...slot.classList]).not.toContain('max-w-0');
     expect(screen.getByRole('button', { name: 'ICU' })).toBe(chip);
   });
 
+  it('animates the tick under motion-safe only, so reduced motion is instant', () => {
+    render(<FilterChip>ICU</FilterChip>);
+    const slot = screen
+      .getByRole('button', { name: 'ICU' })
+      .querySelector('svg')?.parentElement as HTMLElement;
+    expect(slot.className).toMatch(/motion-safe:transition-\[/);
+    expect(slot.className).not.toMatch(/(^|\s)(?:transition|duration)-/);
+  });
+
   // 02-reception.html .fchip: a 12px / 600 pill, a --line-strong edge on the panel, ink-2 text; on,
-  // it fills with the brand (.is-active). The prototype's pill is the one place a pill is right.
-  it('is the prototype .fchip: a 12px pill, an outlined panel when off, brand-filled when on', () => {
+  // it fills with the brand (.is-active). Off, the corners are soft; pressed, they morph to a pill.
+  it('is the prototype .fchip: a 12px chip, an outlined panel when off, brand-filled when on', () => {
     render(<FilterChip>ICU</FilterChip>);
     const chip = screen.getByRole('button', { name: 'ICU' });
     expect([...chip.classList]).toEqual(
       expect.arrayContaining([
-        'rounded-full',
         'text-[12px]',
         'font-semibold',
         'border-border-strong',
@@ -105,8 +125,31 @@ describe('FilterChip', () => {
       ]),
     );
     expect(chip.className).not.toMatch(
-      /shadow|font-medium|corner-shape|active:scale|text-caption|bg-surface-2/,
+      /shadow|font-medium|corner-shape|text-caption|bg-surface-2/,
     );
+  });
+
+  // Corner morph: the radius is the one property that changes shape. 8px to 18px, because the chip is
+  // about 30px tall, so 18px is already the full pill and the change shows across the whole transition
+  // (animating to 999px would finish in the first percent).
+  it('morphs its corners from rounded-sm to a pill when pressed, animating the radius under motion-safe', () => {
+    render(<FilterChip>ICU</FilterChip>);
+    const chip = screen.getByRole('button', { name: 'ICU' });
+    expect([...chip.classList]).toContain('rounded-sm');
+    expect([...chip.classList]).not.toContain('rounded-lg');
+    fireEvent.click(chip);
+    expect([...chip.classList]).toContain('rounded-lg');
+    expect([...chip.classList]).not.toContain('rounded-sm');
+    expect(chip.className).toMatch(
+      /motion-safe:transition-\[[^\]]*border-radius/,
+    );
+    expect(chip.className).not.toMatch(/(^|\s)(?:transition|duration)-/);
+  });
+
+  it('scales down while pressed, under motion-safe only', () => {
+    render(<FilterChip>ICU</FilterChip>);
+    const chip = screen.getByRole('button', { name: 'ICU' });
+    expect([...chip.classList]).toContain('motion-safe:active:scale-95');
   });
 
   it('turns the edge and the text brand on hover while off, like .fchip:hover', () => {

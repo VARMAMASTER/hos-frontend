@@ -6,17 +6,21 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../primitives/cx';
-import { focusRing } from '../../primitives/focus-ring';
 import { useControllableState } from '../../primitives/use-controllable-state';
+import { CheckboxBox } from './checkbox-box';
 
 export interface CheckboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'children'> {
   label: ReactNode;
+  // The mixed state, for a parent box over a partly chosen list (some wards of all). It is the
+  // input's own property, so assistive technology reads it as mixed; a click still clears it
+  // natively, and the parent decides whether it comes back.
+  indeterminate?: boolean;
 }
 
 // A real <input type="checkbox">, so Space, form submission and `required` come from the platform;
-// the box and tick are drawn on top. Its checked state goes through useControllableState like every
-// other Nova control. `className` styles the wrapper.
+// the box, the tick (drawn in) and the mixed dash are drawn on top. Its checked state goes through
+// useControllableState like every other Nova control. `className` styles the wrapper.
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   function Checkbox(
     {
@@ -26,6 +30,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       disabled,
       checked,
       defaultChecked = false,
+      indeterminate,
       onChange,
       ...rest
     },
@@ -54,38 +59,17 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           className,
         )}
       >
-        <span className="relative mt-3 flex h-5 w-5 shrink-0">
-          <input
-            ref={ref}
-            type="checkbox"
-            id={id}
-            disabled={disabled}
-            checked={isChecked}
-            onChange={handleChange}
-            // nova-field draws the 3:1 edge and turns it primary when checked; checked fills too.
-            className={cx(
-              'nova-field peer h-5 w-5 appearance-none rounded-sm',
-              'checked:bg-primary',
-              focusRing,
-              'disabled:cursor-not-allowed',
-            )}
-            {...rest}
-          />
-          {/* The tick is a shape, so "checked" never depends on colour alone. */}
-          <svg
-            viewBox="0 0 20 20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.25"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-            focusable="false"
-            className="pointer-events-none absolute inset-0 m-auto h-3.5 w-3.5 text-on-primary opacity-0 peer-checked:opacity-100"
-          >
-            <path d="M4.5 10.5l3.5 3.5 7.5-8" />
-          </svg>
-        </span>
+        <CheckboxBox
+          ref={ref}
+          id={id}
+          // The 44px row centres the 20px box: 12px down.
+          boxClassName="mt-3"
+          indeterminate={indeterminate}
+          disabled={disabled}
+          checked={isChecked}
+          onChange={handleChange}
+          {...rest}
+        />
         <label
           htmlFor={id}
           className={cx(

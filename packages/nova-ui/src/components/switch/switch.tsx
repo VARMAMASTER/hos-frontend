@@ -75,22 +75,38 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
           className={cx(
             'nova-field group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full',
             '[--nova-field-fill:var(--nova-color-border-control)] hover:[--nova-field-fill:var(--nova-color-ink-2)]',
-            'transition-colors duration-200 ease-out motion-reduce:transition-none aria-checked:bg-primary',
+            'motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out aria-checked:bg-primary',
             focusRing,
             'disabled:cursor-not-allowed',
           )}
           {...rest}
           onClick={handleClick}
         >
-          {/* The thumb's position is the non-colour signal for on and off. */}
+          {/* The thumb's position is the non-colour signal for on and off, and the check in it says
+              "on" in a shape too. Pressed, it stretches from the edge it sits on (a transform only);
+              all of it is motion-safe, so under reduced motion it moves instantly. */}
           <span
             aria-hidden="true"
             className={
-              'pointer-events-none block size-6 translate-x-px rounded-full bg-on-primary ' +
-              'transition-transform duration-200 ease-out motion-reduce:transition-none ' +
-              'group-aria-checked:translate-x-5.25'
+              'pointer-events-none grid size-6 translate-x-px origin-left place-items-center rounded-full bg-on-primary ' +
+              'motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out ' +
+              'group-aria-checked:origin-right group-aria-checked:translate-x-5.25 group-active:scale-x-125'
             }
-          />
+          >
+            <svg
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              focusable="false"
+              className="size-3.5 text-primary opacity-0 group-aria-checked:opacity-100 motion-safe:transition-opacity motion-safe:duration-200 motion-safe:ease-out"
+            >
+              <path d="M4.5 10.5l3.5 3.5 7.5-8" />
+            </svg>
+          </span>
         </button>
         <label
           htmlFor={id}

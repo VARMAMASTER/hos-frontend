@@ -99,7 +99,9 @@ describe('Checkbox', () => {
     const mark = box.parentElement?.querySelector('svg');
     expect(mark?.getAttribute('aria-hidden')).toBe('true');
     expect(box.classList).toContain('peer');
-    expect(mark?.getAttribute('class')).toContain('peer-checked:opacity-100');
+    expect(mark?.getAttribute('class')).toContain(
+      'peer-[:checked:not(:indeterminate)]:opacity-100',
+    );
   });
 
   it('forwards its ref and is a nova-field control', () => {
@@ -127,5 +129,88 @@ describe('Checkbox, the prototype form control', () => {
     const label = screen.getByText('Ramesh consents');
     expect(label.classList).toContain('text-[13.5px]');
     expect(label.className).not.toMatch(/text-sm/);
+  });
+});
+
+describe('Checkbox, the animated check', () => {
+  it('draws the tick as a path, offset out while unchecked and drawn in when checked', () => {
+    render(<Checkbox label="Ramesh consents" />);
+    const box = screen.getByLabelText('Ramesh consents');
+    const tick = box.parentElement?.querySelector(
+      'svg[data-mark="check"]',
+    ) as SVGElement;
+    expect(tick.querySelector('path')?.getAttribute('pathLength')).toBe('1');
+    expect([...tick.classList]).toEqual(
+      expect.arrayContaining([
+        '[stroke-dasharray:1]',
+        '[stroke-dashoffset:1]',
+        'peer-[:checked:not(:indeterminate)]:[stroke-dashoffset:0]',
+        'motion-safe:transition-[stroke-dashoffset,opacity]',
+      ]),
+    );
+  });
+
+  it('presses in under motion-safe only', () => {
+    render(<Checkbox label="Ramesh consents" />);
+    const box = screen.getByLabelText('Ramesh consents');
+    expect([...box.classList]).toContain('motion-safe:active:scale-90');
+    expect(box.className).not.toMatch(/(^|\s)(?:transition|duration)-/);
+  });
+});
+
+describe('Checkbox, indeterminate', () => {
+  it('sets the input indeterminate property, which assistive technology reads as mixed', () => {
+    render(<Checkbox label="All wards" indeterminate />);
+    const box = screen.getByLabelText<HTMLInputElement>('All wards');
+    expect(box.indeterminate).toBe(true);
+    // The platform exposes mixed itself; aria-checked on a native checkbox is the wrong tool.
+    expect(box.getAttribute('aria-checked')).toBeNull();
+  });
+
+  it('is off by default', () => {
+    render(<Checkbox label="All wards" />);
+    expect(
+      screen.getByLabelText<HTMLInputElement>('All wards').indeterminate,
+    ).toBe(false);
+  });
+
+  it('follows the prop as it changes, and survives a re-render after the browser clears it', () => {
+    const { rerender } = render(<Checkbox label="All wards" indeterminate />);
+    const box = screen.getByLabelText<HTMLInputElement>('All wards');
+    rerender(<Checkbox label="All wards" indeterminate={false} />);
+    expect(box.indeterminate).toBe(false);
+    rerender(<Checkbox label="All wards" indeterminate />);
+    expect(box.indeterminate).toBe(true);
+    // A click clears it natively; a parent that keeps indeterminate true gets it back on re-render.
+    fireEvent.click(box);
+    expect(box.indeterminate).toBe(true);
+  });
+
+  it('shows a dash, a shape, in place of the tick', () => {
+    render(<Checkbox label="All wards" indeterminate />);
+    const box = screen.getByLabelText('All wards');
+    const dash = box.parentElement?.querySelector('svg[data-mark="mixed"]');
+    expect(dash?.getAttribute('aria-hidden')).toBe('true');
+    expect(dash?.getAttribute('class')).toContain(
+      'peer-indeterminate:opacity-100',
+    );
+    expect([...box.classList]).toEqual(
+      expect.arrayContaining([
+        'indeterminate:bg-primary',
+        'indeterminate:[--nova-field-edge:var(--nova-color-primary)]',
+      ]),
+    );
+  });
+
+  it('keeps the 44px row', () => {
+    render(<Checkbox label="All wards" indeterminate />);
+    const row = screen.getByLabelText('All wards').closest('div');
+    expect(row?.classList).toContain('min-h-11');
+  });
+
+  it('still forwards its ref to the input', () => {
+    const ref = createRef<HTMLInputElement>();
+    render(<Checkbox label="All wards" indeterminate ref={ref} />);
+    expect(ref.current?.indeterminate).toBe(true);
   });
 });
