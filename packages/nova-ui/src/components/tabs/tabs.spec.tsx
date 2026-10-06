@@ -486,17 +486,20 @@ describe('Tabs', () => {
       expect(list.className).not.toMatch(/bg-primary/);
     });
 
-    it('raises the selected tab as a white chip with its hairline and shadow, and gives the others the secondary ink', () => {
+    // The label is the primary ink, which the legibility proof holds at 4.5:1 on a panel in both
+    // schemes. The prototype's chrome-1 is dark in both schemes, so on a dark panel it vanished.
+    it('raises the selected tab as a panel chip with its hairline and shadow, in the primary ink, and gives the others the secondary ink', () => {
       render(<Harness initial="claims" />);
       expect([...tab('Claims').classList]).toEqual(
         expect.arrayContaining([
           'bg-surface',
-          'text-chrome-1',
+          'text-ink',
           'shadow-sm',
           'ring-1',
           'ring-inset',
         ]),
       );
+      expect(tab('Claims').classList.contains('text-chrome-1')).toBe(false);
       for (const name of ['Overview', 'Notes']) {
         expect(tab(name).classList.contains('bg-surface')).toBe(false);
         expect(tab(name).classList.contains('text-ink-2')).toBe(true);

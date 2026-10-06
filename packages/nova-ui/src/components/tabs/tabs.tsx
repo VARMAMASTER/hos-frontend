@@ -234,10 +234,11 @@ export function Tab({
       className={cx(
         tab,
         focusRing,
-        // Selected (.tab.active): a raised white chip, its hairline drawn inside and shadow-sm under it,
-        // in the deepest chrome ink: a shape as well as a tint.
+        // Selected (.tab.active): a raised panel chip, its hairline drawn inside and shadow-sm under
+        // it: a shape as well as a tint. The label is the primary ink (the prototype's chrome-1 is
+        // the same near-black in the light scheme, but stays dark on a dark panel).
         selected
-          ? 'bg-surface text-chrome-1 shadow-sm ring-1 ring-inset ring-border'
+          ? 'bg-surface text-ink shadow-sm ring-1 ring-inset ring-border'
           : 'text-ink-2 hover:bg-chrome-2/6 hover:text-ink',
         className,
       )}
