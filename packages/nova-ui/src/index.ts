@@ -33,6 +33,7 @@ export * from './components/notification-bell/notification-bell';
 export * from './components/otp-input/otp-input';
 export * from './components/pagination/pagination';
 export * from './components/radio/radio';
+export * from './components/rich-text-editor/rich-text-editor';
 export * from './components/search-field/search-field';
 export * from './components/section-nav/section-nav';
 export * from './components/select/select';
