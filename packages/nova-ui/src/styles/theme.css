@@ -94,6 +94,194 @@
   --nova-pulse-duration: var(--nova-pulse-fast);
 }
 
+/* The AI button's motion (AiButton). Playful, but only ever applied under motion-safe, so
+   prefers-reduced-motion leaves every state still: the glow, the darker thinking fill, the label and
+   the check are static and carry the meaning. Every timing is the motion tokens or a multiple of
+   one, and every colour an AI token, so a hospital's theme recolours it. */
+
+/* The mark twinkles: it swells and turns, dips under, and settles. */
+@keyframes nova-ai-twinkle {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  35% {
+    transform: scale(1.45) rotate(28deg);
+  }
+  65% {
+    transform: scale(0.92) rotate(-10deg);
+  }
+}
+
+/* One soft band of light, left of the button to right of it. */
+@keyframes nova-ai-sheen {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+/* Thinking: the same band, passing over and resting a moment before it comes round again. */
+@keyframes nova-ai-shimmer {
+  0% {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  60%,
+  100% {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+/* The idle glow swells from the still halo to the hover glow and back. */
+@keyframes nova-ai-breathe {
+  0%,
+  100% {
+    box-shadow: var(--nova-ai-halo-shadow);
+  }
+  50% {
+    box-shadow: var(--nova-ai-glow-shadow);
+  }
+}
+
+/* A sparkle circles the label: x and y each travel edge to edge and back, a quarter of a lap apart
+   (the y animation's negative delay), which draws an ellipse. */
+@keyframes nova-ai-orbit-x {
+  from {
+    left: 0%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+@keyframes nova-ai-orbit-y {
+  from {
+    top: 0%;
+  }
+  to {
+    top: 100%;
+  }
+}
+
+/* A particle leaves the centre of the mark at its own angle, and fades. */
+@keyframes nova-ai-burst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--nova-ai-angle)) translateX(0)
+      scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--nova-ai-angle))
+      translateX(var(--nova-ai-reach)) scale(0.2);
+  }
+}
+
+/* The check arrives large and turned, and settles into the label; its stroke draws in. */
+@keyframes nova-ai-settle {
+  from {
+    opacity: 0;
+    transform: scale(1.9) rotate(-24deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes nova-ai-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@utility animate-ai-twinkle {
+  animation: nova-ai-twinkle calc(var(--nova-duration-base) * 3)
+    var(--nova-ease-spring);
+}
+
+@utility animate-ai-sheen {
+  animation: nova-ai-sheen calc(var(--nova-duration-slow) * 3)
+    var(--nova-ease-standard);
+}
+
+@utility animate-ai-shimmer {
+  animation: nova-ai-shimmer calc(var(--nova-duration-slow) * 8) ease-in-out
+    infinite;
+}
+
+@utility animate-ai-breathe {
+  animation: nova-ai-breathe calc(var(--nova-duration-slow) * 14) ease-in-out
+    infinite;
+}
+
+@utility animate-ai-orbit-x {
+  animation: nova-ai-orbit-x calc(var(--nova-duration-slow) * 3) ease-in-out
+    infinite alternate;
+}
+
+@utility animate-ai-orbit-y {
+  animation: nova-ai-orbit-y calc(var(--nova-duration-slow) * 3) ease-in-out
+    infinite alternate;
+  animation-delay: calc(var(--nova-duration-slow) * -1.5);
+}
+
+@utility animate-ai-burst {
+  --nova-ai-reach: 18px;
+  animation: nova-ai-burst calc(var(--nova-duration-slow) * 3)
+    var(--nova-ease-emphasized) both;
+}
+
+/* The check holds its first frame until the burst has gone off, then settles. */
+@utility animate-ai-settle {
+  animation: nova-ai-settle calc(var(--nova-duration-slow) * 2)
+    var(--nova-ease-spring) both;
+  animation-delay: calc(var(--nova-duration-slow) * 1.5);
+}
+
+@utility animate-ai-draw {
+  animation: nova-ai-draw calc(var(--nova-duration-slow) * 2)
+    var(--nova-ease-standard) both;
+  animation-delay: calc(var(--nova-duration-slow) * 2);
+}
+
+/* The AI button's edge: a still halo (the idle button), and the glow it picks up on hover and on
+   keyboard focus. Both are shadows, not motion, so they stay under prefers-reduced-motion. Each
+   also names the pair the idle breathing swells between. */
+/* prettier-ignore */
+@utility nova-ai-halo {
+  --nova-ai-halo-shadow: 0 0 0 1px color-mix(in srgb, var(--nova-color-ai-bright) 45%, transparent), 0 0 10px 0 color-mix(in srgb, var(--nova-color-ai-bright) 30%, transparent);
+  --nova-ai-glow-shadow: 0 0 0 1px color-mix(in srgb, var(--nova-color-ai-bright) 85%, transparent), 0 0 16px 2px color-mix(in srgb, var(--nova-color-ai-bright) 55%, transparent);
+  box-shadow: var(--nova-ai-halo-shadow);
+}
+
+/* prettier-ignore */
+@utility nova-ai-glow {
+  --nova-ai-halo-shadow: 0 0 0 1px color-mix(in srgb, var(--nova-color-ai-bright) 45%, transparent), 0 0 10px 0 color-mix(in srgb, var(--nova-color-ai-bright) 30%, transparent);
+  --nova-ai-glow-shadow: 0 0 0 1px color-mix(in srgb, var(--nova-color-ai-bright) 85%, transparent), 0 0 16px 2px color-mix(in srgb, var(--nova-color-ai-bright) 55%, transparent);
+  box-shadow: var(--nova-ai-glow-shadow);
+}
+
+/* The band of light that sweeps the AI button: a strip half the button wide, parked off its left
+   edge until animate-ai-sheen or animate-ai-shimmer moves it. Its peak is a light veil over the
+   fill, kept faint enough that white text holds 4.5:1 through it (ai-button-motion.spec.ts). */
+/* prettier-ignore */
+@utility nova-ai-sheen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  pointer-events: none;
+  transform: translateX(-120%) skewX(-18deg);
+  background-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--nova-color-on-primary) 14%, transparent), transparent);
+}
+
 @theme inline {
   --color-bg: var(--nova-color-bg);
   --color-surface: var(--nova-color-surface);

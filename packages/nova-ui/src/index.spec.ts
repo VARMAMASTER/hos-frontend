@@ -6,11 +6,18 @@ import type {
   BarChartProps,
   CardProps,
   ChartConfig,
+  ChartLegendItem,
+  ComparisonBarChartProps,
+  DepartmentHeatmapProps,
   DonutChartProps,
+  FunnelChartProps,
   HeroBandProps,
   KpiTileProps,
   LineChartProps,
   NavItemProps,
+  OccupancyAreaChartProps,
+  PatientFlowChartProps,
+  RadialGaugeProps,
   SearchFieldProps,
   SidebarProps,
   SparklineProps,
@@ -19,6 +26,9 @@ import type {
   TabProps,
   TabsProps,
   TopBarProps,
+  VitalsChartProps,
+  VitalsConfig,
+  WaitTimeChartProps,
 } from './index';
 
 // Types vanish at runtime, so the check is that this file compiles: typecheck fails the moment the
@@ -53,18 +63,22 @@ describe('@hos/nova-ui public API', () => {
     'CardBody',
     'CardFooter',
     'AiBadge',
+    'AiButton',
     'AiChatThread',
+    'AiClassChip',
     'AiCopilotDock',
+    'AiDraftBlock',
     'AiPanel',
     'AiProgressSteps',
+    'AiSourceLine',
     'AiStreamText',
     'AiThinking',
     'ChatAnswer',
     'ChatComposer',
     'ChatQuestion',
     'FollowupChips',
-    'SafeMarkdown',
     'isSafeHref',
+    'SafeMarkdown',
     'useCopilotShortcut',
     'ApprovalBar',
     'Avatar',
@@ -112,6 +126,7 @@ describe('@hos/nova-ui public API', () => {
     'Switch',
     'TextField',
     'Textarea',
+    'TierCard',
     'Tooltip',
     'AlertDialog',
     'NotificationBell',
@@ -133,6 +148,7 @@ describe('@hos/nova-ui public API', () => {
     'SURFACE_MATERIALS',
     'useControllableState',
     'VisuallyHidden',
+    'WhyTrail',
     'AreaChart',
     'BarChart',
     'ChartContainer',
@@ -146,6 +162,15 @@ describe('@hos/nova-ui public API', () => {
     'NOVA_CHART_PALETTE',
     'Sparkline',
     'chartColorVar',
+    'ChartLegendList',
+    'VitalsChart',
+    'OccupancyAreaChart',
+    'PatientFlowChart',
+    'WaitTimeChart',
+    'DepartmentHeatmap',
+    'FunnelChart',
+    'RadialGauge',
+    'ComparisonBarChart',
     // The scheme axis, the theme engine an admin theme editor builds on, and the motion tokens.
     'NOVA_SCHEMES',
     'NOVA_DEFAULT_SCHEME',
@@ -161,6 +186,17 @@ describe('@hos/nova-ui public API', () => {
 
   it('keeps the chart folder own context out of the barrel', () => {
     expect(nova).not.toHaveProperty('ChartContext');
+  });
+
+  it.each([
+    'ChartFigure',
+    'ChartPlot',
+    'Marker',
+    'niceCeiling',
+    'heatFill',
+    'heatLevel',
+  ])('keeps the chart folder internal %s out of the barrel', (name) => {
+    expect(nova).not.toHaveProperty(name);
   });
 
   // Raw hex is for the token layer only; app code takes colour from the semantic tokens.
@@ -223,5 +259,78 @@ describe('@hos/nova-ui public API', () => {
       valueKey: 'n',
     };
     expect([bar, line, area, spark, donut]).toHaveLength(5);
+  });
+
+  it('exports the prop types of the hospital charts (checked by tsc)', () => {
+    const vitalsConfig: VitalsConfig = {
+      hr: { label: 'Heart rate', unit: 'bpm', normal: { min: 60, max: 100 } },
+    };
+    const vitals: VitalsChartProps = {
+      data: [{ time: '06:00', hr: 72 }],
+      config: vitalsConfig,
+      ariaLabel: 'Vitals',
+      categoryKey: 'time',
+      seriesKeys: ['hr'],
+      now: '06:00',
+    };
+    const legend: ChartLegendItem = {
+      key: 'normal',
+      label: 'Normal range',
+      mark: 'band',
+      color: 'var(--nova-color-ink-3)',
+    };
+    const base = {
+      data: [{ day: 'Mon', icu: 4, admitted: 2, discharged: 1, p50: 9 }],
+      config: { icu: { label: 'ICU' } },
+      ariaLabel: 'Hospital',
+      categoryKey: 'day',
+    };
+    const occupancy: OccupancyAreaChartProps = {
+      ...base,
+      seriesKeys: ['icu'],
+      capacity: 6,
+    };
+    const flow: PatientFlowChartProps = {
+      ...base,
+      admissionsKey: 'admitted',
+      dischargesKey: 'discharged',
+    };
+    const wait: WaitTimeChartProps = {
+      ...base,
+      p50Key: 'p50',
+      p90Key: 'p90',
+      target: 30,
+    };
+    const heatmap: DepartmentHeatmapProps = {
+      data: [{ day: 'Mon', hour: 9, arrivals: 4 }],
+      ariaLabel: 'Arrivals',
+      rowKey: 'day',
+      columnKey: 'hour',
+      valueKey: 'arrivals',
+    };
+    const funnel: FunnelChartProps = { ...base, valueKey: 'icu' };
+    const gauge: RadialGaugeProps = {
+      ariaLabel: 'Occupancy',
+      value: 78,
+      target: 85,
+      goal: 'at-most',
+    };
+    const comparison: ComparisonBarChartProps = {
+      ...base,
+      actualKey: 'icu',
+      targetKey: 'p50',
+      variant: 'diverging',
+    };
+    expect([
+      vitals,
+      legend,
+      occupancy,
+      flow,
+      wait,
+      heatmap,
+      funnel,
+      gauge,
+      comparison,
+    ]).toHaveLength(9);
   });
 });

@@ -4,7 +4,10 @@ import { Bar, BarChart } from 'recharts';
 import {
   ChartContainer,
   ChartContext,
+  ChartFigure,
   ChartLegendContent,
+  ChartLegendList,
+  ChartPlot,
   ChartTooltipContent,
   chartColorVar,
   type ChartConfig,
@@ -483,5 +486,168 @@ describe('ChartDataTable', () => {
         .getAllByRole('cell')
         .map((cell) => cell.textContent),
     ).toEqual(['2,700', '900']);
+  });
+
+  // A chart that flags a reading (out of range, over capacity) says so in words in its table.
+  it('lets a chart write a cell itself, given the value, the series and the row', () => {
+    renderTable({
+      formatCell: (value: unknown, key: string, row: { month: string }) =>
+        key === 'revenue' && row.month === 'Feb' ? `${value} (high)` : null,
+    });
+    const feb = screen.getByRole('row', { name: /Feb/ });
+    expect(
+      within(feb)
+        .getAllByRole('cell')
+        .map((cell) => cell.textContent),
+    ).toEqual(['1500 (high)', '900']);
+  });
+
+  it('writes the row header with the category formatter it is given', () => {
+    renderTable({ formatCategory: (value: unknown) => `Month ${value}` });
+    expect(
+      screen.getAllByRole('rowheader').map((cell) => cell.textContent),
+    ).toEqual(['Month Jan', 'Month Feb']);
+  });
+});
+
+describe('ChartLegendContent reference entries', () => {
+  const payload = [
+    {
+      value: 'revenue',
+      dataKey: 'revenue',
+      type: 'line',
+      color: 'var(--color-revenue)',
+    },
+  ] as never;
+
+  it('appends the reference marks (band, threshold, marker) after the series, each named in words', () => {
+    const { container } = render(
+      <ChartContext.Provider value={{ config }}>
+        <ChartLegendContent
+          payload={payload}
+          extra={[
+            {
+              key: 'normal',
+              label: 'Normal range',
+              mark: 'band',
+              color: 'var(--nova-color-ink-3)',
+            },
+            {
+              key: 'crit',
+              label: 'Critical threshold',
+              mark: 'dashed',
+              color: 'var(--nova-color-crit)',
+            },
+            {
+              key: 'high',
+              label: 'Above normal',
+              mark: 'triangle-up',
+              color: 'var(--nova-color-warn)',
+            },
+          ]}
+        />
+      </ChartContext.Provider>,
+    );
+    expect(
+      screen.getAllByRole('listitem').map((item) => item.textContent),
+    ).toEqual([
+      'Revenue',
+      'Normal range',
+      'Critical threshold',
+      'Above normal',
+    ]);
+    expect(
+      Array.from(container.querySelectorAll('[data-legend-mark]')).map((mark) =>
+        mark.getAttribute('data-legend-mark'),
+      ),
+    ).toEqual(['line', 'band', 'dashed', 'triangle-up']);
+    container.querySelectorAll('[data-legend-mark]').forEach((mark) => {
+      expect(mark.getAttribute('aria-hidden')).toBe('true');
+    });
+  });
+
+  it('shows the reference entries even when the chart has no series legend', () => {
+    render(
+      <ChartLegendContent
+        payload={[]}
+        extra={[
+          {
+            key: 'target',
+            label: 'Target',
+            mark: 'dashed',
+            color: 'var(--nova-color-ink-3)',
+          },
+        ]}
+      />,
+    );
+    expect(screen.getByText('Target')).toBeTruthy();
+  });
+});
+
+describe('ChartLegendList', () => {
+  it('is the legend list on its own, for a chart drawn without Recharts', () => {
+    const { container } = render(
+      <ChartLegendList
+        items={[
+          {
+            key: 'none',
+            label: 'No data',
+            mark: 'outline',
+            color: 'var(--nova-color-border-strong)',
+          },
+        ]}
+      />,
+    );
+    expect(screen.getByRole('list')).toBeTruthy();
+    expect(screen.getByText('No data')).toBeTruthy();
+    expect(
+      container
+        .querySelector('[data-legend-mark]')
+        ?.getAttribute('data-legend-mark'),
+    ).toBe('outline');
+  });
+});
+
+describe('ChartFigure and ChartPlot', () => {
+  it('make a named, opaque figure that can hold several plots, a legend and one data table', () => {
+    const { container } = render(
+      <ChartFigure
+        config={config}
+        ariaLabel="Vitals"
+        description="Two panels."
+        legend={<p>Legend here</p>}
+        table={<table data-testid="alt" />}
+      >
+        <ChartPlot height={80}>{plot()}</ChartPlot>
+        <ChartPlot height={80}>{plot()}</ChartPlot>
+      </ChartFigure>,
+    );
+    const figure = screen.getByRole('figure', { name: 'Vitals' });
+    expect(figure.classList.contains('nova-data')).toBe(true);
+    expect(figure.style.getPropertyValue('--color-revenue')).toBe(
+      NOVA_CHART_PALETTE[0],
+    );
+    expect(container.querySelectorAll('svg.recharts-surface')).toHaveLength(2);
+    expect(within(figure).getByText('Legend here')).toBeTruthy();
+    expect(within(figure).getByTestId('alt')).toBeTruthy();
+    expect(
+      document.getElementById(figure.getAttribute('aria-describedby') ?? '')
+        ?.textContent,
+    ).toBe('Two panels.');
+  });
+
+  it('keeps every plot out of the Tab order', () => {
+    const { container } = render(
+      <ChartFigure config={config} ariaLabel="Vitals">
+        <ChartPlot height={80}>
+          <BarChart data={data} accessibilityLayer>
+            <Bar dataKey="revenue" />
+          </BarChart>
+        </ChartPlot>
+      </ChartFigure>,
+    );
+    expect(
+      container.querySelector('svg.recharts-surface')?.hasAttribute('tabindex'),
+    ).toBe(false);
   });
 });

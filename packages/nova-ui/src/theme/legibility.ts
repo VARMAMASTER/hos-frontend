@@ -1,4 +1,5 @@
 import { GLASS, MATERIAL_LEVELS, type NovaMaterial } from '../tokens/material';
+import { AI_SHEEN_PEAK } from '../tokens/scale';
 import { NOVA_DARK } from '../tokens/scheme';
 import { NOVA_DEFAULTS } from '../tokens/semantic';
 import { contrastRatio, isHexColour, mixColours } from './contrast';
@@ -308,6 +309,13 @@ export function legibilityChecks(
     'AI button hover fill',
     onPrimary,
     hex('--nova-color-ai-hover'),
+    TEXT,
+    true,
+  );
+  check(
+    'AI button label under the sheen peak',
+    onPrimary,
+    mixColours(onPrimary, AI_SHEEN_PEAK, hex('--nova-color-ai-hover')),
     TEXT,
     true,
   );

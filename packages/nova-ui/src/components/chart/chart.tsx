@@ -6,6 +6,7 @@ import {
   useId,
   useMemo,
   type ComponentProps,
+  type ComponentType,
   type CSSProperties,
   type HTMLAttributes,
   type ReactNode,
@@ -74,6 +75,8 @@ export interface ChartContainerProps
   bare?: boolean;
   // The data-table alternative, rendered visually hidden beside the plot.
   table?: ReactNode;
+  // A legend drawn under the plot, outside Recharts (ChartLegendList).
+  legend?: ReactNode;
   // Painted over the middle of the plot (the total of a donut). Not interactive.
   overlay?: ReactNode;
   // Size used before the container has been measured (server rendering, tests).
@@ -93,20 +96,35 @@ function withoutAccessibilityLayer(
     : chart;
 }
 
-export function ChartContainer({
+export interface ChartFigureProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'role'> {
+  config: ChartConfig;
+  ariaLabel: string;
+  description?: string;
+  bare?: boolean;
+  // Drawn after the plots: a legend built outside Recharts (several plots share one, or the chart is
+  // not a Recharts chart at all).
+  legend?: ReactNode;
+  table?: ReactNode;
+}
+
+// The figure every chart is: the series colours published as variables, the labelled opaque data
+// surface (or a plain box when bare), its description, then the plots, a shared legend and the
+// data-table alternative. ChartContainer is a figure around one plot; a chart drawn as small
+// multiples, or without Recharts (a heatmap, a gauge), uses the figure directly. Exported for the
+// chart folder; the package barrel leaves it out.
+export function ChartFigure({
   config,
   ariaLabel,
   description,
-  children,
-  height = 256,
   bare = false,
+  legend,
   table,
-  overlay,
-  initialDimension,
+  children,
   className,
   style,
   ...rest
-}: ChartContainerProps) {
+}: ChartFigureProps) {
   const descriptionId = useId();
   const value = useMemo(() => ({ config }), [config]);
   const vars = useMemo(() => chartColourVars(config), [config]);
@@ -125,23 +143,63 @@ export function ChartContainer({
         {description ? (
           <VisuallyHidden id={descriptionId}>{description}</VisuallyHidden>
         ) : null}
-        <div className="relative w-full" style={{ height }}>
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-            initialDimension={initialDimension}
-          >
-            {withoutAccessibilityLayer(children)}
-          </ResponsiveContainer>
-          {overlay ? (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              {overlay}
-            </div>
-          ) : null}
-        </div>
+        {children}
+        {legend}
         {table}
       </Root>
     </ChartContext.Provider>
+  );
+}
+
+export interface ChartPlotProps {
+  children: ComponentProps<typeof ResponsiveContainer>['children'];
+  height: number;
+  overlay?: ReactNode;
+  initialDimension?: { width: number; height: number };
+}
+
+// One sized plot: a Recharts chart in a ResponsiveContainer, never a tab stop.
+export function ChartPlot({
+  children,
+  height,
+  overlay,
+  initialDimension,
+}: ChartPlotProps) {
+  return (
+    <div className="relative w-full" style={{ height }}>
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        initialDimension={initialDimension}
+      >
+        {withoutAccessibilityLayer(children)}
+      </ResponsiveContainer>
+      {overlay ? (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          {overlay}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export function ChartContainer({
+  children,
+  height = 256,
+  overlay,
+  initialDimension,
+  ...figure
+}: ChartContainerProps) {
+  return (
+    <ChartFigure {...figure}>
+      <ChartPlot
+        height={height}
+        overlay={overlay}
+        initialDimension={initialDimension}
+      >
+        {children}
+      </ChartPlot>
+    </ChartFigure>
   );
 }
 
@@ -269,6 +327,114 @@ export function ChartTooltipContent({
   );
 }
 
+// How a legend entry is keyed. A series is a stroke ('line') or a square ('rect'); a reference is a
+// shaded band, a dashed rule (a threshold or a target), a marker shape (a flagged reading), a short
+// upright tick (a target on a bar), or an empty outline (no data). Every entry also names itself in
+// words, so nothing in a chart is told by colour alone.
+export type ChartLegendMark =
+  | 'line'
+  | 'rect'
+  | 'band'
+  | 'dashed'
+  | 'triangle-up'
+  | 'triangle-down'
+  | 'diamond'
+  | 'tick'
+  | 'outline';
+
+export interface ChartLegendItem {
+  key: string;
+  label: ReactNode;
+  mark: ChartLegendMark;
+  // A series colour, or a status / ink token for a reference.
+  color: string;
+}
+
+const MARKER_POINTS: Partial<Record<ChartLegendMark, string>> = {
+  'triangle-up': '5,0 10,10 0,10',
+  'triangle-down': '0,0 10,0 5,10',
+  diamond: '5,0 10,5 5,10 0,5',
+};
+
+function LegendMark({ mark, color }: Pick<ChartLegendItem, 'mark' | 'color'>) {
+  const points = MARKER_POINTS[mark];
+  if (points) {
+    return (
+      <svg
+        aria-hidden="true"
+        data-legend-mark={mark}
+        viewBox="0 0 10 10"
+        className="size-2.5 shrink-0"
+      >
+        <polygon points={points} fill={color} />
+      </svg>
+    );
+  }
+  const shapes: Record<string, string> = {
+    line: 'h-0.5 w-3.5 rounded-full',
+    rect: 'size-2.5 rounded-none',
+    band: 'h-2.5 w-3.5 rounded-none',
+    dashed: 'h-0 w-3.5 border-t-2 border-dashed',
+    tick: 'h-3 w-0.5 rounded-full',
+    outline: 'size-2.5 rounded-none border',
+  };
+  const style: CSSProperties =
+    mark === 'dashed' || mark === 'outline'
+      ? { borderColor: color }
+      : mark === 'band'
+        ? // The band as the chart draws it: a light wash of its colour.
+          { backgroundColor: `color-mix(in srgb, ${color} 24%, transparent)` }
+        : { backgroundColor: color };
+  return (
+    <span
+      aria-hidden="true"
+      data-legend-mark={mark}
+      className={cx('shrink-0', shapes[mark])}
+      style={style}
+    />
+  );
+}
+
+export interface ChartLegendListProps {
+  items: ReadonlyArray<ChartLegendItem & { icon?: ComponentType }>;
+  className?: string;
+  hideIcon?: boolean;
+}
+
+// The legend list itself, for a chart drawn without Recharts' Legend (small multiples, a heatmap, a
+// gauge). The prototype's .chart-legend: 12px secondary ink, 16px between entries.
+export function ChartLegendList({
+  items,
+  className,
+  hideIcon = false,
+}: ChartLegendListProps) {
+  if (items.length === 0) {
+    return null;
+  }
+  return (
+    <ul
+      className={cx(
+        'flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-3 text-[12px]',
+        className,
+      )}
+    >
+      {items.map(({ key, label, mark, color, icon: Icon }, index) => (
+        <li
+          key={`${key}-${index}`}
+          className="flex items-center gap-1.5 text-ink-2"
+        >
+          {Icon ? (
+            <Icon />
+          ) : hideIcon ? null : (
+            <LegendMark mark={mark} color={color} />
+          )}
+          <span className="text-ink-2">{label}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export interface ChartLegendContentProps {
   // Recharts supplies the payload when it renders the content.
   payload?: ReadonlyArray<LegendPayload>;
@@ -276,6 +442,8 @@ export interface ChartLegendContentProps {
   hideIcon?: boolean;
   // Look the label up under this key of the datum (a donut names slices by a datum field).
   nameKey?: string;
+  // Reference entries listed after the series: a normal range, a threshold, a target, a marker.
+  extra?: ReadonlyArray<ChartLegendItem>;
 }
 
 // The legend: a mark in the series colour beside the label, which stays in a text token (a light
@@ -286,51 +454,27 @@ export function ChartLegendContent({
   className,
   hideIcon = false,
   nameKey,
+  extra = [],
 }: ChartLegendContentProps) {
   const config = useChartConfig();
-  if (!payload || payload.length === 0) {
-    return null;
-  }
+  const series = (payload ?? [])
+    .filter((item) => item.type !== 'none')
+    .map((item) => {
+      const key = configKey(item, nameKey);
+      const entry = config[key];
+      return {
+        key,
+        label: entry?.label ?? item.value ?? key,
+        mark: (item.type === 'line' ? 'line' : 'rect') as ChartLegendMark,
+        color: item.color ?? chartColorVar(key),
+        icon: entry?.icon,
+      };
+    });
   return (
-    <ul
-      className={cx(
-        // The prototype's .chart-legend: 12px secondary ink, 16px between entries.
-        'flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-3 text-[12px]',
-        className,
-      )}
-    >
-      {payload
-        .filter((item) => item.type !== 'none')
-        .map((item, index) => {
-          const key = configKey(item, nameKey);
-          const entry = config[key];
-          const Icon = entry?.icon;
-          return (
-            <li
-              key={`${key}-${index}`}
-              className="flex items-center gap-1.5 text-ink-2"
-            >
-              {Icon ? (
-                <Icon />
-              ) : hideIcon ? null : (
-                <span
-                  aria-hidden="true"
-                  data-legend-mark={item.type === 'line' ? 'line' : 'rect'}
-                  className={cx(
-                    'shrink-0',
-                    item.type === 'line'
-                      ? 'h-0.5 w-3.5 rounded-full'
-                      : 'size-2.5 rounded-none',
-                  )}
-                  style={{ backgroundColor: item.color }}
-                />
-              )}
-              <span className="text-ink-2">
-                {entry?.label ?? item.value ?? key}
-              </span>
-            </li>
-          );
-        })}
-    </ul>
+    <ChartLegendList
+      items={[...series, ...extra]}
+      className={className}
+      hideIcon={hideIcon}
+    />
   );
 }

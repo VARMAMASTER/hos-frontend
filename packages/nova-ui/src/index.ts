@@ -1,5 +1,6 @@
 export * from './components/activity-feed/activity-feed';
 export * from './components/ai-badge/ai-badge';
+export * from './components/ai-button/ai-button';
 export * from './components/ai-chat-thread/ai-chat-thread';
 export * from './components/ai-chat-thread/ai-stream-text';
 export * from './components/ai-chat-thread/ai-thinking';
@@ -8,10 +9,15 @@ export * from './components/ai-chat-thread/chat-composer';
 export * from './components/ai-chat-thread/chat-question';
 export * from './components/ai-chat-thread/followup-chips';
 export * from './components/ai-chat-thread/safe-markdown';
+export * from './components/ai-class-chip/ai-class-chip';
+export * from './components/ai-class-chip/tier-card';
 export * from './components/ai-copilot-dock/ai-copilot-dock';
 export * from './components/ai-copilot-dock/use-copilot-shortcut';
+export * from './components/ai-draft-block/ai-draft-block';
 export * from './components/ai-panel/ai-panel';
 export * from './components/ai-progress-steps/ai-progress-steps';
+export * from './components/ai-source-line/ai-source-line';
+export * from './components/ai-source-line/why-trail';
 export * from './components/alert-dialog/alert-dialog';
 export * from './components/app-shell/app-shell';
 export * from './components/approval-bar/approval-bar';
@@ -26,10 +32,18 @@ export * from './components/card/card';
 export * from './components/chart/area-chart';
 export * from './components/chart/bar-chart';
 export * from './components/chart/chart-data-table';
+export * from './components/chart/comparison-bar-chart';
+export * from './components/chart/department-heatmap';
 export * from './components/chart/donut-chart';
+export * from './components/chart/funnel-chart';
 export * from './components/chart/line-chart';
+export * from './components/chart/occupancy-area-chart';
 export * from './components/chart/palette';
+export * from './components/chart/patient-flow-chart';
+export * from './components/chart/radial-gauge';
 export * from './components/chart/sparkline';
+export * from './components/chart/vitals-chart';
+export * from './components/chart/wait-time-chart';
 export * from './components/checkbox/checkbox';
 export * from './components/chip/chip';
 export * from './components/chip/tone-label';
@@ -73,6 +87,7 @@ export {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
+  ChartLegendList,
   ChartTooltip,
   ChartTooltipContent,
   chartColorVar,
@@ -82,6 +97,9 @@ export {
   type ChartConfigEntry,
   type ChartContainerProps,
   type ChartLegendContentProps,
+  type ChartLegendItem,
+  type ChartLegendListProps,
+  type ChartLegendMark,
   type ChartTooltipContentProps,
 } from './components/chart/chart';
 export type {

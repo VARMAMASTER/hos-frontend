@@ -16,6 +16,15 @@ export interface ChartDataTableProps {
   // Formats a numeric value; the default groups digits the Indian way.
   formatValue?: (value: number) => ReactNode;
   total?: ChartDataTableTotal;
+  // Writes a cell itself (a reading flagged "high", a period "over capacity"). Returning null or
+  // undefined falls back to the formatted value.
+  formatCell?: (
+    value: unknown,
+    key: string,
+    row: Record<string, unknown>,
+  ) => ReactNode;
+  // Writes the row header (a timestamp as a time of day).
+  formatCategory?: (value: unknown) => ReactNode;
   className?: string;
 }
 
@@ -30,12 +39,25 @@ export function ChartDataTable({
   seriesKeys,
   formatValue,
   total,
+  formatCell,
+  formatCategory,
   className,
 }: ChartDataTableProps) {
-  const show = (value: unknown): ReactNode =>
+  const category = (value: unknown): ReactNode =>
+    value === null || value === undefined
+      ? NO_DATA
+      : formatCategory
+        ? formatCategory(value)
+        : String(value);
+  const format = (value: unknown): ReactNode =>
     typeof value === 'number' && formatValue
       ? formatValue(value)
       : formatChartValue(value);
+  const show = (
+    value: unknown,
+    key: string,
+    row: Record<string, unknown>,
+  ): ReactNode => formatCell?.(value, key, row) ?? format(value);
   return (
     <VisuallyHidden as="div">
       <table className={className}>
@@ -53,9 +75,9 @@ export function ChartDataTable({
         <tbody>
           {data.map((row, index) => (
             <tr key={`${String(row[categoryKey])}-${index}`}>
-              <th scope="row">{String(row[categoryKey] ?? NO_DATA)}</th>
+              <th scope="row">{category(row[categoryKey])}</th>
               {seriesKeys.map((key) => (
-                <td key={key}>{show(row[key])}</td>
+                <td key={key}>{show(row[key], key, row)}</td>
               ))}
             </tr>
           ))}

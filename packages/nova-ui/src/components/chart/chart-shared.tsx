@@ -6,7 +6,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from './chart';
-import { ChartDataTable, type ChartDataTableTotal } from './chart-data-table';
+import {
+  ChartDataTable,
+  type ChartDataTableProps,
+  type ChartDataTableTotal,
+} from './chart-data-table';
 import type { ChartConfig } from './chart-utils';
 
 export type ChartDatum = Record<string, unknown>;
@@ -113,6 +117,13 @@ interface ChartFrameProps extends ChartBaseProps {
   seriesKeys: ReadonlyArray<string>;
   total?: ChartDataTableTotal;
   overlay?: ReactNode;
+  // A legend drawn under the plot, outside Recharts.
+  legend?: ReactNode;
+  formatCell?: ChartDataTableProps['formatCell'];
+  formatCategory?: ChartDataTableProps['formatCategory'];
+  // The table's rows and columns when they differ from the plotted data (a derived column).
+  tableData?: ReadonlyArray<ChartDatum>;
+  tableKeys?: ReadonlyArray<string>;
   children: ReactElement;
 }
 
@@ -127,6 +138,10 @@ export function ChartFrame({
   valueFormatter,
   total,
   overlay,
+  formatCell,
+  formatCategory,
+  tableData,
+  tableKeys,
   children,
   ...container
 }: ChartFrameProps) {
@@ -138,12 +153,14 @@ export function ChartFrame({
       table={
         <ChartDataTable
           caption={ariaLabel}
-          data={data}
+          data={tableData ?? data}
           config={config}
           categoryKey={categoryKey}
-          seriesKeys={seriesKeys}
+          seriesKeys={tableKeys ?? seriesKeys}
           formatValue={valueFormatter}
           total={total}
+          formatCell={formatCell}
+          formatCategory={formatCategory}
         />
       }
       {...container}

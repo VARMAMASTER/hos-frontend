@@ -29,6 +29,19 @@ describe('the legibility proof', () => {
     }
   });
 
+  // The AiButton's sheen band lightens the hover fill by AI_SHEEN_PEAK while it sweeps over the label,
+  // so white text must still hold 4.5:1 on the lightened fill, for every hospital's AI colour.
+  it('measures the AiButton label under the sheen peak, in both schemes', () => {
+    for (const scheme of SCHEMES) {
+      const names = legibilityChecks(
+        resolvePalette(scheme),
+        scheme,
+        'glass',
+      ).map((c) => c.usedBy);
+      expect(names, scheme).toContain('AI button label under the sheen peak');
+    }
+  });
+
   // HOS Violet in both schemes, on all three materials.
   it.each(SCHEMES.flatMap((s) => NOVA_MATERIALS.map((m) => [s, m] as const)))(
     'holds for HOS Violet in the %s scheme on %s',
