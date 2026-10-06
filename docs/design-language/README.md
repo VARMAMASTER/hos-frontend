@@ -64,6 +64,48 @@ Smaller utilities: `nova-card-head` (`.card-h` tint), `nova-tabbar` (`.tabbar`),
 
 Gradients are back exactly where the prototype draws them: the AI rail on AI blocks, the gradient edge on data surfaces, the chrome and hero gradients, the AI gradient and mark. A component never writes one of its own; it uses these utilities or tokens.
 
+## Highlight
+
+The owner asked for the highlighted colours, and their gradients, "in some places". The highlight is a second accent beside the brand, used deliberately. For HOS Violet it is the prototype's own sky, `--chrome-glow-2` (`#60A5FA`): the far stop of every prototype brand gradient (the hero, the `.sb-bar` fill, the aurora). On the chrome the highlight pair stays `--chrome-accent` into `--chrome-glow-2`, as the prototype draws it.
+
+| Token                          | Light (HOS Violet) | Dark      | Role                                                                |
+| ------------------------------ | ------------------ | --------- | ------------------------------------------------------------------- |
+| `--nova-color-highlight`       | `#3276C8`          | `#60A5FA` | the mark: a fill, an underline, an edge, a rail, a ring; never text |
+| `--nova-color-highlight-soft`  | `#E1EEFF`          | `#122946` | the tint under highlight text                                       |
+| `--nova-color-highlight-deep`  | `#004F9C`          | `#7AB1F5` | highlight text, 4.5:1 on its tint, the wash and a panel             |
+| `--nova-color-highlight-hover` | `#004F9C`          | `#8CBFFF` | a hovered highlight edge, one step further from the ground          |
+
+**Built, not picked.** Each member is the sky's hue and chroma pinned to the luminance of its twin in the brand family, so the highlight passes the brand's own proofs. In the dark it is `#60A5FA` itself. In the light it is held at `#3276C8`, the lightest sky that still holds 3:1 as a mark on every light ground: the prototype's sky is 2.5:1 on white. A hospital's highlight is HOS Violet's moved to its hue like every other brand colour, so it keeps the violet-to-sky step from its own brand. The chrome's sky glow (`--nova-color-chrome-glow-2`) follows the brand too, kept no lighter over the hero base than the prototype's, so the hero's text proof holds.
+
+**Gradients**, each declared on every theme and material scope and built only from the brand and highlight tokens:
+
+| Utility               | Token                            | Use                                                                                                               |
+| --------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `nova-highlight-grad` | `--nova-gradient-highlight`      | brand into highlight, 90deg: a gauge fill, the active tab's underline, a sort marker                              |
+| `nova-highlight-rail` | `--nova-gradient-highlight-rail` | the 3px rail down a selected row's first cell                                                                     |
+| `nova-highlight-edge` | `--nova-gradient-highlight-edge` | the 1px hairline of an emphasised card or a chosen option (a data surface swaps it in through `--nova-data-edge`) |
+| `nova-highlight-ring` | `--nova-gradient-highlight-edge` | a 2px ring a hair outside an avatar                                                                               |
+| `nova-highlight-wash` | `--nova-gradient-highlight-wash` | the brand's tint into the highlight's, under highlight text                                                       |
+| `nova-highlight-text` | `--nova-gradient-highlight`      | gradient text for large display figures only; the deep ink unclipped                                              |
+
+The Tailwind colours are `bg-|border-|text-highlight`, `-soft`, `-deep` and `-hover`.
+
+**Where it is used (modest and deliberate).** No gradient on an ordinary button: `.btn-primary` stays solid.
+
+- `StatGauge` fills brand into highlight, the `.sb-bar` fill extended to a panel.
+- The active `Tab` is underlined in the gradient.
+- `KpiTile highlight`: the highlight edge in place of the KPI edge, and the figure in gradient text.
+- `Chip tone="highlight"`, `Tag tone="highlight"` and `Banner tone="highlight"` (an announcement, "New in this release", announced as a status): the wash, the deep ink and a five-pointed star. The star is deliberately not the AI's four-pointed spark.
+- `ChoiceCard`: the chosen tint carries a highlight ring inside the primary edge. `ButtonGroup`: the selected segment (or its sliding indicator) carries the highlight edge, and an unselected segment hovers to `highlight-hover`.
+- `DataTable`: the highlight rail on a selected row, and a highlight underline with a deep-ink arrow on the sorted column.
+- `Timeline` items take `milestone`: a highlight node with the star and the word "Milestone".
+- `Avatar highlight`: the ring, with `highlightLabel` to say what it means.
+- `HeroBand`: its glow stop is the brand's highlight on the chrome.
+
+**Proven like the brand.** `theme/legibility.ts` gates every brand, in both schemes, on every material: the highlight and its hover as 3:1 marks on every ground; the deep ink at 4.5:1 on its tint, across the wash and on the panels; and the gradient figure at 3:1 as large text, point by point along the gradient. `tokens/material.spec.ts` adds the every-brand bounds. The highlight is never colour-only: a star, a word, a shape or an ARIA state says the same. `conventions.spec.ts` lets a component reach the highlight only through these utilities and colours: no raw `--nova-*-highlight*` variable, no opacity, no text in the bare highlight, no new `nova-highlight-*` utility.
+
+Storybook: `Design language/Highlights` shows every use (switch the toolbar), and its "Every preset, light and dark" story shows each preset in both schemes at once.
+
 ## Three independent axes
 
 A screen is the product of three settings, each switchable anywhere in the tree and each independent of the other two:
@@ -159,6 +201,8 @@ These prototype values fail an accessibility proof (`tokens/material.spec.ts`, w
 | Top-bar focus ring    | `--chrome-accent` (2.4:1)            | white                                   | 3:1                                              |
 | Aurora                | 0.22–0.30 tints                      | 0.10 brand, 0.06 accents                | ink-3 at 4.5:1 on the canvas                     |
 | Chart series          | `--c1 … c3` (the good and info hues) | the six-slot data palette               | `palette.spec.ts`: series never read as a status |
+| Highlight (light)     | `--chrome-glow-2` `#60A5FA` (2.5:1)  | `#3276C8`                               | 3:1 as a mark on every light ground              |
+| Selected tab label    | `--chrome-1`                         | `ink`                                   | chrome-1 stays dark on a dark panel              |
 
 ## Unchanged rules (enforced by tests)
 
