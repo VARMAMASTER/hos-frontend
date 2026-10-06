@@ -23,6 +23,7 @@ export * from './components/checkbox/checkbox';
 export * from './components/chip/chip';
 export * from './components/chip/tone-label';
 export * from './components/choice-card/choice-card';
+export * from './components/data-table/data-table';
 export * from './components/dialog/dialog';
 export * from './components/divider/divider';
 export * from './components/empty-state/empty-state';
@@ -35,6 +36,7 @@ export * from './components/notification-bell/notification-bell';
 export * from './components/otp-input/otp-input';
 export * from './components/pagination/pagination';
 export * from './components/radio/radio';
+export * from './components/rich-text-editor/rich-text-editor';
 export * from './components/search-field/search-field';
 export * from './components/section-nav/section-nav';
 export * from './components/select/select';
@@ -53,7 +55,7 @@ export * from './components/timeline/timeline';
 export * from './components/toast/toast';
 export * from './components/tooltip/tooltip';
 export * from './components/top-bar/top-bar';
-export * from './components/workspace-switcher/workspace-switcher';
+export * from './components/module-switcher/module-switcher';
 export {
   ChartContainer,
   ChartLegend,

@@ -33,6 +33,11 @@
     "react-dom": "^19.0.0"
   },
   "dependencies": {
+    "@tiptap/extension-list": "3.31.4",
+    "@tiptap/extensions": "3.31.4",
+    "@tiptap/pm": "3.31.4",
+    "@tiptap/react": "3.31.4",
+    "@tiptap/starter-kit": "3.31.4",
     "react-is": "^19.3.0",
     "recharts": "^3.10.1"
   }

@@ -33,7 +33,7 @@ describe('the published package', () => {
     expect(libTsconfig.exclude).toContain('src/stories/**');
   });
 
-  it('bundles none of React, Recharts or react-is: they resolve from node_modules', () => {
+  it('bundles none of React, Recharts, react-is or Tiptap: they resolve from node_modules', () => {
     const config =
       typeof viteConfig === 'function'
         ? viteConfig({ command: 'build', mode: 'production' })
@@ -48,10 +48,19 @@ describe('the published package', () => {
       'react-dom/client',
       'recharts',
       'react-is',
+      // An app that uses Tiptap itself must not ship ProseMirror twice.
+      '@tiptap/react',
+      '@tiptap/pm/state',
+      '@tiptap/starter-kit',
     ]) {
       expect(isExternal(id), id).toBe(true);
     }
-    for (const id of ['./components/button/button', 'reactive', 'clsx']) {
+    for (const id of [
+      './components/button/button',
+      'reactive',
+      'clsx',
+      '@tiptapish/x',
+    ]) {
       expect(isExternal(id), id).toBe(false);
     }
   });
