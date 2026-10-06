@@ -33,6 +33,8 @@ export const primitives = {
     // prototype).
     sidebar: { 1: '#26185A', 2: '#1A0F42', 3: '#150C34' },
   },
+  // The AI mark's four tints (--ai-mark's conic stops, literals in the prototype).
+  aiMark: { 1: '#EA4335', 2: '#4285F4', 3: '#34A853', 4: '#FBBC04' },
   // The highlight (see --nova-color-highlight* in semantic.ts and scheme.ts): the prototype's sky,
   // --chrome-glow-2 (#60A5FA, chrome.glow2 above), at its own hue and chroma, pinned to the luminance
   // of each member's twin in the brand family (derive.spec.ts rebuilds them). 600 holds 3:1 on every

@@ -610,6 +610,9 @@ describe('theme.css named gradients', () => {
     '--nova-gradient-highlight-rail',
     '--nova-gradient-highlight-edge',
     '--nova-gradient-highlight-wash',
+    '--nova-gradient-ai',
+    '--nova-gradient-ai-rail',
+    '--nova-ai-mark',
     '--nova-tabbar-tint',
     ...Object.keys(MATERIAL_FILLS),
   ])(
@@ -620,11 +623,15 @@ describe('theme.css named gradients', () => {
     },
   );
 
-  it.each(['--nova-gradient-ai', '--nova-gradient-ai-rail'])(
-    'declares %s on :root alone, so no theme or material scope can re-resolve it',
+  // The AI gradient and mark are on the plain :root too (NOVA_DEFAULTS, compared with hos.css), with
+  // the same value, so the page with no theme is the prototype byte for byte.
+  it.each(['--nova-gradient-ai', '--nova-ai-mark'])(
+    'keeps %s on :root as NOVA_DEFAULTS declares it, the same value the scopes re-resolve',
     (name) => {
-      expect(fixed().filter((d) => name in d)).toHaveLength(1);
-      expect(scoped()).not.toHaveProperty(name);
+      expect(fixedValue(name)).toBe(
+        NOVA_DEFAULTS[name as keyof typeof NOVA_DEFAULTS],
+      );
+      expect(scoped()[name]).toBe(fixedValue(name));
     },
   );
 
@@ -685,24 +692,26 @@ describe('theme.css named gradients', () => {
     });
   });
 
+  // The AI follows the hospital theme (owner decision 2026-10-07): the prototype's own --ai-grad and
+  // rail end in var(--teal), the brand, and the AI colours themselves are brand-derived (ai.spec.ts).
   describe('the AI gradients', () => {
-    it('--nova-gradient-ai runs 135deg from the bright cyan through the AI cyan into the pinned violet', () => {
-      expect(fixedValue('--nova-gradient-ai')).toBe(
-        `linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, ${primitives.violet[600]} 105%)`,
+    it('--nova-gradient-ai is the prototype --ai-grad: the bright stop through the AI colour into the brand', () => {
+      expect(scoped()['--nova-gradient-ai']).toBe(
+        'linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, var(--nova-color-primary) 105%)',
       );
     });
 
-    it('--nova-gradient-ai-rail runs down from the pinned violet through the AI cyan to the bright stop', () => {
-      expect(fixedValue('--nova-gradient-ai-rail')).toBe(
-        `linear-gradient(180deg, ${primitives.violet[600]} 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%)`,
+    it('--nova-gradient-ai-rail is the prototype .ai-block rail: down from the brand through the AI colour to the bright stop', () => {
+      expect(scoped()['--nova-gradient-ai-rail']).toBe(
+        'linear-gradient(180deg, var(--nova-color-primary) 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%)',
       );
     });
 
-    it('never reference the brand, so no hospital can recolour the mark that says a machine wrote this', () => {
-      for (const name of ['--nova-gradient-ai', '--nova-gradient-ai-rail']) {
-        expect(fixedValue(name), name).not.toBe('');
-        expect(fixedValue(name), name).not.toMatch(/--nova-color-primary/);
-      }
+    it('--nova-ai-mark is the prototype conic mark, its four tints as tokens', () => {
+      expect(scoped()['--nova-ai-mark']).toBe(
+        'conic-gradient(from 0deg at 50% 50%, var(--nova-color-ai-mark-1) 0deg, var(--nova-color-ai-mark-2) 92deg, var(--nova-color-ai-mark-3) 184deg, var(--nova-color-ai-mark-4) 272deg, var(--nova-color-ai-mark-1) 360deg)',
+      );
+      expect(primitives.violet[600]).toBe('#6D4FE0');
     });
   });
 
@@ -748,13 +757,22 @@ describe('theme.css named gradients', () => {
       },
     });
 
-    it('a wildly different brand leaves the AI gradients exactly as they were', () => {
+    it('the AI gradients and mark follow the brand: its own stop, and its own AI colours when the cyan sits too close', () => {
       for (const name of ['--nova-gradient-ai', '--nova-gradient-ai-rail']) {
         const original = resolve(name);
         expect(original).toContain('#22D3EE');
-        expect(resolve(name, rose)).toBe(original);
-        expect(resolve(name, teal)).toBe(original);
+        expect(original).toContain('#6D4FE0');
+        // Rose keeps the cyan (far from its hue), and the gradient ends in rose.
+        expect(resolve(name, rose)).toContain('#22D3EE');
+        expect(resolve(name, rose)).toContain('#9D174D');
+        // Teal is too close to the cyan: its AI moves away, gradient and all.
+        expect(resolve(name, teal)).not.toContain('#22D3EE');
+        expect(resolve(name, teal)).toContain(
+          teal.cssVariables['--nova-color-ai'] ?? '',
+        );
       }
+      expect(resolve('--nova-ai-mark')).toContain('#EA4335');
+      expect(resolve('--nova-ai-mark', teal)).not.toContain('#EA4335');
     });
 
     it('while --nova-gradient-brand follows the brand', () => {

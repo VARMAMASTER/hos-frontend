@@ -41,6 +41,13 @@ export const BRAND_SCHEME_TOKENS = [
   '--nova-color-highlight-soft',
   '--nova-color-highlight-deep',
   '--nova-color-highlight-hover',
+  // The AI family (AI_SCHEME_TOKENS below): brand-derived since the owner's decision of 2026-10-07.
+  '--nova-color-ai',
+  '--nova-color-ai-deep',
+  '--nova-color-ai-soft',
+  '--nova-color-ai-ghost',
+  '--nova-color-ai-line',
+  '--nova-color-ai-hover',
 ] as const;
 
 export const BRAND_CHROME_TOKENS = [
@@ -59,6 +66,12 @@ export const BRAND_CHROME_TOKENS = [
   '--nova-color-sidebar-2',
   '--nova-color-sidebar-3',
   '--nova-color-sidebar-lift',
+  // The AI's single-value colours (AI_FIXED_TOKENS below): the same in both schemes, like the chrome.
+  '--nova-color-ai-bright',
+  '--nova-color-ai-mark-1',
+  '--nova-color-ai-mark-2',
+  '--nova-color-ai-mark-3',
+  '--nova-color-ai-mark-4',
 ] as const;
 
 export type BrandSchemeToken = (typeof BRAND_SCHEME_TOKENS)[number];
@@ -71,6 +84,265 @@ export type BrandPalette = Record<BrandToken, string>;
 export interface NovaPalette {
   light: BrandPalette;
   dark: BrandPalette;
+}
+
+// The AI follows the hospital theme (owner decision, 2026-10-07), and must stay recognisable: never
+// mistaken for the brand or for a status. Its colours are HOS Violet's (the prototype's cyan) turned
+// to an AI hue chosen per brand, each pinned back to its own luminance, so every AI contrast the
+// prototype holds (AI text on its tints, white on the AI fill, AI marks) holds for every hospital.
+export const AI_SCHEME_TOKENS = [
+  '--nova-color-ai',
+  '--nova-color-ai-deep',
+  '--nova-color-ai-soft',
+  '--nova-color-ai-ghost',
+  '--nova-color-ai-line',
+  '--nova-color-ai-hover',
+] as const;
+
+export const AI_FIXED_TOKENS = [
+  '--nova-color-ai-bright',
+  '--nova-color-ai-mark-1',
+  '--nova-color-ai-mark-2',
+  '--nova-color-ai-mark-3',
+  '--nova-color-ai-mark-4',
+] as const;
+
+type AiToken =
+  | (typeof AI_SCHEME_TOKENS)[number]
+  | (typeof AI_FIXED_TOKENS)[number];
+
+// How far the AI stays from the others, measured on the OKLCH hue circle and as OKLab distance
+// (x 100) between the AI fill and each status fill or the brand primary, in each scheme. The status
+// floor sits just under the prototype's own pair (its cyan is 30.6 degrees from info in the light
+// scheme, 29.8 in the dark, where each colour is re-pinned; ΔE 7.1 and 6.5); the brand gets more room
+// (the prototype holds 63.6 degrees and 18.8), since the brand fills the screen. A brand whose chroma
+// is under greyChroma has no hue to confuse, so only the colour distance applies to it. The chart
+// palette keeps its own rule (a series is at least 10 from the AI, OKLab x 100; palette.spec.ts), so
+// the AI keeps chartDeltaE from every series in each scheme too.
+export const AI_SEPARATION = {
+  statusHue: 28,
+  brandHue: 45,
+  deltaE: 6,
+  chartDeltaE: 10,
+  greyChroma: 0.03,
+} as const;
+
+const CHART_SLOTS = [1, 2, 3, 4, 5, 6] as const;
+const schemeValue = (
+  token: keyof typeof NOVA_DEFAULTS,
+  scheme: 'light' | 'dark',
+) =>
+  scheme === 'dark' && token in NOVA_DARK
+    ? NOVA_DARK[token as keyof typeof NOVA_DARK]
+    : NOVA_DEFAULTS[token];
+const CHART_COLOURS = {
+  light: CHART_SLOTS.map((slot) =>
+    schemeValue(`--nova-chart-${slot}`, 'light'),
+  ),
+  dark: CHART_SLOTS.map((slot) => schemeValue(`--nova-chart-${slot}`, 'dark')),
+};
+
+// One of HOS Violet's colours turned by `rotation` degrees of hue and pinned back to its luminance.
+function turn(hex: string, rotation: number): string {
+  if (rotation === 0) return hex;
+  const { l, c, h } = toOklch(hex);
+  const turned = toOklch(fromOklch({ l, c, h: h + rotation }));
+  return withLuminance(turned.h, turned.c, relativeLuminance(hex));
+}
+
+const STATUSES = ['good', 'warn', 'crit', 'info'] as const;
+
+// The status fills' hues (good, warn, crit, info): fixed for every hospital.
+export const STATUS_HUES: readonly number[] = STATUSES.map(
+  (status) => toOklch(NOVA_DEFAULTS[`--nova-color-${status}`]).h,
+);
+
+export const PROTOTYPE_AI_HUE = toOklch(NOVA_DEFAULTS['--nova-color-ai']).h;
+
+const hueDistance = (a: number, b: number) => Math.abs(hueDelta(a, b));
+
+// OKLab distance x 100 (the dataviz scale: 10 is clearly another colour, 2 a just-noticeable step).
+export function oklabDistance(a: string, b: string): number {
+  const lab = (hex: string): [number, number, number] => {
+    const { l, c, h } = toOklch(hex);
+    const radians = (h * Math.PI) / 180;
+    return [l, c * Math.cos(radians), c * Math.sin(radians)];
+  };
+  const [x, y] = [lab(a), lab(b)];
+  return 100 * Math.hypot(x[0] - y[0], x[1] - y[1], x[2] - y[2]);
+}
+
+// The AI hue for a brand. The prototype's cyan, while its colours keep every floor in both schemes.
+// Otherwise the hue that keeps the most distance from the brand and the statuses (the smallest of its
+// hue distances, as large as it can be), nearest the cyan on a tie, among the hues whose colours keep
+// every floor in both schemes (AI_SEPARATION: hue and colour distance from each status and the brand,
+// colour distance from each chart series). `feasible` is false when no hue does, and the theme is
+// then rejected.
+export function chooseAiHue(
+  primary: string,
+  statusHues: readonly number[] = STATUS_HUES,
+): { hue: number; feasible: boolean } {
+  const brand = toOklch(primary);
+  const chromatic = brand.c >= AI_SEPARATION.greyChroma;
+  const fromStatus = (h: number) =>
+    Math.min(...statusHues.map((status) => hueDistance(h, status)));
+  const fromBrand = (h: number) =>
+    chromatic ? hueDistance(h, brand.h) : Infinity;
+  // Given status hues of its own (a test of the rule), only the hue floors are measured.
+  const custom = statusHues !== STATUS_HUES;
+  // The brand primary in each scheme, as the engine derives it (the dark one is re-pinned).
+  const primaries = {
+    light: primary,
+    dark: withLuminance(
+      brand.h,
+      brand.c,
+      DARK_BRAND_LUMINANCE.primary,
+      'darker',
+    ),
+  };
+  // Whether the AI colours at a hue keep every floor, measured as the gate measures them.
+  const keepsFloors = (h: number) =>
+    fromStatus(h) >= AI_SEPARATION.statusHue &&
+    fromBrand(h) >= AI_SEPARATION.brandHue &&
+    (custom ||
+      (['light', 'dark'] as const).every((scheme) => {
+        const p: Record<string, string> = {
+          '--nova-color-ai': turn(
+            schemeValue('--nova-color-ai', scheme),
+            hueDelta(PROTOTYPE_AI_HUE, h),
+          ),
+          '--nova-color-primary': primaries[scheme],
+        };
+        for (const status of STATUSES) {
+          p[`--nova-color-${status}`] = schemeValue(
+            `--nova-color-${status}`,
+            scheme,
+          );
+        }
+        CHART_SLOTS.forEach((slot, index) => {
+          p[`--nova-chart-${slot}`] = CHART_COLOURS[scheme][index] ?? '';
+        });
+        return aiSeparationFailures(p, scheme).length === 0;
+      }));
+  if (keepsFloors(PROTOTYPE_AI_HUE)) {
+    return { hue: PROTOTYPE_AI_HUE, feasible: true };
+  }
+  // Best first: the largest smallest-distance, then nearest the cyan.
+  const ranked = Array.from({ length: 720 }, (_, i) => i / 2)
+    .map((h) => ({ h, score: Math.min(fromStatus(h), fromBrand(h)) }))
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        hueDistance(a.h, PROTOTYPE_AI_HUE) - hueDistance(b.h, PROTOTYPE_AI_HUE),
+    );
+  const chosen = ranked.find(({ h }) => keepsFloors(h));
+  return chosen
+    ? { hue: chosen.h, feasible: true }
+    : { hue: ranked[0]?.h ?? PROTOTYPE_AI_HUE, feasible: false };
+}
+
+// HOS Violet's AI colours in one scheme, turned by `rotation` degrees of hue and pinned back to their
+// own luminance. No rotation is the prototype's values exactly.
+function aiFamily(
+  scheme: 'light' | 'dark',
+  rotation: number,
+): Record<AiToken, string> {
+  const values = {} as Record<AiToken, string>;
+  for (const token of [...AI_SCHEME_TOKENS, ...AI_FIXED_TOKENS]) {
+    values[token] = turn(schemeValue(token, scheme), rotation);
+  }
+  return values;
+}
+
+export interface AiSeparation {
+  // The smallest hue distance from a status fill, and from the brand (Infinity for a grey brand).
+  statusHue: number;
+  brandHue: number;
+  // The smallest OKLab distance (x 100) from a status fill, from the brand primary and from a chart
+  // series.
+  statusDeltaE: number;
+  brandDeltaE: number;
+  chartDeltaE: number;
+}
+
+// How far one scheme's AI fill sits from the status fills and the brand primary.
+export function aiSeparation(p: Record<string, string>): AiSeparation {
+  const ai = p['--nova-color-ai'] ?? '';
+  const primary = p['--nova-color-primary'] ?? '';
+  const hue = toOklch(ai).h;
+  const brand = toOklch(primary);
+  const statuses = STATUSES.map((status) => p[`--nova-color-${status}`] ?? '');
+  return {
+    statusHue: Math.min(
+      ...statuses.map((status) => hueDistance(hue, toOklch(status).h)),
+    ),
+    brandHue:
+      brand.c >= AI_SEPARATION.greyChroma
+        ? hueDistance(hue, brand.h)
+        : Infinity,
+    statusDeltaE: Math.min(
+      ...statuses.map((status) => oklabDistance(ai, status)),
+    ),
+    brandDeltaE: oklabDistance(ai, primary),
+    chartDeltaE: Math.min(
+      ...CHART_SLOTS.map((slot) =>
+        oklabDistance(ai, p[`--nova-chart-${slot}`] ?? ''),
+      ),
+    ),
+  };
+}
+
+export interface AiSeparationFailure {
+  scheme: 'light' | 'dark';
+  reason: string;
+}
+
+// Every way one scheme's AI fill sits too close to a status fill or to the brand, with the reason.
+export function aiSeparationFailures(
+  p: Record<string, string>,
+  scheme: 'light' | 'dark',
+): AiSeparationFailure[] {
+  const ai = p['--nova-color-ai'] ?? '';
+  const hue = toOklch(ai).h;
+  const failures: AiSeparationFailure[] = [];
+  const others: Array<[name: string, colour: string, floor: number]> = [
+    ...STATUSES.map((status): [string, string, number] => [
+      status,
+      p[`--nova-color-${status}`] ?? '',
+      AI_SEPARATION.statusHue,
+    ]),
+    ['the brand', p['--nova-color-primary'] ?? '', AI_SEPARATION.brandHue],
+  ];
+  for (const [name, colour, floor] of others) {
+    const other = toOklch(colour);
+    const greyBrand =
+      name === 'the brand' && other.c < AI_SEPARATION.greyChroma;
+    const degrees = hueDistance(hue, other.h);
+    if (!greyBrand && degrees < floor) {
+      failures.push({
+        scheme,
+        reason: `AI ${ai} is ${degrees.toFixed(1)}° from ${name} ${colour}; needs at least ${floor}°`,
+      });
+    }
+    const delta = oklabDistance(ai, colour);
+    if (delta < AI_SEPARATION.deltaE) {
+      failures.push({
+        scheme,
+        reason: `AI ${ai} is ${delta.toFixed(1)} (OKLab) from ${name} ${colour}; needs at least ${AI_SEPARATION.deltaE}`,
+      });
+    }
+  }
+  for (const slot of CHART_SLOTS) {
+    const series = p[`--nova-chart-${slot}`] ?? '';
+    const delta = oklabDistance(ai, series);
+    if (delta < AI_SEPARATION.chartDeltaE) {
+      failures.push({
+        scheme,
+        reason: `AI ${ai} is ${delta.toFixed(1)} (OKLab) from chart series ${slot} ${series}; needs at least ${AI_SEPARATION.chartDeltaE}`,
+      });
+    }
+  }
+  return failures;
 }
 
 export interface BrandColours {
@@ -279,14 +551,21 @@ export function deriveNovaPalette(brand: BrandColours): NovaPalette {
     ? template('dark')
     : movePalette(template('dark'), move);
 
+  // The AI turns from the prototype's cyan to the hue chosen for this brand.
+  const rotation = hueDelta(PROTOTYPE_AI_HUE, chooseAiHue(primary).hue);
   return {
     light: {
       ...light,
+      ...aiFamily('light', rotation),
       '--nova-color-primary': primary,
       '--nova-color-primary-strong': strong,
       '--nova-color-primary-soft': soft,
       '--nova-color-primary-hover': strong,
     },
-    dark: { ...dark, ...darkBrandFamily(primary) },
+    dark: {
+      ...dark,
+      ...aiFamily('dark', rotation),
+      ...darkBrandFamily(primary),
+    },
   };
 }

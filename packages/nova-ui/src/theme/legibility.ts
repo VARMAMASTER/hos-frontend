@@ -284,12 +284,13 @@ export function legibilityChecks(
     true,
   );
 
-  // Status and AI: fixed for every hospital, proven in both schemes on the brand's panels.
+  // Status (fixed for every hospital) and AI (derived from the brand), proven in both schemes on the
+  // brand's panels. An AI failure is the brand's to fix.
   for (const status of ['good', 'warn', 'crit', 'info', 'ai'] as const) {
     const base = hex(`--nova-color-${status}`);
     const deep = hex(`--nova-color-${status}-deep`);
     const tinted = hex(`--nova-color-${status}-soft`);
-    check(`${status} text on its tint`, deep, tinted, TEXT, false);
+    check(`${status} text on its tint`, deep, tinted, TEXT, status === 'ai');
     for (const ground of [surface, surface2]) {
       check(`${status} text on a panel`, deep, ground, TEXT, true);
       check(`a ${status} mark on a panel`, base, ground, MARK, true);
@@ -300,16 +301,18 @@ export function legibilityChecks(
     hex('--nova-color-ai-deep'),
     hex('--nova-color-ai-ghost'),
     TEXT,
-    false,
+    true,
   );
-  check('AI button text', onPrimary, hex('--nova-color-ai'), TEXT, false);
+  check('AI button text', onPrimary, hex('--nova-color-ai'), TEXT, true);
   check(
     'AI button hover fill',
     onPrimary,
     hex('--nova-color-ai-hover'),
     TEXT,
-    false,
+    true,
   );
+  // The AI line (the AI block's edge) holds no contrast of its own: the block is told apart by its
+  // gradient rail, the spark and its label. The AI mark is the one AI edge, at 3:1 above.
 
   // The data palette: a thin line or a small mark at 3:1 on the card a chart sits in.
   for (const slot of [1, 2, 3, 4, 5, 6] as const) {

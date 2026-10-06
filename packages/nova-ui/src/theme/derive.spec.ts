@@ -56,10 +56,11 @@ describe('colour arithmetic', () => {
 });
 
 describe('deriveNovaPalette', () => {
-  it('names every brand token once, and none of status, AI or the charts', () => {
+  // Status and the charts are never the brand's. AI is (owner decision 2026-10-07; ai.spec.ts).
+  it('names every brand token once, and none of status or the charts', () => {
     expect(new Set(allTokens).size).toBe(allTokens.length);
     for (const token of allTokens) {
-      expect(token).not.toMatch(/-(good|warn|crit|info|ai)|chart/);
+      expect(token).not.toMatch(/-(good|warn|crit|info)(-|$)|chart/);
     }
   });
 

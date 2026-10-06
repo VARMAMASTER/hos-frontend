@@ -97,12 +97,10 @@ const PROTOTYPE_NAMES: Record<string, keyof typeof NOVA_DEFAULTS> = {
 // The prototype value, and the Nova value that replaces it, for each token an accessibility proof
 // holds (material.spec.ts proves both). The AI gradient's last stop is the prototype's own violet,
 // pinned so a hospital brand cannot recolour it.
+// The AI gradient is no longer held: it ends in the brand, as the prototype's does (var(--teal)),
+// since the AI follows the hospital theme (owner decision 2026-10-07).
 const HELD_BY_A_PROOF: Record<string, [prototype: string, nova: string]> = {
   '--ink-3': ['#6A6584', '#5D5974'],
-  '--ai-grad': [
-    'linear-gradient(135deg, var(--ai-bright) 0%, var(--ai) 48%, var(--teal) 105%)',
-    'linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, #6D4FE0 105%)',
-  ],
 };
 
 describe('the prototype token set (hos.css :root)', () => {
@@ -136,7 +134,7 @@ describe('the prototype token set (hos.css :root)', () => {
     }
   });
 
-  it('holds only ink-3 and the AI gradient stop away from the prototype, for a proof', () => {
+  it('holds only ink-3 away from the prototype, for a proof', () => {
     for (const [prototype, [, nova]] of Object.entries(HELD_BY_A_PROOF)) {
       expect(NOVA_DEFAULTS[PROTOTYPE_NAMES[prototype]], prototype).toBe(nova);
     }
@@ -173,11 +171,19 @@ describe('the prototype token set (hos.css :root)', () => {
           /var\((--[\w-]+)\)/g,
           (_, name: string) => `var(${PROTOTYPE_NAMES[name] ?? name})`,
         );
+      // Nova may name a colour the prototype writes as a literal (the AI mark's four tints are
+      // tokens, so a theme can move them): compared with every Nova token resolved.
+      const tokens = NOVA_DEFAULTS as Record<string, string>;
+      const resolved = (value: string): string =>
+        value.replace(
+          /var\((--nova-color-ai-mark-\d)\)/g,
+          (_, ref: string) => tokens[ref] ?? ref,
+        );
       for (const [name, nova] of Object.entries(PROTOTYPE_NAMES)) {
         const held = HELD_BY_A_PROOF[name];
         expect(prototype[name], name).toBe(held ? held[0] : prototype[name]);
         const expected = held ? held[1] : renamed(prototype[name] ?? '');
-        expect(NOVA_DEFAULTS[nova], name).toBe(expected);
+        expect(resolved(NOVA_DEFAULTS[nova]), name).toBe(expected);
       }
     },
   );

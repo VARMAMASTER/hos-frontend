@@ -146,6 +146,10 @@
   --nova-color-ai-ghost: #F6FDFF;
   --nova-color-ai-line: #B9E6F2;
   --nova-color-ai-hover: #0B5567;
+  --nova-color-ai-mark-1: #EA4335;
+  --nova-color-ai-mark-2: #4285F4;
+  --nova-color-ai-mark-3: #34A853;
+  --nova-color-ai-mark-4: #FBBC04;
   --nova-color-good: #0B8A68;
   --nova-color-good-soft: #E3F2EC;
   --nova-color-good-deep: #07634B;
@@ -180,8 +184,8 @@
   --nova-chart-4: #6C6610;
   --nova-chart-5: #A779FD;
   --nova-chart-6: #9C1B80;
-  --nova-gradient-ai: linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, #6D4FE0 105%);
-  --nova-ai-mark: conic-gradient(from 0deg at 50% 50%, #EA4335 0deg, #4285F4 92deg, #34A853 184deg, #FBBC04 272deg, #EA4335 360deg);
+  --nova-gradient-ai: linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, var(--nova-color-primary) 105%);
+  --nova-ai-mark: conic-gradient(from 0deg at 50% 50%, var(--nova-color-ai-mark-1) 0deg, var(--nova-color-ai-mark-2) 92deg, var(--nova-color-ai-mark-3) 184deg, var(--nova-color-ai-mark-4) 272deg, var(--nova-color-ai-mark-1) 360deg);
   --nova-radius-sm: 8px;
   --nova-radius-md: 12px;
   --nova-radius-lg: 18px;
@@ -438,7 +442,13 @@
    the highlight pair on the chrome. The highlight gradients are the same move on a light or dark
    panel, the brand into the highlight: a fill (gauges, underlines, markers), a rail (a selected
    row), an edge (an emphasised card) and the soft wash under highlight text (the brand's tint into
-   the highlight's). Each stop is proven in theme/legibility.ts. */
+   the highlight's). Each stop is proven in theme/legibility.ts.
+
+   The AI gradients follow the hospital theme too (owner decision, 2026-10-07): as in the prototype,
+   the AI gradient and the AI block's rail run between the AI colours and the brand (var(--teal)),
+   and the AI colours themselves are derived per brand, clear of the brand and every status
+   (theme/derive.ts chooseAiHue). The AI gradient and mark are also on the plain :root above
+   (NOVA_DEFAULTS), with the same values, so a page with no theme is the prototype. */
 /* prettier-ignore */
 :root,
 [data-nova-theme],
@@ -457,6 +467,9 @@
   --nova-gradient-highlight-rail: linear-gradient(180deg, var(--nova-color-primary), var(--nova-color-highlight));
   --nova-gradient-highlight-edge: linear-gradient(135deg, var(--nova-color-primary), var(--nova-color-highlight));
   --nova-gradient-highlight-wash: linear-gradient(90deg, var(--nova-color-primary-soft), var(--nova-color-highlight-soft));
+  --nova-gradient-ai: linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, var(--nova-color-primary) 105%);
+  --nova-gradient-ai-rail: linear-gradient(180deg, var(--nova-color-primary) 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%);
+  --nova-ai-mark: conic-gradient(from 0deg at 50% 50%, var(--nova-color-ai-mark-1) 0deg, var(--nova-color-ai-mark-2) 92deg, var(--nova-color-ai-mark-3) 184deg, var(--nova-color-ai-mark-4) 272deg, var(--nova-color-ai-mark-1) 360deg);
   --nova-tabbar-tint: color-mix(in srgb, var(--nova-color-chrome-2) 7%, transparent);
   --nova-surface-fill: color-mix(in srgb, color-mix(in srgb, var(--nova-color-surface-2) var(--nova-surface-tint), var(--nova-color-surface)) var(--nova-surface-alpha), transparent);
   --nova-surface-border: color-mix(in srgb, var(--nova-surface-rim) calc(var(--nova-glass) * 100%), var(--nova-color-border));
@@ -467,12 +480,10 @@
   --nova-hero-base: color-mix(in srgb, color-mix(in srgb, var(--nova-color-chrome-1) calc(var(--nova-glass) * 100%), var(--nova-color-chrome-2)) var(--nova-hero-base-alpha), transparent);
 }
 
-/* Fixed gradients and textures, the same for every hospital. The AI rail runs from the prototype's
-   violet (pinned as a literal, never the brand) through the AI cyan to the bright stop. The grain is
-   the prototype's SVG noise, laid over the chrome and the hero only. */
+/* Fixed textures, the same for every hospital: the prototype's SVG noise, laid over the chrome and
+   the hero only. */
 /* prettier-ignore */
 :root {
-  --nova-gradient-ai-rail: linear-gradient(180deg, #6D4FE0 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%);
   --nova-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E");
   --nova-grain-hero: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
