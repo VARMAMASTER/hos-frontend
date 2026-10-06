@@ -8,6 +8,7 @@ export * from './components/ai-panel/ai-panel';
 export * from './components/ai-source-line/ai-source-line';
 export * from './components/ai-source-line/why-trail';
 export * from './components/alert-dialog/alert-dialog';
+export * from './components/ambient-scribe-recorder/ambient-scribe-recorder';
 export * from './components/app-shell/app-shell';
 export * from './components/approval-bar/approval-bar';
 export * from './components/avatar/avatar';
@@ -58,6 +59,7 @@ export * from './components/select/select';
 export * from './components/sidebar/nav-item';
 export * from './components/sidebar/nav-section';
 export * from './components/sidebar/sidebar';
+export * from './components/soap-draft-block/soap-draft-block';
 export * from './components/split-layout/split-layout';
 export * from './components/stat-gauge/stat-gauge';
 export * from './components/status-dot/status-dot';
@@ -71,6 +73,7 @@ export * from './components/timeline/timeline';
 export * from './components/toast/toast';
 export * from './components/tooltip/tooltip';
 export * from './components/top-bar/top-bar';
+export * from './components/voice-entry-capture/voice-entry-capture';
 export * from './components/module-switcher/module-switcher';
 export {
   ChartContainer,
