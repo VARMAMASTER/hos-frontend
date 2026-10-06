@@ -50,3 +50,9 @@ export const WithMiddleContent: Story = {
     ),
   },
 };
+
+// Below md the sidebar is a drawer, and the menu button that opens it appears first in the bar. In
+// an AppShell it opens the drawer by itself; on its own, give it onMenuClick (resize to see it).
+export const WithMenuButton: Story = {
+  args: { search, onMenuClick: () => undefined },
+};

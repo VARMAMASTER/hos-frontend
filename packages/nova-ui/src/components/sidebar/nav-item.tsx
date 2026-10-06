@@ -1,14 +1,19 @@
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
+  ReactElement,
   ReactNode,
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { Tooltip } from '../tooltip/tooltip';
+import { useSidebarContext } from './sidebar-context';
 
 interface NavItemOwnProps {
   icon?: ReactNode;
   active?: boolean;
+  // A count or short word shown after the label. In the icon rail it moves onto the icon.
+  badge?: ReactNode;
 }
 
 export type NavItemAnchorProps = NavItemOwnProps & {
@@ -26,8 +31,12 @@ export type NavItemProps = NavItemAnchorProps | NavItemButtonProps;
 // material.spec.ts proves is 4.5:1 for every brand; hover lifts the row with a faint white and
 // whitens the text. Active is the chrome accent's soft fill with its 1px inner ring, white and
 // semibold, so it is marked by weight as well as colour.
+//
+// The item is the same box expanded and in the icon rail: the icon never moves (the rail is exactly
+// the icon, its padding and the sidebar's padding wide), the label fades out and is clipped by the
+// item's overflow, and it never wraps, so nothing jumps while the width animates.
 const base =
-  'flex w-full cursor-pointer items-center gap-2.5 rounded-sm px-2.5 py-2 text-left text-[13.5px] font-medium transition-colors';
+  'relative flex w-full cursor-pointer items-center gap-2.5 overflow-hidden rounded-sm px-2.5 py-2 text-left text-[13.5px] font-medium transition-colors';
 const resting =
   'text-[color:var(--nova-chrome-ink-2)] hover:bg-chrome-ink/5 hover:text-on-primary focus-visible:bg-chrome-ink/5 focus-visible:text-on-primary';
 const current =
@@ -37,54 +46,155 @@ function classes(active: boolean, className: string | undefined): string {
   return cx(base, focusRing, active ? current : resting, className);
 }
 
-function Content({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+// The label's tooltip sits beside the rail. Tooltip only knows top and bottom, so the rail moves
+// its popup to the right of the item from outside; expanded, there is nothing to say twice, so the
+// popup is hidden.
+const tooltipBeside =
+  'w-full [&>[role=tooltip]]:top-1/2 [&>[role=tooltip]]:bottom-auto [&>[role=tooltip]]:left-full [&>[role=tooltip]]:translate-x-0 [&>[role=tooltip]]:-translate-y-1/2 [&>[role=tooltip]]:pb-0 [&>[role=tooltip]]:pl-2';
+const tooltipHidden = 'w-full [&>[role=tooltip]]:hidden';
+
+const badgeShape =
+  'inline-flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-chrome-accent px-1 text-[10px] font-bold leading-none text-chrome-ring';
+
+function firstLetter(label: ReactNode): string {
+  return typeof label === 'string' ? label.trim().charAt(0).toUpperCase() : '';
+}
+
+function Content({
+  icon,
+  badge,
+  active,
+  children,
+}: {
+  icon: ReactNode;
+  badge: ReactNode;
+  active: boolean;
+  children: ReactNode;
+}) {
+  const { collapsed } = useSidebarContext();
+  const hasBadge = badge !== undefined && badge !== null && badge !== false;
+  const glyph =
+    icon ??
+    (collapsed ? (
+      <span data-nova-monogram="" className="text-[11px] font-bold">
+        {firstLetter(children)}
+      </span>
+    ) : null);
   return (
     <>
-      {icon ? (
+      {collapsed && active ? (
+        <span
+          aria-hidden="true"
+          data-nova-active-mark=""
+          className="absolute inset-y-2 left-0 w-0.5 rounded-full bg-chrome-accent"
+        />
+      ) : null}
+      {glyph ? (
         <span
           aria-hidden="true"
           className="flex size-6 shrink-0 items-center justify-center"
         >
-          {icon}
+          {glyph}
         </span>
       ) : null}
-      <span className="min-w-0">{children}</span>
+      <span
+        className={cx(
+          'min-w-0 flex-1 whitespace-nowrap overflow-hidden text-ellipsis motion-safe:transition-opacity duration-base ease-standard',
+          collapsed && 'opacity-0',
+        )}
+      >
+        {children}
+      </span>
+      {hasBadge ? (
+        <span
+          data-nova-badge={collapsed ? 'overlay' : 'inline'}
+          className={cx(
+            badgeShape,
+            collapsed && 'absolute top-0.5 left-6 ring-2 ring-chrome-1',
+          )}
+        >
+          {badge}
+        </span>
+      ) : null}
     </>
   );
 }
 
 export function NavItem(props: NavItemProps) {
+  const { collapsed, drawer, closeDrawer } = useSidebarContext();
+  // Choosing a destination in the drawer puts the drawer away.
+  // A router that handles the click itself still means the destination was chosen.
+  const afterClick = () => {
+    if (drawer) closeDrawer();
+  };
+  const tip = (
+    label: ReactNode,
+    trigger: ReactElement<{ 'aria-describedby'?: string }>,
+  ) => (
+    <Tooltip
+      content={collapsed ? label : null}
+      className={collapsed ? tooltipBeside : tooltipHidden}
+    >
+      {trigger}
+    </Tooltip>
+  );
+
   if (props.as === 'button') {
     const {
       as: _as,
       icon,
       active = false,
+      badge,
       className,
       children,
       type = 'button',
+      onClick,
       ...rest
     } = props;
     // aria-selected is not allowed on role=button, so the active state is aria-current, which any
     // element may carry and assistive tech announces.
-    return (
+    return tip(
+      children,
       <button
         type={type}
         aria-current={active ? 'true' : undefined}
         {...rest}
+        onClick={(event) => {
+          onClick?.(event);
+          afterClick();
+        }}
         className={classes(active, className)}
       >
-        <Content icon={icon}>{children}</Content>
-      </button>
+        <Content icon={icon} badge={badge} active={active}>
+          {children}
+        </Content>
+      </button>,
     );
   }
-  const { as: _as, icon, active = false, className, children, ...rest } = props;
-  return (
+  const {
+    as: _as,
+    icon,
+    active = false,
+    badge,
+    className,
+    children,
+    onClick,
+    ...rest
+  } = props;
+  return tip(
+    children,
     <a
       aria-current={active ? 'page' : undefined}
       {...rest}
+      onClick={(event) => {
+        onClick?.(event);
+        afterClick();
+      }}
       className={classes(active, className)}
     >
-      <Content icon={icon}>{children}</Content>
-    </a>
+      <Content icon={icon} badge={badge} active={active}>
+        {children}
+      </Content>
+    </a>,
   );
 }

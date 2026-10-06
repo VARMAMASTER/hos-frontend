@@ -41,6 +41,7 @@ export * from './components/search-field/search-field';
 export * from './components/section-nav/section-nav';
 export * from './components/select/select';
 export * from './components/sidebar/nav-item';
+export * from './components/sidebar/nav-section';
 export * from './components/sidebar/sidebar';
 export * from './components/split-layout/split-layout';
 export * from './components/stat-gauge/stat-gauge';

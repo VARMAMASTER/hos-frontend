@@ -65,6 +65,7 @@ describe('@hos/nova-ui public API', () => {
     'IconTile',
     'KpiTile',
     'NavItem',
+    'NavSection',
     'SearchField',
     'Sidebar',
     'Tab',

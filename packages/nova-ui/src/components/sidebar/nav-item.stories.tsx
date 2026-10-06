@@ -71,3 +71,12 @@ export const AsButton: Story = {
     </>
   ),
 };
+
+// A badge sits after the label; in the icon rail it moves onto the icon, still a number.
+export const WithBadge: Story = {
+  render: () => (
+    <NavItem href="#claims" icon={<GridIcon />} badge={12}>
+      Claims
+    </NavItem>
+  ),
+};
