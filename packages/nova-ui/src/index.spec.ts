@@ -69,15 +69,32 @@ describe('@hos/nova-ui public API', () => {
     'CardFooter',
     'AiBadge',
     'AiButton',
+    'AiChatThread',
     'AiClassChip',
+    'AiCopilotDock',
     'AiDraftBlock',
     'AiDraftReply',
     'AiPanel',
+    'AiProgressSteps',
     'AiSourceLine',
+    'AmbientScribeRecorder',
+    'AiStreamText',
+    'AiThinking',
+    'ChatAnswer',
+    'ChatComposer',
+    'ChatQuestion',
+    'FollowupChips',
+    'isSafeHref',
+    'SafeMarkdown',
+    'useCopilotShortcut',
     'ApprovalBar',
     'Avatar',
     'Breadcrumbs',
     'EmptyState',
+    'EXTRACTED_VALUES_REVIEW_LABELS',
+    'ExtractedValuesReview',
+    'extractedValueStatus',
+    'initialExtractedSelection',
     'FilterChip',
     'DataTable',
     'Divider',
@@ -117,6 +134,7 @@ describe('@hos/nova-ui public API', () => {
     'Radio',
     'RichTextEditor',
     'Select',
+    'SoapDraftBlock',
     'Switch',
     'TextField',
     'Textarea',
@@ -148,6 +166,7 @@ describe('@hos/nova-ui public API', () => {
     'WaQuickReplyButtons',
     'WaTypingIndicator',
     'WhatsAppThread',
+    'VoiceEntryCapture',
     'WhyTrail',
     'AreaChart',
     'BarChart',
@@ -228,12 +247,16 @@ describe('@hos/nova-ui public API', () => {
   it('keeps the Tabs context internal', () => {
     expect(nova).not.toHaveProperty('TabsContext');
   });
-  it.each(['FieldShell', 'getTabbables', 'trapTab', 'inertOutside'])(
-    'keeps the internal helper %s out of the barrel',
-    (name) => {
-      expect(nova).not.toHaveProperty(name);
-    },
-  );
+  it.each([
+    'FieldShell',
+    'getTabbables',
+    'trapTab',
+    'inertOutside',
+    'useLoopMotion',
+    'useMotionAllowed',
+  ])('keeps the internal helper %s out of the barrel', (name) => {
+    expect(nova).not.toHaveProperty(name);
+  });
   it('exports the prop types of the charts (checked by tsc)', () => {
     const config: ChartConfig = { beds: { label: 'Beds', color: 'chart-1' } };
     const base = {
