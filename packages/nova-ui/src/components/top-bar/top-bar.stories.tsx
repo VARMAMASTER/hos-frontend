@@ -42,7 +42,7 @@ export const SearchOnly: Story = {
 export const WithMiddleContent: Story = {
   args: {
     search,
-    children: <p className="text-sm font-medium">Ward 4B</p>,
+    children: <p className="text-sm font-semibold">Ward 4B</p>,
     actions: (
       <Button variant="secondary" size="sm">
         Handover

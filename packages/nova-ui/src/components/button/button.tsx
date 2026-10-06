@@ -11,7 +11,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const base = cx(
-  'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors',
+  'inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-colors',
   focusRing,
   'disabled:pointer-events-none disabled:opacity-50',
   'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',

@@ -12,7 +12,7 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
 
 const base =
   'inline-flex items-center whitespace-nowrap rounded-sm border px-2 py-0.5 ' +
-  'font-mono text-[11px] leading-4 font-medium';
+  'font-mono text-micro leading-4 font-semibold';
 
 // Every pairing below puts the text token on the fill (or on the surface behind an outline) that
 // the theme engine already gates at 4.5:1, so a tag stays legible in every hospital theme.

@@ -72,7 +72,7 @@ export function ActivityFeed({
             {time}
           </span>
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-medium text-ink">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-semibold text-ink">
               <ToneLabel tone={tone} />
               {title}
             </div>

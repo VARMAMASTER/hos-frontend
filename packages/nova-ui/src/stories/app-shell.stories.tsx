@@ -170,7 +170,7 @@ function ShellPage() {
           brand={<Brand />}
           footer={
             <div className="text-sm">
-              <p className="font-medium">Dr. Anita Rao</p>
+              <p className="font-semibold">Dr. Anita Rao</p>
               <p className="text-[color:var(--nova-chrome-ink-2)]">
                 Cardiology
               </p>

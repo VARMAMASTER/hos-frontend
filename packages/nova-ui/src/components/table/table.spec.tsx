@@ -74,7 +74,7 @@ describe('Table', () => {
     const row = screen.getByText('Haemoglobin');
     expect(column.classList.contains('text-xs')).toBe(true);
     expect(row.classList.contains('text-xs')).toBe(false);
-    expect(row.classList.contains('font-medium')).toBe(true);
+    expect(row.classList.contains('font-semibold')).toBe(true);
   });
 
   it('passes native header attributes through, such as aria-sort', () => {

@@ -82,7 +82,7 @@ export function KpiTile({
           data-delta=""
           data-trend={trend}
           className={cx(
-            'mt-3 flex w-fit items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium',
+            'mt-3 flex w-fit items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold',
             deltaTones[tone],
           )}
         >

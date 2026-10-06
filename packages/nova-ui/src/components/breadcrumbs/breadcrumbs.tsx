@@ -16,7 +16,7 @@ function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
   // The page being viewed is not a link, even when it was given an href.
   if (current) {
     return (
-      <span aria-current="page" className="font-medium text-ink">
+      <span aria-current="page" className="font-semibold text-ink">
         {item.label}
       </span>
     );

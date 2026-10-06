@@ -221,7 +221,7 @@ export function ChartTooltipContent({
       className={cx('grid min-w-32 gap-1.5 px-3 py-2 text-xs', className)}
     >
       {showHeading ? (
-        <div className="font-medium text-ink">{heading}</div>
+        <div className="font-semibold text-ink">{heading}</div>
       ) : null}
       <ul className="grid gap-1">
         {payload.map((item, index) => {

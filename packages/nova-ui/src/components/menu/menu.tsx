@@ -308,7 +308,7 @@ export function MenuGroup({ label, children, ...rest }: MenuGroupProps) {
     <div {...rest} role="group" aria-labelledby={labelId}>
       <div
         id={labelId}
-        className="px-3 pt-2.5 pb-1 text-[11px] font-bold tracking-wide text-ink-3 uppercase"
+        className="px-3 pt-2.5 pb-1 text-micro font-bold tracking-wide text-ink-3 uppercase"
       >
         {label}
       </div>

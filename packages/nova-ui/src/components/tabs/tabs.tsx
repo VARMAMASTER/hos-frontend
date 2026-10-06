@@ -159,7 +159,7 @@ export interface TabProps
 
 // `isolate` keeps the selected chip (a Surface behind the label) inside the tab.
 const tab =
-  'relative isolate inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50';
+  'relative isolate inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-semibold transition-colors disabled:pointer-events-none disabled:opacity-50';
 
 const NAVIGATION_KEYS = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
 

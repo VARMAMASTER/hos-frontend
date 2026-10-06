@@ -194,7 +194,7 @@ export function AdmissionForm() {
           </div>
 
           <fieldset>
-            <legend className="text-sm font-medium text-ink">Sex</legend>
+            <legend className="text-sm font-semibold text-ink">Sex</legend>
             <div className="mt-2 flex flex-wrap gap-x-6 gap-y-3">
               {[
                 ['f', 'Female'],

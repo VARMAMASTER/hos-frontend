@@ -71,7 +71,7 @@ export function Timeline({ items, ...rest }: TimelineProps) {
               <div className="text-xs text-ink-3">{item.time}</div>
               {/* The tone is a visible word (or the AI badge) before the title, so a critical event
                   and a good one differ in greyscale and are announced differently. */}
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium text-ink">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-ink">
                 <ToneLabel tone={tone} />
                 {item.title}
               </div>

@@ -52,7 +52,7 @@ export function Avatar({
     <span
       data-size={size}
       className={cx(
-        'inline-flex shrink-0 select-none items-center justify-center overflow-hidden rounded-full [corner-shape:round] bg-primary-soft font-medium text-primary-strong',
+        'inline-flex shrink-0 select-none items-center justify-center overflow-hidden rounded-full [corner-shape:round] bg-primary-soft font-semibold text-primary-strong',
         sizes[size],
         className,
       )}

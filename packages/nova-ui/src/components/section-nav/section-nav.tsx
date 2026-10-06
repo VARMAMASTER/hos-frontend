@@ -40,7 +40,7 @@ export interface SectionNavProps
 // on-primary (white). Hover and active tint with the translucent brand colour, never with white,
 // so white text keeps its contrast on the chrome for every brand.
 const itemBase =
-  'relative flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm font-medium';
+  'relative flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm font-normal';
 
 const itemIdle =
   'text-(color:--nova-chrome-ink-2) hover:bg-primary/20 hover:text-on-primary';

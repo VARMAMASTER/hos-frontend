@@ -81,4 +81,38 @@ describe('component conventions', () => {
   it('never writes its own backdrop-filter — material comes from the surface utilities', () => {
     expect(offenders(/backdrop-(?:filter|blur)/)).toEqual([]);
   });
+
+  // Elevation is flat (docs/design-language/README.md): depth comes from surface change, hairlines,
+  // the glass frost and a scrim. The glass rim highlight lives in the material tokens, not here.
+  it('never casts a shadow: no shadow-* utility and no box-shadow', () => {
+    expect(
+      offenders(/\b(?:inset-|drop-)?shadow-(?!none\b)|box-?shadow/i),
+    ).toEqual([]);
+  });
+
+  // The type ramp is the only set of sizes; an arbitrary size that duplicates a ramp step hides it
+  // from a ramp change.
+  it('never writes an arbitrary text size that a ramp token already names', () => {
+    expect(offenders(/text-\[(?:11|13|15|17|20|28|40|56)px\]/)).toEqual([]);
+  });
+});
+
+// The weight ladder is 400 / 600 / 700 everywhere, stories included: 500 is banned.
+describe('the weight ladder', () => {
+  const srcDir = fileURLToPath(new URL('..', import.meta.url));
+  const everySource = (dir: string): string[] =>
+    readdirSync(dir).flatMap((name) => {
+      const path = join(dir, name);
+      if (statSync(path).isDirectory()) return everySource(path);
+      return /\.tsx?$/.test(name) && !/\.spec\.tsx?$/.test(name) ? [path] : [];
+    });
+
+  it('never uses weight 500 (font-medium) in a component, primitive or story', () => {
+    const medium = /\bfont-medium\b|font-\[500\]|fontWeight:\s*['"]?500\b/;
+    expect(
+      everySource(srcDir)
+        .filter((path) => medium.test(readFileSync(path, 'utf8')))
+        .map((path) => path.slice(srcDir.length)),
+    ).toEqual([]);
+  });
 });

@@ -63,13 +63,13 @@ function BedContent({ bed }: { bed: Bed }) {
     <>
       <span aria-hidden="true" className="block">
         <span className="flex flex-wrap items-baseline justify-between gap-x-2">
-          <span className="font-mono text-xs font-medium text-ink">
+          <span className="font-mono text-xs font-semibold text-ink">
             {bed.label}
           </span>
           {/* The status word is the cue; colour only backs it up. */}
           <span
             className={cx(
-              'text-[11px] font-bold tracking-wide uppercase',
+              'text-micro font-bold tracking-wide uppercase',
               statusStyles[bed.status].word,
             )}
           >
@@ -126,7 +126,7 @@ export function BedGrid({
             <button
               type="button"
               className={cx(
-                'block min-h-16 w-full cursor-pointer rounded-[inherit] p-2.5 text-left hover:shadow-sm',
+                'block min-h-16 w-full cursor-pointer rounded-[inherit] p-2.5 text-left hover:bg-ink/5 motion-safe:active:scale-[0.98] motion-safe:transition-transform',
                 focusRing,
               )}
               onClick={() => onSelect(bed.id)}

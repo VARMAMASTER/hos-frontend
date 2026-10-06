@@ -116,7 +116,7 @@ export function TableHeaderCell({
       className={cx(
         'px-4 py-2.5',
         // A row header is body text that labels its row; a column header is a small caption.
-        scope === 'row' ? 'font-medium' : 'text-xs font-semibold',
+        scope === 'row' ? 'font-semibold' : 'text-xs font-semibold',
         columnClasses(align, numeric),
         className,
       )}

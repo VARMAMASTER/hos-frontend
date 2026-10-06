@@ -56,13 +56,13 @@ export function FieldShell({
       {/* The asterisk sits beside the <label>, not inside it, so the accessible name stays the
           label text; the control's own `required` attribute is what assistive tech announces. */}
       <div className="flex items-baseline gap-1">
-        <label htmlFor={id} className="text-sm font-medium text-ink">
+        <label htmlFor={id} className="text-sm font-semibold text-ink">
           {label}
         </label>
         {required ? (
           <span
             aria-hidden="true"
-            className="text-sm font-medium text-crit-deep"
+            className="text-sm font-semibold text-crit-deep"
           >
             *
           </span>
@@ -86,7 +86,7 @@ export function FieldShell({
         {hasError ? (
           <p
             id={errorId}
-            className="mt-1.5 flex items-start gap-1.5 text-xs font-medium text-crit-deep"
+            className="mt-1.5 flex items-start gap-1.5 text-xs font-semibold text-crit-deep"
           >
             <ErrorIcon />
             {error}
