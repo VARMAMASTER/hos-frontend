@@ -7,6 +7,7 @@ import type {
   CardProps,
   ChartConfig,
   ChartLegendItem,
+  ComparisonBarChartProps,
   DepartmentHeatmapProps,
   DonutChartProps,
   FunnelChartProps,
@@ -16,6 +17,7 @@ import type {
   NavItemProps,
   OccupancyAreaChartProps,
   PatientFlowChartProps,
+  RadialGaugeProps,
   SearchFieldProps,
   SidebarProps,
   SparklineProps,
@@ -148,6 +150,8 @@ describe('@hos/nova-ui public API', () => {
     'WaitTimeChart',
     'DepartmentHeatmap',
     'FunnelChart',
+    'RadialGauge',
+    'ComparisonBarChart',
     // The scheme axis, the theme engine an admin theme editor builds on, and the motion tokens.
     'NOVA_SCHEMES',
     'NOVA_DEFAULT_SCHEME',
@@ -282,6 +286,18 @@ describe('@hos/nova-ui public API', () => {
       valueKey: 'arrivals',
     };
     const funnel: FunnelChartProps = { ...base, valueKey: 'icu' };
+    const gauge: RadialGaugeProps = {
+      ariaLabel: 'Occupancy',
+      value: 78,
+      target: 85,
+      goal: 'at-most',
+    };
+    const comparison: ComparisonBarChartProps = {
+      ...base,
+      actualKey: 'icu',
+      targetKey: 'p50',
+      variant: 'diverging',
+    };
     expect([
       vitals,
       legend,
@@ -290,6 +306,8 @@ describe('@hos/nova-ui public API', () => {
       wait,
       heatmap,
       funnel,
-    ]).toHaveLength(7);
+      gauge,
+      comparison,
+    ]).toHaveLength(9);
   });
 });

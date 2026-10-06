@@ -1,12 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen, within } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from '@testing-library/react';
 import type { ReactElement } from 'react';
-import { fireEvent } from '@testing-library/react';
+import { ComparisonBarChart } from './comparison-bar-chart';
 import { DepartmentHeatmap } from './department-heatmap';
 import { FunnelChart } from './funnel-chart';
-import { heatFill, heatLevel } from './hospital-shared';
+import { heatFill, heatLevel, niceCeiling } from './hospital-shared';
 import { OccupancyAreaChart } from './occupancy-area-chart';
 import { PatientFlowChart } from './patient-flow-chart';
+import { RadialGauge } from './radial-gauge';
 import { VitalsChart, type VitalsConfig } from './vitals-chart';
 import { WaitTimeChart } from './wait-time-chart';
 
@@ -664,6 +671,17 @@ describe('WaitTimeChart', () => {
   });
 });
 
+describe('niceCeiling', () => {
+  it('rounds an axis top up to a readable figure without doubling it', () => {
+    expect(niceCeiling(117.6)).toBe(120);
+    expect(niceCeiling(70.4)).toBe(80);
+    expect(niceCeiling(63.8)).toBe(80);
+    expect(niceCeiling(9)).toBe(10);
+    expect(niceCeiling(1450)).toBe(1500);
+    expect(niceCeiling(0)).toBe(1);
+  });
+});
+
 describe('the heatmap scale', () => {
   it('bins a value into one of five steps from zero to the maximum', () => {
     expect(heatLevel(0, 40)).toBe(0);
@@ -958,6 +976,342 @@ describe('FunnelChart', () => {
         {...props}
         ariaLabel="Ramesh pathway"
         data={[{ stage: 'Registered', patients: 999 }]}
+      />,
+      /Ramesh|999/,
+    );
+  });
+});
+
+describe('RadialGauge', () => {
+  const props = {
+    value: 82,
+    target: 85,
+    goal: 'at-most' as const,
+    label: 'Bed occupancy',
+    ariaLabel: 'IPD bed occupancy today',
+  };
+
+  it('is a named figure on an opaque data surface', () => {
+    render(<RadialGauge {...props} />);
+    expect(
+      screen
+        .getByRole('figure', { name: 'IPD bed occupancy today' })
+        .classList.contains('nova-data'),
+    ).toBe(true);
+  });
+
+  it('draws a semicircle track and the value arc in the palette colour, hidden from assistive technology', () => {
+    const { container } = render(<RadialGauge {...props} value={50} />);
+    const svg = container.querySelector('svg');
+    expect(svg?.getAttribute('aria-hidden')).toBe('true');
+    expect(
+      container.querySelector('[data-gauge-track]')?.getAttribute('d'),
+    ).toBe('M 20 100 A 80 80 0 0 1 180 100');
+    const arc = container.querySelector('[data-gauge-value]');
+    // Half of 0-100 ends at the top of the arc.
+    expect(arc?.getAttribute('d')).toBe('M 20 100 A 80 80 0 0 1 100 20');
+    expect(arc?.getAttribute('stroke')).toBe('var(--color-value)');
+  });
+
+  it('shows the value and the label as text', () => {
+    const { container } = render(<RadialGauge {...props} />);
+    expect(container.querySelector('[data-gauge-reading]')?.textContent).toBe(
+      '82%',
+    );
+    expect(
+      screen.getByText('Bed occupancy', { selector: 'span' }),
+    ).toBeTruthy();
+  });
+
+  it('ticks the target across the arc in ink and keys it in the legend', () => {
+    const { container } = render(<RadialGauge {...props} />);
+    const tick = container.querySelector('[data-gauge-target]');
+    expect(tick?.getAttribute('stroke')).toBe('var(--nova-color-ink)');
+    const figure = screen.getByRole('figure', {
+      name: 'IPD bed occupancy today',
+    });
+    expect(legendLabels(figure)).toEqual(['Target (85%)']);
+  });
+
+  it('says whether the value is within target, and marks a breach by shape', () => {
+    const ok = render(<RadialGauge {...props} />);
+    expect(ok.container.querySelector('[data-gauge-status]')?.textContent).toBe(
+      'Within target',
+    );
+    expect(ok.container.querySelector('[data-shape]')).toBeNull();
+    cleanup();
+    const over = render(<RadialGauge {...props} value={92} />);
+    expect(
+      over.container.querySelector('[data-gauge-status]')?.textContent,
+    ).toBe('Above target');
+    const marker = over.container.querySelector('[data-shape]');
+    expect(marker?.getAttribute('data-shape')).toBe('triangle-up');
+    expect(marker?.getAttribute('fill')).toBe('var(--nova-color-warn)');
+    cleanup();
+    const sla = render(
+      <RadialGauge
+        ariaLabel="Triage SLA"
+        label="Seen within 15 min"
+        value={91}
+        target={95}
+        goal="at-least"
+      />,
+    );
+    expect(
+      sla.container.querySelector('[data-gauge-status]')?.textContent,
+    ).toBe('Below target');
+    expect(
+      sla.container.querySelector('[data-shape]')?.getAttribute('data-shape'),
+    ).toBe('triangle-down');
+  });
+
+  it('carries a data table and a description of the reading', () => {
+    render(<RadialGauge {...props} />);
+    expect(tableRows('IPD bed occupancy today')).toEqual([
+      ['Measure', 'Value', 'Target', 'Status'],
+      ['Bed occupancy', '82%', 'at most 85%', 'Within target'],
+    ]);
+    expect(
+      describedText(
+        screen.getByRole('figure', { name: 'IPD bed occupancy today' }),
+      ),
+    ).toBe('Bed occupancy 82%, target at most 85%: within target.');
+  });
+
+  it('keeps the arc on the scale but the figure true when the value is past it', () => {
+    const { container } = render(<RadialGauge {...props} value={120} />);
+    expect(
+      container.querySelector('[data-gauge-value]')?.getAttribute('d'),
+    ).toBe('M 20 100 A 80 80 0 0 1 180 100');
+    expect(container.querySelector('[data-gauge-reading]')?.textContent).toBe(
+      '120%',
+    );
+  });
+
+  it('takes its own scale, unit and formatter', () => {
+    const { container } = render(
+      <RadialGauge
+        ariaLabel="Door to doctor"
+        label="Median wait"
+        value={15}
+        min={0}
+        max={60}
+        target={30}
+        goal="at-most"
+        valueFormatter={(n) => `${n} min`}
+      />,
+    );
+    expect(container.querySelector('[data-gauge-reading]')?.textContent).toBe(
+      '15 min',
+    );
+    expect(
+      container.querySelector('[data-gauge-value]')?.getAttribute('d'),
+    ).toBe('M 20 100 A 80 80 0 0 1 43.43 43.43');
+  });
+
+  it('says No data, and draws no arc, without a value', () => {
+    const { container } = render(<RadialGauge {...props} value={null} />);
+    expect(container.querySelector('[data-gauge-value]')).toBeNull();
+    expect(container.querySelector('[data-gauge-reading]')?.textContent).toBe(
+      'No data',
+    );
+    expect(tableRows('IPD bed occupancy today')[1]).toEqual([
+      'Bed occupancy',
+      'No data',
+      'at most 85%',
+      'No data',
+    ]);
+  });
+
+  it('works without a target', () => {
+    const { container } = render(
+      <RadialGauge ariaLabel="Occupancy" value={40} />,
+    );
+    expect(container.querySelector('[data-gauge-target]')).toBeNull();
+    expect(container.querySelector('[data-gauge-status]')).toBeNull();
+  });
+
+  it('never logs a figure', () => {
+    expectNothingLogged(
+      <RadialGauge {...props} ariaLabel="Ramesh occupancy" value={999} />,
+      /Ramesh|999/,
+    );
+  });
+});
+
+describe('ComparisonBarChart', () => {
+  const departments = [
+    { dept: 'Cardiology', actual: 112, target: 100 },
+    { dept: 'Radiology', actual: 74, target: 90 },
+    { dept: 'Orthopaedics', actual: 60, target: 60 },
+  ];
+  const props = {
+    data: departments,
+    config: {
+      actual: { label: 'Revenue, lakh', color: 'chart-1' },
+      target: { label: 'Target' },
+    },
+    categoryKey: 'dept',
+    actualKey: 'actual',
+    targetKey: 'target',
+    ariaLabel: 'Revenue against target by department',
+  };
+
+  it('is a named figure on an opaque data surface', () => {
+    render(<ComparisonBarChart {...props} />);
+    expect(
+      screen
+        .getByRole('figure', { name: 'Revenue against target by department' })
+        .classList.contains('nova-data'),
+    ).toBe(true);
+  });
+
+  it('draws a bullet per department: the actual bar on a track, the target as an ink tick', () => {
+    const { container } = render(<ComparisonBarChart {...props} />);
+    expect(container.querySelectorAll('[data-bullet-actual]')).toHaveLength(3);
+    expect(
+      container.querySelectorAll('.recharts-bar-background-rectangle'),
+    ).toHaveLength(3);
+    const ticks = container.querySelectorAll('[data-bullet-target]');
+    expect(ticks).toHaveLength(3);
+    ticks.forEach((tick) => {
+      expect(tick.getAttribute('stroke')).toBe('var(--nova-color-ink)');
+    });
+  });
+
+  it('places each target tick on the value scale of its track', () => {
+    const { container } = render(<ComparisonBarChart {...props} />);
+    // The scale tops out at 120 (112 with headroom); Cardiology's target of 100 is 5/6 along.
+    const actual = container.querySelector('[data-bullet-actual]');
+    const tick = container.querySelector('[data-bullet-target]');
+    const x0 = Number(actual?.getAttribute('data-track-x'));
+    const width = Number(actual?.getAttribute('data-track-width'));
+    expect(width).toBeGreaterThan(0);
+    expect(Number(tick?.getAttribute('x1'))).toBeCloseTo(
+      x0 + (width * 100) / 120,
+      1,
+    );
+  });
+
+  it('marks a department that missed its target by shape', () => {
+    const { container } = render(<ComparisonBarChart {...props} />);
+    expect(flags(container, 'data-bullet-miss')).toEqual(['Radiology']);
+    expect(
+      container.querySelector('[data-bullet-miss]')?.getAttribute('data-shape'),
+    ).toBe('triangle-down');
+  });
+
+  it('names the actual, the target and the miss marker in its legend', () => {
+    render(<ComparisonBarChart {...props} />);
+    expect(
+      legendLabels(
+        screen.getByRole('figure', {
+          name: 'Revenue against target by department',
+        }),
+      ),
+    ).toEqual(['Revenue, lakh', 'Target', 'Below target']);
+  });
+
+  it('carries a data table with the signed difference and the status in words', () => {
+    render(<ComparisonBarChart {...props} />);
+    expect(tableRows('Revenue against target by department')).toEqual([
+      ['dept', 'Revenue, lakh', 'Target', 'Difference', 'Status'],
+      ['Cardiology', '112', '100', '+12', 'Met target'],
+      ['Radiology', '74', '90', '−16', 'Below target'],
+      ['Orthopaedics', '60', '60', '0', 'Met target'],
+    ]);
+  });
+
+  it('says how many met target, and which did not', () => {
+    render(<ComparisonBarChart {...props} />);
+    expect(
+      describedText(
+        screen.getByRole('figure', {
+          name: 'Revenue against target by department',
+        }),
+      ),
+    ).toBe('2 of 3 met target. Below target: Radiology.');
+  });
+
+  it('for an at-most goal, being over the target is the miss', () => {
+    const { container } = render(
+      <ComparisonBarChart {...props} goal="at-most" />,
+    );
+    expect(flags(container, 'data-bullet-miss')).toEqual(['Cardiology']);
+    expect(
+      container.querySelector('[data-bullet-miss]')?.getAttribute('data-shape'),
+    ).toBe('triangle-up');
+  });
+
+  it('draws the difference from target as diverging bars from a zero rule, each labelled with its sign', () => {
+    const { container } = render(
+      <ComparisonBarChart {...props} variant="diverging" />,
+    );
+    // Orthopaedics is exactly on target: a 2px sliver on the zero rule, labelled 0.
+    expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(
+      3,
+    );
+    expect(
+      container
+        .querySelector('.recharts-reference-line-line')
+        ?.getAttribute('stroke'),
+    ).toBe('var(--nova-color-ink-2)');
+    expect(
+      Array.from(container.querySelectorAll('[data-variance-label]')).map(
+        (label) => label.textContent,
+      ),
+    ).toEqual(['+12', '−16', '0']);
+    expect(
+      legendLabels(
+        screen.getByRole('figure', {
+          name: 'Revenue against target by department',
+        }),
+      ),
+    ).toEqual(['Difference from target']);
+  });
+
+  it('handles no data, one department and null values', () => {
+    render(<ComparisonBarChart {...props} data={[]} />);
+    expect(tableRows('Revenue against target by department')).toHaveLength(1);
+    cleanup();
+    const one = render(
+      <ComparisonBarChart {...props} data={[departments[1]]} />,
+    );
+    expect(flags(one.container, 'data-bullet-miss')).toEqual(['Radiology']);
+    cleanup();
+    expect(() =>
+      render(
+        <ComparisonBarChart
+          {...props}
+          data={[
+            { dept: 'Cardiology', actual: null, target: 100 },
+            { dept: 'Radiology', actual: 40, target: 'n/a' },
+          ]}
+        />,
+      ),
+    ).not.toThrow();
+    expect(tableRows('Revenue against target by department').slice(1)).toEqual([
+      ['Cardiology', 'No data', '100', 'No data', 'No data'],
+      ['Radiology', '40', 'No data', 'No data', 'No data'],
+    ]);
+    cleanup();
+    expect(() =>
+      render(
+        <ComparisonBarChart
+          {...props}
+          variant="diverging"
+          data={[{ dept: 'Cardiology', actual: null, target: 100 }]}
+        />,
+      ),
+    ).not.toThrow();
+  });
+
+  it('never logs a figure', () => {
+    expectNothingLogged(
+      <ComparisonBarChart
+        {...props}
+        ariaLabel="Ramesh revenue"
+        data={[{ dept: 'Cardiology', actual: 999, target: 1 }]}
       />,
       /Ramesh|999/,
     );

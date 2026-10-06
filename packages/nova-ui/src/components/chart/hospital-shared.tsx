@@ -14,8 +14,19 @@ export const BAND = 'var(--nova-color-ink-3)';
 export const BAND_OPACITY = 0.1;
 // Now, and a capacity line: quiet ink, solid.
 export const RULE = 'var(--nova-color-ink-2)';
-// A track behind a bar (a bullet chart, a gauge).
+// A track behind a bar (a funnel, a bullet chart): one step off the surface.
 export const TRACK = 'var(--nova-color-surface-2)';
+// The gauge's track is a thick arc with nothing around it, so it takes the hairline colour to show.
+export const GAUGE_TRACK = 'var(--nova-color-border)';
+// A target tick across a bar or an arc: full ink, so it holds 3:1 on the track and on the series.
+export const TICK = 'var(--nova-color-ink)';
+
+export type Goal = 'at-least' | 'at-most';
+
+// A miss is the wrong side of the target for the goal; the marker points the way it went.
+export function missed(value: number, target: number, goal: Goal): boolean {
+  return goal === 'at-least' ? value < target : value > target;
+}
 
 export type StatusLevel = 'warn' | 'crit';
 
@@ -51,14 +62,17 @@ export function joinWords(
     .join(separator);
 }
 
-// The smallest 1, 2, 2.5 or 5 x 10^n at or above a value, for an axis top with headroom.
+// The smallest readable figure (1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6 or 8 x 10^n) at or above a value,
+// for an axis top with headroom that never nearly doubles the plot.
+const NICE_STEPS = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10] as const;
+
 export function niceCeiling(value: number): number {
   if (!(value > 0)) {
     return 1;
   }
   const power = 10 ** Math.floor(Math.log10(value));
-  const step = [1, 2, 2.5, 5, 10].find((m) => m * power >= value) ?? 10;
-  return step * power;
+  const step = NICE_STEPS.find((m) => m * power >= value) ?? 10;
+  return Math.round(step * power * 1e6) / 1e6;
 }
 
 export type MarkerShape = 'triangle-up' | 'triangle-down' | 'diamond';
