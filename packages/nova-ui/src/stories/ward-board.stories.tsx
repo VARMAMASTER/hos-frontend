@@ -12,13 +12,12 @@ import {
 } from '../components/section-nav/section-nav';
 import { SplitLayout } from '../components/split-layout/split-layout';
 import {
-  WorkspaceSwitcher,
-  type WorkspaceGroup,
-  type WorkspaceOption,
-} from '../components/workspace-switcher/workspace-switcher';
+  ModuleSwitcher,
+  type ModuleOption,
+} from '../components/module-switcher/module-switcher';
 
 // One realistic screen built from the navigation, identity and domain components, so they can be
-// seen working together: chrome on the left (brand, workspace switcher, section nav), the ward
+// seen working together: chrome on the left (brand, module switcher, section nav), the ward
 // board on the right (bed grid and activity feed in a split).
 
 const meta = {
@@ -43,23 +42,13 @@ function Glyph({ children }: { children: ReactNode }) {
   );
 }
 
-const workspaces: WorkspaceGroup[] = [
-  {
-    label: 'Clinical',
-    items: [
-      { id: 'ipd', name: 'IPD', label: 'In-patients' },
-      { id: 'nursing', name: 'Nursing' },
-      { id: 'ot', name: 'Operation Theatre' },
-      { id: 'er', name: 'Emergency', disabled: true },
-    ],
-  },
-  {
-    label: 'Money',
-    items: [
-      { id: 'billing', name: 'Billing' },
-      { id: 'pharmacy', name: 'Pharmacy' },
-    ],
-  },
+const modules: ModuleOption[] = [
+  { id: 'ipd', label: 'IPD', group: 'Clinical', description: 'In-patients' },
+  { id: 'nursing', label: 'Nursing', group: 'Clinical' },
+  { id: 'ot', label: 'Operation Theatre', group: 'Clinical' },
+  { id: 'er', label: 'Emergency', group: 'Clinical', disabled: true },
+  { id: 'billing', label: 'Billing', group: 'Money' },
+  { id: 'pharmacy', label: 'Pharmacy', group: 'Money' },
 ];
 
 const beds: Bed[] = [
@@ -119,11 +108,8 @@ function count(status: Bed['status']) {
 
 function WardBoard() {
   const [switcherOpen, setSwitcherOpen] = useState(false);
-  const [workspace, setWorkspace] = useState<WorkspaceOption>({
-    id: 'ipd',
-    name: 'IPD',
-    label: 'In-patients',
-  });
+  const [moduleId, setModuleId] = useState('ipd');
+  const currentModule = modules.find((module) => module.id === moduleId);
   const [section, setSection] = useState('beds');
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -184,21 +170,16 @@ function WardBoard() {
     <div className="grid min-h-[36rem] md:grid-cols-[16rem_minmax(0,1fr)]">
       <aside className="nova-chrome flex flex-col gap-4 p-3">
         <BrandMark name="HOS" sub="Hospital OS" href="#home" />
-        <WorkspaceSwitcher
-          current={workspace}
-          groups={workspaces}
+        <ModuleSwitcher
+          current={moduleId}
+          modules={modules}
           open={switcherOpen}
           onOpenChange={setSwitcherOpen}
-          onSelect={(id) => {
-            const next = workspaces
-              .flatMap((group) => group.items)
-              .find((item) => item.id === id);
-            if (next) setWorkspace(next);
-          }}
-          hint="Switch workspace"
+          onSelect={setModuleId}
+          hint="Switch module"
         />
         <SectionNav
-          ariaLabel={`${workspace.name} sections`}
+          ariaLabel={`${currentModule?.label} sections`}
           items={sections}
           onSelect={setSection}
         />
@@ -206,7 +187,7 @@ function WardBoard() {
 
       <main className="min-w-0 space-y-4 p-6">
         <HeroBand
-          title={`${workspace.name} ward board`}
+          title={`${currentModule?.label} ward board`}
           description="Press a bed to open it"
         >
           <div className="grid gap-3 sm:grid-cols-3">

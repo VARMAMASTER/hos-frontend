@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { Menu, MenuItem } from '../components/menu/menu';
-import { WorkspaceSwitcher } from '../components/workspace-switcher/workspace-switcher';
+import { ModuleSwitcher } from '../components/module-switcher/module-switcher';
 import { focusRing } from '../primitives/focus-ring';
 
 afterEach(() => cleanup());
@@ -52,28 +52,21 @@ describe('the keyboard focus ring a nested light surface resolves', () => {
     );
   });
 
-  it('is the brand primary for the workspace menu, an overlay anchored in the dark chrome', () => {
+  it('is the brand primary for the module menu, an overlay anchored in the dark chrome', () => {
     render(
       <div className="nova-chrome">
-        <WorkspaceSwitcher
-          current={{ id: 'ipd', name: 'IPD' }}
-          groups={[
-            {
-              label: 'Units',
-              items: [
-                { id: 'ipd', name: 'IPD' },
-                { id: 'icu', name: 'ICU' },
-              ],
-            },
+        <ModuleSwitcher
+          current="ipd"
+          modules={[
+            { id: 'ipd', label: 'IPD', group: 'Clinical' },
+            { id: 'icu', label: 'ICU', group: 'Clinical' },
           ]}
-          onSelect={() => undefined}
         />
       </div>,
     );
-    fireEvent.keyDown(
-      screen.getByRole('button', { name: /Current workspace/ }),
-      { key: 'ArrowDown' },
-    );
+    fireEvent.keyDown(screen.getByRole('button', { name: /Current module/ }), {
+      key: 'ArrowDown',
+    });
     fireEvent.keyDown(document.activeElement as Element, { key: 'ArrowDown' });
     const focused = document.activeElement as Element;
     expect(focused.getAttribute('role')).toBe('menuitemradio');

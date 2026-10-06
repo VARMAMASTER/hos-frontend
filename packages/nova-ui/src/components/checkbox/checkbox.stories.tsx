@@ -16,3 +16,7 @@ export const Disabled: Story = { args: { disabled: true } };
 export const DisabledChecked: Story = {
   args: { disabled: true, defaultChecked: true },
 };
+
+export const Indeterminate: Story = {
+  args: { label: 'All wards', indeterminate: true },
+};

@@ -1,5 +1,8 @@
 import type { HTMLAttributes } from 'react';
+import { cx } from '../../primitives/cx';
+import { VisuallyHidden } from '../../primitives/visually-hidden';
 import { Button } from '../button/button';
+import { Select } from '../select/select';
 
 export interface PaginationProps extends HTMLAttributes<HTMLElement> {
   // The page shown, counting from 1. A value outside 1..pageCount is treated as the nearest real page.
@@ -94,5 +97,101 @@ export function Pagination({
         </li>
       </ol>
     </nav>
+  );
+}
+
+// The page sizes a table offers.
+export const PAGE_SIZE_OPTIONS = [10, 25, 50, 100] as const;
+
+const pageCountOf = (total: number, pageSize: number) =>
+  Math.max(1, Math.ceil(total / Math.max(1, pageSize)));
+
+// "Showing 1–25 of 312": the rows on the page out of all of them. A page past the end reads as the
+// last page, and a single row has no range to write.
+export function formatPaginationRange(
+  page: number,
+  pageSize: number,
+  total: number,
+): string {
+  if (total <= 0) return 'Showing 0 of 0';
+  const size = Math.max(1, Math.floor(pageSize));
+  const current = Math.min(
+    Math.max(1, Math.floor(page)),
+    pageCountOf(total, size),
+  );
+  const first = (current - 1) * size + 1;
+  const last = Math.min(current * size, total);
+  return first === last
+    ? `Showing ${first} of ${total}`
+    : `Showing ${first}–${last} of ${total}`;
+}
+
+export interface PaginationBarProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
+  // The page shown, counting from 1.
+  page: number;
+  pageSize: number;
+  // Every row, not only the page's: the bar works out the page count.
+  total: number;
+  pageSizeOptions?: readonly number[];
+  onPageChange: (page: number) => void;
+  // Without it the "Rows per page" select is left out.
+  onPageSizeChange?: (pageSize: number) => void;
+}
+
+// The footer of a data table: the range label, the page size and the page buttons. The range is a
+// polite live region, so paging or filtering is announced as the new range.
+export function PaginationBar({
+  page,
+  pageSize,
+  total,
+  pageSizeOptions = PAGE_SIZE_OPTIONS,
+  onPageChange,
+  onPageSizeChange,
+  className,
+  ...rest
+}: PaginationBarProps) {
+  // A size the caller starts with that is not on the list stays selectable.
+  const sizes = pageSizeOptions.includes(pageSize)
+    ? pageSizeOptions
+    : [...pageSizeOptions, pageSize].sort((a, b) => a - b);
+  return (
+    <div
+      className={cx(
+        'flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5 text-[12.5px] text-ink-2',
+        className,
+      )}
+      {...rest}
+    >
+      <p aria-live="polite" className="tabular-nums slashed-zero">
+        {formatPaginationRange(page, pageSize, total)}
+      </p>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        {onPageSizeChange ? (
+          <div className="flex items-center gap-2">
+            <span aria-hidden="true">Rows per page</span>
+            {/* The Select's label sits above its control; here the visible words are beside it, so
+                the label is visually hidden and the field's top margin is taken back. */}
+            <Select
+              className="-mt-1"
+              label={<VisuallyHidden>Rows per page</VisuallyHidden>}
+              value={String(pageSize)}
+              options={sizes.map((size) => ({
+                value: String(size),
+                label: String(size),
+              }))}
+              onChange={(event) =>
+                onPageSizeChange(Number(event.currentTarget.value))
+              }
+            />
+          </div>
+        ) : null}
+        <Pagination
+          page={page}
+          pageCount={pageCountOf(total, pageSize)}
+          onPageChange={onPageChange}
+        />
+      </div>
+    </div>
   );
 }

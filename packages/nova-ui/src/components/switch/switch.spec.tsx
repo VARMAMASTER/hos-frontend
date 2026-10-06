@@ -218,3 +218,61 @@ describe('Switch, iOS-style', () => {
     expect(screen.getByText('Ramesh SMS').classList).toContain('text-[13.5px]');
   });
 });
+
+describe('Switch, the modern thumb', () => {
+  it('shows a decorative check in the thumb that fades in only when on', () => {
+    render(<Switch label="Ramesh SMS" />);
+    const track = screen.getByRole('switch');
+    const thumb = track.querySelector('span') as HTMLElement;
+    const check = thumb.querySelector('svg') as SVGElement;
+    expect(check.getAttribute('aria-hidden')).toBe('true');
+    expect([...check.classList]).toEqual(
+      expect.arrayContaining([
+        'opacity-0',
+        'group-aria-checked:opacity-100',
+        'text-primary',
+      ]),
+    );
+    // role and state are unchanged: the check is not in the accessible name.
+    expect(screen.getByRole('switch', { name: 'Ramesh SMS' })).toBe(track);
+  });
+
+  it('stretches the thumb while pressed, from the edge it sits on, as a transform', () => {
+    render(<Switch label="Ramesh SMS" />);
+    const thumb = screen
+      .getByRole('switch')
+      .querySelector('span') as HTMLElement;
+    expect([...thumb.classList]).toEqual(
+      expect.arrayContaining([
+        'origin-left',
+        'group-aria-checked:origin-right',
+        'group-active:scale-x-125',
+      ]),
+    );
+  });
+
+  it('moves, fades and stretches under motion-safe only, so reduced motion is instant', () => {
+    render(<Switch label="Ramesh SMS" />);
+    const track = screen.getByRole('switch');
+    const thumb = track.querySelector('span') as HTMLElement;
+    const check = thumb.querySelector('svg') as SVGElement;
+    expect(thumb.className).toMatch(/motion-safe:transition-transform/);
+    expect(check.getAttribute('class')).toMatch(
+      /motion-safe:transition-opacity/,
+    );
+    expect(track.className).toMatch(/motion-safe:transition-colors/);
+    for (const el of [track, thumb, check]) {
+      expect(el.getAttribute('class')).not.toMatch(
+        /(^|\s)(?:transition|duration|ease)-/,
+      );
+      expect(el.getAttribute('class')).not.toMatch(/motion-reduce/);
+    }
+  });
+
+  it('still reports role switch and aria-checked as it toggles', () => {
+    render(<Switch label="Ramesh SMS" />);
+    const toggle = screen.getByRole('switch');
+    fireEvent.click(toggle);
+    expect(toggle.getAttribute('aria-checked')).toBe('true');
+  });
+});

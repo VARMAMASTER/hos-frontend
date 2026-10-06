@@ -124,6 +124,31 @@ describe('Radio', () => {
     expect(dot?.getAttribute('class')).toContain('peer-checked:opacity-100');
   });
 
+  // The dot grows in from half size, on the transform and opacity only, under motion-safe.
+  it('grows its dot in when selected, animating transform and opacity under motion-safe only', () => {
+    render(<Radio name="sex" label="Female" />);
+    const radio = screen.getByLabelText('Female');
+    const dot = radio.parentElement?.querySelector('svg') as SVGElement;
+    expect([...dot.classList]).toEqual(
+      expect.arrayContaining([
+        'scale-50',
+        'opacity-0',
+        'peer-checked:scale-100',
+        'motion-safe:transition-[transform,opacity]',
+      ]),
+    );
+    expect(dot.getAttribute('class')).not.toMatch(
+      /(^|\s)(?:transition|duration)-/,
+    );
+  });
+
+  it('presses in under motion-safe only', () => {
+    render(<Radio name="sex" label="Female" />);
+    expect([...screen.getByLabelText('Female').classList]).toContain(
+      'motion-safe:active:scale-90',
+    );
+  });
+
   it('forwards its ref and is a nova-field control', () => {
     const ref = createRef<HTMLInputElement>();
     render(<Radio name="sex" label="Female" ref={ref} />);

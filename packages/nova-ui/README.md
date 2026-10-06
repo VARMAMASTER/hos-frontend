@@ -71,7 +71,7 @@ transparency or more contrast always forces solid.
 ## Components
 
 - **Shell:** `AppShell`, `Sidebar`, `NavItem`, `TopBar`, `SearchField`, `BrandMark`,
-  `WorkspaceSwitcher`, `SectionNav`, `SplitLayout`, `Breadcrumbs`, `HeroBand`.
+  `ModuleSwitcher`, `SectionNav`, `SplitLayout`, `Breadcrumbs`, `HeroBand`.
 - **Content:** `Card`, `KpiTile` (with a `visual` slot), `Table`, `Tabs`, `Pagination`, `Divider`,
   `EmptyState`, `Avatar`, `IconTile`, `Tag`, `Chip`, `ToneLabel`, `StatusDot`, `Banner`,
   `Timeline`, `ActivityFeed`, `BedGrid`.
