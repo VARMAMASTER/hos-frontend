@@ -45,7 +45,7 @@ export interface AppShellProps
 // the rail, so a hospital or a page can set either like any other token. The column animates under
 // motion-safe, and the Sidebar fills it, so the two never disagree mid-transition.
 const grid =
-  'grid min-h-screen grid-cols-1 md:grid-cols-[var(--nova-shell-w)_1fr] motion-safe:transition-[grid-template-columns] duration-base ease-standard';
+  'grid min-h-screen grid-cols-1 md:grid-cols-[var(--nova-shell-w)_1fr] motion-safe:transition-[grid-template-columns] motion-safe:duration-base motion-safe:ease-standard';
 const expandedWidth = '[--nova-shell-w:var(--nova-sidebar-w)]';
 const railWidth = '[--nova-shell-w:var(--nova-sidebar-rail-w,4.25rem)]';
 

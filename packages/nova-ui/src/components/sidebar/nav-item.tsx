@@ -99,7 +99,7 @@ function Content({
       ) : null}
       <span
         className={cx(
-          'min-w-0 flex-1 whitespace-nowrap overflow-hidden text-ellipsis motion-safe:transition-opacity duration-base ease-standard',
+          'min-w-0 flex-1 whitespace-nowrap overflow-hidden text-ellipsis motion-safe:transition-opacity motion-safe:duration-base motion-safe:ease-standard',
           collapsed && 'opacity-0',
         )}
       >

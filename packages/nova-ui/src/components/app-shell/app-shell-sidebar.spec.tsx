@@ -106,8 +106,8 @@ describe('AppShell with the icon rail', () => {
     const { container } = render(<Shell />);
     for (const name of [
       'motion-safe:transition-[grid-template-columns]',
-      'duration-base',
-      'ease-standard',
+      'motion-safe:duration-base',
+      'motion-safe:ease-standard',
     ]) {
       expect(root(container).classList.contains(name), name).toBe(true);
     }
@@ -246,6 +246,28 @@ describe('AppShell as a drawer below the breakpoint', () => {
     expect(document.activeElement).toBe(
       screen.getByRole('link', { name: 'Home' }),
     );
+  });
+
+  it('shows the drawer at once when it opens, and only hides it after it has slid away', () => {
+    const { container } = render(<Shell />);
+    const sidebar = sidebarEl(container);
+    // Closed: visibility is transitioned along with the slide, so it flips at the end of the way out.
+    expect(
+      sidebar.classList.contains(
+        'motion-safe:transition-[translate,visibility]',
+      ),
+    ).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
+    // Open: only the slide is transitioned, so the drawer is visible (and focusable) from the first frame.
+    expect(sidebar.classList.contains('visible')).toBe(true);
+    expect(
+      sidebar.classList.contains('motion-safe:transition-[translate]'),
+    ).toBe(true);
+    expect(
+      sidebar.classList.contains(
+        'motion-safe:transition-[translate,visibility]',
+      ),
+    ).toBe(false);
   });
 
   it('closes on Escape and returns focus to the menu button', () => {

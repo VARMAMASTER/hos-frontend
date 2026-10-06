@@ -50,8 +50,8 @@ describe('NavItem in the icon rail', () => {
     const text = screen.getByText('Patients');
     for (const name of [
       'motion-safe:transition-opacity',
-      'duration-base',
-      'ease-standard',
+      'motion-safe:duration-base',
+      'motion-safe:ease-standard',
     ]) {
       expect(text.classList.contains(name), name).toBe(true);
     }

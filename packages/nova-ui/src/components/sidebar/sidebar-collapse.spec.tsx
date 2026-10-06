@@ -115,8 +115,8 @@ describe('Sidebar collapse', () => {
     for (const name of [
       'w-[var(--nova-sidebar-rail-w,4.25rem)]',
       'motion-safe:transition-[width]',
-      'duration-base',
-      'ease-standard',
+      'motion-safe:duration-base',
+      'motion-safe:ease-standard',
     ]) {
       expect(root.classList.contains(name), name).toBe(true);
     }

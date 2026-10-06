@@ -54,11 +54,11 @@ const railFrame = 'md:overflow-visible';
 const standaloneExpanded = 'w-full md:w-[var(--nova-sidebar-w)]';
 const standaloneRail = 'w-[var(--nova-sidebar-rail-w,4.25rem)]';
 const widthMotion =
-  'motion-safe:transition-[width] duration-base ease-standard';
+  'motion-safe:transition-[width] motion-safe:duration-base motion-safe:ease-standard';
 
 // The drawer: over the content, off to the left until it is opened.
 const drawerFrame =
-  'fixed inset-y-0 left-0 z-70 h-dvh w-[min(var(--nova-sidebar-w),85vw)] overflow-y-auto overflow-x-hidden shadow-lg outline-none motion-safe:transition-[transform,visibility] duration-base ease-standard';
+  'fixed inset-y-0 left-0 z-70 h-dvh w-[min(var(--nova-sidebar-w),85vw)] overflow-y-auto overflow-x-hidden shadow-lg outline-none motion-safe:duration-base motion-safe:ease-standard';
 
 const toggleButton =
   'inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-sm text-[color:var(--nova-chrome-ink-2)] transition-colors hover:bg-chrome-ink/5 hover:text-on-primary focus-visible:bg-chrome-ink/5 focus-visible:text-on-primary';
@@ -81,7 +81,7 @@ function ToggleIcon({
       aria-hidden="true"
       focusable="false"
       className={cx(
-        'size-4 motion-safe:transition-transform duration-base ease-standard',
+        'size-4 motion-safe:transition-transform motion-safe:duration-base motion-safe:ease-standard',
         collapsed && 'rotate-180',
       )}
     >
@@ -138,7 +138,9 @@ function SidebarView({
     ? cx(
         frame,
         drawerFrame,
-        drawerOpen ? 'translate-x-0' : 'invisible -translate-x-full',
+        drawerOpen
+          ? 'visible translate-x-0 motion-safe:transition-[translate]'
+          : 'invisible -translate-x-full motion-safe:transition-[translate,visibility]',
       )
     : cx(
         frame,
