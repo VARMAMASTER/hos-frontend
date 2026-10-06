@@ -20,7 +20,12 @@ export const Surfaces: StoryObj = {
       <HeroBand
         title="Today at the hospital"
         description="12 admissions, 9 discharges, 4 beds free"
-        actions={<Button variant="outline">New admission</Button>}
+        actions={
+          <>
+            <Button variant="ghost">New appointment</Button>
+            <Button>Register patient</Button>
+          </>
+        }
       />
 
       <div className="grid gap-4 md:grid-cols-3">

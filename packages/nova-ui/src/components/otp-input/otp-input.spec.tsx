@@ -310,16 +310,45 @@ describe('OtpInput error', () => {
 });
 
 describe('OtpInput look', () => {
-  it('draws digits at title3, weight 600, with no shadow and no weight 500', () => {
+  // 01-login.html .otp-box: IBM Plex Mono 600, a 1.5px edge, 10px radius (--r-sm here), 50px tall.
+  // The prototype's 19px is not a size hos.css uses, so the nearest one (20px, .t-no) stands in.
+  it('draws the digits as the prototype .otp-box does: mono, 20px, weight 600, no shadow', () => {
     const view = setup();
     const box = view.container.querySelector('[data-otp-box]');
-    expect(box?.className).toContain('text-title3');
+    expect(box?.className).toContain('font-mono');
+    expect(box?.className).toContain('text-[20px]');
     expect(box?.className).toContain('font-semibold');
-    expect(view.container.innerHTML).not.toMatch(/shadow|font-medium/);
+    expect(box?.className).toContain('border-[1.5px]');
+    expect(box?.className).toContain('rounded-sm');
+    expect(box?.className).toContain('h-[50px]');
+    expect(view.container.innerHTML).not.toMatch(
+      /shadow|font-medium|text-title3/,
+    );
+  });
+
+  it('sets the label, hint and error at the prototype 12px (.f-label, .tiny)', () => {
+    const view = setup({ hint: 'We sent it', error: 'Wrong' });
+    const label = view.container.querySelector('label');
+    expect(label?.className).toContain('text-[12px]');
+    expect(label?.className).toContain('font-semibold');
+    expect(label?.className).toContain('text-ink-2');
+    expect(screen.getByText('We sent it').className).toContain('text-[12px]');
+    expect(screen.getByRole('alert').className).toContain('text-[12px]');
+  });
+
+  it('tints a filled box with the brand, like .otp-box.filled', () => {
+    const view = setup();
+    type('48');
+    const boxes = view.container.querySelectorAll('[data-otp-box]');
+    expect(boxes[0]?.className).toContain('bg-primary-soft');
+    expect(boxes[0]?.className).toContain('text-primary-strong');
+    expect(boxes[0]?.className).toContain('border-primary');
+    expect(boxes[3]?.className).not.toContain('bg-primary-soft');
   });
 
   // jsdom cannot measure layout, so this checks the classes that make the row fit: every box shares
-  // the row (flex-1 from a zero basis, min-width 0 so it may shrink), stays square, and is capped.
+  // the row (flex-1 from a zero basis, min-width 0 so it may shrink) and is capped at the
+  // prototype's 44px (.otp-box width), at a fixed 50px height.
   it('lays the boxes out fluidly, so six of them fit a narrow card without overflow', () => {
     const view = setup();
     const row = view.container.querySelector('[data-otp-box]')
@@ -329,13 +358,7 @@ describe('OtpInput look', () => {
     for (const box of view.container.querySelectorAll('[data-otp-box]')) {
       const classes = [...box.classList];
       expect(classes).toEqual(
-        expect.arrayContaining([
-          'flex-1',
-          'basis-0',
-          'min-w-0',
-          'aspect-square',
-          'max-w-14',
-        ]),
+        expect.arrayContaining(['flex-1', 'basis-0', 'min-w-0', 'max-w-11']),
       );
       expect(classes.some((name) => /^(?:sm:)?[wh]-\d+$/.test(name))).toBe(
         false,

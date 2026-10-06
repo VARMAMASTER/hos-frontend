@@ -344,11 +344,12 @@
 }
 
 /* The card: the prototype's .card (an opaque panel, a 1px --line edge, --shadow-sm). Solid under
-   either material, as the prototype keeps every card. */
+   either material, as the prototype keeps every card. A tinted tile (a bed's status edge) recolours
+   the edge through --nova-card-edge rather than fighting this border shorthand. */
 @utility nova-card {
   --nova-focus-ring: var(--nova-color-primary);
   background-color: var(--nova-color-surface);
-  border: 1px solid var(--nova-color-border);
+  border: 1px solid var(--nova-card-edge, var(--nova-color-border));
   box-shadow: var(--nova-surface-lift, var(--nova-shadow-sm));
 
   /* A selected card or option: the edge upgrades to 2px primary and nothing else changes. */

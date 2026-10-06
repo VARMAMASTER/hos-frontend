@@ -118,7 +118,7 @@ describe('Checkbox', () => {
   });
 });
 
-describe('Checkbox, Apple-refined', () => {
+describe('Checkbox, the prototype form control', () => {
   it('gives the row a 44px minimum touch target and the prototype 13.5px label text', () => {
     render(<Checkbox label="Ramesh consents" />);
     const control = screen.getByLabelText('Ramesh consents');

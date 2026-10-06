@@ -25,6 +25,19 @@ describe('Tag', () => {
     }
   });
 
+  // .tag-offline has no border, so a solid tag draws none and keeps the prototype's height; an
+  // outline tag is its border.
+  it('draws a border only on an outline tag', () => {
+    render(
+      <>
+        <Tag>Offline</Tag>
+        <Tag variant="outline">Beta</Tag>
+      </>,
+    );
+    expect(screen.getByText('Offline').className).not.toMatch(/\bborder\b/);
+    expect(screen.getByText('Beta').classList.contains('border')).toBe(true);
+  });
+
   it.each([
     ['solid', 'neutral', ['bg-chrome-1', 'text-chrome-ink']],
     ['solid', 'primary', ['bg-primary', 'text-on-primary']],
