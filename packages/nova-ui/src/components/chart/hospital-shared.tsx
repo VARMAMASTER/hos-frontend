@@ -113,6 +113,26 @@ export interface DotProps {
   payload?: Record<string, unknown>;
 }
 
+// The heatmap's sequential scale: five steps of one palette hue mixed into the surface. One hue
+// whose strength rises step by step reads for every colour vision (it is a lightness ramp, not a hue
+// ramp), and because it is mixed into the scheme's own surface it runs pale to strong in light and
+// dark to bright in dark. A missing value is not a step: it is an empty outlined cell.
+export const HEAT_STEPS = 5;
+const HEAT_STRENGTH = [14, 32, 52, 74, 100] as const;
+
+export function heatLevel(value: number, max: number): number {
+  if (!(max > 0) || !(value > 0)) {
+    return 0;
+  }
+  return Math.min(HEAT_STEPS - 1, Math.floor((value / max) * HEAT_STEPS));
+}
+
+export function heatFill(colour: string, level: number): string {
+  const strength =
+    HEAT_STRENGTH[Math.max(0, Math.min(HEAT_STEPS - 1, level))] ?? 100;
+  return `color-mix(in oklab, ${colour} ${strength}%, var(--nova-color-surface))`;
+}
+
 // A breach marker as a ReferenceDot shape: Recharts hands over the point, the marker is drawn on it.
 export function markerShape(
   shape: MarkerShape,

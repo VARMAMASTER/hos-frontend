@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import type { ReactElement } from 'react';
+import { fireEvent } from '@testing-library/react';
+import { DepartmentHeatmap } from './department-heatmap';
+import { FunnelChart } from './funnel-chart';
+import { heatFill, heatLevel } from './hospital-shared';
 import { OccupancyAreaChart } from './occupancy-area-chart';
 import { PatientFlowChart } from './patient-flow-chart';
 import { VitalsChart, type VitalsConfig } from './vitals-chart';
@@ -654,6 +658,306 @@ describe('WaitTimeChart', () => {
         {...props}
         ariaLabel="Ramesh wait"
         data={[{ hour: '08:00', p50: 999, p90: 1000 }]}
+      />,
+      /Ramesh|999/,
+    );
+  });
+});
+
+describe('the heatmap scale', () => {
+  it('bins a value into one of five steps from zero to the maximum', () => {
+    expect(heatLevel(0, 40)).toBe(0);
+    expect(heatLevel(7, 40)).toBe(0);
+    expect(heatLevel(8, 40)).toBe(1);
+    expect(heatLevel(39, 40)).toBe(4);
+    expect(heatLevel(40, 40)).toBe(4);
+    expect(heatLevel(5, 0)).toBe(0);
+  });
+
+  // One hue, rising in strength from the surface: a lightness ramp reads for every colour vision
+  // and, mixed into the scheme's own surface, runs dark to bright in the dark scheme.
+  it('is one palette hue mixed into the surface, stronger at every step', () => {
+    const steps = [0, 1, 2, 3, 4].map((level) =>
+      heatFill('var(--color-arrivals)', level),
+    );
+    steps.forEach((fill) => {
+      expect(fill).toMatch(
+        /^color-mix\(in oklab, var\(--color-arrivals\) \d+%, var\(--nova-color-surface\)\)$/,
+      );
+    });
+    const strengths = steps.map((fill) => Number(/(\d+)%/.exec(fill)?.[1]));
+    expect(strengths).toEqual([...strengths].sort((a, b) => a - b));
+    expect(new Set(strengths).size).toBe(5);
+    expect(strengths[4]).toBe(100);
+  });
+});
+
+describe('DepartmentHeatmap', () => {
+  const arrivals = [
+    { day: 'Mon', hour: 8, arrivals: 4 },
+    { day: 'Mon', hour: 9, arrivals: 40 },
+    { day: 'Mon', hour: 10, arrivals: 22 },
+    { day: 'Tue', hour: 8, arrivals: 0 },
+    { day: 'Tue', hour: 9, arrivals: null },
+    { day: 'Tue', hour: 10, arrivals: 31 },
+  ];
+  const props = {
+    data: arrivals,
+    rowKey: 'day',
+    columnKey: 'hour',
+    valueKey: 'arrivals',
+    valueLabel: 'ED arrivals',
+    columnFormatter: (hour: string | number) =>
+      `${String(hour).padStart(2, '0')}:00`,
+    ariaLabel: 'ED arrivals by day and hour',
+  };
+
+  it('is a named figure on an opaque data surface', () => {
+    render(<DepartmentHeatmap {...props} />);
+    expect(
+      screen
+        .getByRole('figure', { name: 'ED arrivals by day and hour' })
+        .classList.contains('nova-data'),
+    ).toBe(true);
+  });
+
+  it('draws a cell per day and hour, binned on the sequential scale, a missing value as no data', () => {
+    const { container } = render(<DepartmentHeatmap {...props} />);
+    expect(flags(container, 'data-heat-level')).toEqual([
+      '0',
+      '4',
+      '2',
+      '0',
+      'none',
+      '3',
+    ]);
+  });
+
+  it('keeps the drawn grid away from assistive technology: the table is its reading', () => {
+    const { container } = render(<DepartmentHeatmap {...props} />);
+    expect(
+      container
+        .querySelector('[data-heat-cell]')
+        ?.closest('[aria-hidden="true"]'),
+    ).toBeTruthy();
+  });
+
+  it('shows the figure of a cell in a tooltip on hover, and hides it on leaving', () => {
+    const { container } = render(<DepartmentHeatmap {...props} />);
+    const cells = container.querySelectorAll('[data-heat-cell]');
+    fireEvent.mouseEnter(cells[1]);
+    // A pointer readout inside the hidden grid: the table already gives every figure to a reader.
+    const tip = screen.getByRole('tooltip', { hidden: true });
+    expect(within(tip).getByText('Mon · 09:00')).toBeTruthy();
+    expect(within(tip).getByText('ED arrivals')).toBeTruthy();
+    expect(within(tip).getByText('40')).toBeTruthy();
+    fireEvent.mouseLeave(
+      container.querySelector('[data-heat-grid]') as Element,
+    );
+    expect(screen.queryByRole('tooltip', { hidden: true })).toBeNull();
+  });
+
+  it('has a scale legend from zero to the maximum, and no data, in words', () => {
+    const { container } = render(<DepartmentHeatmap {...props} />);
+    const legend = container.querySelector('[data-heat-legend]');
+    expect(
+      Array.from(legend?.querySelectorAll('li') ?? []).map(
+        (item) => item.textContent,
+      ),
+    ).toEqual(['ED arrivals', '0', '40', 'No data']);
+    expect(legend?.querySelectorAll('[data-heat-swatch]')).toHaveLength(5);
+  });
+
+  it('carries a data table: a row per day, a column per hour', () => {
+    render(<DepartmentHeatmap {...props} />);
+    expect(tableRows('ED arrivals by day and hour')).toEqual([
+      ['day', '08:00', '09:00', '10:00'],
+      ['Mon', '4', '40', '22'],
+      ['Tue', '0', 'No data', '31'],
+    ]);
+  });
+
+  it('names the busiest cell in its description', () => {
+    render(<DepartmentHeatmap {...props} description="Last week." />);
+    expect(
+      describedText(
+        screen.getByRole('figure', { name: 'ED arrivals by day and hour' }),
+      ),
+    ).toBe('Last week. Highest ED arrivals: Mon 09:00, 40.');
+  });
+
+  it('takes the row and column order it is given', () => {
+    render(
+      <DepartmentHeatmap
+        {...props}
+        rows={['Tue', 'Mon']}
+        columns={[10, 9, 8]}
+      />,
+    );
+    expect(tableRows('ED arrivals by day and hour')[0]).toEqual([
+      'day',
+      '10:00',
+      '09:00',
+      '08:00',
+    ]);
+    expect(tableRows('ED arrivals by day and hour')[1][0]).toBe('Tue');
+  });
+
+  it('handles no data, one cell and non-numeric values', () => {
+    render(<DepartmentHeatmap {...props} data={[]} />);
+    expect(tableRows('ED arrivals by day and hour')).toHaveLength(1);
+    cleanup();
+    const one = render(
+      <DepartmentHeatmap
+        {...props}
+        data={[{ day: 'Mon', hour: 8, arrivals: 3 }]}
+      />,
+    );
+    expect(flags(one.container, 'data-heat-level')).toEqual(['4']);
+    cleanup();
+    expect(() =>
+      render(
+        <DepartmentHeatmap
+          {...props}
+          data={[
+            { day: 'Mon', hour: 8, arrivals: 'n/a' },
+            { day: null, hour: 9, arrivals: 2 },
+          ]}
+        />,
+      ),
+    ).not.toThrow();
+  });
+
+  it('never logs a figure', () => {
+    expectNothingLogged(
+      <DepartmentHeatmap
+        {...props}
+        ariaLabel="Ramesh arrivals"
+        data={[{ day: 'Mon', hour: 8, arrivals: 999 }]}
+      />,
+      /Ramesh|999/,
+    );
+  });
+});
+
+describe('FunnelChart', () => {
+  const pathway = [
+    { stage: 'Registered', patients: 1240 },
+    { stage: 'Consulted', patients: 1180 },
+    { stage: 'Investigated', patients: 826 },
+    { stage: 'Admitted', patients: 310 },
+    { stage: 'Discharged', patients: 298 },
+  ];
+  const props = {
+    data: pathway,
+    config: { patients: { label: 'Patients', color: 'chart-1' } },
+    categoryKey: 'stage',
+    valueKey: 'patients',
+    ariaLabel: 'Patient pathway this month',
+  };
+
+  it('is a named figure on an opaque data surface', () => {
+    render(<FunnelChart {...props} />);
+    expect(
+      screen
+        .getByRole('figure', { name: 'Patient pathway this month' })
+        .classList.contains('nova-data'),
+    ).toBe(true);
+  });
+
+  it('draws a bar per stage, in order, on a track', () => {
+    const { container } = render(<FunnelChart {...props} />);
+    expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(
+      5,
+    );
+    expect(
+      Array.from(
+        container.querySelectorAll('.recharts-yAxis-tick-labels text'),
+      ).map((tick) => tick.textContent),
+    ).toEqual([
+      'Registered',
+      'Consulted',
+      'Investigated',
+      'Admitted',
+      'Discharged',
+    ]);
+    expect(
+      container.querySelectorAll('.recharts-bar-background-rectangle'),
+    ).toHaveLength(5);
+  });
+
+  it('labels each bar with its count and the drop-off from the stage before', () => {
+    const { container } = render(<FunnelChart {...props} />);
+    expect(
+      Array.from(container.querySelectorAll('[data-funnel-label]')).map(
+        (label) => label.textContent,
+      ),
+    ).toEqual([
+      '1,240',
+      '1,180 · −5%',
+      '826 · −30%',
+      '310 · −62%',
+      '298 · −4%',
+    ]);
+  });
+
+  it('carries a data table with the share of the first stage and the drop-off', () => {
+    render(<FunnelChart {...props} />);
+    expect(tableRows('Patient pathway this month')).toEqual([
+      ['stage', 'Patients', 'Share of first stage', 'Drop-off'],
+      ['Registered', '1,240', '100%', '—'],
+      ['Consulted', '1,180', '95%', '5%'],
+      ['Investigated', '826', '67%', '30%'],
+      ['Admitted', '310', '25%', '62%'],
+      ['Discharged', '298', '24%', '4%'],
+    ]);
+  });
+
+  it('says where the pathway ends up and where it loses the most', () => {
+    render(<FunnelChart {...props} />);
+    expect(
+      describedText(
+        screen.getByRole('figure', { name: 'Patient pathway this month' }),
+      ),
+    ).toBe(
+      '24% of Registered reached Discharged. Largest drop-off: Investigated to Admitted, 62%.',
+    );
+  });
+
+  it('handles no data, one stage and null values', () => {
+    render(<FunnelChart {...props} data={[]} />);
+    expect(tableRows('Patient pathway this month')).toHaveLength(1);
+    cleanup();
+    const one = render(<FunnelChart {...props} data={[pathway[0]]} />);
+    expect(one.container.querySelectorAll('[data-funnel-label]')).toHaveLength(
+      1,
+    );
+    cleanup();
+    expect(() =>
+      render(
+        <FunnelChart
+          {...props}
+          data={[
+            { stage: 'Registered', patients: 0 },
+            { stage: 'Consulted', patients: null },
+            { stage: 'Admitted', patients: 3 },
+          ]}
+        />,
+      ),
+    ).not.toThrow();
+    expect(tableRows('Patient pathway this month').slice(1)).toEqual([
+      ['Registered', '0', '—', '—'],
+      ['Consulted', 'No data', 'No data', 'No data'],
+      ['Admitted', '3', '—', 'No data'],
+    ]);
+  });
+
+  it('never logs a figure', () => {
+    expectNothingLogged(
+      <FunnelChart
+        {...props}
+        ariaLabel="Ramesh pathway"
+        data={[{ stage: 'Registered', patients: 999 }]}
       />,
       /Ramesh|999/,
     );

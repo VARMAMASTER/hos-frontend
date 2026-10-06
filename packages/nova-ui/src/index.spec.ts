@@ -7,7 +7,9 @@ import type {
   CardProps,
   ChartConfig,
   ChartLegendItem,
+  DepartmentHeatmapProps,
   DonutChartProps,
+  FunnelChartProps,
   HeroBandProps,
   KpiTileProps,
   LineChartProps,
@@ -144,6 +146,8 @@ describe('@hos/nova-ui public API', () => {
     'OccupancyAreaChart',
     'PatientFlowChart',
     'WaitTimeChart',
+    'DepartmentHeatmap',
+    'FunnelChart',
     // The scheme axis, the theme engine an admin theme editor builds on, and the motion tokens.
     'NOVA_SCHEMES',
     'NOVA_DEFAULT_SCHEME',
@@ -161,12 +165,16 @@ describe('@hos/nova-ui public API', () => {
     expect(nova).not.toHaveProperty('ChartContext');
   });
 
-  it.each(['ChartFigure', 'ChartPlot', 'Marker', 'niceCeiling'])(
-    'keeps the chart folder internal %s out of the barrel',
-    (name) => {
-      expect(nova).not.toHaveProperty(name);
-    },
-  );
+  it.each([
+    'ChartFigure',
+    'ChartPlot',
+    'Marker',
+    'niceCeiling',
+    'heatFill',
+    'heatLevel',
+  ])('keeps the chart folder internal %s out of the barrel', (name) => {
+    expect(nova).not.toHaveProperty(name);
+  });
 
   // Raw hex is for the token layer only; app code takes colour from the semantic tokens.
   it('keeps the raw primitive palette out of the barrel', () => {
@@ -266,6 +274,22 @@ describe('@hos/nova-ui public API', () => {
       p90Key: 'p90',
       target: 30,
     };
-    expect([vitals, legend, occupancy, flow, wait]).toHaveLength(5);
+    const heatmap: DepartmentHeatmapProps = {
+      data: [{ day: 'Mon', hour: 9, arrivals: 4 }],
+      ariaLabel: 'Arrivals',
+      rowKey: 'day',
+      columnKey: 'hour',
+      valueKey: 'arrivals',
+    };
+    const funnel: FunnelChartProps = { ...base, valueKey: 'icu' };
+    expect([
+      vitals,
+      legend,
+      occupancy,
+      flow,
+      wait,
+      heatmap,
+      funnel,
+    ]).toHaveLength(7);
   });
 });
