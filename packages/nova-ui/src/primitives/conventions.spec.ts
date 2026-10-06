@@ -265,8 +265,75 @@ describe('component conventions', () => {
       "'nova-ai-grad'",
       "'nova-ai-mark'",
       "'[--nova-data-edge:var(--nova-gradient-edge-kpi)]'",
+      "'nova-highlight-grad'",
+      "'nova-highlight-text'",
+      "'[--nova-data-edge:var(--nova-gradient-highlight-edge)]'",
     ]) {
       expect(GRADIENT_OFFENCE.test(good), good).toBe(false);
+    }
+  });
+
+  // The highlight reaches a component only through its tokens: the colour utilities (bg-highlight,
+  // border-highlight, text-highlight-deep, bg-highlight-soft, …), the nova-highlight-* utilities, or
+  // the data-edge swap. A component never names a highlight variable itself, never paints the
+  // highlight at an opacity (only the solid values are proven), never sets text in the bare
+  // highlight (it is a mark: highlight text is the deep ink or nova-highlight-text), and never
+  // invents a highlight utility.
+  const HIGHLIGHT_UTILITIES: readonly string[] = [
+    'nova-highlight-grad',
+    'nova-highlight-rail',
+    'nova-highlight-wash',
+    'nova-highlight-text',
+    'nova-highlight-edge',
+    'nova-highlight-ring',
+  ];
+  const HIGHLIGHT_SWAP =
+    '[--nova-data-edge:var(--nova-gradient-highlight-edge)]';
+  const highlightOffences = (text: string): string[] => {
+    const source = code(text).split(HIGHLIGHT_SWAP).join('');
+    return [
+      ...[...source.matchAll(/--nova-(?:color|gradient)-highlight[\w-]*/g)],
+      ...[
+        ...source.matchAll(
+          /(?<![\w-])[a-z]+(?:-[a-z]+)*-highlight(?:-(?:soft|deep|hover))?\/[\w.[\]()%-]+/g,
+        ),
+      ],
+      ...[...source.matchAll(/(?<![\w-])text-highlight(?![\w-])/g)],
+      ...[...source.matchAll(/(?<![\w-])nova-highlight-[\w-]+/g)].filter(
+        (match) => !HIGHLIGHT_UTILITIES.includes(match[0]),
+      ),
+    ].map((match) => bare(match[0]));
+  };
+
+  it('reaches the highlight only through its tokens and utilities', () => {
+    expect(offences(highlightOffences)).toEqual([]);
+  });
+
+  it('the highlight guard rejects a raw variable, an opacity, highlight text and an unknown utility, and accepts the tokens', () => {
+    for (const bad of [
+      "'bg-[var(--nova-color-highlight)]'",
+      "{ color: 'var(--nova-color-highlight-deep)' }",
+      "'[background-image:var(--nova-gradient-highlight)]'",
+      "'bg-highlight/40'",
+      "'hover:border-highlight-hover/50'",
+      "'text-highlight'",
+      "'md:text-highlight'",
+      "'nova-highlight-glow'",
+    ]) {
+      expect(highlightOffences(bad), bad).not.toEqual([]);
+    }
+    for (const good of [
+      "'bg-highlight-soft text-highlight-deep'",
+      "'border border-highlight'",
+      "'hover:border-highlight-hover'",
+      "'nova-highlight-grad'",
+      "'nova-highlight-wash nova-highlight-edge'",
+      "'nova-highlight-rail'",
+      "'nova-highlight-text'",
+      "'nova-highlight-ring'",
+      `'${HIGHLIGHT_SWAP}'`,
+    ]) {
+      expect(highlightOffences(good), good).toEqual([]);
     }
   });
 
