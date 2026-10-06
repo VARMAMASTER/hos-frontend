@@ -31,7 +31,7 @@ export const WithFooter: Story = {
   render: () => (
     <Card className="max-w-xl">
       <CardHeader title="Ward 4B" description="Medicine, second floor" />
-      <CardBody className="text-callout text-ink-2">
+      <CardBody className="text-[13px] text-ink-2">
         14 of 18 beds occupied; 2 discharges expected before noon.
       </CardBody>
       <CardFooter>
@@ -52,7 +52,7 @@ export const SelectableCards: Story = {
     const [chosen, setChosen] = useState(plans[1]);
     return (
       <fieldset className="grid max-w-3xl gap-4 sm:grid-cols-3">
-        <legend className="mb-2 text-callout font-semibold text-ink">
+        <legend className="mb-2 text-[13px] font-semibold text-ink">
           Room type
         </legend>
         {plans.map((plan) => (
@@ -64,10 +64,8 @@ export const SelectableCards: Story = {
             className="has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-primary"
           >
             <label className="flex cursor-pointer flex-col gap-2 p-5">
-              <span className="text-headline font-semibold text-ink">
-                {plan}
-              </span>
-              <span className="text-callout text-ink-3">
+              <span className="text-[17px] font-semibold text-ink">{plan}</span>
+              <span className="text-[13px] text-ink-3">
                 {plan === chosen ? 'Selected' : 'Available'}
               </span>
               <input

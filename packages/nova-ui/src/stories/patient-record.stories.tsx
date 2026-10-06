@@ -215,7 +215,7 @@ function PatientRecord() {
 
       <div className="flex flex-wrap items-center gap-3">
         <Avatar name="Meera Iyer" size="sm" />
-        <span className="text-callout text-ink-2">
+        <span className="text-[13px] text-ink-2">
           Attending: Dr. Meera Iyer
         </span>
         <StatusDot tone="warn" label="Under observation" className="ml-auto" />
@@ -252,7 +252,10 @@ function PatientRecord() {
             aria-labelledby="results-title"
             className="flex flex-col gap-3"
           >
-            <h2 id="results-title" className="text-body font-semibold text-ink">
+            <h2
+              id="results-title"
+              className="text-[14px] font-semibold text-ink"
+            >
               Lab results
             </h2>
             <Table
@@ -294,7 +297,10 @@ function PatientRecord() {
             aria-labelledby="imaging-title"
             className="flex flex-col gap-3"
           >
-            <h2 id="imaging-title" className="text-body font-semibold text-ink">
+            <h2
+              id="imaging-title"
+              className="text-[14px] font-semibold text-ink"
+            >
               Imaging
             </h2>
             <EmptyState

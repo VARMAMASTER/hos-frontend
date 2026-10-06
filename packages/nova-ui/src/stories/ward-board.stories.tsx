@@ -233,7 +233,7 @@ function WardBoard() {
                   ariaLabel="General ward beds"
                   onSelect={setSelected}
                 />
-                <p role="status" className="text-callout text-ink-2">
+                <p role="status" className="text-[13px] text-ink-2">
                   {picked
                     ? `Selected bed ${picked.label}, ${picked.status}`
                     : 'No bed selected'}
@@ -245,7 +245,7 @@ function WardBoard() {
             <section aria-labelledby="activity-heading" className="space-y-2">
               <h2
                 id="activity-heading"
-                className="text-body font-semibold text-ink"
+                className="text-[14px] font-semibold text-ink"
               >
                 Activity
               </h2>

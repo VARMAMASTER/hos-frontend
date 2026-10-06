@@ -5,11 +5,12 @@ import { Button } from '../components/button/button';
 import { Card } from '../components/card/card';
 import { NotificationBell } from '../components/notification-bell/notification-bell';
 import { OtpInput } from '../components/otp-input/otp-input';
+import { Surface } from '../primitives/surface';
 import { StatGauge } from '../components/stat-gauge/stat-gauge';
 import { showToast, Toaster } from '../components/toast/toast';
 
 const meta = {
-  title: 'Foundations/Apple catalog',
+  title: 'Foundations/Catalog',
   parameters: { layout: 'padded' },
 } satisfies Meta;
 
@@ -26,8 +27,8 @@ function SignInCard() {
   return (
     <Card className="flex max-w-sm flex-col gap-4 p-5">
       <div className="flex flex-col gap-1">
-        <h2 className="text-headline font-bold text-ink">Sign in</h2>
-        <p className="text-callout text-ink-2">
+        <h2 className="text-[17px] font-bold text-ink">Sign in</h2>
+        <p className="text-[13px] text-ink-2">
           Enter the code we sent to +91 98xxx xx210.
         </p>
       </div>
@@ -76,12 +77,17 @@ export const DashboardGauges: Story = {
 function Bell() {
   const [count, setCount] = useState(120);
   return (
-    <div className="flex items-center gap-3">
+    // The bell is a .tb-ico top-bar control, so it is shown on the chrome it belongs to.
+    <Surface
+      material="chrome"
+      radius="md"
+      className="flex items-center gap-3 px-6 py-3"
+    >
       <NotificationBell count={count} onClick={() => setCount(0)} />
-      <span className="text-callout text-ink-2">
+      <span className="text-[13px] text-(color:--nova-chrome-ink-2)">
         Press the bell to mark them read.
       </span>
-    </div>
+    </Surface>
   );
 }
 

@@ -62,7 +62,7 @@ function LiveSearch() {
         placeholder="Type to search"
         onValueChange={setValue}
       />
-      <p className="text-callout text-[color:var(--nova-chrome-ink-2)]">
+      <p className="text-[13px] text-[color:var(--nova-chrome-ink-2)]">
         onValueChange received: {value === '' ? 'nothing yet' : `"${value}"`}
       </p>
     </div>

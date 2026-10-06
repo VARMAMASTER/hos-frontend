@@ -16,7 +16,7 @@ export const Default: Story = {
   args: {
     sidebar: (
       <Sidebar
-        brand={<span className="text-body font-semibold">Acme Hospital</span>}
+        brand={<span className="text-[14px] font-semibold">Acme Hospital</span>}
       >
         <NavItem href="#dashboard" active>
           Dashboard
@@ -27,7 +27,7 @@ export const Default: Story = {
     ),
     children: (
       <div className="p-6">
-        <h1 className="text-headline font-semibold text-ink">Dashboard</h1>
+        <h1 className="text-[17px] font-semibold text-ink">Dashboard</h1>
         <p className="mt-2 text-ink-2">
           The content column sits on the brand canvas and can shrink, so a wide
           table scrolls inside it instead of stretching the page. See the full

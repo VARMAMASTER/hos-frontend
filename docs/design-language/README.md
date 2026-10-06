@@ -1,151 +1,96 @@
-# Nova design language: Apple refinements on violet glass
+# Nova design language: the HOS prototype
 
-**This file is binding.** The Apple references in this folder supply the _craft_. Where they conflict with Nova, this file decides.
+Nova is the HOS prototype, built as a React library. **`os/public/assets/hos.css` ("HOS Design System v3") is binding**: its `:root` tokens, its shapes and its sizes. The prototype pages in `os/public/*.html` and the screenshots in `os/public/assets/shots/` show how they are used. Where this file and the prototype disagree, the prototype wins; where the prototype and an accessibility proof disagree, the proof wins and the value is listed under [Held by a proof](#held-by-a-proof).
 
-Owner decision (2026-10-06): "Apple refinements on Nova", with Inter as the typeface.
+The Apple adaptation that used to live here is superseded (owner decision, 2026-10-06). `apple-reference/` is kept only as history.
 
-Nova keeps:
+## How the prototype maps onto Nova
 
-- its identity: violet brand, per-hospital themes, the glass/solid material axis, and the brand, chrome, aurora and AI gradients;
-- every accessibility rule.
+Nova's semantic names stay the API (`--nova-color-primary`, `bg-surface`, `text-ink-2`); every **value** is the prototype's. `tokens/semantic.ts` (`NOVA_DEFAULTS`) and `styles/theme.css` hold the same values, and `semantic.spec.ts` compares them token by token with `hos.css`.
 
-Nova adopts Apple's typography, spacing, radius grammar, control shapes, flat elevation and motion.
+| Prototype                                                                                                                                                   | Nova token                                           | Tailwind                                                 | Value                                                            |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------- |
+| `--bg`                                                                                                                                                      | `--nova-color-bg`                                    | `bg-bg`                                                  | `#F0EFF9`                                                        |
+| `--panel`                                                                                                                                                   | `--nova-color-surface`                               | `bg-surface`                                             | `#FFFFFF`                                                        |
+| `--panel-2`                                                                                                                                                 | `--nova-color-surface-2`                             | `bg-surface-2`                                           | `#F8F7FD`                                                        |
+| `--line`                                                                                                                                                    | `--nova-color-border`                                | `border-border`                                          | `#E4E1F2`                                                        |
+| `--line-strong`                                                                                                                                             | `--nova-color-border-strong`                         | `border-border-strong`                                   | `#CFC9E6`                                                        |
+| `--ink`, `--ink-2`                                                                                                                                          | `--nova-color-ink`, `-ink-2`                         | `text-ink`, `text-ink-2`                                 | `#1A1730`, `#5B5775`                                             |
+| `--ink-3`                                                                                                                                                   | `--nova-color-ink-3`                                 | `text-ink-3`                                             | `#5D5974` (held, see below)                                      |
+| `--teal`, `--teal-strong`, `--teal-soft`, `--teal-ghost`                                                                                                    | `--nova-color-primary`, `-strong`, `-soft`, `-ghost` | `bg-primary` …                                           | `#6D4FE0`, `#5636B8`, `#EFEAFC`, `#F8F5FE`                       |
+| `--ai`, `--ai-bright`, `--ai-deep`, `--ai-soft`, `--ai-ghost`, `--ai-line`                                                                                  | `--nova-color-ai*`                                   | `bg-ai` …                                                | `#0E7490`, `#22D3EE`, `#0B5567`, `#DDF4FA`, `#F6FDFF`, `#B9E6F2` |
+| `--good`, `--warn`, `--crit`, `--info` with `-soft` and `-deep`                                                                                             | `--nova-color-good*` …                               | `bg-good-soft text-good-deep` …                          | unchanged                                                        |
+| `--chrome-1`, `-2`, `-3`, `--chrome-glass`, `--chrome-line`, `--chrome-ink`, `--chrome-ink-2`, `--chrome-accent`, `--chrome-accent-soft`, `--chrome-glow-2` | `--nova-color-chrome-*`                              | `bg-chrome-1`, `border-chrome-line`, `text-chrome-ink` … | verbatim                                                         |
+| `.tb-dot` ring `#221448`                                                                                                                                    | `--nova-color-chrome-ring`                           | `border-chrome-ring`                                     | `#221448`                                                        |
+| `--ai-grad`                                                                                                                                                 | `--nova-gradient-ai`                                 | `nova-ai-grad`                                           | cyan → AI cyan → violet (the violet pinned, never the brand)     |
+| `--ai-mark`                                                                                                                                                 | `--nova-ai-mark`                                     | `nova-ai-mark`                                           | the four-hue conic spark, on the mark only                       |
+| `--f-display`, `--f-body`, `--f-mono`                                                                                                                       | `--nova-font-display`, `-body`, `-mono`              | `font-display`, `font-sans`, `font-mono`                 | Google Sans Flex; IBM Plex Mono                                  |
+| `--sidebar-w`                                                                                                                                               | `--nova-sidebar-w`                                   |                                                          | `248px`                                                          |
 
-## References (read for intent; this file wins on conflict)
+Fonts load from the prototype's own Google Fonts URL (`family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=IBM+Plex+Mono:wght@500;600`) in `apps/web/index.html` and Storybook's `preview-head.html` and `manager-head.html`. The body is the prototype's: 14px on a 1.55 line with optical sizing (`theme.css`, `@layer base`), so a component that sets only a size inherits the prototype's line height.
 
-These files are copies of the project skill `.claude/skills/apple-design-system` in the HOS folder:
+## Scales
 
-- `apple-reference/apple-design-source.md`: the Apple visual philosophy (condensed DESIGN.md).
-- `apple-reference/tokens.md`: the token set (colour, spacing, radius, borders, type).
-- `apple-reference/components.md`: per-component specs. They are React Native; translate `View`→`div` but keep the tokens, radii, weights and border widths.
-- `apple-reference/checklist.md`: the review checklist (read "Action Blue" as Nova `primary`).
+| Scale    | Prototype                                                                                                  | Nova, in components                                                        |
+| -------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------ | ------------------------------- | ---------- | --------------------- | --- | ------ |
+| Spacing  | `--space-0 … 10`: 2, 4, 6, 8, 10, 12, 16, 20, 24, 32, 48 px                                                | Tailwind steps `0.5 1 1.5 2 2.5 3 4 5 6 8 12`, plus `0` and `px`           |
+| Radius   | `--r-sm 8`, `--r-md 12`, `--r-lg 18`, `--r-xl 22`, `--r-full 999`                                          | `rounded-sm                                                                | md     | lg                              | xl         | full`, `rounded-none` |
+| Type     | every `font-size` in `hos.css`: 9.5, 10, 10.5, 11, 11.5, 12, 12.5, 13, 13.5, 14, 15, 16, 17, 20, 23, 26 px | `text-[12.5px]` and so on, from `PROTOTYPE_TYPE_SIZES` (`tokens/scale.ts`) |
+| Weight   | 400, 500, 600, 700                                                                                         | `font-normal                                                               | medium | semibold                        | bold`      |
+| Shadow   | `--shadow-sm                                                                                               | md                                                                         | lg     | glass`, on hue `262deg 45% 27%` | `shadow-sm | md                    | lg  | glass` |
+| Headings | h1 23/600/-0.015em, h2 17/600/-0.01em, h3 14/600/-0.005em                                                  | `tracking-h1                                                               | h2     | h3` with the size and weight    |
 
-## Typography
+Corners are plain `border-radius`: the prototype has no `corner-shape`. Where the prototype writes a literal radius off its own scale (`.btn` 9px, `.tab` 10px, `.tabbar` 14px, `.ic` 7px, `.brand-mark` 11px), Nova uses the nearest `--r-*` step.
 
-- **Inter** (variable) replaces Google Sans Flex as `--nova-font-body`. IBM Plex Mono stays for figures, IDs and tabular numbers. Update the Google Fonts links in Storybook (`.storybook/preview-head.html`) and the web app (`apps/web/index.html`).
-- **Type ramp** becomes tokens, mapped into Tailwind's `@theme`:
+`primitives/conventions.spec.ts` enforces all of it in every component: only these spacing steps, radii, type sizes, weights and shadows; no stock `text-xs|sm|…`, no raw hex, no stock palette, no private backdrop-filter, outline classes or `corner-shape`, and no hand-written gradient.
 
-  | Token      | Size |
-  | ---------- | ---- |
-  | `micro`    | 11px |
-  | `caption`  | 13px |
-  | `callout`  | 15px |
-  | `body`     | 17px |
-  | `headline` | 20px |
-  | `title3`   | 28px |
-  | `title2`   | 40px |
-  | `title1`   | 56px |
+## Surfaces and gradients
 
-  Components use the ramp, never ad-hoc `text-[13px]`.
+Each prototype surface is one utility in `theme.css`, reached through `Surface` (`material=`):
 
-- **Weights: 400 / 600 / 700 only. 500 is banned.** No `font-medium` anywhere. Labels and emphasis use 600, body 400, headlines 700.
-- Headlines (≥ 20px) tighten tracking slightly, about -0.01em. Small text is never tightened.
-- Body reading text and form input text are 17px. Dense data (table cells, chips, meta lines) uses `callout` (15) or `caption` (13). This is a clinical density decision: tables stay scannable.
+| Role       | Utility         | Prototype                                                                                              |
+| ---------- | --------------- | ------------------------------------------------------------------------------------------------------ |
+| `card`     | `nova-card`     | `.card`: panel, `--line` edge, `--shadow-sm`, radius md                                                |
+| `data`     | `nova-data`     | `.card` plus `.edge-premium`, the 1px violet-to-cyan gradient edge (KPI tiles swap in the `.kpi` edge) |
+| `surface`  | `nova-surface`  | `.glass-panel` on glass, the card on solid                                                             |
+| `overlay`  | `nova-overlay`  | `.glass-card` (menus, dialogs, tooltips)                                                               |
+| `field`    | `nova-field`    | `.f-input`: opaque panel, the proven control edge                                                      |
+| `chrome`   | `nova-chrome`   | `.topbar`: the indigo gradient with grain, frosted                                                     |
+| `sidebar`  | `nova-sidebar`  | `.sidebar`: deepening gradient, the brand lift, grain; never frosted                                   |
+| `hero`     | `nova-hero`     | `.glass-hero`: violet to sky over the chrome glass, `--shadow-glass`                                   |
+| `ai-block` | `nova-ai-block` | `.ai-block`: AI wash, AI line, the 3px gradient rail; green once approved                              |
 
-## Spacing and radius
+Smaller utilities: `nova-card-head` (`.card-h` tint), `nova-tabbar` (`.tabbar`), `nova-ai-spark` (`.ai-spark`), `nova-ai-rail`, `nova-ai-grad`, `nova-ai-mark`, `nova-bar-grad` (`.sb-bar`), `nova-gradient-text`, `nova-canvas` (the aurora).
 
-- Spacing scale: 2, 4, 8, 12, 16, 20, 24, 32, 48, 64. Prefer `gap` on flex containers over per-child margins. Card interior padding is 20, field padding 16 × 12, label-to-control gap 4, gap between stacked fields 16-20.
-- **Radius grammar**, from `apple-reference-tokens.md` and replacing Nova's 8/12/18:
+Gradients are back exactly where the prototype draws them: the AI rail on AI blocks, the gradient edge on data surfaces, the chrome and hero gradients, the AI gradient and mark. A component never writes one of its own; it uses these utilities or tokens.
 
-  | Token  | Value | Use                                                             |
-  | ------ | ----- | --------------------------------------------------------------- |
-  | `sm`   | 6px   | inline, compact                                                 |
-  | `md`   | 10px  | inputs, small tiles                                             |
-  | `lg`   | 14px  | cards, dialogs, sheets                                          |
-  | `xl`   | 20px  | large hero surfaces                                             |
-  | `pill` | full  | anything that reads as an action: buttons, filter chips, search |
+## Material
 
-  Nothing in between. Corners stay continuous (Nova's global `corner-shape: squircle`, the web equivalent of `borderCurve: 'continuous'`). True circles (avatars, switch thumbs, dots) and capsules (pill buttons, chips, the switch track) opt out with `[corner-shape:round]`: the squircle would flatten a pill's ends into a rounded rectangle.
+The glass/solid axis stays. Glass is the default and is the prototype's own glass: the top bar, the hero, glass panels and overlays frost; cards, fields, data and the sidebar stay solid, as the prototype keeps them ("glass never under dense data"). Solid is the prototype's opaque fallbacks. A hospital may choose solid; `prefers-reduced-transparency`, `prefers-contrast: more` and a browser without `backdrop-filter` always force solid.
 
-## Borders and elevation
+## Held by a proof
 
-- **A subtle, premium lift** (owner decision, 2026-10-06). Four levels, soft and low-opacity, tinted to the Nova violet shadow hue (262deg 45% 27%), never neutral black:
-  - `--nova-elevation-1`: resting cards, panels and data surfaces (`nova-surface`, `nova-data`);
-  - `--nova-elevation-2`: menus, popovers, tooltips and toasts (`nova-overlay`), and an interactive card on hover;
-  - `--nova-elevation-3`: dialogs and sheets;
-  - `--nova-elevation-button`: the filled buttons (primary, danger, ai) only. Outline and ghost buttons, inputs and chips stay flat.
-- Elevation comes only from the --nova-elevation-\* tokens; components never invent a shadow.
-- Depth also comes from surface change, 1px hairlines, the glass material's blur, and a scrim behind modals. Glass and solid both lift; glass adds its 1px white rim / top inset highlight. The accessibility fallbacks (reduced transparency, more contrast) keep the lift: it does not affect legibility.
-- Two border widths only:
-  - 1px for default edges;
-  - 2px `primary` only on a _selected_ card or option.
-- Card and divider hairlines use a soft hairline token, as subtle as Apple's.
-- **Interactive control edges are the exception.** Inputs, selects, checkboxes, radios and the switch track keep a boundary of at least 3:1 against their surface. Nova's proven `--nova-field-edge` stays: WCAG 1.4.11 applies, and clinicians must see a field. Focused uses 1px plus the focus ring in `primary`; error uses crit.
+These prototype values fail an accessibility proof (`tokens/material.spec.ts`, which also shows each prototype value failing), so Nova keeps the nearest value that passes:
 
-## Colour
+| Value                 | Prototype                            | Nova                                    | Why                                              |
+| --------------------- | ------------------------------------ | --------------------------------------- | ------------------------------------------------ |
+| `--ink-3`             | `#6A6584`                            | `#5D5974`                               | small print at 4.5:1 on the aurora-tinted canvas |
+| Form control edge     | `--line-strong` (1.6:1)              | `--nova-color-border-control` `#736E8B` | WCAG 1.4.11, 3:1                                 |
+| Overlay fill          | `.glass-card` 0.62 white             | 0.83                                    | ink-3 at 4.5:1 on a menu over the opaque sidebar |
+| Top-bar light end     | `rgba(59,33,120,.72)`                | `.78`                                   | secondary ink at 4.5:1 inside the search field   |
+| Top-bar secondary ink | white at .5–.66                      | .88                                     | as above                                         |
+| Sidebar secondary ink | `--chrome-ink-2` .66, labels .42–.5  | .70                                     | 4.5:1 under the brand lift for every brand       |
+| Hero base             | `--chrome-glass` .6                  | .9                                      | white at 4.5:1 at the sky end                    |
+| Hero secondary ink    | white .68                            | .9                                      | 4.5:1 at the sky end                             |
+| Top-bar focus ring    | `--chrome-accent` (2.4:1)            | white                                   | 3:1                                              |
+| Aurora                | 0.22–0.30 tints                      | 0.10 brand, 0.06 accents                | ink-3 at 4.5:1 on the canvas                     |
+| Chart series          | `--c1 … c3` (the good and info hues) | the six-slot data palette               | `palette.spec.ts`: series never read as a status |
 
-- **One interactive accent: Nova `primary`.** It is violet by default and each hospital's own brand under its theme; it is the "Action Blue" role. Links, CTAs, focus and selected state all use it. No second interactive colour.
-- Status colours stay Nova's accessible -soft / -deep pairs, not iOS system colours (`#ff9500` on white is about 2.2:1). Status is never decoration.
-- AI stays the fixed cyan with the ✦ marker. The AI rail is solid cyan; the AI gradient is never a border.
-- Gradients stay where Nova's identity lives: the hero band, the sidebar and top-bar chrome, and the aurora canvas. **No gradient on buttons**; the pill shape carries the emphasis.
-- No gradient borders: edges are 1px hairlines; data surfaces are opaque with a hairline.
+## Unchanged rules (enforced by tests)
 
-## Controls (from the catalog, adapted)
-
-- **Button = pill CTA.**
-  - Shape: radius `pill`, padding 12 × 24 (md) and a compact sm size.
-  - Label: `body` 17 at **400**. Do not bump the weight; the pill carries emphasis.
-  - Variants:
-    - `primary`: filled primary;
-    - `outline`: the old `secondary`, renamed, with a 1px primary border and primary text;
-    - `ghost`: primary text, no border;
-    - `danger`: crit fill, white text;
-    - `ai`: AI fill, ✦ marker.
-  - States:
-    - press: `scale(0.95)`;
-    - disabled: opacity 0.5;
-    - `loading`: a spinner replaces the label, keeping the width, with `aria-busy`;
-    - `fullWidth`.
-  - No gradient. The filled variants carry `--nova-elevation-button`; outline and ghost stay flat.
-- **Input:**
-  - label 600 at `callout`;
-  - field radius `md`, padding 16 × 12, text `body` 17, placeholder in muted ink;
-  - optional leading and trailing icons at 18px;
-  - helper line in `caption`; the error line in crit.
-  - Edge: the 3:1 rule above. Selects follow the same spec.
-- **Card:**
-  - radius `lg`, 1px hairline, padding 20, gap 8, elevation 1;
-  - title 600 at `headline` 20, supporting copy at `callout` / `caption`;
-  - optional footer row with `space-between`;
-  - interactive cards press to `scale(0.98)` and rise to elevation 2 on hover; a selected card gets a 2px primary border and nothing else.
-  - On glass, the panel variant keeps its frosted fill.
-- **Chip:** pill, padding 8 × 2, `caption` 13. Two kinds:
-  - Status tone chips keep the -soft / -deep pairs and a leading icon or word. They are never colour-only.
-  - Add `FilterChip`: a toggle with `aria-pressed`, parchment-like inactive, primary active, press `scale(0.96)`.
-- **Avatar:** a circle with a soft surface fill and initials at 600 in muted ink. Sizes 20, 32, 40, 48. An optional `verified` glyph sits in primary.
-- **Tabs, checkbox, radio, switch:** restyled to the grammar.
-  - The switch is iOS-style: a pill track with a white circular thumb and primary when on.
-  - Checkbox / radio rows get a 44px minimum touch target.
-- **Motion:** quiet and quick.
-  - Entrances: 150-240ms ease-out.
-  - Press: `scale(0.95)` buttons, 0.96-0.99 chips and cards.
-  - Dialogs: scale in from 0.94 with a fade.
-  - All of it is disabled under `prefers-reduced-motion`.
-
-## New components from the catalog
-
-- **Toast (`Toaster` + `showToast(message, variant)`):**
-  - top-centred, radius `lg`, elevation 2;
-  - variants: `info` on near-black, `success` on primary, `error` on crit;
-  - white `callout` text, auto-dismiss at 3500ms, tap to dismiss, `role="status"` / `aria-live`.
-- **OtpInput:**
-  - six square boxes with a hidden real input (`autocomplete="one-time-code"`, numeric);
-  - digits 600 at `title3`;
-  - the active box gets a primary edge; error gets a crit edge plus the shake animation (reduced-motion: no shake).
-  - It serves login by mobile OTP.
-- **AlertDialog:**
-  - a centred confirm on Nova's Dialog: max-width 280, radius `lg`, scrim, elevation 3 (from Dialog);
-  - title 600 at `headline`, message at `callout`;
-  - a button row divided by hairlines (two side by side; one, or three or more, stacked);
-  - cancel / destructive / default roles.
-  - Use it only when the user must choose; use a Toast for confirmations.
-- **NotificationBell:** a bell button with an accessible name. The unread badge is a crit pill with the count (99+ cap) and the count in its accessible name.
-- **StatGauge:** value 600 at `headline`, label at `caption`, a 6px track with a primary fill, and `role="meter"` with `aria-valuenow`. Use it for things like bed occupancy.
-- **EmptyState** (existing): restyle to the catalog. Centred, 64px vertical padding, a 44px icon, title 600 at `title3`, body at `body` centred and max-width 320, optional CTA.
-
-## Unchanged rules (still enforced by tests)
-
-Status is never colour-only. Text is at least 4.5:1, every brand proven. Focus rings and control edges are at least 3:1. Dense data is never translucent. Tenants cannot override status or AI. Components compose the primitives. `conventions.spec.ts` gains:
-
-- no `font-medium` (weight 500 is banned);
-- no shadow on components other than the `shadow-elevation-*` classes and the surface utilities' elevation.
+- Text is at least 4.5:1 and focus rings and control edges at least 3:1, proven for every hospital brand.
+- Status is never colour-only: a word, a glyph or a shape goes with every tone.
+- Dense data is never translucent.
+- Hospitals cannot override status, AI, chart or chrome tokens; only the brand colours and the body font.
+- Every interactive element takes its focus ring from `focusRing`; motion is off under `prefers-reduced-motion`.
+- Components compose the primitives (`cx`, `focusRing`, `Surface`, `useControllableState`).

@@ -29,7 +29,8 @@ export const FullWidth: Story = {
   ),
 };
 
-// Every variant side by side: pills with a regular-weight label, no shadow, no gradient.
+// Every variant side by side, as the prototype's .btn family: a 13px semibold label, an 8px radius,
+// flat fills, shadow-md on hover.
 export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">

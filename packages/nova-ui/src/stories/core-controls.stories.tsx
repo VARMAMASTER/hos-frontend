@@ -21,21 +21,21 @@ import { TextField } from '../components/text-field/text-field';
 import { Textarea } from '../components/textarea/textarea';
 
 const meta = {
-  title: 'Design language/Apple refinements',
+  title: 'Design language/Core controls',
   parameters: { layout: 'fullscreen' },
 } satisfies Meta;
 
 export default meta;
 
-// One page with every refined core control in every state, so the owner can compare it with the
-// previous build (and Glass with Solid, from the toolbar). The spec is
-// docs/design-language/README.md: Inter, the 400 / 600 / 700 ladder, the type ramp, pill CTAs,
-// the 6 / 10 / 14 / 20 radii, flat elevation, quiet press-scale motion.
+// One page with every core control in every state, so the owner can set it beside the prototype
+// (and Glass beside Solid, from the toolbar). The spec is docs/design-language/README.md, which makes
+// os/public/assets/hos.css binding: Google Sans Flex, the 400 / 500 / 600 / 700 weights, the
+// prototype's type sizes, the 8 / 12 / 18 / 22 radii and its violet-tinted shadows.
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-headline font-bold text-ink">{title}</h2>
+      <h2 className="text-[17px] font-bold text-ink">{title}</h2>
       {children}
     </section>
   );
@@ -44,7 +44,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-caption text-ink-3">{label}</p>
+      <p className="text-[12px] text-ink-3">{label}</p>
       <div className="flex flex-wrap items-center gap-3">{children}</div>
     </div>
   );
@@ -118,13 +118,13 @@ function RoomChoice() {
           className="has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-primary"
         >
           <label className="flex cursor-pointer flex-col gap-2 p-5">
-            <span className="text-headline font-semibold text-ink">{room}</span>
-            <span className="text-callout text-ink-3">
+            <span className="text-[17px] font-semibold text-ink">{room}</span>
+            <span className="text-[13px] text-ink-3">
               {room === chosen ? 'Selected' : 'Interactive: press me'}
             </span>
             <input
               type="radio"
-              name="apple-room"
+              name="core-room"
               checked={room === chosen}
               onChange={() => setChosen(room)}
               className="sr-only"
@@ -140,24 +140,37 @@ export const CoreControls: StoryObj = {
   render: () => (
     <div className="mx-auto flex max-w-5xl flex-col gap-12 p-6">
       <header className="flex flex-col gap-2">
-        <h1 className="text-title2 font-bold text-ink">Apple refinements</h1>
-        <p className="max-w-2xl text-body text-ink-2">
-          Nova keeps its violet brand, glass and gradients and takes on
-          Apple&apos;s craft. Body and form text are 17px Inter at 400; labels
-          are 600; headlines 700 with slightly tight tracking.
+        <h1 className="font-display text-[23px] font-semibold tracking-h1 text-ink">
+          Core controls
+        </h1>
+        <p className="max-w-2xl text-[13px] text-ink-2">
+          Every control as the HOS prototype draws it: Google Sans Flex, body
+          text at 14px on a 1.55 line, form text at 13.5px, labels at 12px
+          semibold, buttons at 13px semibold.
         </p>
       </header>
 
-      <Section title="Type ramp">
+      <Section title="Type sizes">
         <div className="flex flex-col gap-1">
-          <p className="text-title1 font-bold text-ink">Title 1 · 56</p>
-          <p className="text-title2 font-bold text-ink">Title 2 · 40</p>
-          <p className="text-title3 font-bold text-ink">Title 3 · 28</p>
-          <p className="text-headline font-bold text-ink">Headline · 20</p>
-          <p className="text-body text-ink">Body · 17 · Ramesh Kumar, bed 12</p>
-          <p className="text-callout text-ink-2">Callout · 15 · table cells</p>
-          <p className="text-caption text-ink-3">Caption · 13 · chips, meta</p>
-          <p className="text-micro text-ink-3">Micro · 11 · timestamps</p>
+          <p className="font-display text-[26px] font-bold text-ink">
+            KPI figure · 26 · 4,280
+          </p>
+          <p className="font-display text-[23px] font-semibold tracking-h1 text-ink">
+            h1 · 23 · Good morning, Swapna
+          </p>
+          <p className="font-display text-[17px] font-semibold tracking-h2 text-ink">
+            h2 · 17 · Now serving
+          </p>
+          <p className="text-[14px] text-ink">
+            Body · 14 · Ramesh Kumar, bed 12
+          </p>
+          <p className="text-[13.5px] text-ink">Form and nav · 13.5</p>
+          <p className="text-[13px] text-ink-2">Table, button, banner · 13</p>
+          <p className="text-[12px] text-ink-2">Small print · 12 · .tiny</p>
+          <p className="text-[11.5px] font-semibold text-ink-2">Chip · 11.5</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[.06em] text-ink-2">
+            Table header · 11
+          </p>
         </div>
       </Section>
 
@@ -239,12 +252,12 @@ export const CoreControls: StoryObj = {
             <Checkbox label="Locked" disabled />
           </div>
           <fieldset className="flex flex-col">
-            <legend className="text-callout font-semibold text-ink">
+            <legend className="text-[13px] font-semibold text-ink">
               Triage
             </legend>
-            <Radio name="apple-triage" label="Immediate" defaultChecked />
-            <Radio name="apple-triage" label="Urgent" />
-            <Radio name="apple-triage" label="Standard" disabled />
+            <Radio name="core-triage" label="Immediate" defaultChecked />
+            <Radio name="core-triage" label="Urgent" />
+            <Radio name="core-triage" label="Standard" disabled />
           </fieldset>
           <div className="flex flex-col">
             <Switch label="SMS reminders" defaultChecked />
@@ -278,13 +291,13 @@ export const CoreControls: StoryObj = {
               Archived
             </Tab>
           </TabList>
-          <TabPanel value="overview" className="pt-3 text-body text-ink-2">
+          <TabPanel value="overview" className="pt-3 text-[14px] text-ink-2">
             Vitals stable since admission.
           </TabPanel>
-          <TabPanel value="labs" className="pt-3 text-body text-ink-2">
+          <TabPanel value="labs" className="pt-3 text-[14px] text-ink-2">
             Haemoglobin 11.2 g/dL.
           </TabPanel>
-          <TabPanel value="billing" className="pt-3 text-body text-ink-2">
+          <TabPanel value="billing" className="pt-3 text-[14px] text-ink-2">
             Pre-auth approved.
           </TabPanel>
         </Tabs>
@@ -304,7 +317,7 @@ export const CoreControls: StoryObj = {
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader title="Ward 4B" description="Medicine, second floor" />
-            <CardBody className="text-callout text-ink-2">
+            <CardBody className="text-[13px] text-ink-2">
               14 of 18 beds occupied.
             </CardBody>
             <CardFooter>
@@ -319,7 +332,7 @@ export const CoreControls: StoryObj = {
               title="Collections"
               description="Dense data stays opaque"
             />
-            <CardBody className="font-mono text-title3 text-ink">
+            <CardBody className="font-mono text-[23px] text-ink">
               ₹4.2L
             </CardBody>
           </Card>

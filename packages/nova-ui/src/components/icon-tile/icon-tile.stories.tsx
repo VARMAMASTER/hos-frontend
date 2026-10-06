@@ -54,7 +54,7 @@ export const Sizes: Story = {
 export const BesideALabel: Story = {
   name: 'Beside a label (decorative, hidden from screen readers)',
   render: () => (
-    <div className="flex items-center gap-3 text-callout font-semibold text-on-primary">
+    <div className="flex items-center gap-3 text-[13px] font-semibold text-on-primary">
       <IconTile>{glyph}</IconTile>
       <span>Beds</span>
     </div>

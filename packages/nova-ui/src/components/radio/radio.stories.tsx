@@ -18,7 +18,7 @@ export const Disabled: Story = { args: { disabled: true } };
 export const Group: Story = {
   render: () => (
     <fieldset>
-      <legend className="text-callout font-semibold text-ink">
+      <legend className="text-[13px] font-semibold text-ink">
         Triage category
       </legend>
       <div className="mt-2 flex flex-col gap-3">

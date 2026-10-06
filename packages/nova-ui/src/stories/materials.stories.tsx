@@ -10,9 +10,10 @@ const meta = { title: 'Materials/Glass and solid' } satisfies Meta;
 
 export default meta;
 
-// Flip Material in the toolbar to compare. Glass frosts the canvas behind the hero, the panel and
-// the overlay; solid is the same layout with flat fills. The data surfaces (the data card and the
-// KPI tiles) are opaque by design, so they must look the same under both.
+// Flip Material in the toolbar to compare. Glass is the prototype's own: the hero, the glass panel,
+// the top bar and the overlay frost; solid is the same layout with the prototype's opaque fallbacks.
+// Cards, fields and data (the KPI tiles, the data card) are opaque in the prototype, so they look the
+// same under both.
 export const Surfaces: StoryObj = {
   render: () => (
     <div className="flex flex-col gap-6">
@@ -41,10 +42,10 @@ export const Surfaces: StoryObj = {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card variant="glass">
           <CardHeader
-            title="Panel"
-            description="Frosts the canvas on glass, a flat card on solid"
+            title="Glass panel"
+            description=".glass-panel on glass, the card on solid"
             actions={<Chip tone="ai">AI draft</Chip>}
           />
           <CardBody className="flex flex-wrap gap-2">
@@ -55,7 +56,7 @@ export const Surfaces: StoryObj = {
         <Card variant="data">
           <CardHeader
             title="Data card"
-            description="Opaque under both materials, edged with a soft hairline"
+            description="Opaque under both materials, with the gradient edge"
             actions={<Chip tone="info">Dense data</Chip>}
           />
           <CardBody className="flex flex-wrap gap-2">
@@ -65,16 +66,16 @@ export const Surfaces: StoryObj = {
         </Card>
       </div>
 
-      {/* The AI rail (AiPanel's draft state) and the brand gradient text. */}
+      {/* The AI gradient rail on a plain card, and the brand gradient text. */}
       <div className="grid items-center gap-4 md:grid-cols-2">
         <Card className="nova-ai-rail">
           <CardHeader
             title="AI draft"
-            description="A solid AI-cyan rail and the spark mark an AI surface"
+            description="The gradient rail and the spark mark an AI surface"
             actions={<AiBadge />}
           />
         </Card>
-        <h2 className="nova-gradient-text w-fit text-title3 font-semibold">
+        <h2 className="nova-gradient-text w-fit text-[23px] font-semibold">
           Brand gradient text
         </h2>
       </div>
@@ -82,19 +83,19 @@ export const Surfaces: StoryObj = {
       {/* The remaining surface utilities, until components use them. */}
       <div className="grid gap-4 md:grid-cols-3">
         <div className="nova-chrome rounded-lg p-4">
-          <p className="text-callout font-semibold">nova-chrome</p>
-          <p className="text-callout text-(color:--nova-chrome-ink-2)">
+          <p className="text-[13px] font-semibold">nova-chrome</p>
+          <p className="text-[13px] text-(color:--nova-chrome-ink-2)">
             Secondary ink on the app frame
           </p>
         </div>
         <div className="nova-overlay rounded-lg p-4">
-          <p className="text-callout font-semibold text-ink">nova-overlay</p>
-          <p className="text-callout text-ink-3">Menus, dialogs and tooltips</p>
+          <p className="text-[13px] font-semibold text-ink">nova-overlay</p>
+          <p className="text-[13px] text-ink-3">Menus, dialogs and tooltips</p>
         </div>
         <label className="block">
-          <span className="mb-1 block text-callout text-ink-3">nova-field</span>
+          <span className="mb-1 block text-[13px] text-ink-3">nova-field</span>
           <input
-            className="nova-field h-10 w-full rounded-md px-3 text-callout text-ink"
+            className="nova-field w-full rounded-sm px-2.5 py-2 text-[13.5px] text-ink"
             placeholder="Search patients"
           />
         </label>
