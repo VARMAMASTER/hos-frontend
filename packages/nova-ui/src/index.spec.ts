@@ -55,6 +55,7 @@ describe('@hos/nova-ui public API', () => {
     'Breadcrumbs',
     'EmptyState',
     'FilterChip',
+    'DataTable',
     'Divider',
     'HeroBand',
     'IconTile',

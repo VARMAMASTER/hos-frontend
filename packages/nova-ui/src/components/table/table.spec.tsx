@@ -205,3 +205,140 @@ describe('Table', () => {
     expect(screen.getByRole('region', { name: 'Medications' })).toBeTruthy();
   });
 });
+
+describe('Table, for data that scrolls', () => {
+  it('scrolls both ways inside its frame when it is given a max height', () => {
+    const { container } = render(<Table caption="Long" maxHeight="20rem" />);
+    const scroller = screen.getByRole('region', { name: 'Long' });
+    expect(scroller.style.maxHeight).toBe('20rem');
+    expect(scroller.classList.contains('overflow-auto')).toBe(true);
+    expect(container.firstElementChild?.className).not.toMatch(/overflow-/);
+  });
+
+  it('takes a numeric max height as pixels', () => {
+    render(<Table caption="Long" maxHeight={240} />);
+    expect(screen.getByRole('region', { name: 'Long' }).style.maxHeight).toBe(
+      '240px',
+    );
+  });
+
+  it('keeps header cells in place while the body scrolls, on an opaque fill', () => {
+    render(
+      <Table caption="Sticky">
+        <TableHead sticky>
+          <TableRow>
+            <TableHeaderCell>Name</TableHeaderCell>
+          </TableRow>
+        </TableHead>
+      </Table>,
+    );
+    const th = screen.getByText('Name');
+    expect(th.classList.contains('sticky')).toBe(true);
+    expect(th.classList.contains('top-0')).toBe(true);
+    expect(th.classList.contains('z-20')).toBe(true);
+    expect(th.classList.contains('bg-surface-2')).toBe(true);
+    expect(th.className).not.toMatch(/bg-[^\s/]+\/\d/);
+  });
+
+  it('does not stick the head unless asked', () => {
+    const { container } = renderResults();
+    expect(screen.getByText('Test').classList.contains('sticky')).toBe(false);
+    expect(container.querySelector('thead')?.className).not.toContain('sticky');
+  });
+
+  it('pins a cell to the start edge with sticky, over an opaque fill that follows the row', () => {
+    render(
+      <Table caption="Pinned">
+        <TableBody>
+          <TableRow>
+            <TableCell stickyStart>pinned</TableCell>
+            <TableCell>loose</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    const pinned = screen.getByText('pinned');
+    expect(pinned.classList.contains('sticky')).toBe(true);
+    expect(pinned.classList.contains('bg-surface')).toBe(true);
+    expect(pinned.className).toContain('group-hover:bg-primary-ghost');
+    expect(screen.getByText('loose').classList.contains('sticky')).toBe(false);
+  });
+
+  it('puts a pinned header cell above the pinned body cells it scrolls over', () => {
+    render(
+      <Table caption="Pinned">
+        <TableHead sticky>
+          <TableRow>
+            <TableHeaderCell stickyStart>Name</TableHeaderCell>
+            <TableHeaderCell>Ward</TableHeaderCell>
+          </TableRow>
+        </TableHead>
+      </Table>,
+    );
+    expect(screen.getByText('Name').classList.contains('z-30')).toBe(true);
+  });
+
+  it('marks a selected row with aria-selected and a tint', () => {
+    render(
+      <Table caption="Rows">
+        <TableBody>
+          <TableRow selected>
+            <TableCell>chosen</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>other</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    const chosen = screen.getByText('chosen').closest('tr') as HTMLElement;
+    expect(chosen.getAttribute('aria-selected')).toBe('true');
+    expect(chosen.classList.contains('bg-primary-soft')).toBe(true);
+    const other = screen.getByText('other').closest('tr') as HTMLElement;
+    expect(other.getAttribute('aria-selected')).toBeNull();
+  });
+
+  it('tightens every cell under density="compact"', () => {
+    render(
+      <Table caption="Dense" density="compact">
+        <TableHead>
+          <TableRow>
+            <TableHeaderCell>Name</TableHeaderCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableCell>Ramesh</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    for (const text of ['Name', 'Ramesh']) {
+      const cell = screen.getByText(text);
+      expect(cell.classList.contains('py-1.5')).toBe(true);
+      expect(cell.classList.contains('py-2.5')).toBe(false);
+    }
+  });
+
+  it('is comfortable, the prototype padding, by default', () => {
+    renderResults();
+    expect(screen.getByText('Ferritin').classList.contains('py-2.5')).toBe(
+      true,
+    );
+  });
+
+  it('sets a mono cell in IBM Plex Mono', () => {
+    render(
+      <Table caption="Ids">
+        <TableBody>
+          <TableRow>
+            <TableCell mono>MRN-0042</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    expect(screen.getByText('MRN-0042').classList.contains('font-mono')).toBe(
+      true,
+    );
+  });
+});

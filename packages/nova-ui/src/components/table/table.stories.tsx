@@ -128,3 +128,38 @@ export const ScrollsInsideItsFrame: Story = {
     </div>
   ),
 };
+
+const readings = Array.from({ length: 40 }, (_, index) => ({
+  time: `${String(Math.floor(index / 2) + 6).padStart(2, '0')}:${index % 2 ? '30' : '00'}`,
+  pulse: 70 + ((index * 3) % 18),
+  spo2: 94 + (index % 5),
+}));
+
+// A max height makes the body scroll under a sticky head, and compact density tightens the rows.
+export const StickyHeaderCompact: Story = {
+  args: {
+    caption: 'Vitals, every half hour',
+    maxHeight: 280,
+    density: 'compact',
+  },
+  render: (args) => (
+    <Table {...args}>
+      <TableHead sticky>
+        <TableRow>
+          <TableHeaderCell>Time</TableHeaderCell>
+          <TableHeaderCell numeric>Pulse</TableHeaderCell>
+          <TableHeaderCell numeric>SpO₂</TableHeaderCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {readings.map((reading) => (
+          <TableRow key={reading.time}>
+            <TableHeaderCell scope="row">{reading.time}</TableHeaderCell>
+            <TableCell numeric>{reading.pulse}</TableCell>
+            <TableCell numeric>{reading.spo2}%</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  ),
+};
