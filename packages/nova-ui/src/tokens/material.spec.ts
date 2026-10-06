@@ -4,9 +4,12 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { contrastRatio, mixColours } from '../theme/contrast';
+import { screenColours } from '../theme/legibility';
 import {
   GLASS,
   isNovaMaterial,
+  MATERIAL_FILLS,
+  MATERIAL_LEVELS,
   MATERIAL_TOKENS,
   NOVA_DEFAULT_MATERIAL,
   NOVA_MATERIALS,
@@ -40,25 +43,7 @@ function blocksFor(selector: string): Array<Record<string, string>> {
   return blocks;
 }
 
-// A colour seen through CSS `screen` blending at `opacity` over `backdrop` (the sidebar's lift is a
-// screened layer): screen lightens each channel to 1 - (1 - a)(1 - b), then the layer's alpha mixes.
-function screenColours(
-  colour: string,
-  opacity: number,
-  backdrop: string,
-): string {
-  const ch = (hex: string) =>
-    [1, 3, 5].map((offset) => parseInt(hex.slice(offset, offset + 2), 16));
-  const top = ch(colour);
-  const screened = ch(backdrop).map(
-    (value, index) => 255 - ((255 - value) * (255 - (top[index] ?? 0))) / 255,
-  );
-  const hex = `#${screened
-    .map((value) => Math.round(value).toString(16).padStart(2, '0'))
-    .join('')
-    .toUpperCase()}`;
-  return mixColours(hex, opacity, backdrop);
-}
+const percent = (share: number) => `${Math.round(share * 100)}%`;
 
 const ink2 = NOVA_DEFAULTS['--nova-color-ink-2'];
 const ink3 = NOVA_DEFAULTS['--nova-color-ink-3'];
@@ -68,8 +53,8 @@ const chromeInk = NOVA_DEFAULTS['--nova-color-chrome-ink'];
 const chromeAccent = NOVA_DEFAULTS['--nova-color-chrome-accent'];
 const white = '#FFFFFF';
 // The sidebar's gradient stops (theme.css --nova-gradient-sidebar) and the prototype's hero colours.
-const SIDEBAR_TOP = '#26185A';
-const SIDEBAR_BASE = '#150C34';
+const SIDEBAR_TOP = NOVA_DEFAULTS['--nova-color-sidebar-1'];
+const SIDEBAR_BASE = NOVA_DEFAULTS['--nova-color-sidebar-3'];
 const TOPBAR_END = NOVA_DEFAULTS['--nova-color-chrome-3'];
 const HERO_SKY = NOVA_DEFAULTS['--nova-color-chrome-glow-2'];
 const HERO_BASE = NOVA_DEFAULTS['--nova-color-chrome-1'];
@@ -78,95 +63,171 @@ const HERO_BASE = NOVA_DEFAULTS['--nova-color-chrome-1'];
 const lightestPrimary = '#767676';
 
 describe('material', () => {
-  it('is glass by default, product-wide', () => {
+  it('is glass by default, product-wide, and one of glass, frost or solid', () => {
     expect(NOVA_DEFAULT_MATERIAL).toBe('glass');
-    expect(NOVA_MATERIALS).toEqual(['glass', 'solid']);
+    expect(NOVA_MATERIALS).toEqual(['glass', 'frost', 'solid']);
   });
 
-  it('recognises only "glass" and "solid"', () => {
+  it('recognises only "glass", "frost" and "solid"', () => {
     expect(isNovaMaterial('glass')).toBe(true);
+    expect(isNovaMaterial('frost')).toBe(true);
     expect(isNovaMaterial('solid')).toBe(true);
     expect(isNovaMaterial('frosted')).toBe(false);
     expect(isNovaMaterial(null)).toBe(false);
   });
 
-  it('gives glass and solid exactly the same set of tokens, so switching never leaves one unset', () => {
-    expect(Object.keys(MATERIAL_TOKENS.solid).sort()).toEqual(
-      Object.keys(MATERIAL_TOKENS.glass).sort(),
-    );
+  it('gives every material exactly the same set of tokens, so switching never leaves one unset', () => {
+    for (const material of NOVA_MATERIALS) {
+      expect(Object.keys(MATERIAL_TOKENS[material]).sort(), material).toEqual(
+        Object.keys(MATERIAL_TOKENS.glass).sort(),
+      );
+    }
     expect(MATERIAL_TOKENS.glass['--nova-glass']).toBe('1');
+    expect(MATERIAL_TOKENS.frost['--nova-glass']).toBe('1');
     expect(MATERIAL_TOKENS.solid['--nova-glass']).toBe('0');
+  });
+
+  // A material is numbers (and the scheme-aware sheen), never a brand colour: theme.css builds the
+  // fills from them at every theme scope, so a material switched anywhere meets the nearest theme.
+  it('names no brand-derived colour, so it combines with any hospital theme', () => {
+    for (const material of NOVA_MATERIALS) {
+      for (const [name, value] of Object.entries(MATERIAL_TOKENS[material])) {
+        expect(value, `${material} ${name}`).not.toMatch(
+          /--nova-color-(?!sheen)/,
+        );
+      }
+    }
   });
 
   // The prototype's glass utilities, value for value: .glass-panel and .glass-card frost with their
   // own blur and saturation, rim with a white hairline and lift at --shadow-md under a 1px highlight.
+  // The white is the sheen token, white in the light scheme.
   it('frosts a glass panel as the prototype .glass-panel does', () => {
+    expect(NOVA_DEFAULTS['--nova-color-sheen']).toBe(white);
     expect(MATERIAL_TOKENS.glass).toMatchObject({
-      '--nova-surface-fill': 'rgb(255 255 255 / 0.72)',
+      '--nova-surface-alpha': '72%',
+      '--nova-surface-tint': '0%',
       '--nova-surface-filter': 'blur(14px) saturate(140%)',
-      '--nova-surface-border': 'rgb(255 255 255 / 0.5)',
+      '--nova-surface-rim':
+        'color-mix(in srgb, var(--nova-color-sheen) 50%, transparent)',
       '--nova-surface-shadow':
-        'var(--nova-shadow-md), inset 0 1px 0 0 rgb(255 255 255 / 0.7)',
+        'var(--nova-shadow-md), inset 0 1px 0 0 color-mix(in srgb, var(--nova-color-sheen) 70%, transparent)',
     });
   });
 
   it('frosts an overlay as the prototype .glass-card does, at the opacity the proof holds', () => {
     expect(MATERIAL_TOKENS.glass).toMatchObject({
+      '--nova-overlay-alpha': '83%',
       '--nova-overlay-filter': 'blur(20px) saturate(160%)',
-      '--nova-overlay-border': 'rgb(255 255 255 / 0.6)',
+      '--nova-overlay-rim':
+        'color-mix(in srgb, var(--nova-color-sheen) 60%, transparent)',
       '--nova-overlay-shadow':
-        'var(--nova-shadow-md), inset 0 1px 0 0 rgb(255 255 255 / 0.65)',
+        'var(--nova-shadow-md), inset 0 1px 0 0 color-mix(in srgb, var(--nova-color-sheen) 65%, transparent)',
     });
     // The prototype's .glass-card is 0.62; the proof for a menu over the sidebar needs 0.83.
     expect(GLASS.overlayAlpha).toBe(0.83);
   });
 
-  it('paints the top bar and the hero with the prototype gradients, held where the proofs need it', () => {
+  it('paints the top bar and the hero at the prototype opacities, held where the proofs need it', () => {
     expect(MATERIAL_TOKENS.glass).toMatchObject({
-      '--nova-chrome-fill':
-        'linear-gradient(120deg, rgb(23 15 48 / 0.85), rgb(59 33 120 / 0.78))',
+      '--nova-chrome-alpha-start': '85%',
+      '--nova-chrome-alpha-end': '78%',
       '--nova-chrome-filter': 'blur(16px) saturate(150%)',
-      '--nova-hero-fill':
-        'linear-gradient(120deg, rgb(42 27 92 / 0.92), rgb(96 165 250 / 0.55))',
-      '--nova-hero-base': 'rgb(23 15 48 / 0.9)',
+      '--nova-hero-alpha-start': '92%',
+      '--nova-hero-alpha-end': '55%',
+      '--nova-hero-base-alpha': '90%',
       '--nova-hero-filter': 'blur(20px) saturate(160%)',
     });
+  });
+
+  // Frost is a heavier, more opaque, tinted glass: everything at least as opaque as glass, more blur,
+  // and the panels tinted toward panel-2.
+  it('makes frost heavier, more opaque and tinted', () => {
+    const glass = MATERIAL_LEVELS.glass;
+    const frost = MATERIAL_LEVELS.frost;
+    for (const key of [
+      'surfaceAlpha',
+      'overlayAlpha',
+      'chromeStartAlpha',
+      'chromeEndAlpha',
+      'heroStartAlpha',
+      'heroEndAlpha',
+      'heroBaseAlpha',
+    ] as const) {
+      expect(frost[key], key).toBeGreaterThanOrEqual(glass[key]);
+    }
+    const blur = (filter: string) =>
+      Number(/blur\((\d+)px\)/.exec(filter)?.[1]);
+    for (const key of [
+      'surfaceFilter',
+      'overlayFilter',
+      'chromeFilter',
+      'heroFilter',
+    ] as const) {
+      expect(blur(frost[key]), key).toBeGreaterThan(blur(glass[key]));
+    }
+    expect(frost.surfaceTint).toBe(1);
+    expect(frost.overlayTint).toBe(1);
   });
 
   // Solid is the prototype's opaque card and menu, and its own @supports fallbacks for the chrome
   // and the hero.
   it('makes solid the prototype card, menu and opaque fallbacks', () => {
     expect(MATERIAL_TOKENS.solid).toMatchObject({
-      '--nova-surface-fill': 'var(--nova-color-surface)',
+      '--nova-surface-alpha': '100%',
       '--nova-surface-filter': 'none',
-      '--nova-surface-border': 'var(--nova-color-border)',
       '--nova-surface-shadow': 'var(--nova-shadow-sm)',
-      '--nova-overlay-fill': 'var(--nova-color-surface)',
+      '--nova-overlay-alpha': '100%',
       '--nova-overlay-filter': 'none',
       '--nova-overlay-shadow': 'var(--nova-shadow-md)',
+      '--nova-chrome-alpha-start': '100%',
+      '--nova-chrome-alpha-end': '100%',
       '--nova-chrome-filter': 'none',
-      '--nova-hero-fill':
-        'linear-gradient(120deg, var(--nova-color-chrome-2), var(--nova-color-chrome-3))',
+      '--nova-hero-alpha-start': '100%',
+      '--nova-hero-alpha-end': '100%',
+      '--nova-hero-base-alpha': '100%',
       '--nova-hero-filter': 'none',
     });
   });
 
-  it('builds the translucent fills from the same numbers the contrast proofs use', () => {
-    expect(MATERIAL_TOKENS.glass['--nova-surface-fill']).toBe(
-      `rgb(255 255 255 / ${GLASS.surfaceAlpha})`,
+  it('builds the fills from the brand colours and the material numbers, the solid edge from the panel line', () => {
+    expect(MATERIAL_FILLS).toMatchObject({
+      '--nova-surface-fill':
+        'color-mix(in srgb, color-mix(in srgb, var(--nova-color-surface-2) var(--nova-surface-tint), var(--nova-color-surface)) var(--nova-surface-alpha), transparent)',
+      '--nova-surface-border':
+        'color-mix(in srgb, var(--nova-surface-rim) calc(var(--nova-glass) * 100%), var(--nova-color-border))',
+      '--nova-chrome-fill':
+        'linear-gradient(120deg, color-mix(in srgb, var(--nova-color-chrome-1) var(--nova-chrome-alpha-start), transparent), color-mix(in srgb, var(--nova-color-chrome-3) var(--nova-chrome-alpha-end), transparent))',
+    });
+    // The hero runs into the sky on glass and frost, into chrome-3 on solid (the prototype's
+    // fallback), over chrome-1 (chrome-2 on solid).
+    expect(MATERIAL_FILLS['--nova-hero-fill']).toContain(
+      'color-mix(in srgb, var(--nova-color-chrome-glow-2) calc(var(--nova-glass) * 100%), var(--nova-color-chrome-3))',
     );
-    expect(MATERIAL_TOKENS.glass['--nova-overlay-fill']).toBe(
-      `rgb(255 255 255 / ${GLASS.overlayAlpha})`,
+    expect(MATERIAL_FILLS['--nova-hero-base']).toContain(
+      'color-mix(in srgb, var(--nova-color-chrome-1) calc(var(--nova-glass) * 100%), var(--nova-color-chrome-2))',
     );
-    expect(MATERIAL_TOKENS.glass['--nova-chrome-fill']).toContain(
-      `rgb(59 33 120 / ${GLASS.topbarEndAlpha})`,
-    );
-    expect(MATERIAL_TOKENS.glass['--nova-hero-fill']).toContain(
-      `rgb(96 165 250 / ${GLASS.heroSkyAlpha})`,
-    );
-    expect(MATERIAL_TOKENS.glass['--nova-hero-base']).toBe(
-      `rgb(23 15 48 / ${GLASS.heroBaseAlpha})`,
-    );
+  });
+
+  it('builds the material tokens from the same numbers the contrast proofs use', () => {
+    for (const material of NOVA_MATERIALS) {
+      const levels = MATERIAL_LEVELS[material];
+      const tokens = MATERIAL_TOKENS[material];
+      expect(tokens['--nova-surface-alpha']).toBe(percent(levels.surfaceAlpha));
+      expect(tokens['--nova-overlay-alpha']).toBe(percent(levels.overlayAlpha));
+      expect(tokens['--nova-chrome-alpha-end']).toBe(
+        percent(levels.chromeEndAlpha),
+      );
+      expect(tokens['--nova-hero-alpha-end']).toBe(
+        percent(levels.heroEndAlpha),
+      );
+      expect(tokens['--nova-hero-base-alpha']).toBe(
+        percent(levels.heroBaseAlpha),
+      );
+    }
+    expect(GLASS.topbarEndAlpha).toBe(MATERIAL_LEVELS.glass.chromeEndAlpha);
+    expect(GLASS.heroSkyAlpha).toBe(MATERIAL_LEVELS.glass.heroEndAlpha);
+    expect(GLASS.heroBaseAlpha).toBe(MATERIAL_LEVELS.glass.heroBaseAlpha);
   });
 
   it('hands the chrome, the sidebar and the hero their secondary inks at the alphas the proofs use', () => {
@@ -177,13 +238,13 @@ describe('material', () => {
       `--nova-chrome-field: rgb(255 255 255 / ${GLASS.chromeFieldAlpha});`,
     );
     expect(css).toContain(
-      `--nova-chrome-ink-2: rgb(241 238 251 / ${GLASS.sidebarInk2Alpha});`,
+      `--nova-chrome-ink-2: color-mix(in srgb, var(--nova-color-chrome-ink) ${percent(GLASS.sidebarInk2Alpha)}, transparent);`,
     );
     expect(css).toContain(
       `--nova-hero-ink-2: rgb(255 255 255 / ${GLASS.heroInk2Alpha});`,
     );
     expect(css).toContain(
-      `color-mix(in srgb, var(--nova-color-primary) ${Math.round(GLASS.sidebarBrandShare * 100)}%, transparent)`,
+      `color-mix(in srgb, var(--nova-color-sidebar-lift) ${percent(GLASS.sidebarBrandShare)}, transparent)`,
     );
   });
 });
@@ -207,7 +268,8 @@ const darkestCanvas = GLASS.canvasAccents.map(canvasUnder).reduce(darker);
 // The top bar at its lightest: the light end of its gradient over white, which is what a sticky bar
 // has under it when it scrolls over a card.
 const lightestTopbar = mixColours(TOPBAR_END, GLASS.topbarEndAlpha, white);
-// The sidebar at its lightest: the lightest brand's lift screened over the top stop.
+// The sidebar at its lightest: a lift as light as the lightest brand primary, screened over the top
+// stop. (A theme's lift is derived at HOS Violet's luminance, darker than this bound.)
 const lightestSidebar = screenColours(
   lightestPrimary,
   GLASS.sidebarBrandShare,
@@ -338,7 +400,11 @@ describe('glass legibility holds for every possible hospital brand', () => {
   // The tab rail is opaque (the canvas with a 7% chrome-2 tint), so its unselected labels never
   // depend on the aurora behind it.
   it('keeps the secondary ink of an unselected tab at 4.5:1 or more on the tab rail', () => {
-    const rail = mixColours(NOVA_DEFAULTS['--nova-color-chrome-2'], 0.07, bg);
+    const rail = mixColours(
+      NOVA_DEFAULTS['--nova-color-chrome-2'],
+      GLASS.tabbarTint,
+      bg,
+    );
     expect(contrastRatio(ink2, rail)).toBeGreaterThanOrEqual(4.5);
   });
 
@@ -410,6 +476,12 @@ describe('theme.css material blocks', () => {
     ]);
   });
 
+  it('declares the frost tokens for [data-nova-material=frost]', () => {
+    expect(blocksFor("[data-nova-material='frost']")).toEqual([
+      MATERIAL_TOKENS.frost,
+    ]);
+  });
+
   it('declares the solid tokens for [data-nova-material=solid]', () => {
     expect(blocksFor("[data-nova-material='solid']")).toEqual([
       MATERIAL_TOKENS.solid,
@@ -429,13 +501,20 @@ describe('theme.css material blocks', () => {
     ]);
   });
 
+  it('builds the fills on the root and on every theme and material scope, so either axis re-resolves them', () => {
+    const [scoped] = blocksFor(
+      ':root, [data-nova-theme], [data-nova-material]',
+    );
+    expect(scoped).toMatchObject(MATERIAL_FILLS);
+  });
+
   it('tints the canvas with both brand blobs at exactly the strength the legibility proof assumes', () => {
     const tint = `calc(${Math.round(GLASS.canvasTint * 100)}% * var(--nova-glass))`;
     expect(css).toContain(
       `color-mix(in srgb, var(--nova-color-primary) ${tint}, transparent)`,
     );
     expect(css).toContain(
-      `color-mix(in srgb, var(--nova-color-primary-strong) ${tint}, transparent)`,
+      `color-mix(in srgb, var(--nova-color-primary-hover) ${tint}, transparent)`,
     );
   });
 
@@ -457,9 +536,11 @@ describe('theme.css material blocks', () => {
     );
   });
 
-  it('paints the sidebar from the stops the proofs use', () => {
+  it('paints the sidebar from the stop tokens the proofs use', () => {
     const sidebar = /--nova-gradient-sidebar:([^;]*);/.exec(css)?.[1] ?? '';
-    expect(sidebar).toContain(`${SIDEBAR_TOP} 0%`);
-    expect(sidebar).toContain(`${SIDEBAR_BASE} 100%`);
+    expect(sidebar).toContain('var(--nova-color-sidebar-1) 0%');
+    expect(sidebar).toContain('var(--nova-color-sidebar-3) 100%');
+    expect(SIDEBAR_TOP).toBe('#26185A');
+    expect(SIDEBAR_BASE).toBe('#150C34');
   });
 });

@@ -29,6 +29,9 @@ export const primitives = {
     glow2: '#60A5FA',
     // The ring that cuts a badge out of the top bar (.tb-ico .tb-dot), a literal in the prototype.
     ring: '#221448',
+    // The sidebar's base, deepening downward (.sidebar's linear-gradient stops, literals in the
+    // prototype).
+    sidebar: { 1: '#26185A', 2: '#1A0F42', 3: '#150C34' },
   },
   // The data palette (see --nova-chart-* in semantic.ts): sky, gold, rose, olive, lavender, plum.
   data: {

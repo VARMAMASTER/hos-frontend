@@ -47,6 +47,7 @@
   --color-primary-strong: var(--nova-color-primary-strong);
   --color-primary-soft: var(--nova-color-primary-soft);
   --color-primary-ghost: var(--nova-color-primary-ghost);
+  --color-primary-hover: var(--nova-color-primary-hover);
   --color-on-primary: var(--nova-color-on-primary);
   --color-ai: var(--nova-color-ai);
   --color-ai-bright: var(--nova-color-ai-bright);
@@ -54,6 +55,7 @@
   --color-ai-soft: var(--nova-color-ai-soft);
   --color-ai-ghost: var(--nova-color-ai-ghost);
   --color-ai-line: var(--nova-color-ai-line);
+  --color-ai-hover: var(--nova-color-ai-hover);
   --color-good: var(--nova-color-good);
   --color-good-soft: var(--nova-color-good-soft);
   --color-good-deep: var(--nova-color-good-deep);
@@ -89,6 +91,24 @@
   --font-mono: var(--nova-font-mono);
   --default-font-family: var(--nova-font-body);
   --default-mono-font-family: var(--nova-font-mono);
+  /* Motion curves as ease-spring | standard | emphasized (durations are the utilities below). */
+  --ease-spring: var(--nova-ease-spring);
+  --ease-standard: var(--nova-ease-standard);
+  --ease-emphasized: var(--nova-ease-emphasized);
+}
+
+/* Motion durations as duration-fast | base | slow. Tailwind has no duration namespace in @theme, so
+   each is a utility over its token. Components apply them under motion-safe. */
+@utility duration-fast {
+  transition-duration: var(--nova-duration-fast);
+}
+
+@utility duration-base {
+  transition-duration: var(--nova-duration-base);
+}
+
+@utility duration-slow {
+  transition-duration: var(--nova-duration-slow);
 }
 
 /* The defaults below stay byte-identical to NOVA_DEFAULTS (tokens/semantic.ts), in the
@@ -109,6 +129,7 @@
   --nova-color-primary-strong: #5636B8;
   --nova-color-primary-soft: #EFEAFC;
   --nova-color-primary-ghost: #F8F5FE;
+  --nova-color-primary-hover: #5636B8;
   --nova-color-on-primary: #FFFFFF;
   --nova-color-ai: #0E7490;
   --nova-color-ai-bright: #22D3EE;
@@ -116,6 +137,7 @@
   --nova-color-ai-soft: #DDF4FA;
   --nova-color-ai-ghost: #F6FDFF;
   --nova-color-ai-line: #B9E6F2;
+  --nova-color-ai-hover: #0B5567;
   --nova-color-good: #0B8A68;
   --nova-color-good-soft: #E3F2EC;
   --nova-color-good-deep: #07634B;
@@ -139,6 +161,11 @@
   --nova-color-chrome-accent-soft: rgba(167, 139, 250, 0.18);
   --nova-color-chrome-glow-2: #60A5FA;
   --nova-color-chrome-ring: #221448;
+  --nova-color-sidebar-1: #26185A;
+  --nova-color-sidebar-2: #1A0F42;
+  --nova-color-sidebar-3: #150C34;
+  --nova-color-sidebar-lift: #6D4FE0;
+  --nova-color-sheen: #FFFFFF;
   --nova-chart-1: #248FCC;
   --nova-chart-2: #B38A00;
   --nova-chart-3: #E75594;
@@ -169,48 +196,151 @@
   --nova-shadow-lg: 0 4px 8px -2px hsl(var(--nova-shadow-hue) / .07), 0 12px 24px -6px hsl(var(--nova-shadow-hue) / .11), 0 28px 48px -14px hsl(var(--nova-shadow-hue) / .14);
   --nova-shadow-glass: 0 8px 24px -8px hsl(var(--nova-shadow-hue) / .45), 0 2px 10px hsl(var(--nova-shadow-hue) / .28);
   --nova-sidebar-w: 248px;
+  --nova-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --nova-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --nova-ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --nova-duration-fast: 150ms;
+  --nova-duration-base: 200ms;
+  --nova-duration-slow: 240ms;
   --nova-font-display: "Google Sans Flex", system-ui, -apple-system, sans-serif;
   --nova-font-body: "Google Sans Flex", system-ui, -apple-system, sans-serif;
   --nova-font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
 }
 
+/* The scheme: light (the prototype, and the default with no attribute), dark, or system, which
+   follows prefers-color-scheme. A scheme is only a color-scheme: every colour that changes with it is
+   light-dark(light, dark) (below, and in each hospital theme's inline palette), which the browser
+   resolves where the colour is used. A scheme set anywhere in the tree therefore wins for its own
+   subtree, inside or outside any theme or material, and `system` needs no script. */
+[data-nova-scheme='light'] {
+  color-scheme: light;
+}
+
+[data-nova-scheme='dark'] {
+  color-scheme: dark;
+}
+
+[data-nova-scheme='system'] {
+  color-scheme: light dark;
+}
+
+/* Each scheme-dependent token as light-dark(light, dark), for HOS Violet. The light values are the
+   :root block's above; the dark ones are NOVA_DARK (tokens/scheme.ts), and scheme.spec.ts compares
+   the two files. A browser without light-dark() keeps the :root block: the light scheme. */
+/* prettier-ignore */
+@supports (color: light-dark(#000, #fff)) {
+  :root {
+    --nova-color-bg: light-dark(#F0EFF9, #161424);
+    --nova-color-surface: light-dark(#FFFFFF, #1F1E2E);
+    --nova-color-surface-2: light-dark(#F8F7FD, #252436);
+    --nova-color-border: light-dark(#E4E1F2, #3B3951);
+    --nova-color-border-strong: light-dark(#CFC9E6, #4D4A66);
+    --nova-color-border-control: light-dark(#736E8B, #787693);
+    --nova-color-ink: light-dark(#1A1730, #E9E8F7);
+    --nova-color-ink-2: light-dark(#5B5775, #ADABC4);
+    --nova-color-ink-3: light-dark(#5D5974, #9493AE);
+    --nova-color-primary: light-dark(#6D4FE0, #775BEC);
+    --nova-color-primary-strong: light-dark(#5636B8, #ABA3FF);
+    --nova-color-primary-soft: light-dark(#EFEAFC, #282446);
+    --nova-color-primary-ghost: light-dark(#F8F5FE, #212033);
+    --nova-color-primary-hover: light-dark(#5636B8, #6241D1);
+    --nova-color-ai: light-dark(#0E7490, #1F7D9A);
+    --nova-color-ai-deep: light-dark(#0B5567, #75B7CE);
+    --nova-color-ai-soft: light-dark(#DDF4FA, #022D3A);
+    --nova-color-ai-ghost: light-dark(#F6FDFF, #0D222A);
+    --nova-color-ai-line: light-dark(#B9E6F2, #184B5C);
+    --nova-color-ai-hover: light-dark(#0B5567, #00617A);
+    --nova-color-good: light-dark(#0B8A68, #008463);
+    --nova-color-good-soft: light-dark(#E3F2EC, #072F23);
+    --nova-color-good-deep: light-dark(#07634B, #6EBD9F);
+    --nova-color-warn: light-dark(#B45309, #BA5814);
+    --nova-color-warn-soft: light-dark(#FBEEDD, #3D2212);
+    --nova-color-warn-deep: light-dark(#8A3E06, #EC9A6C);
+    --nova-color-crit: light-dark(#B3261E, #CE4337);
+    --nova-color-crit-soft: light-dark(#F9E7E5, #3F201C);
+    --nova-color-crit-deep: light-dark(#8E1D16, #FF8E7E);
+    --nova-color-info: light-dark(#2563A8, #3976BC);
+    --nova-color-info-soft: light-dark(#E7EFF8, #162941);
+    --nova-color-info-deep: light-dark(#1A4C85, #7FB1EC);
+    --nova-chart-1: light-dark(#248FCC, #1792FF);
+    --nova-chart-4: light-dark(#6C6610, #7B6F46);
+    --nova-chart-5: light-dark(#A779FD, #C675FF);
+    --nova-chart-6: light-dark(#9C1B80, #A849A9);
+    --nova-color-sheen: light-dark(#FFFFFF, rgb(255 255 255 / 0.16));
+  }
+}
+
 /* Material: glass is the product default (no attribute needed); a hospital theme or the product can
-   set data-nova-material="solid". Values mirror MATERIAL_TOKENS (tokens/material.ts); material.spec.ts
-   compares them. Accessibility and missing backdrop-filter support always force solid. */
+   set data-nova-material="frost" or "solid". A material is numbers only (opacities, tints, filters)
+   and the scheme-aware sheen, never a brand colour, so it combines with whichever theme is nearest:
+   the fills themselves are built below, at every theme and material scope. Values mirror
+   MATERIAL_TOKENS (tokens/material.ts); material.spec.ts compares them. Accessibility and missing
+   backdrop-filter support always force solid. */
 /* prettier-ignore */
 :root,
 [data-nova-material='glass'] {
   --nova-glass: 1;
-  --nova-surface-fill: rgb(255 255 255 / 0.72);
+  --nova-surface-alpha: 72%;
+  --nova-surface-tint: 0%;
   --nova-surface-filter: blur(14px) saturate(140%);
-  --nova-surface-border: rgb(255 255 255 / 0.5);
-  --nova-surface-shadow: var(--nova-shadow-md), inset 0 1px 0 0 rgb(255 255 255 / 0.7);
-  --nova-overlay-fill: rgb(255 255 255 / 0.83);
+  --nova-surface-rim: color-mix(in srgb, var(--nova-color-sheen) 50%, transparent);
+  --nova-surface-shadow: var(--nova-shadow-md), inset 0 1px 0 0 color-mix(in srgb, var(--nova-color-sheen) 70%, transparent);
+  --nova-overlay-alpha: 83%;
+  --nova-overlay-tint: 0%;
   --nova-overlay-filter: blur(20px) saturate(160%);
-  --nova-overlay-border: rgb(255 255 255 / 0.6);
-  --nova-overlay-shadow: var(--nova-shadow-md), inset 0 1px 0 0 rgb(255 255 255 / 0.65);
-  --nova-chrome-fill: linear-gradient(120deg, rgb(23 15 48 / 0.85), rgb(59 33 120 / 0.78));
+  --nova-overlay-rim: color-mix(in srgb, var(--nova-color-sheen) 60%, transparent);
+  --nova-overlay-shadow: var(--nova-shadow-md), inset 0 1px 0 0 color-mix(in srgb, var(--nova-color-sheen) 65%, transparent);
+  --nova-chrome-alpha-start: 85%;
+  --nova-chrome-alpha-end: 78%;
   --nova-chrome-filter: blur(16px) saturate(150%);
-  --nova-hero-fill: linear-gradient(120deg, rgb(42 27 92 / 0.92), rgb(96 165 250 / 0.55));
-  --nova-hero-base: rgb(23 15 48 / 0.9);
+  --nova-hero-alpha-start: 92%;
+  --nova-hero-alpha-end: 55%;
+  --nova-hero-base-alpha: 90%;
   --nova-hero-filter: blur(20px) saturate(160%);
+}
+
+/* Frost: a heavier, more opaque glass, tinted toward panel-2 (the brand's own faint hue). */
+/* prettier-ignore */
+[data-nova-material='frost'] {
+  --nova-glass: 1;
+  --nova-surface-alpha: 86%;
+  --nova-surface-tint: 100%;
+  --nova-surface-filter: blur(28px) saturate(180%);
+  --nova-surface-rim: color-mix(in srgb, var(--nova-color-sheen) 60%, transparent);
+  --nova-surface-shadow: var(--nova-shadow-md), inset 0 1px 0 0 color-mix(in srgb, var(--nova-color-sheen) 80%, transparent);
+  --nova-overlay-alpha: 92%;
+  --nova-overlay-tint: 100%;
+  --nova-overlay-filter: blur(32px) saturate(180%);
+  --nova-overlay-rim: color-mix(in srgb, var(--nova-color-sheen) 70%, transparent);
+  --nova-overlay-shadow: var(--nova-shadow-md), inset 0 1px 0 0 color-mix(in srgb, var(--nova-color-sheen) 75%, transparent);
+  --nova-chrome-alpha-start: 92%;
+  --nova-chrome-alpha-end: 88%;
+  --nova-chrome-filter: blur(28px) saturate(170%);
+  --nova-hero-alpha-start: 95%;
+  --nova-hero-alpha-end: 55%;
+  --nova-hero-base-alpha: 94%;
+  --nova-hero-filter: blur(32px) saturate(170%);
 }
 
 /* prettier-ignore */
 [data-nova-material='solid'] {
   --nova-glass: 0;
-  --nova-surface-fill: var(--nova-color-surface);
+  --nova-surface-alpha: 100%;
+  --nova-surface-tint: 0%;
   --nova-surface-filter: none;
-  --nova-surface-border: var(--nova-color-border);
+  --nova-surface-rim: transparent;
   --nova-surface-shadow: var(--nova-shadow-sm);
-  --nova-overlay-fill: var(--nova-color-surface);
+  --nova-overlay-alpha: 100%;
+  --nova-overlay-tint: 0%;
   --nova-overlay-filter: none;
-  --nova-overlay-border: var(--nova-color-border);
+  --nova-overlay-rim: transparent;
   --nova-overlay-shadow: var(--nova-shadow-md);
-  --nova-chrome-fill: linear-gradient(120deg, var(--nova-color-chrome-1), var(--nova-color-chrome-3));
+  --nova-chrome-alpha-start: 100%;
+  --nova-chrome-alpha-end: 100%;
   --nova-chrome-filter: none;
-  --nova-hero-fill: linear-gradient(120deg, var(--nova-color-chrome-2), var(--nova-color-chrome-3));
-  --nova-hero-base: var(--nova-color-chrome-2);
+  --nova-hero-alpha-start: 100%;
+  --nova-hero-alpha-end: 100%;
+  --nova-hero-base-alpha: 100%;
   --nova-hero-filter: none;
 }
 
@@ -219,18 +349,22 @@
   :root,
   [data-nova-material] {
     --nova-glass: 0;
-    --nova-surface-fill: var(--nova-color-surface);
+    --nova-surface-alpha: 100%;
+    --nova-surface-tint: 0%;
     --nova-surface-filter: none;
-    --nova-surface-border: var(--nova-color-border);
+    --nova-surface-rim: transparent;
     --nova-surface-shadow: var(--nova-shadow-sm);
-    --nova-overlay-fill: var(--nova-color-surface);
+    --nova-overlay-alpha: 100%;
+    --nova-overlay-tint: 0%;
     --nova-overlay-filter: none;
-    --nova-overlay-border: var(--nova-color-border);
+    --nova-overlay-rim: transparent;
     --nova-overlay-shadow: var(--nova-shadow-md);
-    --nova-chrome-fill: linear-gradient(120deg, var(--nova-color-chrome-1), var(--nova-color-chrome-3));
+    --nova-chrome-alpha-start: 100%;
+    --nova-chrome-alpha-end: 100%;
     --nova-chrome-filter: none;
-    --nova-hero-fill: linear-gradient(120deg, var(--nova-color-chrome-2), var(--nova-color-chrome-3));
-    --nova-hero-base: var(--nova-color-chrome-2);
+    --nova-hero-alpha-start: 100%;
+    --nova-hero-alpha-end: 100%;
+    --nova-hero-base-alpha: 100%;
     --nova-hero-filter: none;
   }
 }
@@ -240,18 +374,22 @@
   :root,
   [data-nova-material] {
     --nova-glass: 0;
-    --nova-surface-fill: var(--nova-color-surface);
+    --nova-surface-alpha: 100%;
+    --nova-surface-tint: 0%;
     --nova-surface-filter: none;
-    --nova-surface-border: var(--nova-color-border);
+    --nova-surface-rim: transparent;
     --nova-surface-shadow: var(--nova-shadow-sm);
-    --nova-overlay-fill: var(--nova-color-surface);
+    --nova-overlay-alpha: 100%;
+    --nova-overlay-tint: 0%;
     --nova-overlay-filter: none;
-    --nova-overlay-border: var(--nova-color-border);
+    --nova-overlay-rim: transparent;
     --nova-overlay-shadow: var(--nova-shadow-md);
-    --nova-chrome-fill: linear-gradient(120deg, var(--nova-color-chrome-1), var(--nova-color-chrome-3));
+    --nova-chrome-alpha-start: 100%;
+    --nova-chrome-alpha-end: 100%;
     --nova-chrome-filter: none;
-    --nova-hero-fill: linear-gradient(120deg, var(--nova-color-chrome-2), var(--nova-color-chrome-3));
-    --nova-hero-base: var(--nova-color-chrome-2);
+    --nova-hero-alpha-start: 100%;
+    --nova-hero-alpha-end: 100%;
+    --nova-hero-base-alpha: 100%;
     --nova-hero-filter: none;
   }
 }
@@ -269,41 +407,52 @@
   }
 }
 
-/* Named gradients, so components, stories and future work reuse one definition of each.
+/* Everything built from the brand's colours: the named gradients, and the fills the surface utilities
+   paint (MATERIAL_FILLS, tokens/material.ts), so components, stories and future work reuse one
+   definition of each and every hospital theme gets its own with no extra work.
 
-   Brand-derived ones (brand, sidebar, aurora) are built from the hospital's own colour tokens, so
-   every hospital theme gets its own with no extra work. A var() inside a custom property is resolved
-   where the property is declared and then inherited as a finished value, so declared on the root
-   alone these would stay HOS violet inside a NovaThemeProvider subtree. They are therefore declared
-   on the root and on every element that can change an input: data-nova-theme carries the brand
-   colours, data-nova-material the glass switch.
+   A var() inside a custom property is resolved where the property is declared and then inherited as
+   a finished value, so declared on the root alone these would stay HOS violet inside a
+   NovaThemeProvider subtree. They are therefore declared on the root and on every element that can
+   change an input: data-nova-theme carries the brand colours, data-nova-material the material's
+   numbers. (The scheme needs no scope: light-dark() resolves where the colour is used.)
 
-   The sidebar is the prototype's .sidebar: a deep base that deepens downward, with a violet lift
-   behind the brand (the hospital's primary at 42%, screened over the base). The aurora is the
-   prototype's four-blob mesh (body::before), tinted at the strengths the legibility proof allows. */
+   The sidebar is the prototype's .sidebar: a deep base that deepens downward, with a lift behind the
+   brand (the brand's lift colour at 42%, screened over the base). The aurora is the prototype's
+   four-blob mesh (body::before), tinted at the strengths the legibility proof allows; its second
+   brand blob is primary-hover, which is primary-strong in the light scheme and stays a deep fill in
+   the dark one. The edges are .edge-premium and the KPI tile's own edge: the chrome accent into the
+   AI cyan, fading out. The bar is the prototype's .sb-bar fill. */
 /* prettier-ignore */
 :root,
 [data-nova-theme],
 [data-nova-material] {
   --nova-gradient-brand: linear-gradient(120deg, var(--nova-color-primary-strong), var(--nova-color-primary));
-  --nova-gradient-sidebar: radial-gradient(120% 42% at 0% 0%, color-mix(in srgb, var(--nova-color-primary) 42%, transparent), transparent 70%), linear-gradient(180deg, #26185A 0%, #1A0F42 42%, #150C34 100%);
+  --nova-gradient-sidebar: radial-gradient(120% 42% at 0% 0%, color-mix(in srgb, var(--nova-color-sidebar-lift) 42%, transparent), transparent 70%), linear-gradient(180deg, var(--nova-color-sidebar-1) 0%, var(--nova-color-sidebar-2) 42%, var(--nova-color-sidebar-3) 100%);
   --nova-gradient-aurora:
     radial-gradient(680px 520px at 8% -6%, color-mix(in srgb, var(--nova-color-primary) calc(10% * var(--nova-glass)), transparent), transparent 62%),
     radial-gradient(720px 560px at 96% 4%, color-mix(in srgb, #60A5FA calc(6% * var(--nova-glass)), transparent), transparent 60%),
-    radial-gradient(760px 620px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-strong) calc(10% * var(--nova-glass)), transparent), transparent 60%),
+    radial-gradient(760px 620px at 78% 96%, color-mix(in srgb, var(--nova-color-primary-hover) calc(10% * var(--nova-glass)), transparent), transparent 60%),
     radial-gradient(620px 520px at 18% 104%, color-mix(in srgb, #22D3EE calc(6% * var(--nova-glass)), transparent), transparent 58%);
+  --nova-gradient-edge: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-chrome-accent) 55%, transparent), color-mix(in srgb, var(--nova-color-ai-bright) 26%, transparent) 60%, transparent 85%);
+  --nova-gradient-edge-kpi: linear-gradient(135deg, color-mix(in srgb, var(--nova-color-chrome-accent) 50%, transparent), color-mix(in srgb, var(--nova-color-ai-bright) 24%, transparent) 65%, transparent 85%);
+  --nova-gradient-bar: linear-gradient(90deg, var(--nova-color-chrome-accent), var(--nova-color-chrome-glow-2));
+  --nova-tabbar-tint: color-mix(in srgb, var(--nova-color-chrome-2) 7%, transparent);
+  --nova-surface-fill: color-mix(in srgb, color-mix(in srgb, var(--nova-color-surface-2) var(--nova-surface-tint), var(--nova-color-surface)) var(--nova-surface-alpha), transparent);
+  --nova-surface-border: color-mix(in srgb, var(--nova-surface-rim) calc(var(--nova-glass) * 100%), var(--nova-color-border));
+  --nova-overlay-fill: color-mix(in srgb, color-mix(in srgb, var(--nova-color-surface-2) var(--nova-overlay-tint), var(--nova-color-surface)) var(--nova-overlay-alpha), transparent);
+  --nova-overlay-border: color-mix(in srgb, var(--nova-overlay-rim) calc(var(--nova-glass) * 100%), var(--nova-color-border));
+  --nova-chrome-fill: linear-gradient(120deg, color-mix(in srgb, var(--nova-color-chrome-1) var(--nova-chrome-alpha-start), transparent), color-mix(in srgb, var(--nova-color-chrome-3) var(--nova-chrome-alpha-end), transparent));
+  --nova-hero-fill: linear-gradient(120deg, color-mix(in srgb, var(--nova-color-chrome-2) var(--nova-hero-alpha-start), transparent), color-mix(in srgb, color-mix(in srgb, var(--nova-color-chrome-glow-2) calc(var(--nova-glass) * 100%), var(--nova-color-chrome-3)) var(--nova-hero-alpha-end), transparent));
+  --nova-hero-base: color-mix(in srgb, color-mix(in srgb, var(--nova-color-chrome-1) calc(var(--nova-glass) * 100%), var(--nova-color-chrome-2)) var(--nova-hero-base-alpha), transparent);
 }
 
 /* Fixed gradients and textures, the same for every hospital. The AI rail runs from the prototype's
-   violet (pinned as a literal, never the brand) through the AI cyan to the bright stop. The edges are
-   .edge-premium and the KPI tile's own edge: violet into cyan, fading out. The grain is the
-   prototype's SVG noise, laid over the chrome and the hero only. */
+   violet (pinned as a literal, never the brand) through the AI cyan to the bright stop. The grain is
+   the prototype's SVG noise, laid over the chrome and the hero only. */
 /* prettier-ignore */
 :root {
   --nova-gradient-ai-rail: linear-gradient(180deg, #6D4FE0 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%);
-  --nova-gradient-edge: linear-gradient(135deg, rgba(167,139,250,.55), rgba(34,211,238,.26) 60%, transparent 85%);
-  --nova-gradient-bar: linear-gradient(90deg, var(--nova-color-chrome-accent), var(--nova-color-chrome-glow-2));
-  --nova-gradient-edge-kpi: linear-gradient(135deg, rgba(167,139,250,.5), rgba(34,211,238,.24) 65%, transparent 85%);
   --nova-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E");
   --nova-grain-hero: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -448,7 +597,7 @@
 /* prettier-ignore */
 @utility nova-sidebar {
   --nova-focus-ring: var(--nova-color-chrome-accent);
-  --nova-chrome-ink-2: rgb(241 238 251 / 0.7);
+  --nova-chrome-ink-2: color-mix(in srgb, var(--nova-color-chrome-ink) 70%, transparent);
   background-image: var(--nova-grain), var(--nova-gradient-sidebar);
   background-blend-mode: overlay, screen, normal;
   box-shadow: inset -1px 0 0 rgba(255,255,255,.05);
@@ -591,13 +740,13 @@
   }
 }
 
-/* The prototype's .tabbar: the 7% chrome-2 tint laid over the opaque canvas, so content scrolling
-   under a sticky bar never reads through the labels, and the card hairline. material.spec.ts proves
-   the unselected tabs' secondary ink on it. */
+/* The prototype's .tabbar: the 7% chrome-2 tint (--nova-tabbar-tint, the brand's chrome) laid over
+   the opaque canvas, so content scrolling under a sticky bar never reads through the labels, and the
+   card hairline. The legibility proof covers the unselected tabs' secondary ink on it. */
 /* prettier-ignore */
 @utility nova-tabbar {
   background-color: var(--nova-color-bg);
-  background-image: linear-gradient(rgba(42,27,92,.07), rgba(42,27,92,.07));
+  background-image: linear-gradient(var(--nova-tabbar-tint), var(--nova-tabbar-tint));
   border: 1px solid var(--nova-color-border);
 }
 

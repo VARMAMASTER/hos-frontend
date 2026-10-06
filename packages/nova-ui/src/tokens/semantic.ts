@@ -25,6 +25,10 @@ export const NOVA_DEFAULTS = {
   '--nova-color-primary-strong': p.violet[700],
   '--nova-color-primary-soft': p.violet[100],
   '--nova-color-primary-ghost': p.violet[50],
+  // The fill a primary button hovers to, under white text: the prototype's .btn-primary:hover is
+  // --teal-strong. Its own token because in the dark scheme primary-strong turns light (it is text on
+  // a dark panel there) while this stays a fill white text holds 4.5:1 on.
+  '--nova-color-primary-hover': p.violet[700],
   '--nova-color-on-primary': p.white,
   // AI signature (--ai, --ai-bright, --ai-deep, --ai-soft, --ai-ghost, --ai-line)
   '--nova-color-ai': p.cyan[700],
@@ -33,6 +37,9 @@ export const NOVA_DEFAULTS = {
   '--nova-color-ai-soft': p.cyan[100],
   '--nova-color-ai-ghost': p.cyan[50],
   '--nova-color-ai-line': p.cyan[200],
+  // The AI button's hover fill under white text (ai-deep in the prototype), for the same reason as
+  // primary-hover: ai-deep is AI text, and turns light in the dark scheme.
+  '--nova-color-ai-hover': p.cyan[800],
   // status, with the "-deep" text-on-tint pairing for each -soft fill
   '--nova-color-good': p.green[600],
   '--nova-color-good-soft': p.green[100],
@@ -46,8 +53,9 @@ export const NOVA_DEFAULTS = {
   '--nova-color-info': p.blue[700],
   '--nova-color-info-soft': p.blue[100],
   '--nova-color-info-deep': p.blue[800],
-  // chrome: the deep indigo-violet app frame (--chrome-*). Fixed for every hospital, like the
-  // prototype; the brand reaches the sidebar only through its violet lift (theme.css).
+  // chrome: the deep indigo-violet app frame (--chrome-*). These are HOS Violet's; a hospital theme
+  // derives its own from its brand (theme/derive.ts), at the same luminance, so the frame recolours
+  // and every proof made on these values still holds.
   '--nova-color-chrome-1': p.chrome[1],
   '--nova-color-chrome-2': p.chrome[2],
   '--nova-color-chrome-3': p.chrome[3],
@@ -60,6 +68,17 @@ export const NOVA_DEFAULTS = {
   '--nova-color-chrome-glow-2': p.chrome.glow2,
   // The dark ring around a top-bar badge (.tb-ico .tb-dot border, a literal in the prototype).
   '--nova-color-chrome-ring': p.chrome.ring,
+  // The sidebar's base gradient, top to bottom (.sidebar: #26185A 0%, #1A0F42 42%, #150C34 100%).
+  '--nova-color-sidebar-1': p.chrome.sidebar[1],
+  '--nova-color-sidebar-2': p.chrome.sidebar[2],
+  '--nova-color-sidebar-3': p.chrome.sidebar[3],
+  // The violet lift behind the brand mark (.sidebar's radial rgba(109,79,224,.42), screened over the
+  // base): the brand primary for HOS Violet. A theme derives its own from this one at the same
+  // luminance, so the lift is the brand's hue and the sidebar inks stay proven in both schemes.
+  '--nova-color-sidebar-lift': p.violet[600],
+  // The light that catches a glass edge: the white of .glass-panel's rim and top highlight. The dark
+  // scheme dims it (tokens/scheme.ts), so glass keeps a rim without a glaring white line.
+  '--nova-color-sheen': p.white,
   // The data palette: six series colours, fixed for every hospital like status and AI, so the same
   // chart reads the same everywhere (never in the theme allow-list). Built with the dataviz method
   // (OKLab/OKLCH, Machado 2009 colour-vision simulation): neighbouring slots at least 12.8 apart
@@ -110,6 +129,13 @@ export const NOVA_DEFAULTS = {
   '--nova-shadow-glass':
     '0 8px 24px -8px hsl(var(--nova-shadow-hue) / .45), 0 2px 10px hsl(var(--nova-shadow-hue) / .28)',
   '--nova-sidebar-w': '248px',
+  // motion (tokens/scale.ts MOTION_EASINGS and MOTION_DURATIONS_MS)
+  '--nova-ease-spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+  '--nova-ease-standard': 'cubic-bezier(0.2, 0, 0, 1)',
+  '--nova-ease-emphasized': 'cubic-bezier(0.05, 0.7, 0.1, 1)',
+  '--nova-duration-fast': '150ms',
+  '--nova-duration-base': '200ms',
+  '--nova-duration-slow': '240ms',
   // fonts (--f-display, --f-body, --f-mono): Google Sans Flex, one variable family for display and
   // body; IBM Plex Mono for tabular clinical and financial figures.
   '--nova-font-display':

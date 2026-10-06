@@ -50,3 +50,26 @@ export const FONT_WEIGHT_UTILITIES = [
   'font-semibold',
   'font-bold',
 ] as const;
+
+// Motion. The prototype moves quietly and quickly (120-200ms, ease-out); these are the named curves
+// and durations every transition takes, declared as --nova-ease-* and --nova-duration-* (semantic.ts,
+// theme.css) and reached as ease-spring | standard | emphasized and duration-fast | base | slow.
+// Components apply them under motion-safe, so prefers-reduced-motion still turns motion off.
+export const MOTION_EASINGS = {
+  // A slight overshoot, for something that lands: a switch thumb, a chip toggling on.
+  spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+  // Hover, focus and colour changes.
+  standard: 'cubic-bezier(0.2, 0, 0, 1)',
+  // A surface entering: a dialog, a menu, a toast.
+  emphasized: 'cubic-bezier(0.05, 0.7, 0.1, 1)',
+} as const;
+
+export const MOTION_DURATIONS_MS = { fast: 150, base: 200, slow: 240 } as const;
+
+export const EASE_UTILITIES = Object.keys(MOTION_EASINGS).map(
+  (name) => `ease-${name}`,
+);
+
+export const DURATION_UTILITIES = Object.keys(MOTION_DURATIONS_MS).map(
+  (name) => `duration-${name}`,
+);

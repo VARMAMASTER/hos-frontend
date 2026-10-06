@@ -4,7 +4,11 @@ import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
+  DURATION_UTILITIES,
+  EASE_UTILITIES,
   FONT_WEIGHT_UTILITIES,
+  MOTION_DURATIONS_MS,
+  MOTION_EASINGS,
   PROTOTYPE_TYPE_SIZES,
   RADIUS_PX,
   RADIUS_UTILITIES,
@@ -129,5 +133,50 @@ describe('the shadow scale and the weights', () => {
       'font-semibold',
       'font-bold',
     ]);
+  });
+});
+
+// Motion: the prototype moves quietly (120-200ms ease-out). These are Nova's named curves and
+// durations, so a component asks for ease-standard and duration-base instead of writing its own;
+// a component still applies them under motion-safe, so prefers-reduced-motion turns motion off.
+describe('the motion tokens', () => {
+  it('names three easing curves and three durations, as Nova tokens', () => {
+    expect(MOTION_EASINGS).toEqual({
+      spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+      standard: 'cubic-bezier(0.2, 0, 0, 1)',
+      emphasized: 'cubic-bezier(0.05, 0.7, 0.1, 1)',
+    });
+    expect(MOTION_DURATIONS_MS).toEqual({ fast: 150, base: 200, slow: 240 });
+    for (const [name, curve] of Object.entries(MOTION_EASINGS)) {
+      expect(defaults[`--nova-ease-${name}`]).toBe(curve);
+      expect(declared(`--nova-ease-${name}`)).toBe(curve);
+    }
+    for (const [name, ms] of Object.entries(MOTION_DURATIONS_MS)) {
+      expect(defaults[`--nova-duration-${name}`]).toBe(`${ms}ms`);
+      expect(declared(`--nova-duration-${name}`)).toBe(`${ms}ms`);
+    }
+  });
+
+  it('reaches Tailwind as ease-spring | standard | emphasized and duration-fast | base | slow', () => {
+    expect(EASE_UTILITIES).toEqual([
+      'ease-spring',
+      'ease-standard',
+      'ease-emphasized',
+    ]);
+    expect(DURATION_UTILITIES).toEqual([
+      'duration-fast',
+      'duration-base',
+      'duration-slow',
+    ]);
+    for (const name of Object.keys(MOTION_EASINGS)) {
+      expect(declared(`--ease-${name}`)).toBe(`var(--nova-ease-${name})`);
+    }
+    for (const name of Object.keys(MOTION_DURATIONS_MS)) {
+      expect(css).toMatch(
+        new RegExp(
+          String.raw`@utility duration-${name} \{\s*transition-duration: var\(--nova-duration-${name}\);\s*\}`,
+        ),
+      );
+    }
   });
 });

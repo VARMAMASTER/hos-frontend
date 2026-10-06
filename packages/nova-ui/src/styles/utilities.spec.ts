@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { createNovaTheme, type NovaTheme } from '../theme/create-theme';
-import { GLASS, MATERIAL_TOKENS } from '../tokens/material';
+import { GLASS, MATERIAL_FILLS, MATERIAL_TOKENS } from '../tokens/material';
 import { primitives } from '../tokens/primitives';
 import { NOVA_DEFAULTS } from '../tokens/semantic';
 
@@ -282,7 +282,7 @@ describe('theme.css utilities', () => {
     it('rings focus in the chrome accent and hands children the proven secondary ink', () => {
       expect(sidebar().declarations).toMatchObject({
         '--nova-focus-ring': 'var(--nova-color-chrome-accent)',
-        '--nova-chrome-ink-2': `rgb(241 238 251 / ${GLASS.sidebarInk2Alpha})`,
+        '--nova-chrome-ink-2': `color-mix(in srgb, var(--nova-color-chrome-ink) ${percent(GLASS.sidebarInk2Alpha)}, transparent)`,
       });
     });
   });
@@ -446,11 +446,7 @@ describe('theme.css utilities', () => {
     expect(utility('nova-bar-grad').declarations).toEqual({
       'background-image': 'var(--nova-gradient-bar)',
     });
-    expect(
-      rulesFor(':root')
-        .map((rule) => rule.declarations)
-        .find((d) => '--nova-gradient-bar' in d)?.['--nova-gradient-bar'],
-    ).toBe(
+    expect(rulesFor(BRAND_SCOPES)[0]?.declarations['--nova-gradient-bar']).toBe(
       'linear-gradient(90deg, var(--nova-color-chrome-accent), var(--nova-color-chrome-glow-2))',
     );
   });
@@ -479,14 +475,18 @@ describe('theme.css utilities', () => {
   });
 
   // The prototype's .tabbar: the 7% chrome-2 tint laid over the opaque canvas (so content scrolling
-  // under a sticky bar never reads through the labels), with the card hairline.
+  // under a sticky bar never reads through the labels), with the card hairline. The tint is the
+  // brand's chrome-2, so it follows a hospital theme.
   it('nova-tabbar is the prototype tab rail: an opaque tinted canvas with the hairline edge', () => {
     expect(utility('nova-tabbar').declarations).toEqual({
       'background-color': 'var(--nova-color-bg)',
       'background-image':
-        'linear-gradient(rgba(42,27,92,.07), rgba(42,27,92,.07))',
+        'linear-gradient(var(--nova-tabbar-tint), var(--nova-tabbar-tint))',
       border: '1px solid var(--nova-color-border)',
     });
+    expect(rulesFor(BRAND_SCOPES)[0]?.declarations['--nova-tabbar-tint']).toBe(
+      `color-mix(in srgb, var(--nova-color-chrome-2) ${percent(GLASS.tabbarTint)}, transparent)`,
+    );
   });
 
   it('nova-ai-grad fills with the AI gradient and nova-ai-mark with the AI mark', () => {
@@ -522,6 +522,11 @@ describe('theme.css named gradients', () => {
     '--nova-gradient-brand',
     '--nova-gradient-sidebar',
     '--nova-gradient-aurora',
+    '--nova-gradient-edge',
+    '--nova-gradient-edge-kpi',
+    '--nova-gradient-bar',
+    '--nova-tabbar-tint',
+    ...Object.keys(MATERIAL_FILLS),
   ])(
     'declares %s on every theme and material scope, so a subtree re-resolves it',
     (name) => {
@@ -530,12 +535,7 @@ describe('theme.css named gradients', () => {
     },
   );
 
-  it.each([
-    '--nova-gradient-ai',
-    '--nova-gradient-ai-rail',
-    '--nova-gradient-edge',
-    '--nova-gradient-edge-kpi',
-  ])(
+  it.each(['--nova-gradient-ai', '--nova-gradient-ai-rail'])(
     'declares %s on :root alone, so no theme or material scope can re-resolve it',
     (name) => {
       expect(fixed().filter((d) => name in d)).toHaveLength(1);
@@ -551,7 +551,7 @@ describe('theme.css named gradients', () => {
 
   it('--nova-gradient-sidebar is the prototype sidebar: the brand lift at 42% over a base that deepens downward', () => {
     expect(scoped()['--nova-gradient-sidebar']).toBe(
-      `radial-gradient(120% 42% at 0% 0%, color-mix(in srgb, var(--nova-color-primary) ${percent(GLASS.sidebarBrandShare)}, transparent), transparent 70%), linear-gradient(180deg, #26185A 0%, #1A0F42 42%, #150C34 100%)`,
+      `radial-gradient(120% 42% at 0% 0%, color-mix(in srgb, var(--nova-color-sidebar-lift) ${percent(GLASS.sidebarBrandShare)}, transparent), transparent 70%), linear-gradient(180deg, var(--nova-color-sidebar-1) 0%, var(--nova-color-sidebar-2) 42%, var(--nova-color-sidebar-3) 100%)`,
     );
   });
 
@@ -571,12 +571,17 @@ describe('theme.css named gradients', () => {
     );
   });
 
+  // .edge-premium is rgba(167,139,250,.55) into rgba(34,211,238,.26): the chrome accent and the AI
+  // bright cyan, so for HOS Violet it is the prototype's exactly, and a hospital's edge takes its own
+  // accent.
   it('--nova-gradient-edge is the prototype .edge-premium and --nova-gradient-edge-kpi the .kpi edge', () => {
-    expect(fixedValue('--nova-gradient-edge')).toBe(
-      'linear-gradient(135deg, rgba(167,139,250,.55), rgba(34,211,238,.26) 60%, transparent 85%)',
+    expect(NOVA_DEFAULTS['--nova-color-chrome-accent']).toBe('#A78BFA');
+    expect(NOVA_DEFAULTS['--nova-color-ai-bright']).toBe('#22D3EE');
+    expect(scoped()['--nova-gradient-edge']).toBe(
+      'linear-gradient(135deg, color-mix(in srgb, var(--nova-color-chrome-accent) 55%, transparent), color-mix(in srgb, var(--nova-color-ai-bright) 26%, transparent) 60%, transparent 85%)',
     );
-    expect(fixedValue('--nova-gradient-edge-kpi')).toBe(
-      'linear-gradient(135deg, rgba(167,139,250,.5), rgba(34,211,238,.24) 65%, transparent 85%)',
+    expect(scoped()['--nova-gradient-edge-kpi']).toBe(
+      'linear-gradient(135deg, color-mix(in srgb, var(--nova-color-chrome-accent) 50%, transparent), color-mix(in srgb, var(--nova-color-ai-bright) 24%, transparent) 65%, transparent 85%)',
     );
   });
 
@@ -664,16 +669,37 @@ describe('theme.css named gradients', () => {
       );
     });
 
-    it('and so do the sidebar lift and the aurora, with none of the default violet left in them', () => {
+    // The owner's report: a preset "looked as if it did nothing", because only the primary family
+    // followed the brand. Everything built from a brand-derived colour must now leave HOS violet.
+    it('and so do the aurora, the sidebar, the top bar, the hero, the edges and the panels, with none of the default violet left in them', () => {
+      const violet = Object.keys(rose.cssVariables)
+        .map((token) => NOVA_DEFAULTS[token as keyof typeof NOVA_DEFAULTS])
+        .filter((value) => /^#/.test(value) && value !== '#FFFFFF');
+      expect(violet).toContain('#170F30');
       for (const name of [
-        '--nova-gradient-sidebar',
         '--nova-gradient-aurora',
+        '--nova-gradient-sidebar',
+        '--nova-gradient-edge',
+        '--nova-gradient-bar',
+        '--nova-tabbar-tint',
+        '--nova-chrome-fill',
+        '--nova-hero-fill',
+        '--nova-hero-base',
+        '--nova-surface-border',
+        '--nova-overlay-fill',
       ]) {
-        const themed = resolve(name, rose);
-        expect(themed, name).not.toBe(resolve(name));
-        expect(themed.toUpperCase(), name).toMatch(/#(?:9D174D|831843)/);
-        expect(themed.toUpperCase(), name).not.toMatch(/#(?:6D4FE0|5636B8)/);
+        const themed = resolve(name, rose).toUpperCase();
+        expect(themed, name).not.toBe(resolve(name).toUpperCase());
+        for (const value of violet) {
+          expect(themed, `${name} keeps ${value}`).not.toContain(value);
+        }
       }
+      expect(resolve('--nova-gradient-aurora', rose).toUpperCase()).toMatch(
+        /#9D174D.*#831843/,
+      );
+      expect(resolve('--nova-gradient-sidebar', rose)).toContain(
+        rose.cssVariables['--nova-color-sidebar-lift'],
+      );
     });
   });
 });

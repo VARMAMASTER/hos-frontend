@@ -3,15 +3,26 @@ import { cleanup, render, screen } from '@testing-library/react';
 import {
   createNovaTheme,
   NOVA_THEME_VARIABLES,
+  themeVariables,
   type NovaTheme,
 } from './create-theme';
+import { deriveNovaPalette } from './derive';
 import {
   applyNovaMaterial,
+  applyNovaScheme,
   applyNovaTheme,
   NovaThemeProvider,
 } from './theme-provider';
 
 afterEach(() => cleanup());
+
+const tealPalette = deriveNovaPalette({
+  primary: '#0F766E',
+  primaryStrong: '#115E59',
+  primarySoft: '#CCFBF1',
+});
+// Each scheme token is written once as light-dark(light, dark): the scheme picks its half.
+const tealPrimary = `light-dark(#0F766E, ${tealPalette.dark['--nova-color-primary']})`;
 
 const teal = createNovaTheme({
   name: 'Teal Care',
@@ -32,7 +43,11 @@ describe('NovaThemeProvider', () => {
     const wrapper = screen.getByText('inside').parentElement as HTMLElement;
     expect(wrapper.dataset['novaTheme']).toBe('Teal Care');
     expect(wrapper.style.getPropertyValue('--nova-color-primary')).toBe(
-      '#0F766E',
+      tealPrimary,
+    );
+    // The chrome is dark in both schemes: one value, the brand's own.
+    expect(wrapper.style.getPropertyValue('--nova-color-chrome-1')).toBe(
+      tealPalette.light['--nova-color-chrome-1'],
     );
   });
 
@@ -55,7 +70,7 @@ describe('applyNovaTheme', () => {
     const cleanupTheme = applyNovaTheme(teal);
     expect(
       document.documentElement.style.getPropertyValue('--nova-color-primary'),
-    ).toBe('#0F766E');
+    ).toBe(tealPrimary);
     expect(document.documentElement.dataset['novaTheme']).toBe('Teal Care');
     cleanupTheme();
     expect(
@@ -79,13 +94,46 @@ describe('the allow-list a theme is applied through', () => {
     },
   } as NovaTheme;
 
-  it('is the brand colours and the body font, shared with createNovaTheme', () => {
-    expect([...NOVA_THEME_VARIABLES].sort()).toEqual([
-      '--nova-color-primary',
-      '--nova-color-primary-soft',
-      '--nova-color-primary-strong',
-      '--nova-font-body',
-    ]);
+  it('is the brand-derived palette and the body font, shared with createNovaTheme, and no status, AI or chart token', () => {
+    expect([...NOVA_THEME_VARIABLES].sort()).toEqual(
+      [...Object.keys(tealPalette.light), '--nova-font-body'].sort(),
+    );
+    for (const name of NOVA_THEME_VARIABLES) {
+      expect(name).not.toMatch(/-(good|warn|crit|info|ai)(-|$)|chart/);
+    }
+  });
+
+  // A stored row carries the brand colours; everything else is rebuilt from them, so a row cannot
+  // set an ink, a canvas or a chrome colour of its own.
+  it('rebuilds the palette from the brand colours, ignoring any derived value a row carries', () => {
+    const row = {
+      name: 'Row',
+      cssVariables: {
+        '--nova-color-primary': '#0F766E',
+        '--nova-color-primary-strong': '#115E59',
+        '--nova-color-primary-soft': '#CCFBF1',
+        '--nova-color-ink': '#FFFFFF',
+        '--nova-color-chrome-1': '#FFFFFF',
+      },
+    } as NovaTheme;
+    render(
+      <NovaThemeProvider theme={row}>
+        <p>row</p>
+      </NovaThemeProvider>,
+    );
+    const style = (screen.getByText('row').parentElement as HTMLElement).style;
+    expect(style.getPropertyValue('--nova-color-ink')).toBe(
+      `light-dark(${tealPalette.light['--nova-color-ink']}, ${tealPalette.dark['--nova-color-ink']})`,
+    );
+    expect(style.getPropertyValue('--nova-color-chrome-1')).toBe(
+      tealPalette.light['--nova-color-chrome-1'],
+    );
+  });
+
+  it('writes the light values alone where the browser has no light-dark()', () => {
+    expect(
+      themeVariables(teal, { lightDark: false })['--nova-color-primary'],
+    ).toBe('#0F766E');
   });
 
   it('NovaThemeProvider writes only allow-listed variables, so a forged theme cannot recolour status or AI', () => {
@@ -95,8 +143,8 @@ describe('the allow-list a theme is applied through', () => {
       </NovaThemeProvider>,
     );
     const wrapper = screen.getByText('forged').parentElement as HTMLElement;
-    expect(wrapper.style.getPropertyValue('--nova-color-primary')).toBe(
-      '#0F766E',
+    expect(wrapper.style.getPropertyValue('--nova-color-primary')).toMatch(
+      /^light-dark\(#0F766E, /,
     );
     for (const name of [
       '--nova-color-crit',
@@ -112,7 +160,9 @@ describe('the allow-list a theme is applied through', () => {
     const restore = applyNovaTheme(forged);
     try {
       const style = document.documentElement.style;
-      expect(style.getPropertyValue('--nova-color-primary')).toBe('#0F766E');
+      expect(style.getPropertyValue('--nova-color-primary')).toMatch(
+        /^light-dark\(#0F766E, /,
+      );
       expect(style.getPropertyValue('--nova-color-crit')).toBe('');
       expect(style.getPropertyValue('--nova-color-ai')).toBe('');
       expect(style.getPropertyValue('--nova-gradient-ai')).toBe('');
@@ -131,7 +181,7 @@ describe('the allow-list a theme is applied through', () => {
     const restoreB = applyNovaTheme(teal);
     try {
       expect(style.getPropertyValue('--nova-font-body')).toBe('');
-      expect(style.getPropertyValue('--nova-color-primary')).toBe('#0F766E');
+      expect(style.getPropertyValue('--nova-color-primary')).toBe(tealPrimary);
     } finally {
       restoreB();
       expect(style.getPropertyValue('--nova-font-body')).toBe(
@@ -203,6 +253,52 @@ describe('material', () => {
       expect(document.documentElement.dataset['novaMaterial']).toBe(undefined);
     } finally {
       delete document.documentElement.dataset['novaMaterial'];
+    }
+  });
+});
+
+describe('scheme', () => {
+  const wrapperOf = (text: string) =>
+    screen.getByText(text).parentElement as HTMLElement;
+
+  it('sets no scheme attribute when nobody chooses one, so the CSS default (light) applies', () => {
+    render(
+      <NovaThemeProvider theme={teal}>
+        <p>default scheme</p>
+      </NovaThemeProvider>,
+    );
+    expect(wrapperOf('default scheme').dataset['novaScheme']).toBe(undefined);
+  });
+
+  it.each(['light', 'dark', 'system'] as const)(
+    'marks a %s subtree, independent of the theme and the material',
+    (scheme) => {
+      render(
+        <NovaThemeProvider theme={teal} material="frost" scheme={scheme}>
+          <p>{scheme} subtree</p>
+        </NovaThemeProvider>,
+      );
+      const wrapper = wrapperOf(`${scheme} subtree`);
+      expect(wrapper.dataset['novaScheme']).toBe(scheme);
+      expect(wrapper.dataset['novaTheme']).toBe('Teal Care');
+      expect(wrapper.dataset['novaMaterial']).toBe('frost');
+    },
+  );
+
+  it('applyNovaScheme switches the whole product and the cleanup restores what was there', () => {
+    document.documentElement.dataset['novaScheme'] = 'light';
+    try {
+      const restore = applyNovaScheme('dark');
+      expect(document.documentElement.dataset['novaScheme']).toBe('dark');
+      restore();
+      expect(document.documentElement.dataset['novaScheme']).toBe('light');
+      delete document.documentElement.dataset['novaScheme'];
+      const restoreSystem = applyNovaScheme('system');
+      expect(document.documentElement.dataset['novaScheme']).toBe('system');
+      restoreSystem();
+      expect(document.documentElement.dataset['novaScheme']).toBe(undefined);
+    } finally {
+      delete document.documentElement.dataset['novaScheme'];
     }
   });
 });

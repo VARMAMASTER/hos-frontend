@@ -6,8 +6,9 @@ import {
 import { cx } from './cx';
 
 // The material roles theme.css defines. A component picks a role; the role's tokens decide what
-// glass or solid looks like. Adding a surface means adding a token block, never editing components.
-// card, field, data and ai-block stay opaque under either material, as the prototype keeps them; surface,
+// glass, frost or solid looks like, in either scheme. Adding a surface means adding a token block,
+// never editing components.
+// card, field, data and ai-block stay opaque under every material, as the prototype keeps them; surface,
 // overlay, chrome and hero are the prototype's glass; the sidebar is opaque chrome.
 export const SURFACE_MATERIALS = [
   'card',
