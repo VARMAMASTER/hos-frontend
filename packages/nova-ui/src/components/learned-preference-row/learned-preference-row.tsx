@@ -162,10 +162,8 @@ export function LearnedPreferenceRow({
           on ? 'text-ink' : 'text-ink-3',
         )}
       >
-        <span className="font-semibold">
-          {on ? words.nowDoes : words.wouldDo}
-        </span>{' '}
-        {does}
+        {/* The prototype's .learn-does: the lead-in plain, the caller bolds what matters. */}
+        <span>{on ? words.nowDoes : words.wouldDo}</span> {does}
         {on ? null : (
           <>
             {' '}
