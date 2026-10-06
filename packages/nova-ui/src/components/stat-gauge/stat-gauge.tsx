@@ -17,9 +17,10 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
-// A metric as a loader: the figure and its label in text, and a thin track filled in proportion.
-// The track is the meter (role="meter"), named by the label and read as the value text, so the
-// figure is never only a bar. It is nova-data, so it stays opaque under glass.
+// A metric as a loader, after the prototype's KPI tile (hos.css .kpi) and its sidebar bar (.sb-bar):
+// the label and the figure in text, and a thin track filled in proportion. The track is the meter
+// (role="meter"), named by the label and read as the value text, so the figure is never only a bar.
+// It is nova-data, so it stays opaque under glass.
 export function StatGauge({
   label,
   value,
@@ -37,14 +38,24 @@ export function StatGauge({
   return (
     <Surface
       material="data"
-      radius="lg"
-      className={cx('flex flex-col gap-2 border border-border p-5', className)}
+      radius="md"
+      // .kpi: --r-md, a 1px line border, 16px padding, --shadow-sm.
+      className={cx(
+        'flex flex-col border border-border p-4 shadow-sm',
+        className,
+      )}
       {...rest}
     >
-      <p className="text-headline font-semibold text-ink">{text}</p>
-      <p id={labelId} className="text-caption text-ink-2">
+      {/* .kpi-l: 12px / 500 in ink-2. */}
+      <p id={labelId} className="text-[12px] font-medium text-ink-2">
         {label}
       </p>
+      {/* .kpi-v: 26px / 700, tabular figures with a slashed zero, a 2px gap under the label. */}
+      <p className="mt-0.5 text-[26px] font-bold tabular-nums slashed-zero text-ink">
+        {text}
+      </p>
+      {/* .sb-bar: a 5px track, a full radius, an 8px gap above. The fill is the brand colour: the
+          prototype's violet-to-blue bar gradient has no Nova utility yet. */}
       <div
         role="meter"
         aria-labelledby={labelId}
@@ -52,10 +63,10 @@ export function StatGauge({
         aria-valuemin={min}
         aria-valuemax={max}
         aria-valuetext={text}
-        className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2"
+        className="mt-2 h-[5px] w-full overflow-hidden rounded-full bg-border"
       >
         <div
-          className="h-full rounded-full bg-primary motion-safe:transition-[width] motion-safe:duration-200"
+          className="h-full rounded-full nova-bar-grad motion-safe:transition-[width] motion-safe:duration-200"
           style={{ width: `${percent}%` }}
         />
       </div>

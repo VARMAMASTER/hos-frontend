@@ -199,8 +199,8 @@ describe('Select element', () => {
   });
 });
 
-describe('Select, Apple-refined', () => {
-  it('follows the input spec: body 17, padded 16 x 12, radius md', () => {
+describe('Select, the prototype form control', () => {
+  it('follows the .f-input spec: 13.5px, padded 10 x 8, radius sm', () => {
     render(<Select label="Ward" options={[{ value: 'a', label: 'A' }]} />);
     const select = screen.getByLabelText('Ward');
     expect([...select.classList]).toEqual(

@@ -80,7 +80,7 @@ describe('@hos/nova-ui public API', () => {
     'SectionNav',
     'SplitLayout',
     'Tag',
-    'WorkspaceSwitcher',
+    'ModuleSwitcher',
     'Banner',
     'Checkbox',
     'Dialog',

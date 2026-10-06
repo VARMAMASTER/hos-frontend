@@ -69,13 +69,14 @@ export function clearToasts(): void {
   if (toasts.length > 0) publish([]);
 }
 
-// White callout text on near-black (info), on the brand primary (success) or on crit (error). The
-// focus ring takes the text colour, because the default primary ring would vanish on the primary
-// fill. The variant is also drawn as an icon shape, so it never depends on colour alone.
-const variants: Record<ToastVariant, string> = {
-  info: 'bg-ink text-bg',
-  success: 'bg-primary text-on-primary',
-  error: 'bg-crit text-on-primary',
+// The prototype's .hos-toast (assets/sim.css): a panel with a 1px line border and a 3px coloured left
+// edge, and a small coloured tile holding a white glyph. The default toast is the brand (the
+// prototype's teal), good is green; an error takes crit (the prototype's .warn toast carries its
+// crit items). The variant is also drawn as a glyph shape, so it never depends on colour alone.
+const variants: Record<ToastVariant, { edge: string; tile: string }> = {
+  info: { edge: 'border-l-primary', tile: 'bg-primary' },
+  success: { edge: 'border-l-good', tile: 'bg-good' },
+  error: { edge: 'border-l-crit', tile: 'bg-crit' },
 };
 
 export interface ToasterProps {
@@ -95,13 +96,17 @@ export function Toaster({
   const items = useSyncExternalStore(subscribe, snapshot, snapshot);
   const calm = items.filter((toast) => toast.variant !== 'error');
   const errors = items.filter((toast) => toast.variant === 'error');
-  const region = 'flex w-full flex-col items-center gap-2';
+  // empty:-mt-2 takes back the host's gap for a region with nothing in it, so a lone toast sits
+  // exactly 20px from the corner. The regions stay in the page (and the accessibility tree) either way.
+  const region = 'flex w-full flex-col gap-2 empty:-mt-2';
   return (
     <div
       // Dialog leaves a live region alone when it makes the page inert, so toasts are still heard.
       data-nova-live-region=""
       className={cx(
-        'pointer-events-none fixed inset-x-0 top-4 z-[60] flex flex-col items-center gap-2 px-4 font-sans',
+        // .hos-toasts: fixed 20px from the bottom right corner, as wide as its widest toast up to 360px,
+        // an 8px gap.
+        'pointer-events-none fixed bottom-5 right-5 z-[60] flex w-max max-w-[min(360px,calc(100vw-40px))] flex-col gap-2 font-sans',
         className,
       )}
     >
@@ -147,10 +152,11 @@ function ToastView({
     playMotion(
       ref.current,
       [
-        { opacity: 0, transform: 'translateY(-8px)' },
-        { opacity: 1, transform: 'translateY(0)' },
+        // sim.css @keyframes toast-in: .28s cubic-bezier(.2,.8,.2,1).
+        { opacity: 0, transform: 'translateY(10px) scale(.98)' },
+        { opacity: 1, transform: 'none' },
       ],
-      { duration: 200, easing: 'ease-out' },
+      { duration: 280, easing: 'cubic-bezier(.2, .8, .2, 1)' },
     );
   }, []);
 
@@ -185,12 +191,14 @@ function ToastView({
         }
       }}
       className={cx(
-        'pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-lg px-4 py-3 text-callout shadow-elevation-2 [--nova-focus-ring:currentColor]',
-        variants[toast.variant],
+        // .hos-toast: 13px, --r-md, 12px 16px padding, an 8px gap, a 1px line border, --shadow-md. The
+        // 3px left edge takes the variant colour; border-l-[3px] is the prototype's own value.
+        'pointer-events-auto flex w-full items-start gap-2 rounded-md border border-l-[3px] border-border bg-surface px-4 py-3 text-[13px] text-ink shadow-md',
+        variants[toast.variant].edge,
       )}
     >
       <ToastIcon variant={toast.variant} />
-      <div className="min-w-0 flex-1">{toast.message}</div>
+      <div className="min-w-0 flex-1 font-semibold">{toast.message}</div>
       <button
         type="button"
         aria-label={dismissLabel}
@@ -199,7 +207,8 @@ function ToastView({
           dismissToast(toast.id);
         }}
         className={cx(
-          '-mr-2 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-opacity hover:opacity-80',
+          // .hos-x: a 30px square, --r-sm, line border on --panel-2, ink-2; hover fills with the line.
+          '-my-1 inline-flex h-[30px] w-[30px] shrink-0 items-center justify-center self-center rounded-sm border border-border bg-surface-2 text-ink-2 transition-colors hover:bg-border',
           focusRing,
         )}
       >
@@ -220,38 +229,32 @@ function ToastView({
   );
 }
 
-// A different shape per variant (circle-i, circle-tick, octagon), like Banner's.
+// .ht-ic: a 20px tile in the variant colour with a white glyph. A different glyph per variant (an
+// i, a tick, a !), like Banner's, so the variant never rests on colour alone. The tile's radius is
+// --r-sm (8px); the prototype's 6px is not on the radius scale.
 function ToastIcon({ variant }: { variant: ToastVariant }) {
   return (
-    <svg
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-      className="h-5 w-5 shrink-0"
+    <span
+      className={cx(
+        'mt-px grid h-5 w-5 shrink-0 place-items-center rounded-sm text-on-primary',
+        variants[variant].tile,
+      )}
     >
-      {variant === 'info' ? (
-        <>
-          <circle cx="10" cy="10" r="7.25" />
-          <path d="M10 9v4.5M10 6.5h.01" />
-        </>
-      ) : null}
-      {variant === 'success' ? (
-        <>
-          <circle cx="10" cy="10" r="7.25" />
-          <path d="M6.75 10.25l2.25 2.25 4.25-4.75" />
-        </>
-      ) : null}
-      {variant === 'error' ? (
-        <>
-          <path d="M7 2.75h6L17.25 7v6L13 17.25H7L2.75 13V7z" />
-          <path d="M10 6.75v4M10 13.25h.01" />
-        </>
-      ) : null}
-    </svg>
+      <svg
+        viewBox="0 0 20 20"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        focusable="false"
+        className="h-3.5 w-3.5"
+      >
+        {variant === 'info' ? <path d="M10 9v5M10 5.75h.01" /> : null}
+        {variant === 'success' ? <path d="M4.5 10.5l3.5 3.5 7.5-8" /> : null}
+        {variant === 'error' ? <path d="M10 5v6M10 14.5h.01" /> : null}
+      </svg>
+    </span>
   );
 }

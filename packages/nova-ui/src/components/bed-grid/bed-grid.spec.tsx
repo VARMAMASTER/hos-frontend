@@ -284,6 +284,25 @@ describe('BedGrid', () => {
     }
   });
 
+  // The prototype's .bed status edges (#C4D7EC, #BFE0D2, #EFD3AE) are the status colour at about
+  // 18% over its own -soft fill; the edge goes through the card's edge property so it is not lost to
+  // the utility's border shorthand.
+  it.each([
+    ['occupied', 'info'],
+    ['free', 'good'],
+    ['cleaning', 'warn'],
+  ] as const)(
+    'edges a %s bed in the %s status colour at 18 per cent',
+    (status, token) => {
+      render(
+        <BedGrid beds={[{ id: 'b', label: '1', status }]} ariaLabel="Beds" />,
+      );
+      expect(screen.getByRole('listitem').className).toContain(
+        `[--nova-card-edge:color-mix(in_srgb,var(--nova-color-${token})_18%,transparent)]`,
+      );
+    },
+  );
+
   it('keeps the same surface and status on the list item when the cell is a button', () => {
     render(<BedGrid beds={beds} onSelect={() => undefined} ariaLabel="Beds" />);
     const [first] = screen.getAllByRole('listitem');

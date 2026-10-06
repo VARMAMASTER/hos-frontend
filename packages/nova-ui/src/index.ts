@@ -52,7 +52,7 @@ export * from './components/timeline/timeline';
 export * from './components/toast/toast';
 export * from './components/tooltip/tooltip';
 export * from './components/top-bar/top-bar';
-export * from './components/workspace-switcher/workspace-switcher';
+export * from './components/module-switcher/module-switcher';
 export {
   ChartContainer,
   ChartLegend,
