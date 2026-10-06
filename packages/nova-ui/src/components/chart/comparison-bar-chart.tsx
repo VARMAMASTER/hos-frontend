@@ -68,8 +68,17 @@ interface LabelProps {
 
 interface BulletLabelProps extends LabelProps {
   index?: number;
-  // The chart's box, margins included.
-  parentViewBox?: { x: number; width: number };
+  // The chart's box, margins included (a cartesian box here; Recharts types it for polar too).
+  parentViewBox?: unknown;
+}
+
+// The right edge of a cartesian view box, or null for any other shape.
+function rightOf(box: unknown): number | null {
+  if (typeof box !== 'object' || box === null) {
+    return null;
+  }
+  const { x, width } = box as { x?: unknown; width?: unknown };
+  return typeof x === 'number' && typeof width === 'number' ? x + width : null;
 }
 
 // Actual against target per department. As a bullet chart, each department is a bar on a track with
@@ -293,7 +302,8 @@ export function ComparisonBarChart({
   const figures = ({ y, height, index, parentViewBox }: BulletLabelProps) => {
     const datum = rows[index ?? -1];
     const actual = reading(datum?.[actualKey]);
-    if (!datum || actual === null || !parentViewBox) {
+    const chartRight = rightOf(parentViewBox);
+    if (!datum || actual === null || chartRight === null) {
       return null;
     }
     const target = reading(datum[targetKey]);
@@ -301,7 +311,7 @@ export function ComparisonBarChart({
       <text
         data-bullet-label=""
         // The chart box less the right margin is the end of the track.
-        x={parentViewBox.x + parentViewBox.width - FIGURES_MARGIN + 8}
+        x={chartRight - FIGURES_MARGIN + 8}
         y={Number(y) + Number(height) / 2}
         dominantBaseline="central"
         className="fill-ink text-[12px] font-semibold tabular-nums"
