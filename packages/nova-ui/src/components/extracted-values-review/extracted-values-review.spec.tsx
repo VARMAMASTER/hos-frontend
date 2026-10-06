@@ -253,6 +253,17 @@ describe('ExtractedValuesReview: the table', () => {
     ).toBe(true);
   });
 
+  // The prototype transcribes and does not interpret ("Within range" / "Outside reference range",
+  // ADR #7 green tier). The defaults say where the number sits against the printed range, and never
+  // the clinical words Normal, High or Low.
+  it('words the default statuses as a comparison with the printed range, not as a clinical reading', () => {
+    render(<Review />);
+    const text = document.body.textContent ?? '';
+    for (const word of ['Normal', 'Abnormal', 'High', 'Low']) {
+      expect(text, word).not.toMatch(new RegExp(`\b${word}\b`));
+    }
+  });
+
   it('prints a range the caller spelt out as given', () => {
     render(<Review />);
     expect(within(row('eGFR')).getByText('> 90')).toBeTruthy();
@@ -260,11 +271,13 @@ describe('ExtractedValuesReview: the table', () => {
 
   it('shows the status as a word and an icon, never colour alone', () => {
     render(<Review />);
-    const creat = within(row('Serum creatinine')).getByText('High');
+    const creat = within(row('Serum creatinine')).getByText('Above range');
     expect(creat.closest('[data-tone]')?.querySelector('svg')).not.toBeNull();
-    expect(within(row('Serum sodium')).getByText('Normal')).toBeTruthy();
-    expect(within(row('eGFR')).getByText('Low')).toBeTruthy();
-    const crit = within(row('Serum potassium')).getByText('Critical high');
+    expect(within(row('Serum sodium')).getByText('Within range')).toBeTruthy();
+    expect(within(row('eGFR')).getByText('Below range')).toBeTruthy();
+    const crit = within(row('Serum potassium')).getByText(
+      'Above range · critical',
+    );
     expect(crit.closest('[data-tone]')?.getAttribute('data-tone')).toBe('crit');
   });
 
@@ -337,9 +350,11 @@ describe('ExtractedValuesReview: editing a value', () => {
   it('recomputes the status from the edited value', () => {
     render(<Review />);
     fireEvent.change(field('Serum potassium'), { target: { value: '4.9' } });
-    expect(within(row('Serum potassium')).getByText('Normal')).toBeTruthy();
     expect(
-      within(row('Serum potassium')).queryByText('Critical high'),
+      within(row('Serum potassium')).getByText('Within range'),
+    ).toBeTruthy();
+    expect(
+      within(row('Serum potassium')).queryByText('Above range · critical'),
     ).toBeNull();
   });
 
