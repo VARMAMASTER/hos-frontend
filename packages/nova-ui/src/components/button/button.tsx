@@ -53,6 +53,8 @@ const variants: Record<DrawnVariant, string> = {
   ai: 'border-transparent bg-ai text-on-primary hover:bg-ai-hover',
 };
 
+// variant="ai" is the plain, solid .btn-ai of the prototype (a table row action, the Approve button of
+// an approval bar). The animated, playful AI button is AiButton (components/ai-button).
 const AI_SPARK = "before:content-['✦'_/_'']";
 
 // md is .btn, sm is .btn-sm (6px by 10px, 12px type; its 7px radius is off-scale too).
