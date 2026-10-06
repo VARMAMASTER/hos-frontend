@@ -118,8 +118,8 @@ export function OtpInput({
       <label htmlFor={inputId} className="text-callout font-semibold text-ink">
         {label}
       </label>
-      <div ref={boxesRef} className="relative inline-flex self-start">
-        <div aria-hidden="true" className="flex gap-2">
+      <div ref={boxesRef} className="relative w-full">
+        <div aria-hidden="true" className="flex w-full gap-2">
           {Array.from({ length }, (_, index) => {
             const active = focused && !disabled && index === activeIndex;
             return (
@@ -128,7 +128,8 @@ export function OtpInput({
                 data-otp-box=""
                 data-active={active ? 'true' : undefined}
                 className={cx(
-                  'flex h-12 w-12 items-center justify-center rounded-md border bg-surface text-title3 font-semibold text-ink sm:h-14 sm:w-14',
+                  // Fluid: the boxes share the row and shrink to fit it (min-w-0), staying square and capped at 56px.
+                  'flex aspect-square max-w-14 min-w-0 flex-1 basis-0 items-center justify-center rounded-md border bg-surface text-title3 font-semibold text-ink',
                   error
                     ? 'border-crit'
                     : active

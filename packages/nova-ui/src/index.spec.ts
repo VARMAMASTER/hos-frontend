@@ -91,6 +91,7 @@ describe('@hos/nova-ui public API', () => {
     'TextField',
     'Textarea',
     'Tooltip',
+    'AlertDialog',
     'NotificationBell',
     'OtpInput',
     'StatGauge',

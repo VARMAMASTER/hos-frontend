@@ -1,6 +1,7 @@
 export * from './components/activity-feed/activity-feed';
 export * from './components/ai-badge/ai-badge';
 export * from './components/ai-panel/ai-panel';
+export * from './components/alert-dialog/alert-dialog';
 export * from './components/app-shell/app-shell';
 export * from './components/approval-bar/approval-bar';
 export * from './components/avatar/avatar';

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { AlertDialog } from '../components/alert-dialog/alert-dialog';
 import { Button } from '../components/button/button';
 import { Card } from '../components/card/card';
 import { NotificationBell } from '../components/notification-bell/notification-bell';
@@ -103,3 +104,29 @@ export const ToastTrigger: Story = {
     </>
   ),
 };
+
+function DischargeConfirm() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Toaster />
+      <Button onClick={() => setOpen(true)}>Discharge patient…</Button>
+      <AlertDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Discharge patient?"
+        message="Ramesh will be discharged and the bed released. This cannot be undone."
+        actions={[
+          { label: 'Cancel', role: 'cancel' },
+          {
+            label: 'Discharge',
+            role: 'destructive',
+            onSelect: () => showToast('Patient discharged', 'success'),
+          },
+        ]}
+      />
+    </>
+  );
+}
+
+export const AlertConfirm: Story = { render: () => <DischargeConfirm /> };

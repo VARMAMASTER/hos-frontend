@@ -318,6 +318,34 @@ describe('OtpInput look', () => {
     expect(view.container.innerHTML).not.toMatch(/shadow|font-medium/);
   });
 
+  // jsdom cannot measure layout, so this checks the classes that make the row fit: every box shares
+  // the row (flex-1 from a zero basis, min-width 0 so it may shrink), stays square, and is capped.
+  it('lays the boxes out fluidly, so six of them fit a narrow card without overflow', () => {
+    const view = setup();
+    const row = view.container.querySelector('[data-otp-box]')
+      ?.parentElement as HTMLElement;
+    expect(row.className).toContain('w-full');
+    expect(row.className).toContain('gap-2');
+    for (const box of view.container.querySelectorAll('[data-otp-box]')) {
+      const classes = [...box.classList];
+      expect(classes).toEqual(
+        expect.arrayContaining([
+          'flex-1',
+          'basis-0',
+          'min-w-0',
+          'aspect-square',
+          'max-w-14',
+        ]),
+      );
+      expect(classes.some((name) => /^(?:sm:)?[wh]-\d+$/.test(name))).toBe(
+        false,
+      );
+    }
+    // The wrapper takes the container's width instead of shrink-wrapping fixed boxes.
+    expect(row.parentElement?.className).toContain('w-full');
+    expect(row.parentElement?.className).not.toContain('inline-flex');
+  });
+
   it('puts className on the root and other attributes on the input', () => {
     const view = render(
       <OtpInput className="mx-auto" data-testid="otp" required />,
