@@ -73,7 +73,7 @@ export function PhoneFrame({
           <span
             data-slot="phone-status"
             // .tag-offline: 10.5px mono on the chrome's darkest stop.
-            className="ml-auto shrink-0 rounded-sm bg-chrome-1 px-2 py-0.5 font-mono text-[10.5px] font-normal text-chrome-ink"
+            className="ml-auto shrink-0 rounded-sm bg-chrome-1 px-2 py-0.5 font-mono text-[10.5px] text-chrome-ink"
           >
             {status}
           </span>
