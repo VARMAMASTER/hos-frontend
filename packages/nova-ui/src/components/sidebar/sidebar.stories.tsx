@@ -91,9 +91,9 @@ const items = (
 
 export const Default: Story = {
   args: {
-    brand: <span className="text-base font-semibold">Acme Hospital</span>,
+    brand: <span className="text-body font-semibold">Acme Hospital</span>,
     footer: (
-      <div className="text-sm">
+      <div className="text-callout">
         <p className="font-semibold">Dr. Anita Rao</p>
         <p className="text-[color:var(--nova-chrome-ink-2)]">Cardiology</p>
       </div>

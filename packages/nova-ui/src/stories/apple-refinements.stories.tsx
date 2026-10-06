@@ -138,7 +138,7 @@ function RoomChoice() {
 
 export const CoreControls: StoryObj = {
   render: () => (
-    <div className="mx-auto flex max-w-5xl flex-col gap-10 p-6">
+    <div className="mx-auto flex max-w-5xl flex-col gap-12 p-6">
       <header className="flex flex-col gap-2">
         <h1 className="text-title2 font-bold text-ink">Apple refinements</h1>
         <p className="max-w-2xl text-body text-ink-2">

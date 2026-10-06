@@ -31,7 +31,7 @@ function MenuDemo() {
           Discharge…
         </MenuItem>
       </Menu>
-      <p className="py-2 text-sm text-ink-2" aria-live="polite">
+      <p className="py-2 text-callout text-ink-2" aria-live="polite">
         {chosen}
       </p>
     </div>

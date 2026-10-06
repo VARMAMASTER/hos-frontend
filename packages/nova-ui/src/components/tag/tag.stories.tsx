@@ -15,7 +15,7 @@ export const Outline: Story = { args: { variant: 'outline' } };
 
 export const AllCombinations: Story = {
   render: () => (
-    <div className="grid grid-cols-[auto_auto_auto_auto] items-center justify-start gap-x-4 gap-y-3 text-sm text-ink-2">
+    <div className="grid grid-cols-[auto_auto_auto_auto] items-center justify-start gap-x-4 gap-y-3 text-callout text-ink-2">
       <span />
       <span>neutral</span>
       <span>primary</span>

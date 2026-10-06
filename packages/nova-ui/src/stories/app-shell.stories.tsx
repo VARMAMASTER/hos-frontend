@@ -91,8 +91,8 @@ const icons = {
 
 function Brand() {
   return (
-    <span className="flex items-center gap-2 text-base font-semibold">
-      <span className="grid size-8 place-items-center rounded-md bg-primary text-sm text-on-primary">
+    <span className="flex items-center gap-2 text-body font-semibold">
+      <span className="grid size-8 place-items-center rounded-md bg-primary text-callout text-on-primary">
         H
       </span>
       Acme Hospital
@@ -152,7 +152,7 @@ function Overview() {
             description="Waiting for review"
             actions={<Chip tone="ai">AI summary ready</Chip>}
           />
-          <CardBody className="text-sm text-ink-2">
+          <CardBody className="text-callout text-ink-2">
             14 admissions across 6 wards. Ward 4B has the longest queue.
           </CardBody>
         </Card>
@@ -169,7 +169,7 @@ function ShellPage() {
         <Sidebar
           brand={<Brand />}
           footer={
-            <div className="text-sm">
+            <div className="text-callout">
               <p className="font-semibold">Dr. Anita Rao</p>
               <p className="text-[color:var(--nova-chrome-ink-2)]">
                 Cardiology

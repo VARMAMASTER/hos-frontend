@@ -74,7 +74,7 @@ export const Surfaces: StoryObj = {
             actions={<AiBadge />}
           />
         </Card>
-        <h2 className="nova-gradient-text w-fit text-3xl font-semibold">
+        <h2 className="nova-gradient-text w-fit text-title3 font-semibold">
           Brand gradient text
         </h2>
       </div>
@@ -82,19 +82,19 @@ export const Surfaces: StoryObj = {
       {/* The remaining surface utilities, until components use them. */}
       <div className="grid gap-4 md:grid-cols-3">
         <div className="nova-chrome rounded-lg p-4">
-          <p className="text-sm font-semibold">nova-chrome</p>
-          <p className="text-sm text-(color:--nova-chrome-ink-2)">
+          <p className="text-callout font-semibold">nova-chrome</p>
+          <p className="text-callout text-(color:--nova-chrome-ink-2)">
             Secondary ink on the app frame
           </p>
         </div>
         <div className="nova-overlay rounded-lg p-4">
-          <p className="text-sm font-semibold text-ink">nova-overlay</p>
-          <p className="text-sm text-ink-3">Menus, dialogs and tooltips</p>
+          <p className="text-callout font-semibold text-ink">nova-overlay</p>
+          <p className="text-callout text-ink-3">Menus, dialogs and tooltips</p>
         </div>
         <label className="block">
-          <span className="mb-1 block text-sm text-ink-3">nova-field</span>
+          <span className="mb-1 block text-callout text-ink-3">nova-field</span>
           <input
-            className="nova-field h-10 w-full rounded-md px-3 text-sm text-ink"
+            className="nova-field h-10 w-full rounded-md px-3 text-callout text-ink"
             placeholder="Search patients"
           />
         </label>

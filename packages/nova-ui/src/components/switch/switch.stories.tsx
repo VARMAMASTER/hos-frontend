@@ -27,7 +27,7 @@ function ControlledSwitch() {
         checked={on}
         onCheckedChange={setOn}
       />
-      <p className="text-sm text-ink-2" aria-live="polite">
+      <p className="text-callout text-ink-2" aria-live="polite">
         {on ? 'Staff will be told to gown up.' : 'Standard precautions.'}
       </p>
     </div>

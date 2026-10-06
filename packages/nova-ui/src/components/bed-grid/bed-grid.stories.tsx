@@ -54,7 +54,7 @@ function Selectable() {
   return (
     <div className="space-y-3">
       <BedGrid beds={beds} ariaLabel="Ward A beds" onSelect={setSelected} />
-      <p role="status" className="text-sm text-ink-2">
+      <p role="status" className="text-callout text-ink-2">
         {bed ? `Selected bed ${bed.label} (${bed.status})` : 'No bed selected'}
       </p>
     </div>

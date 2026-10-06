@@ -17,7 +17,7 @@ export const CustomLabel: Story = { args: { label: 'AI summary' } };
 
 export const InContext: Story = {
   render: () => (
-    <p className="flex items-center gap-2 text-sm text-ink">
+    <p className="flex items-center gap-2 text-callout text-ink">
       Discharge summary
       <AiBadge />
     </p>
