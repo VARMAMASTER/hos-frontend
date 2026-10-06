@@ -135,6 +135,7 @@ export interface ExtractedValuesReviewLabels {
   reportDate: string;
   patient: string;
   intro: string;
+  introApproved: string;
   caption: string;
   columns: ExtractedValuesReviewColumns;
   reading: string;
@@ -198,6 +199,8 @@ export const EXTRACTED_VALUES_REVIEW_LABELS: Readonly<ExtractedValuesReviewLabel
     patient: 'Patient',
     intro:
       'Nothing below is in the chart yet. Correct any value, untick what you don’t want, then approve. Only what you tick is filed, under your name.',
+    introApproved:
+      'The values marked Filed are in the chart. The rest were not filed.',
     caption: 'Values read from the report',
     columns: {
       include: 'Include',
@@ -802,7 +805,9 @@ export function ExtractedValuesReview({
   } else {
     body = (
       <div className="flex flex-col gap-3">
-        <p className="text-[12px] text-ink-2">{words.intro}</p>
+        <p className="text-[12px] text-ink-2">
+          {approved ? words.introApproved : words.intro}
+        </p>
         {patientMismatch ? (
           // The confirmation sits under the banner, on the block's own wash, where its edge and
           // label are proven; the banner says what is wrong.
@@ -1100,7 +1105,7 @@ function ExtractedRow({
         {locked ? (
           <span
             className={cx(
-              'inline-flex items-center gap-1 text-[12px] font-semibold [&_svg]:size-3',
+              'inline-flex items-center gap-1 whitespace-nowrap text-[12px] font-semibold [&_svg]:size-3',
               ticked ? 'text-good-deep' : 'text-ink-2',
             )}
           >
@@ -1129,7 +1134,9 @@ function ExtractedRow({
         ) : null}
       </TableHeaderCell>
       <TableCell>
-        <div className="flex items-center gap-1.5">
+        {/* The unit wraps under the value when the table is squeezed, so the table's narrowest
+            width is the input's, not the input's and a long unit's. */}
+        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
           {locked ? (
             <span
               className="font-mono text-[12px] font-semibold tabular-nums"

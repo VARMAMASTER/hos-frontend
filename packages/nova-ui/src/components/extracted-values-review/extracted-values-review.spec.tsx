@@ -485,6 +485,16 @@ describe('ExtractedValuesReview: approving', () => {
     expect(within(row('Serum creatinine')).getByText('1.4')).toBeTruthy();
   });
 
+  it('no longer says "nothing is in the chart" once approved', () => {
+    render(<Review defaultState="approved" approvedBy="Dr. K. Ramesh" />);
+    expect(screen.queryByText(/Nothing below is in the chart yet/)).toBeNull();
+    expect(
+      screen.getByText(
+        'The values marked Filed are in the chart. The rest were not filed.',
+      ),
+    ).toBeTruthy();
+  });
+
   it('shows a stored approval with its time', () => {
     render(
       <Review
