@@ -170,6 +170,133 @@ describe('ApprovalBar', () => {
     expect(screen.queryByText(/Approved by/)).toBeNull();
   });
 
+  it('takes its button words as props, so they can be translated or changed to "Sign"', () => {
+    render(
+      <ApprovalBar
+        onApprove={noop}
+        onEdit={noop}
+        onReject={noop}
+        approveLabel="Sign"
+        editLabel="Modifier"
+        rejectLabel="Rejeter"
+      />,
+    );
+    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual([
+      'Sign',
+      'Modifier',
+      'Rejeter',
+    ]);
+  });
+
+  it('names each button with the thing it acts on when labelledBy is given', () => {
+    render(
+      <>
+        <h3 id="summary-title">Discharge summary</h3>
+        <ApprovalBar
+          onApprove={noop}
+          onReject={noop}
+          labelledBy="summary-title"
+        />
+      </>,
+    );
+    expect(button('Approve Discharge summary')).toBeTruthy();
+    expect(button('Reject Discharge summary')).toBeTruthy();
+  });
+
+  it('can hold Approve unavailable on its own (aria-disabled, focusable, fires nothing)', () => {
+    const onApprove = vi.fn();
+    const onReject = vi.fn();
+    render(
+      <ApprovalBar onApprove={onApprove} onReject={onReject} approveDisabled />,
+    );
+    const approve = button('Approve');
+    expect(approve.getAttribute('aria-disabled')).toBe('true');
+    expect(approve.disabled).toBe(false);
+    fireEvent.click(approve);
+    expect(onApprove).not.toHaveBeenCalled();
+    fireEvent.click(button('Reject'));
+    expect(onReject).toHaveBeenCalledTimes(1);
+  });
+
+  it('adds caller actions to the row', () => {
+    render(
+      <ApprovalBar
+        onApprove={noop}
+        actions={<button type="button">Open the theatre record</button>}
+      />,
+    );
+    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual([
+      'Approve',
+      'Open the theatre record',
+    ]);
+  });
+
+  it('offers Undo beside the approval record when it has an onUndo', () => {
+    const onUndo = vi.fn();
+    render(
+      <ApprovalBar
+        onApprove={noop}
+        onUndo={onUndo}
+        approvedBy="Dr. Meera Iyer"
+        undoLabel="Annuler"
+      />,
+    );
+    fireEvent.click(button('Annuler'));
+    expect(onUndo).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows a custom approval note in place of the default record', () => {
+    render(
+      <ApprovalBar
+        onApprove={noop}
+        approvedBy="Dr. Meera Iyer"
+        approvedNote="Signed by Dr. Meera Iyer — logged to the audit trail."
+      />,
+    );
+    expect(
+      screen.getByText('Signed by Dr. Meera Iyer — logged to the audit trail.'),
+    ).toBeTruthy();
+    expect(screen.queryByText(/Approved by/)).toBeNull();
+  });
+
+  it('moves focus to Undo when the controls go, if it offers one', () => {
+    const { rerender } = render(<ApprovalBar onApprove={noop} onUndo={noop} />);
+    button('Approve').focus();
+    rerender(
+      <ApprovalBar
+        onApprove={noop}
+        onUndo={noop}
+        approvedBy="Dr. Meera Iyer"
+      />,
+    );
+    expect(document.activeElement).toBe(button('Undo'));
+  });
+
+  it('moves focus back to Approve after Undo, instead of dropping it to <body>', () => {
+    const { rerender } = render(
+      <ApprovalBar
+        onApprove={noop}
+        onUndo={noop}
+        approvedBy="Dr. Meera Iyer"
+      />,
+    );
+    button('Undo').focus();
+    rerender(<ApprovalBar onApprove={noop} onUndo={noop} />);
+    expect(document.activeElement).toBe(button('Approve'));
+  });
+
+  it('can leave the announcement to someone else (no second live region)', () => {
+    render(
+      <ApprovalBar
+        onApprove={noop}
+        approvedBy="Dr. Meera Iyer"
+        announce={false}
+      />,
+    );
+    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.getByText(/Approved by Dr. Meera Iyer/)).toBeTruthy();
+  });
+
   it('lets the group label be translated and passes attributes through', () => {
     render(
       <ApprovalBar
