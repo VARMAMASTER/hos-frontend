@@ -2,7 +2,8 @@
 // The colour pairings the call transcript and the AI draft reply paint on the product's own tokens,
 // proven as theme/legibility.ts proves the rest: text at 4.5:1, marks and rings at 3:1, for HOS
 // Violet and the 480-brand sweep, in both schemes. The call frame, its bubbles and the footer are
-// opaque under every material. (The WhatsApp phone's pairings are in tokens/whatsapp.spec.ts.)
+// opaque under every material. The WhatsApp phone's pairings (tokens/whatsapp.ts) are swept here
+// too, so each brand's palette is derived once for every messaging pairing.
 //
 // These belong in legibilityChecks() (theme/legibility.ts is another owner's file); until they move
 // there, this spec holds them.
@@ -11,6 +12,7 @@ import { withLuminance } from '../../theme/colour';
 import { contrastRatio } from '../../theme/contrast';
 import { deriveNovaPalette, suggestNovaBrand } from '../../theme/derive';
 import { resolvePalette, type ResolvedPalette } from '../../theme/legibility';
+import { whatsappLegibilityFailures } from '../../tokens/whatsapp';
 
 const TEXT = 4.5;
 const MARK = 3;
@@ -123,7 +125,7 @@ function failures(palette: ResolvedPalette, scheme: string): string[] {
   });
 }
 
-describe('the call transcript and draft reply pairings', () => {
+describe('the messaging pairings: call transcript, draft reply and the WhatsApp phone', () => {
   it.each(SCHEMES)('hold for HOS Violet in the %s scheme', (scheme) => {
     expect(failures(resolvePalette(scheme), scheme)).toEqual([]);
   });
@@ -147,10 +149,12 @@ describe('the call transcript and draft reply pairings', () => {
             primary,
           });
           for (const scheme of SCHEMES) {
+            const resolved = resolvePalette(scheme, palette);
             found.push(
-              ...failures(resolvePalette(scheme, palette), scheme).map(
-                (failure) => `${primary} ${failure}`,
-              ),
+              ...[
+                ...failures(resolved, scheme),
+                ...whatsappLegibilityFailures(resolved, scheme),
+              ].map((failure) => `${primary} ${failure}`),
             );
           }
         }

@@ -4,13 +4,13 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { contrastRatio, mixColours } from '../theme/contrast';
-import { withLuminance } from '../theme/colour';
-import { deriveNovaPalette, suggestNovaBrand } from '../theme/derive';
-import { resolvePalette, type ResolvedPalette } from '../theme/legibility';
+import { contrastRatio } from '../theme/contrast';
+import { resolvePalette } from '../theme/legibility';
 import {
   WHATSAPP_COLOURS,
   WHATSAPP_HELD_BY_A_PROOF,
+  WHATSAPP_TEXT_MINIMUM,
+  whatsappLegibilityFailures,
   type WhatsAppColour,
 } from './whatsapp';
 
@@ -187,158 +187,11 @@ describe('the WhatsApp colours against the prototype', () => {
   );
 });
 
-// Every pairing the WhatsApp thread paints, in both schemes. Text holds 4.5:1 (the time stamp is
-// 9.5px, the smallest text in the product); the focus ring and the failed mark hold 3:1.
-const TEXT = 4.5;
-const MARK = 3;
+const TEXT = WHATSAPP_TEXT_MINIMUM;
 const SCHEMES = ['light', 'dark'] as const;
-type Scheme = (typeof SCHEMES)[number];
-
-const wa = (name: WhatsAppColour, scheme: Scheme) =>
+const wa = (name: WhatsAppColour, scheme: (typeof SCHEMES)[number]) =>
   WHATSAPP_COLOURS[name][scheme];
-
-type Ground = (scheme: Scheme, palette: ResolvedPalette) => string;
-const token =
-  (name: WhatsAppColour): Ground =>
-  (scheme) =>
-    wa(name, scheme);
-const nova =
-  (name: keyof ResolvedPalette): Ground =>
-  (_scheme, palette) =>
-    palette[name];
-
-const PAIRINGS: ReadonlyArray<readonly [string, Ground, Ground, number]> = [
-  [
-    'message text on an incoming bubble',
-    token('--nova-wa-ink'),
-    token('--nova-wa-in'),
-    TEXT,
-  ],
-  [
-    'message text on an outgoing bubble',
-    token('--nova-wa-ink'),
-    token('--nova-wa-out'),
-    TEXT,
-  ],
-  [
-    'time, gloss and speaker on an incoming bubble',
-    token('--nova-wa-ink-2'),
-    token('--nova-wa-in'),
-    TEXT,
-  ],
-  [
-    'time, gloss and speaker on an outgoing bubble',
-    token('--nova-wa-ink-2'),
-    token('--nova-wa-out'),
-    TEXT,
-  ],
-  [
-    'the after-hours notice on its pill',
-    token('--nova-wa-ink-2'),
-    token('--nova-wa-in'),
-    TEXT,
-  ],
-  [
-    'a quick reply on its button',
-    token('--nova-wa-accent'),
-    token('--nova-wa-in'),
-    TEXT,
-  ],
-  [
-    'a quick reply under the pointer',
-    token('--nova-wa-accent'),
-    token('--nova-wa-hover'),
-    TEXT,
-  ],
-  [
-    'a locked quick reply',
-    token('--nova-wa-ink-2'),
-    token('--nova-wa-in'),
-    TEXT,
-  ],
-  [
-    '"Read" beside the ticks',
-    token('--nova-wa-accent'),
-    token('--nova-wa-out'),
-    TEXT,
-  ],
-  [
-    '"Read" beside the ticks, incoming',
-    token('--nova-wa-accent'),
-    token('--nova-wa-in'),
-    TEXT,
-  ],
-  [
-    'the header name',
-    token('--nova-wa-header-ink'),
-    token('--nova-wa-header'),
-    TEXT,
-  ],
-  [
-    'the focus ring on the wall',
-    token('--nova-wa-accent'),
-    token('--nova-wa-wall'),
-    MARK,
-  ],
-  [
-    'the focus ring on an incoming bubble',
-    token('--nova-wa-accent'),
-    token('--nova-wa-in'),
-    MARK,
-  ],
-  [
-    'the focus ring on an outgoing bubble',
-    token('--nova-wa-accent'),
-    token('--nova-wa-out'),
-    MARK,
-  ],
-  [
-    '"Not sent" under a bubble, on the wall',
-    nova('--nova-color-crit-deep'),
-    token('--nova-wa-wall'),
-    TEXT,
-  ],
-  [
-    'the failed mark on an outgoing bubble',
-    nova('--nova-color-crit-deep'),
-    token('--nova-wa-out'),
-    MARK,
-  ],
-  [
-    'the failed mark on an incoming bubble',
-    nova('--nova-color-crit-deep'),
-    token('--nova-wa-in'),
-    MARK,
-  ],
-  [
-    'the header status tag',
-    nova('--nova-color-chrome-ink'),
-    nova('--nova-color-chrome-1'),
-    TEXT,
-  ],
-  [
-    'the header avatar initials (chrome ink over its 15% wash on the header)',
-    nova('--nova-color-chrome-ink'),
-    (scheme, palette) =>
-      mixColours(
-        palette['--nova-color-chrome-ink'],
-        0.15,
-        wa('--nova-wa-header', scheme),
-      ),
-    TEXT,
-  ],
-];
-
-function failures(palette: ResolvedPalette, scheme: Scheme): string[] {
-  return PAIRINGS.flatMap(([usedBy, fg, bg, minimum]) => {
-    const f = fg(scheme, palette);
-    const b = bg(scheme, palette);
-    const ratio = contrastRatio(f, b);
-    return ratio < minimum
-      ? [`${scheme} ${usedBy}: ${f} on ${b} ${ratio.toFixed(2)}:1 < ${minimum}`]
-      : [];
-  });
-}
+const failures = whatsappLegibilityFailures;
 
 describe('the WhatsApp pairings', () => {
   it.each(SCHEMES)('hold for HOS Violet in the %s scheme', (scheme) => {
@@ -366,28 +219,16 @@ describe('the WhatsApp pairings', () => {
     }
   });
 
-  // The hospital's theme moves the chrome ink and the header tag; the 480-brand sweep of
-  // legibility.spec.ts, in both schemes.
-  it('hold for 480 hospital brands, in both schemes', () => {
-    const found: string[] = [];
-    for (let hue = 0; hue < 360; hue += 15) {
-      for (const chroma of [0, 0.05, 0.12, 0.2, 0.3]) {
-        for (const y of [0.04, 0.1, 0.142, 0.18]) {
-          const primary = withLuminance(hue, chroma, y, 'darker');
-          const palette = deriveNovaPalette({
-            ...suggestNovaBrand(primary),
-            primary,
-          });
-          for (const scheme of SCHEMES) {
-            found.push(
-              ...failures(resolvePalette(scheme, palette), scheme).map(
-                (failure) => `${primary} ${failure}`,
-              ),
-            );
-          }
-        }
-      }
-    }
-    expect(found).toEqual([]);
-  }, 60_000);
+  // The hospital's theme moves the chrome ink and the header tag: the 480-brand sweep is in
+  // components/call-transcript-console/messaging-legibility.spec.ts, which derives each brand's
+  // palette once for every messaging pairing.
+  it('would catch a failing pair', () => {
+    const palette = {
+      ...resolvePalette('light'),
+      '--nova-color-chrome-ink': '#3A3A3A',
+    };
+    expect(failures(palette, 'light').join(' | ')).toContain(
+      'the header status tag',
+    );
+  });
 });

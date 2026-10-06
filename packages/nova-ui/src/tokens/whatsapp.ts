@@ -1,3 +1,6 @@
+import { contrastRatio, mixColours } from '../theme/contrast';
+import type { ResolvedPalette } from '../theme/legibility';
+
 // WhatsApp's brand colours, for a thread drawn as the patient sees it on their phone (WhatsAppThread,
 // ChatBubble's whatsapp palette). They are the one exception to "theme tokens only": another
 // company's brand, so a hospital's theme never moves them. They live here and in one marked block at
@@ -60,3 +63,162 @@ export const WHATSAPP_HELD_BY_A_PROOF: Readonly<
   // WhatsApp's dark secondary ink #8696A0 is 2.61:1 on its own dark outgoing bubble.
   '--nova-wa-ink-2': { dark: '#8696A0' },
 };
+
+// Every pairing the WhatsApp thread paints, in both schemes. Text holds 4.5:1 (the time stamp is
+// 9.5px, the smallest text in the product); the focus ring and the failed mark hold 3:1.
+export const WHATSAPP_TEXT_MINIMUM = 4.5;
+const TEXT = WHATSAPP_TEXT_MINIMUM;
+const MARK = 3;
+type Scheme = 'light' | 'dark';
+
+const wa = (name: WhatsAppColour, scheme: Scheme) =>
+  WHATSAPP_COLOURS[name][scheme];
+
+export type Ground = (scheme: Scheme, palette: ResolvedPalette) => string;
+const token =
+  (name: WhatsAppColour): Ground =>
+  (scheme) =>
+    wa(name, scheme);
+const nova =
+  (name: keyof ResolvedPalette): Ground =>
+  (_scheme, palette) =>
+    palette[name];
+
+export const WHATSAPP_PAIRINGS: ReadonlyArray<
+  readonly [string, Ground, Ground, number]
+> = [
+  [
+    'message text on an incoming bubble',
+    token('--nova-wa-ink'),
+    token('--nova-wa-in'),
+    TEXT,
+  ],
+  [
+    'message text on an outgoing bubble',
+    token('--nova-wa-ink'),
+    token('--nova-wa-out'),
+    TEXT,
+  ],
+  [
+    'time, gloss and speaker on an incoming bubble',
+    token('--nova-wa-ink-2'),
+    token('--nova-wa-in'),
+    TEXT,
+  ],
+  [
+    'time, gloss and speaker on an outgoing bubble',
+    token('--nova-wa-ink-2'),
+    token('--nova-wa-out'),
+    TEXT,
+  ],
+  [
+    'the after-hours notice on its pill',
+    token('--nova-wa-ink-2'),
+    token('--nova-wa-in'),
+    TEXT,
+  ],
+  [
+    'a quick reply on its button',
+    token('--nova-wa-accent'),
+    token('--nova-wa-in'),
+    TEXT,
+  ],
+  [
+    'a quick reply under the pointer',
+    token('--nova-wa-accent'),
+    token('--nova-wa-hover'),
+    TEXT,
+  ],
+  [
+    'a locked quick reply',
+    token('--nova-wa-ink-2'),
+    token('--nova-wa-in'),
+    TEXT,
+  ],
+  [
+    '"Read" beside the ticks',
+    token('--nova-wa-accent'),
+    token('--nova-wa-out'),
+    TEXT,
+  ],
+  [
+    '"Read" beside the ticks, incoming',
+    token('--nova-wa-accent'),
+    token('--nova-wa-in'),
+    TEXT,
+  ],
+  [
+    'the header name',
+    token('--nova-wa-header-ink'),
+    token('--nova-wa-header'),
+    TEXT,
+  ],
+  [
+    'the focus ring on the wall',
+    token('--nova-wa-accent'),
+    token('--nova-wa-wall'),
+    MARK,
+  ],
+  [
+    'the focus ring on an incoming bubble',
+    token('--nova-wa-accent'),
+    token('--nova-wa-in'),
+    MARK,
+  ],
+  [
+    'the focus ring on an outgoing bubble',
+    token('--nova-wa-accent'),
+    token('--nova-wa-out'),
+    MARK,
+  ],
+  [
+    '"Not sent" under a bubble, on the wall',
+    nova('--nova-color-crit-deep'),
+    token('--nova-wa-wall'),
+    TEXT,
+  ],
+  [
+    'the failed mark on an outgoing bubble',
+    nova('--nova-color-crit-deep'),
+    token('--nova-wa-out'),
+    MARK,
+  ],
+  [
+    'the failed mark on an incoming bubble',
+    nova('--nova-color-crit-deep'),
+    token('--nova-wa-in'),
+    MARK,
+  ],
+  [
+    'the header status tag',
+    nova('--nova-color-chrome-ink'),
+    nova('--nova-color-chrome-1'),
+    TEXT,
+  ],
+  [
+    'the header avatar initials (chrome ink over its 15% wash on the header)',
+    nova('--nova-color-chrome-ink'),
+    (scheme, palette) =>
+      mixColours(
+        palette['--nova-color-chrome-ink'],
+        0.15,
+        wa('--nova-wa-header', scheme),
+      ),
+    TEXT,
+  ],
+];
+
+// The pairings that fall below their minimum for one palette and scheme, as readable lines.
+export function whatsappLegibilityFailures(
+  palette: ResolvedPalette,
+  scheme: Scheme,
+): string[] {
+  return WHATSAPP_PAIRINGS.flatMap(([usedBy, fg, bg, minimum]) => {
+    const f = fg(scheme, palette);
+    const b = bg(scheme, palette);
+    const ratio = contrastRatio(f, b);
+    return ratio < minimum
+      ? [`${scheme} ${usedBy}: ${f} on ${b} ${ratio.toFixed(2)}:1 < ${minimum}`]
+      : [];
+  });
+}
