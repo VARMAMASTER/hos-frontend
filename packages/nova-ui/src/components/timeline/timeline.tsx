@@ -430,7 +430,7 @@ function Skeleton({
 }) {
   const compact = density === 'compact';
   // Plain shapes standing where the events will be; the pulse is for people who allow motion.
-  const bar = 'motion-safe:animate-pulse rounded-full bg-border';
+  const bar = 'motion-safe:animate-pulse rounded-full bg-border-strong';
   return (
     <div {...rest} role="status" aria-busy="true" data-density={density}>
       <VisuallyHidden>{label}</VisuallyHidden>

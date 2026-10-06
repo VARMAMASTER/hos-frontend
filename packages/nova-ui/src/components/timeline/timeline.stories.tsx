@@ -120,7 +120,7 @@ const actions: [string, TimelineItem['tone']][] = [
 const audit: TimelineItem[] = Array.from({ length: 14 }, (_, index) => {
   const [title, tone] = actions[index % actions.length] ??
     actions[0] ?? ['', undefined];
-  const minutes = 6 + index * 47;
+  const minutes = 6 + index * 173;
   return {
     id: `audit-${index}`,
     at: new Date(Date.parse(NOW) - minutes * 60_000),

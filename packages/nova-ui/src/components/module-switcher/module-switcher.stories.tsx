@@ -87,7 +87,7 @@ const nurseModules: ModuleOption[] = hosModules.map((module) => {
 });
 
 const decorate: Decorator = (Story) => (
-  <div className="nova-chrome h-[28rem] w-72 rounded-lg p-3">
+  <div className="nova-chrome h-[44rem] w-72 rounded-lg p-3">
     <Story />
   </div>
 );
