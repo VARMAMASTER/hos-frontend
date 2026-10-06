@@ -27,6 +27,8 @@ export const primitives = {
     ink: '#F1EEFB',
     accent: '#A78BFA',
     glow2: '#60A5FA',
+    // The ring that cuts a badge out of the top bar (.tb-ico .tb-dot), a literal in the prototype.
+    ring: '#221448',
   },
   // The data palette (see --nova-chart-* in semantic.ts): sky, gold, rose, olive, lavender, plum.
   data: {

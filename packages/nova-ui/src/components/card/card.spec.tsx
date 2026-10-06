@@ -33,40 +33,40 @@ describe('Card', () => {
 });
 
 describe('Card variant', () => {
-  it('is a glass/solid panel by default', () => {
+  it('is the prototype card by default: opaque under either material', () => {
     render(<Card>default card</Card>);
     const card = screen.getByText('default card');
     expect(card.dataset['variant']).toBe('panel');
-    expect(card.classList.contains('nova-surface')).toBe(true);
+    expect(card.classList.contains('nova-card')).toBe(true);
+    expect(card.classList.contains('nova-surface')).toBe(false);
     expect(card.classList.contains('nova-data')).toBe(false);
   });
 
-  it('renders the panel variant with the surface utility', () => {
-    render(<Card variant="panel">panel card</Card>);
-    const card = screen.getByText('panel card');
-    expect(card.dataset['variant']).toBe('panel');
-    expect(card.classList.contains('nova-surface')).toBe(true);
-  });
-
-  it('renders the data variant with the opaque data utility and none of the glass', () => {
+  it('renders the data variant with the opaque data utility (the gradient edge)', () => {
     render(<Card variant="data">data card</Card>);
     const card = screen.getByText('data card');
     expect(card.dataset['variant']).toBe('data');
     expect(card.classList.contains('nova-data')).toBe(true);
-    expect(card.classList.contains('nova-surface')).toBe(false);
+    expect(card.classList.contains('nova-card')).toBe(false);
   });
 
-  it('does not paint an opaque fill, border or shadow over the glass panel', () => {
-    // bg-surface would cover nova-surface's translucent fill and defeat the material.
-    render(<Card>glass card</Card>);
-    const card = screen.getByText('glass card');
+  it('renders the glass variant with the material-aware glass panel', () => {
+    render(<Card variant="glass">glass card</Card>);
+    expect(
+      screen.getByText('glass card').classList.contains('nova-surface'),
+    ).toBe(true);
+  });
+
+  it('paints nothing over the surface utility: fill, border and shadow come from it', () => {
+    render(<Card>plain card</Card>);
+    const card = screen.getByText('plain card');
     for (const flat of ['bg-surface', 'border', 'border-border', 'shadow-sm']) {
       expect(card.classList.contains(flat)).toBe(false);
     }
   });
 
-  it.each(['panel', 'data'] as const)(
-    'keeps the rounded corners, merges className and passes attributes through (%s)',
+  it.each(['panel', 'data', 'glass'] as const)(
+    'rounds at the prototype card radius, merges className and passes attributes through (%s)',
     (variant) => {
       render(
         <Card variant={variant} className="max-w-xl" id="claims">
@@ -74,26 +74,33 @@ describe('Card variant', () => {
         </Card>,
       );
       const card = screen.getByText(`merged ${variant}`);
-      expect(card.classList.contains('rounded-lg')).toBe(true);
+      expect(card.classList.contains('rounded-md')).toBe(true);
       expect(card.classList.contains('max-w-xl')).toBe(true);
       expect(card.id).toBe('claims');
     },
   );
 });
 
-describe('Card, Apple-refined', () => {
-  it('sets the title at 600 on the headline step and the supporting copy on callout', () => {
+describe('Card, the prototype .card-h and .card-b', () => {
+  it('sets an h2 title as the prototype h2 (17px semibold) with the .tiny description beside it', () => {
     render(<CardHeader title="Ward 4B" description="12 of 18 beds" />);
     const title = screen.getByRole('heading', { name: 'Ward 4B' });
     expect([...title.classList]).toEqual(
-      expect.arrayContaining(['text-headline', 'font-semibold']),
+      expect.arrayContaining(['text-[17px]', 'font-semibold', 'tracking-h2']),
     );
-    expect(screen.getByText('12 of 18 beds').classList).toContain(
-      'text-callout',
+    expect([...screen.getByText('12 of 18 beds').classList]).toEqual(
+      expect.arrayContaining(['text-[12px]', 'text-ink-2']),
     );
   });
 
-  it('pads the header, body and footer by 20 and lays the footer out space-between', () => {
+  it('sets an h3 title as the prototype h3 (14px semibold)', () => {
+    render(<CardHeader title="Vitals" headingLevel={3} />);
+    expect([
+      ...screen.getByRole('heading', { name: 'Vitals' }).classList,
+    ]).toEqual(expect.arrayContaining(['text-[14px]', 'font-semibold']));
+  });
+
+  it('pads the header 12 by 16 on the tinted head, the body 16, and lays the footer out space-between', () => {
     render(
       <Card>
         <CardHeader title="Claims" />
@@ -104,51 +111,49 @@ describe('Card, Apple-refined', () => {
         </CardFooter>
       </Card>,
     );
-    const header = screen
-      .getByRole('heading', { name: 'Claims' })
-      .closest('.p-5');
-    expect(header).not.toBeNull();
-    expect(screen.getByText('body').classList).toContain('p-5');
+    const header = screen.getByRole('heading', { name: 'Claims' })
+      .parentElement as HTMLElement;
+    expect([...header.classList]).toEqual(
+      expect.arrayContaining(['nova-card-head', 'px-4', 'py-3', 'border-b']),
+    );
+    expect(screen.getByText('body').classList).toContain('p-4');
     const footer = screen.getByText('3 open').parentElement as HTMLElement;
     expect([...footer.classList]).toEqual(
-      expect.arrayContaining(['flex', 'justify-between', 'p-5', 'border-t']),
+      expect.arrayContaining(['flex', 'justify-between', 'border-t']),
     );
-  });
-
-  it('presses an interactive card to scale(0.98), only when motion is welcome', () => {
-    render(
-      <>
-        <Card interactive>pressable</Card>
-        <Card>still</Card>
-      </>,
-    );
-    const pressable = screen.getByText('pressable');
-    expect(pressable.classList).toContain('motion-safe:active:scale-[0.98]');
-    expect(pressable.dataset['interactive']).toBe('true');
-    expect(screen.getByText('still').className).not.toMatch(/scale/);
   });
 
   it.each([
     ['panel', 'surface'],
     ['data', 'data'],
+    ['glass', 'surface'],
   ] as const)(
-    'steps an interactive %s card from elevation 1 to 2 on hover, with no transition under reduced motion',
+    'lifts an interactive %s card 2px to shadow-md on hover, only when motion is welcome',
     (variant, token) => {
       render(
-        <Card variant={variant} interactive>
-          hover me
-        </Card>,
+        <>
+          <Card variant={variant} interactive>
+            hover me
+          </Card>
+          <Card variant={variant}>still</Card>
+        </>,
       );
       const card = screen.getByText('hover me');
-      expect(card.classList).toContain(
-        `hover:[--nova-${token}-lift:var(--nova-elevation-2)]`,
+      expect(card.dataset['interactive']).toBe('true');
+      expect([...card.classList]).toEqual(
+        expect.arrayContaining([
+          `hover:[--nova-${token}-lift:var(--nova-shadow-md)]`,
+          'hover:border-border-strong',
+          'motion-safe:hover:-translate-y-0.5',
+          'motion-reduce:transition-none',
+        ]),
       );
-      expect(card.classList).toContain('motion-reduce:transition-none');
       expect(card.className).toMatch(/transition-\[[^\]]*box-shadow/);
+      expect(screen.getByText('still').className).not.toMatch(/translate|lift/);
     },
   );
 
-  it.each(['panel', 'data'] as const)(
+  it.each(['panel', 'data', 'glass'] as const)(
     'marks a selected %s card for the 2px primary border theme.css draws, and nothing else',
     (variant) => {
       render(

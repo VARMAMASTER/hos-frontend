@@ -73,6 +73,7 @@
   --color-chrome-ink: var(--nova-color-chrome-ink);
   --color-chrome-accent: var(--nova-color-chrome-accent);
   --color-chrome-accent-soft: var(--nova-color-chrome-accent-soft);
+  --color-chrome-ring: var(--nova-color-chrome-ring);
   --radius-sm: var(--nova-radius-sm);
   --radius-md: var(--nova-radius-md);
   --radius-lg: var(--nova-radius-lg);
@@ -137,6 +138,7 @@
   --nova-color-chrome-accent: #A78BFA;
   --nova-color-chrome-accent-soft: rgba(167, 139, 250, 0.18);
   --nova-color-chrome-glow-2: #60A5FA;
+  --nova-color-chrome-ring: #221448;
   --nova-chart-1: #248FCC;
   --nova-chart-2: #B38A00;
   --nova-chart-3: #E75594;
@@ -300,6 +302,7 @@
 :root {
   --nova-gradient-ai-rail: linear-gradient(180deg, #6D4FE0 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%);
   --nova-gradient-edge: linear-gradient(135deg, rgba(167,139,250,.55), rgba(34,211,238,.26) 60%, transparent 85%);
+  --nova-gradient-bar: linear-gradient(90deg, var(--nova-color-chrome-accent), var(--nova-color-chrome-glow-2));
   --nova-gradient-edge-kpi: linear-gradient(135deg, rgba(167,139,250,.5), rgba(34,211,238,.24) 65%, transparent 85%);
   --nova-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E");
   --nova-grain-hero: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -354,6 +357,17 @@
   }
 }
 
+/* The prototype's .card-h: a whisper of top-lit tint (panel-2 into the panel) that separates a card's
+   header from its body, under the card's own top corners. */
+@utility nova-card-head {
+  background-image: linear-gradient(
+    180deg,
+    var(--nova-color-surface-2),
+    var(--nova-color-surface)
+  );
+  border-radius: var(--nova-radius-md) var(--nova-radius-md) 0 0;
+}
+
 /* A glass panel: the prototype's .glass-panel on glass, the card on solid. */
 @utility nova-surface {
   --nova-focus-ring: var(--nova-color-primary);
@@ -378,13 +392,14 @@
   box-shadow: var(--nova-overlay-lift, var(--nova-overlay-shadow));
 }
 
-/* Form controls: the prototype's .f-input, an opaque panel. The edge is --nova-field-edge,
+/* Form controls: the prototype's .f-input, an opaque panel (a control that is its own fill, such as a
+   switch track, sets --nova-field-fill). The edge is --nova-field-edge,
    border-control unless a state sets it: the 3:1 edge material.spec.ts proves against the fill and
    the backdrop (WCAG 1.4.11). Hover, focus, checked and invalid each set the variable, so a control
    never fights this border with an important modifier; invalid comes last and wins. */
 @utility nova-field {
   --nova-focus-ring: var(--nova-color-primary);
-  background-color: var(--nova-color-surface);
+  background-color: var(--nova-field-fill, var(--nova-color-surface));
   border: 1px solid var(--nova-field-edge, var(--nova-color-border-control));
 
   &:hover:where(:not(:disabled)) {
@@ -426,12 +441,13 @@
 }
 
 /* The sidebar: the prototype's .sidebar, opaque under either material (the prototype never frosts
-   it). Its secondary ink (--nova-sidebar-ink-2, GLASS.sidebarInk2Alpha) and the --chrome-accent focus
-   ring are proven over the violet lift for every brand. */
+   it). Its secondary ink (GLASS.sidebarInk2Alpha) and the --chrome-accent focus
+   ring are proven over the violet lift for every brand. It sets the same --nova-chrome-ink-2 the top
+   bar sets, at its own alpha, so a chrome control takes the right ink wherever it sits. */
 /* prettier-ignore */
 @utility nova-sidebar {
   --nova-focus-ring: var(--nova-color-chrome-accent);
-  --nova-sidebar-ink-2: rgb(241 238 251 / 0.7);
+  --nova-chrome-ink-2: rgb(241 238 251 / 0.7);
   background-image: var(--nova-grain), var(--nova-gradient-sidebar);
   background-blend-mode: overlay, screen, normal;
   box-shadow: inset -1px 0 0 rgba(255,255,255,.05);
@@ -550,9 +566,48 @@
   }
 }
 
+/* The prototype's .ai-spark: the 22px badge in the multicolour mark that heads an AI block. The tight
+   dark shadow keeps the white glyph legible over the mark's amber quadrant. Inside an approved block
+   it settles to solid green. */
+/* prettier-ignore */
+@utility nova-ai-spark {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background-image: var(--nova-ai-mark);
+  color: #fff;
+  font-size: 12px;
+  text-shadow: 0 1px 2px rgba(20,10,0,.55), 0 0 3px rgba(20,10,0,.35);
+  box-shadow: 0 1px 4px rgba(60,40,10,.28), inset 0 0 0 1px rgba(255,255,255,.28);
+
+  [data-approved='true'] & {
+    background-image: none;
+    background-color: var(--nova-color-good);
+    box-shadow: 0 1px 4px rgba(11,138,104,.3), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+}
+
+/* The prototype's .tabbar: the 7% chrome-2 tint laid over the opaque canvas, so content scrolling
+   under a sticky bar never reads through the labels, and the card hairline. material.spec.ts proves
+   the unselected tabs' secondary ink on it. */
+/* prettier-ignore */
+@utility nova-tabbar {
+  background-color: var(--nova-color-bg);
+  background-image: linear-gradient(rgba(42,27,92,.07), rgba(42,27,92,.07));
+  border: 1px solid var(--nova-color-border);
+}
+
 /* The AI signature gradient (--ai-grad) as a fill: the spine, spark, orb and pill of the prototype. */
 @utility nova-ai-grad {
   background-image: var(--nova-gradient-ai);
+}
+
+/* The prototype's .sb-bar fill: a progress or gauge bar, the chrome accent into the sky glow. */
+@utility nova-bar-grad {
+  background-image: var(--nova-gradient-bar);
 }
 
 /* The multicolour AI mark (--ai-mark), for the mark only (the spark badge, the copilot orb). */

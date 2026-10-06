@@ -58,6 +58,8 @@ export const NOVA_DEFAULTS = {
   '--nova-color-chrome-accent': p.chrome.accent,
   '--nova-color-chrome-accent-soft': 'rgba(167, 139, 250, 0.18)',
   '--nova-color-chrome-glow-2': p.chrome.glow2,
+  // The dark ring around a top-bar badge (.tb-ico .tb-dot border, a literal in the prototype).
+  '--nova-color-chrome-ring': p.chrome.ring,
   // The data palette: six series colours, fixed for every hospital like status and AI, so the same
   // chart reads the same everywhere (never in the theme allow-list). Built with the dataviz method
   // (OKLab/OKLCH, Machado 2009 colour-vision simulation): neighbouring slots at least 12.8 apart

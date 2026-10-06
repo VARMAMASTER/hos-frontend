@@ -177,7 +177,7 @@ describe('material', () => {
       `--nova-chrome-field: rgb(255 255 255 / ${GLASS.chromeFieldAlpha});`,
     );
     expect(css).toContain(
-      `--nova-sidebar-ink-2: rgb(241 238 251 / ${GLASS.sidebarInk2Alpha});`,
+      `--nova-chrome-ink-2: rgb(241 238 251 / ${GLASS.sidebarInk2Alpha});`,
     );
     expect(css).toContain(
       `--nova-hero-ink-2: rgb(255 255 255 / ${GLASS.heroInk2Alpha});`,
@@ -333,6 +333,13 @@ describe('glass legibility holds for every possible hospital brand', () => {
       mixColours(HERO_BASE, 0.6, white),
     );
     expect(contrastRatio(white, prototypeHero)).toBeLessThan(4.5);
+  });
+
+  // The tab rail is opaque (the canvas with a 7% chrome-2 tint), so its unselected labels never
+  // depend on the aurora behind it.
+  it('keeps the secondary ink of an unselected tab at 4.5:1 or more on the tab rail', () => {
+    const rail = mixColours(NOVA_DEFAULTS['--nova-color-chrome-2'], 0.07, bg);
+    expect(contrastRatio(ink2, rail)).toBeGreaterThanOrEqual(4.5);
   });
 
   // WCAG 1.4.11: a field's edge is the thing that says "type here", so it needs 3:1 against both of

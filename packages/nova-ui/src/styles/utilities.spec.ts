@@ -167,10 +167,10 @@ describe('theme.css utilities', () => {
   // The prototype's .f-input is an opaque panel. The edge is a custom property, so a control states
   // hover, invalid or checked by setting one variable instead of fighting the utility's border with
   // an important modifier. Unset, it is border-control, which material.spec.ts proves at 3:1.
-  it('nova-field is an opaque panel with its edge from --nova-field-edge, border-control by default', () => {
+  it('nova-field is an opaque panel (unless a control sets --nova-field-fill) with its edge from --nova-field-edge, border-control by default', () => {
     const field = utility('nova-field');
     expect(field.declarations).toMatchObject({
-      'background-color': 'var(--nova-color-surface)',
+      'background-color': 'var(--nova-field-fill, var(--nova-color-surface))',
       border:
         '1px solid var(--nova-field-edge, var(--nova-color-border-control))',
     });
@@ -275,10 +275,12 @@ describe('theme.css utilities', () => {
       expect(sidebar().declarations).not.toHaveProperty('backdrop-filter');
     });
 
+    // The sidebar sets the same --nova-chrome-ink-2 the top bar does, at its own proven alpha, so a
+    // chrome control takes the right secondary ink wherever it sits.
     it('rings focus in the chrome accent and hands children the proven secondary ink', () => {
       expect(sidebar().declarations).toMatchObject({
         '--nova-focus-ring': 'var(--nova-color-chrome-accent)',
-        '--nova-sidebar-ink-2': `rgb(241 238 251 / ${GLASS.sidebarInk2Alpha})`,
+        '--nova-chrome-ink-2': `rgb(241 238 251 / ${GLASS.sidebarInk2Alpha})`,
       });
     });
   });
@@ -426,6 +428,62 @@ describe('theme.css utilities', () => {
   it('nova-radius-inherit takes the corner radius of its parent', () => {
     expect(utility('nova-radius-inherit').declarations).toEqual({
       'border-radius': 'inherit',
+    });
+  });
+
+  it('nova-card-head tints a card header panel-2 into the panel under the card top corners', () => {
+    expect(utility('nova-card-head').declarations).toEqual({
+      'background-image':
+        'linear-gradient(180deg, var(--nova-color-surface-2), var(--nova-color-surface))',
+      'border-radius': 'var(--nova-radius-md) var(--nova-radius-md) 0 0',
+    });
+  });
+
+  // The prototype's .sb-bar fill: the chrome accent into the sky glow, left to right.
+  it('nova-bar-grad fills a bar with the prototype .sb-bar gradient', () => {
+    expect(utility('nova-bar-grad').declarations).toEqual({
+      'background-image': 'var(--nova-gradient-bar)',
+    });
+    expect(
+      rulesFor(':root')
+        .map((rule) => rule.declarations)
+        .find((d) => '--nova-gradient-bar' in d)?.['--nova-gradient-bar'],
+    ).toBe(
+      'linear-gradient(90deg, var(--nova-color-chrome-accent), var(--nova-color-chrome-glow-2))',
+    );
+  });
+
+  // The prototype's .ai-spark: a 22px tile in the multicolour mark with a white glyph kept legible by a
+  // tight dark shadow; approved, it turns solid green.
+  it('nova-ai-spark is the prototype spark badge, green once its block is approved', () => {
+    const spark = utility('nova-ai-spark');
+    expect(spark.declarations).toMatchObject({
+      width: '22px',
+      height: '22px',
+      'border-radius': '7px',
+      'background-image': 'var(--nova-ai-mark)',
+      color: '#fff',
+      'font-size': '12px',
+      'text-shadow': '0 1px 2px rgba(20,10,0,.55), 0 0 3px rgba(20,10,0,.35)',
+      'box-shadow':
+        '0 1px 4px rgba(60,40,10,.28), inset 0 0 0 1px rgba(255,255,255,.28)',
+    });
+    expect(spark.nested["[data-approved='true'] &"]?.declarations).toEqual({
+      'background-image': 'none',
+      'background-color': 'var(--nova-color-good)',
+      'box-shadow':
+        '0 1px 4px rgba(11,138,104,.3), inset 0 1px 0 rgba(255,255,255,.35)',
+    });
+  });
+
+  // The prototype's .tabbar: the 7% chrome-2 tint laid over the opaque canvas (so content scrolling
+  // under a sticky bar never reads through the labels), with the card hairline.
+  it('nova-tabbar is the prototype tab rail: an opaque tinted canvas with the hairline edge', () => {
+    expect(utility('nova-tabbar').declarations).toEqual({
+      'background-color': 'var(--nova-color-bg)',
+      'background-image':
+        'linear-gradient(rgba(42,27,92,.07), rgba(42,27,92,.07))',
+      border: '1px solid var(--nova-color-border)',
     });
   });
 
@@ -658,6 +716,14 @@ describe('theme.css Tailwind theme mapping', () => {
   });
 
   // Sizes are written text-[Npx] from PROTOTYPE_TYPE_SIZES; there is no named ramp any more.
+  // The dark ring that cuts a badge out of the top bar (.tb-ico .tb-dot: 2px solid #221448).
+  it('maps the chrome ring colour, so a top-bar badge draws border-chrome-ring', () => {
+    expect(mapped()['--color-chrome-ring']).toBe(
+      'var(--nova-color-chrome-ring)',
+    );
+    expect(NOVA_DEFAULTS['--nova-color-chrome-ring']).toBe('#221448');
+  });
+
   it('maps no named text sizes', () => {
     expect(
       Object.keys({ ...stock(), ...mapped() }).filter((name) =>
