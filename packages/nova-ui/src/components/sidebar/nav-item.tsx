@@ -26,8 +26,9 @@ export type NavItemButtonProps = NavItemOwnProps & {
 
 export type NavItemProps = NavItemAnchorProps | NavItemButtonProps;
 
-// The prototype's .nav a: 13.5px at 500, 8px by 10px, 10px between icon and label (its 10px radius
-// is off the --r-* scale, so sm). Resting text reads the chrome's secondary ink, which
+// The prototype's .nav a: 13.5px at 500 (text-input), 8px by 10px, 10px between icon and label (the
+// nav row tokens: px-nav-item, py-nav-item, gap-nav-item; its 10px radius is off the --r-* scale,
+// so the control corner). Resting text reads the chrome's secondary ink, which
 // material.spec.ts proves is 4.5:1 for every brand; hover lifts the row with a faint white and
 // whitens the text. Active is the chrome accent's soft fill with its 1px inner ring, white and
 // semibold, so it is marked by weight as well as colour.
@@ -36,11 +37,11 @@ export type NavItemProps = NavItemAnchorProps | NavItemButtonProps;
 // the icon, its padding and the sidebar's padding wide), the label fades out and is clipped by the
 // item's overflow, and it never wraps, so nothing jumps while the width animates.
 const base =
-  'relative flex w-full cursor-pointer items-center gap-2.5 overflow-hidden rounded-sm px-2.5 py-2 text-left text-[13.5px] font-medium transition-colors';
+  'relative flex w-full cursor-pointer items-center gap-nav-item overflow-hidden rounded-control px-nav-item py-nav-item text-left text-input font-medium transition-colors';
 const resting =
   'text-[color:var(--nova-chrome-ink-2)] hover:bg-chrome-ink/5 hover:text-on-primary focus-visible:bg-chrome-ink/5 focus-visible:text-on-primary';
 const current =
-  'bg-chrome-accent-soft font-semibold text-on-primary ring-1 ring-inset ring-chrome-accent/35';
+  'bg-chrome-accent-soft font-semibold text-on-primary ring-hairline ring-inset ring-chrome-accent/35';
 
 function classes(active: boolean, className: string | undefined): string {
   return cx(base, focusRing, active ? current : resting, className);
@@ -50,11 +51,11 @@ function classes(active: boolean, className: string | undefined): string {
 // its popup to the right of the item from outside; expanded, there is nothing to say twice, so the
 // popup is hidden.
 const tooltipBeside =
-  'w-full [&>[role=tooltip]]:top-1/2 [&>[role=tooltip]]:bottom-auto [&>[role=tooltip]]:left-full [&>[role=tooltip]]:translate-x-0 [&>[role=tooltip]]:-translate-y-1/2 [&>[role=tooltip]]:pb-0 [&>[role=tooltip]]:pl-2';
+  'w-full [&>[role=tooltip]]:top-1/2 [&>[role=tooltip]]:bottom-auto [&>[role=tooltip]]:left-full [&>[role=tooltip]]:translate-x-0 [&>[role=tooltip]]:-translate-y-1/2 [&>[role=tooltip]]:pb-0 [&>[role=tooltip]]:pl-s3';
 const tooltipHidden = 'w-full [&>[role=tooltip]]:hidden';
 
 const badgeShape =
-  'inline-flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-chrome-accent px-1 text-[10px] font-bold leading-none text-chrome-ring';
+  'inline-flex h-s6 min-w-s6 shrink-0 items-center justify-center rounded-full bg-chrome-accent px-s1 text-badge font-bold leading-none text-chrome-ring';
 
 function firstLetter(label: ReactNode): string {
   return typeof label === 'string' ? label.trim().charAt(0).toUpperCase() : '';
@@ -76,7 +77,7 @@ function Content({
   const glyph =
     icon ??
     (collapsed ? (
-      <span data-nova-monogram="" className="text-[11px] font-bold">
+      <span data-nova-monogram="" className="text-meta font-bold">
         {firstLetter(children)}
       </span>
     ) : null);
@@ -86,13 +87,13 @@ function Content({
         <span
           aria-hidden="true"
           data-nova-active-mark=""
-          className="absolute inset-y-2 left-0 w-0.5 rounded-full bg-chrome-accent"
+          className="absolute inset-y-s3 left-0 w-nav-mark rounded-full bg-chrome-accent"
         />
       ) : null}
       {glyph ? (
         <span
           aria-hidden="true"
-          className="flex size-6 shrink-0 items-center justify-center"
+          className="flex size-tile shrink-0 items-center justify-center"
         >
           {glyph}
         </span>
@@ -110,7 +111,7 @@ function Content({
           data-nova-badge={collapsed ? 'overlay' : 'inline'}
           className={cx(
             badgeShape,
-            collapsed && 'absolute top-0.5 left-6 ring-2 ring-chrome-1',
+            collapsed && 'absolute top-s0 left-s8 ring-emphasis ring-chrome-1',
           )}
         >
           {badge}

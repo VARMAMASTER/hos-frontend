@@ -67,7 +67,7 @@ const sections: SectionNavItem[] = [
 ];
 
 const decorate: Decorator = (Story) => (
-  <div className="nova-chrome w-64 rounded-lg p-3">
+  <div className="nova-chrome w-sidebar rounded-overlay p-s5">
     <Story />
   </div>
 );

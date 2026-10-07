@@ -2,7 +2,7 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { BrandMark } from './brand-mark';
 
 const decorate: Decorator = (Story) => (
-  <div className="nova-chrome w-64 rounded-lg p-4">
+  <div className="nova-chrome w-sidebar rounded-overlay p-s6">
     <Story />
   </div>
 );

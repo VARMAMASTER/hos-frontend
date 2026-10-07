@@ -846,6 +846,69 @@
 /* ===== Component tokens: family a (end) ===== */
 
 /* ===== Component tokens: family b, shell, navigation, data, tables and charts (begin) ===== */
+:root {
+  /* The chrome's 36px square: the brand mark (hos.css .brand-mark) and the top bar's menu button. */
+  --nova-chrome-tile: 36px;
+  /* The drawer sidebar never covers more of a phone than this. */
+  --nova-drawer-max-w: 85vw;
+  /* .topbar-search: max-width 440px. */
+  --nova-topbar-search-w: 440px;
+  /* A navigation row in the chrome (.nav a, .sec-item, .ws-switch, and the .nav-label above them):
+     8px by 10px, 10px between the glyph and the label. */
+  --nova-nav-item-px: var(--nova-space-4);
+  --nova-nav-item-py: var(--nova-space-3);
+  --nova-nav-item-gap: var(--nova-space-4);
+  /* .sec-nav .ic: an 18px glyph box holding a 17px glyph. */
+  --nova-nav-glyph: 18px;
+  --nova-nav-glyph-icon: 17px;
+  /* The active row's accent rail (.sec-item.active::before): 2.5px wide, as tall as the glyph. */
+  --nova-nav-mark-w: 2.5px;
+  --nova-nav-mark-h: var(--nova-nav-glyph-icon);
+  /* .bed-grid and .bed: cells at least 96px wide and 64px tall. */
+  --nova-bed-min-w: 96px;
+  --nova-bed-min-h: 64px;
+  /* How much of a status colour tints a tinted tile's edge (a bed cell). */
+  --nova-status-edge-tint: 18%;
+  /* KpiTile's trailing visual (a Sparkline), beside the figure. */
+  --nova-kpi-visual-w: 96px;
+  /* DataTable: the row checkbox, its column (the box and the row padding on both sides, which is
+     also where the pinned first column starts), the search box, and the scroll area's height. */
+  --nova-table-check: var(--nova-space-7);
+  --nova-table-select-w: calc(var(--nova-row-px) * 2 + var(--nova-table-check));
+  --nova-table-search-w: 288px;
+  --nova-table-max-h: 36rem;
+  /* Charts: the tooltip's least width, and a legend key's stroke or band. */
+  --nova-chart-tooltip-min-w: 128px;
+  --nova-legend-mark-w: var(--nova-icon-sm);
+}
+
+@theme inline {
+  --size-chrome-tile: var(--nova-chrome-tile);
+  --max-width-drawer: var(--nova-drawer-max-w);
+  --max-width-topbar-search: var(--nova-topbar-search-w);
+  --gap-nav-item: var(--nova-nav-item-gap);
+  --size-nav-glyph: var(--nova-nav-glyph);
+  --size-nav-glyph-icon: var(--nova-nav-glyph-icon);
+  --width-nav-mark: var(--nova-nav-mark-w);
+  --height-nav-mark: var(--nova-nav-mark-h);
+  --min-height-bed: var(--nova-bed-min-h);
+  --width-kpi-visual: var(--nova-kpi-visual-w);
+  --size-table-check: var(--nova-table-check);
+  --width-table-select: var(--nova-table-select-w);
+  --min-width-table-select: var(--nova-table-select-w);
+  --inset-table-select: var(--nova-table-select-w);
+  --width-table-search: var(--nova-table-search-w);
+  --min-width-chart-tooltip: var(--nova-chart-tooltip-min-w);
+  --width-legend-mark: var(--nova-legend-mark-w);
+}
+
+@utility px-nav-item {
+  padding-inline: var(--nova-nav-item-px);
+}
+
+@utility py-nav-item {
+  padding-block: var(--nova-nav-item-py);
+}
 /* ===== Component tokens: family b (end) ===== */
 
 /* ===== Component tokens: family c, AI components (begin) ===== */

@@ -25,7 +25,7 @@ function Icon({ children }: { children: ReactNode }) {
       strokeWidth="1.6"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="size-5"
+      className="size-icon-lg"
     >
       {children}
     </svg>
@@ -91,11 +91,11 @@ const items = (
 // The hospital block and the user footer each have a small form for the rail: the logo mark and the
 // avatar.
 const brand = (
-  <span className="flex items-center gap-2.5">
-    <span className="grid size-9 place-items-center rounded-md bg-primary font-display text-[14px] font-bold text-on-primary">
+  <span className="flex items-center gap-s4">
+    <span className="grid size-chrome-tile place-items-center rounded-card bg-primary font-display text-body font-bold text-on-primary">
       AH
     </span>
-    <span className="font-display text-[16px] font-bold text-on-primary">
+    <span className="font-display text-subtitle font-bold text-on-primary">
       Acme Hospital
     </span>
   </span>
@@ -104,13 +104,13 @@ const logoMark = (
   <span
     role="img"
     aria-label="Acme Hospital"
-    className="grid size-9 place-items-center rounded-md bg-primary font-display text-[14px] font-bold text-on-primary"
+    className="grid size-chrome-tile place-items-center rounded-card bg-primary font-display text-body font-bold text-on-primary"
   >
     AH
   </span>
 );
 const footer = (
-  <div className="flex items-center gap-2.5 text-[13px]">
+  <div className="flex items-center gap-s4 text-control">
     <Avatar name="Anita Rao" tone="chrome" />
     <div className="min-w-0">
       <p className="font-semibold text-on-primary">Dr. Anita Rao</p>
@@ -139,13 +139,13 @@ export const NavOnly: Story = { args: { children: items } };
 function ControlledDemo() {
   const [collapsed, setCollapsed] = useState(false);
   return (
-    <div className="flex min-h-screen items-start gap-6">
+    <div className="flex min-h-screen items-start gap-s8">
       <Sidebar
         {...common}
         collapsed={collapsed}
         onCollapsedChange={setCollapsed}
       />
-      <div className="flex flex-col gap-3 p-6 text-[13px] text-ink">
+      <div className="flex flex-col gap-s5 p-s8 text-control text-ink">
         <p>
           The sidebar is <strong>{collapsed ? 'collapsed' : 'expanded'}</strong>
           .

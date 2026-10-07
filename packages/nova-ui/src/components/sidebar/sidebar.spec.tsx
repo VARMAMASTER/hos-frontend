@@ -15,7 +15,7 @@ describe('Sidebar', () => {
     expect(root.classList.contains('nova-sidebar')).toBe(true);
     expect(root.dataset['surface']).toBe('sidebar');
     expect([...root.classList]).toEqual(
-      expect.arrayContaining(['px-3', 'py-5', 'gap-1']),
+      expect.arrayContaining(['px-s5', 'py-s7', 'gap-s1']),
     );
     // A frame, not a card: its edges are straight.
     expect(root.classList.contains('rounded-none')).toBe(true);
@@ -88,7 +88,7 @@ describe('Sidebar', () => {
     );
     const root = container.firstElementChild as HTMLElement;
     expect(root.classList.contains('w-full')).toBe(true);
-    expect(root.classList.contains('md:w-[var(--nova-sidebar-w)]')).toBe(true);
+    expect(root.classList.contains('md:w-sidebar')).toBe(true);
   });
 
   it('stays pinned full height from md up, scrolling on its own when the nav is long', () => {
@@ -118,5 +118,21 @@ describe('Sidebar', () => {
     expect(root.classList.contains('extra')).toBe(true);
     expect(root.classList.contains('nova-sidebar')).toBe(true);
     expect(root.dataset['testid']).toBe('side');
+  });
+});
+
+// Tokens only: the rail and the drawer take their widths from the sidebar tokens, and the footer
+// lines up with the nav rows.
+describe('Sidebar tokens', () => {
+  it('insets the footer like a nav row', () => {
+    render(
+      <Sidebar footer={<span>Dr Ramesh</span>}>
+        <a href="/home">Home</a>
+      </Sidebar>,
+    );
+    const footer = screen.getByText('Dr Ramesh').parentElement as HTMLElement;
+    expect([...footer.classList]).toEqual(
+      expect.arrayContaining(['px-nav-item', 'pt-s5', 'pb-s1']),
+    );
   });
 });

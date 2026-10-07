@@ -23,9 +23,9 @@ describe('TopBar', () => {
       'top-0',
       'z-50',
       'flex',
-      'px-6',
-      'py-3',
-      'gap-4',
+      'px-s8',
+      'py-s5',
+      'gap-s6',
     ]) {
       expect(root.classList.contains(name), name).toBe(true);
     }
@@ -43,8 +43,8 @@ describe('TopBar', () => {
     render(<TopBar search={<input aria-label="Find a patient" />} />);
     const landmark = screen.getByRole('search');
     expect(landmark.classList.contains('flex-1')).toBe(true);
-    // The prototype's .topbar-search caps at 440px.
-    expect(landmark.classList.contains('max-w-[440px]')).toBe(true);
+    // The prototype's .topbar-search caps at 440px (--nova-topbar-search-w).
+    expect(landmark.classList.contains('max-w-topbar-search')).toBe(true);
     // Without min-w-0 a long placeholder would keep the slot from shrinking on a narrow screen.
     expect(landmark.classList.contains('min-w-0')).toBe(true);
   });

@@ -63,7 +63,7 @@ describe('NavItem', () => {
       'bg-chrome-accent-soft',
       'text-on-primary',
       'font-semibold',
-      'ring-1',
+      'ring-hairline',
       'ring-inset',
       'ring-chrome-accent/35',
     ]) {
@@ -73,10 +73,10 @@ describe('NavItem', () => {
     expect(resting.classList.contains('bg-chrome-accent-soft')).toBe(false);
     expect([...resting.classList]).toEqual(
       expect.arrayContaining([
-        'text-[13.5px]',
+        'text-input',
         'font-medium',
-        'px-2.5',
-        'py-2',
+        'px-nav-item',
+        'py-nav-item',
       ]),
     );
     expect(resting.className).toContain('--nova-chrome-ink-2');

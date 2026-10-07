@@ -39,8 +39,8 @@ export interface SidebarProps
 }
 
 // The prototype's .sidebar: a frame, not a card, so its corners are straight; 20px by 12px of
-// padding and 4px between its parts.
-const frame = 'rounded-none flex flex-col gap-1 px-3 py-5';
+// padding (py-s7, px-s5) and 4px between its parts (gap-s1).
+const frame = 'rounded-none flex flex-col gap-s1 px-s5 py-s7';
 
 // Beside the content, it is pinned to the viewport and scrolls on its own. As the rail it does not
 // scroll: a scroll container would clip the labels that pop out beside the icons. The sidebar sits
@@ -51,17 +51,18 @@ const railFrame = 'md:overflow-visible';
 
 // Its own width when nothing else sizes it: the --nova-sidebar-w token, or the rail token. In an
 // AppShell the grid column sizes it, and animates.
-const standaloneExpanded = 'w-full md:w-[var(--nova-sidebar-w)]';
-const standaloneRail = 'w-[var(--nova-sidebar-rail-w,4.25rem)]';
+const standaloneExpanded = 'w-full md:w-sidebar';
+const standaloneRail = 'w-rail';
 const widthMotion =
   'motion-safe:transition-[width] motion-safe:duration-base motion-safe:ease-standard';
 
-// The drawer: over the content, off to the left until it is opened.
+// The drawer: over the content, off to the left until it is opened. It is the sidebar's width, but
+// never more of a phone than --nova-drawer-max-w.
 const drawerFrame =
-  'fixed inset-y-0 left-0 z-70 h-dvh w-[min(var(--nova-sidebar-w),85vw)] overflow-y-auto overflow-x-hidden shadow-lg outline-none motion-safe:duration-base motion-safe:ease-standard';
+  'fixed inset-y-0 left-0 z-70 h-dvh w-sidebar max-w-drawer overflow-y-auto overflow-x-hidden shadow-lg outline-none motion-safe:duration-base motion-safe:ease-standard';
 
 const toggleButton =
-  'inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-sm text-[color:var(--nova-chrome-ink-2)] transition-colors hover:bg-chrome-ink/5 hover:text-on-primary focus-visible:bg-chrome-ink/5 focus-visible:text-on-primary';
+  'inline-flex size-s9 shrink-0 cursor-pointer items-center justify-center rounded-control text-[color:var(--nova-chrome-ink-2)] transition-colors hover:bg-chrome-ink/5 hover:text-on-primary focus-visible:bg-chrome-ink/5 focus-visible:text-on-primary';
 
 function ToggleIcon({
   collapsed,
@@ -81,7 +82,7 @@ function ToggleIcon({
       aria-hidden="true"
       focusable="false"
       className={cx(
-        'size-4 motion-safe:transition-transform motion-safe:duration-base motion-safe:ease-standard',
+        'size-icon-md motion-safe:transition-transform motion-safe:duration-base motion-safe:ease-standard',
         collapsed && 'rotate-180',
       )}
     >
@@ -160,13 +161,14 @@ function SidebarView({
       {...drawerProps}
       {...rest}
     >
-      {/* The header: the brand (the logo mark in the rail) and the toggle. .brand is 4px 8px 16px. */}
+      {/* The header: the brand (the logo mark in the rail) and the toggle. .brand is 4px 8px 16px
+          (pt-s1, px-s3, pb-s6). */}
       <div
         className={cx(
-          'flex gap-2 pt-1 pb-4',
+          'flex gap-s3 pt-s1 pb-s6',
           collapsed
             ? 'flex-col items-center'
-            : 'items-start justify-between px-2',
+            : 'items-start justify-between px-s3',
         )}
       >
         {brandBlock ? (
@@ -195,12 +197,13 @@ function SidebarView({
         {children}
       </nav>
       {footerBlock ? (
-        // .sidebar-foot: pinned to the bottom, 12px 10px 4px, under the chrome line.
+        // .sidebar-foot: pinned to the bottom, 12px 10px 4px (pt-s5, the nav row's inset, pb-s1),
+        // under the chrome line.
         <div
           key={collapsed ? 'avatar' : 'user'}
           className={cx(
-            'mt-auto border-t border-chrome-line pt-3 pb-1 motion-safe:animate-fade-in',
-            collapsed ? 'flex justify-center' : 'px-2.5',
+            'mt-auto border-t border-chrome-line pt-s5 pb-s1 motion-safe:animate-fade-in',
+            collapsed ? 'flex justify-center' : 'px-nav-item',
           )}
         >
           {footerBlock}

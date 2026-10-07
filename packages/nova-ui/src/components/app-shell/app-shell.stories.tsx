@@ -28,7 +28,7 @@ function Icon({ children }: { children: ReactNode }) {
       strokeWidth="1.6"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="size-5"
+      className="size-icon-lg"
     >
       {children}
     </svg>
@@ -38,11 +38,11 @@ function Icon({ children }: { children: ReactNode }) {
 const sidebar = (
   <Sidebar
     brand={
-      <span className="flex items-center gap-2.5">
-        <span className="grid size-9 place-items-center rounded-md bg-primary font-display text-[14px] font-bold text-on-primary">
+      <span className="flex items-center gap-s4">
+        <span className="grid size-chrome-tile place-items-center rounded-card bg-primary font-display text-body font-bold text-on-primary">
           AH
         </span>
-        <span className="font-display text-[16px] font-bold text-on-primary">
+        <span className="font-display text-subtitle font-bold text-on-primary">
           Acme Hospital
         </span>
       </span>
@@ -51,13 +51,13 @@ const sidebar = (
       <span
         role="img"
         aria-label="Acme Hospital"
-        className="grid size-9 place-items-center rounded-md bg-primary font-display text-[14px] font-bold text-on-primary"
+        className="grid size-chrome-tile place-items-center rounded-card bg-primary font-display text-body font-bold text-on-primary"
       >
         AH
       </span>
     }
     footer={
-      <div className="flex items-center gap-2.5 text-[13px]">
+      <div className="flex items-center gap-s4 text-control">
         <Avatar name="Anita Rao" tone="chrome" />
         <div className="min-w-0">
           <p className="font-semibold text-on-primary">Dr. Anita Rao</p>
@@ -140,9 +140,9 @@ const content = (
         </>
       }
     />
-    <div className="p-6">
-      <h1 className="text-[17px] font-semibold text-ink">Dashboard</h1>
-      <p className="mt-2 text-ink-2">
+    <div className="p-s8">
+      <h1 className="text-title font-semibold text-ink">Dashboard</h1>
+      <p className="mt-s3 text-ink-2">
         The content column sits on the brand canvas and reflows with the
         sidebar. Ctrl/Cmd+B collapses it to the icon rail; below 768px it is a
         drawer behind the menu button. See the full page under Pages / App

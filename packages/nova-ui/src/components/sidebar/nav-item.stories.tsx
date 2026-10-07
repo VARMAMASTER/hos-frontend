@@ -2,7 +2,7 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { NavItem } from './nav-item';
 
 const onChrome: Decorator = (Story) => (
-  <div className="nova-chrome flex w-64 flex-col gap-1 rounded-lg p-4">
+  <div className="nova-chrome flex w-sidebar flex-col gap-s1 rounded-overlay p-s6">
     <Story />
   </div>
 );
@@ -24,7 +24,7 @@ function GridIcon() {
       stroke="currentColor"
       strokeWidth="1.6"
       strokeLinejoin="round"
-      className="size-5"
+      className="size-icon-lg"
     >
       <rect x="3" y="3" width="5.5" height="5.5" rx="1.2" />
       <rect x="11.5" y="3" width="5.5" height="5.5" rx="1.2" />

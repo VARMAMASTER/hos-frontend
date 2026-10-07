@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../primitives/cx';
+import { BREAKPOINT_REM } from '../../tokens/design';
 import { useControllableState } from '../../primitives/use-controllable-state';
 import { getTabbables, trapTab } from '../dialog/focus';
 import {
@@ -47,10 +48,11 @@ export interface AppShellProps
 const grid =
   'grid min-h-screen grid-cols-1 md:grid-cols-[var(--nova-shell-w)_1fr] motion-safe:transition-[grid-template-columns] motion-safe:duration-base motion-safe:ease-standard';
 const expandedWidth = '[--nova-shell-w:var(--nova-sidebar-w)]';
-const railWidth = '[--nova-shell-w:var(--nova-sidebar-rail-w,4.25rem)]';
+const railWidth = '[--nova-shell-w:var(--nova-sidebar-rail-w)]';
 
-// Tailwind's md: the width at which the sidebar stops being a drawer.
-const DESKTOP = '(min-width: 48rem)';
+// Tailwind's md: the width at which the sidebar stops being a drawer (BREAKPOINT_REM, which
+// design.spec.ts holds to Tailwind's own md).
+const DESKTOP = `(min-width: ${BREAKPOINT_REM.md}rem)`;
 
 function isFocusable(element: Element | null): element is HTMLElement {
   return element instanceof HTMLElement && element !== document.body;
