@@ -35,7 +35,7 @@ describe('StatusDot', () => {
   it('draws the prototype .dot: a 7px circle', () => {
     render(<StatusDot tone="good" label="Stable" />);
     const dot = dotOf('Stable');
-    expect(dot?.classList.contains('size-[7px]')).toBe(true);
+    expect(dot?.classList.contains('size-dot')).toBe(true);
     expect(dot?.classList.contains('rounded-full')).toBe(true);
     expect(dot?.className).not.toMatch(/corner-shape/);
   });

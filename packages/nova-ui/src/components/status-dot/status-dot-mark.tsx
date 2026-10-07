@@ -25,7 +25,7 @@ const rings: Record<StatusDotTone, string> = {
 
 // The dot and its label sit on one line, shared by StatusDot and LiveDot.
 export const statusDotRow =
-  'inline-flex items-center gap-1.5 text-[13px] text-ink';
+  'inline-flex items-center gap-s2 text-control text-ink';
 
 // The heartbeat is decoration, never the message: both animations are motion-safe, and the ring is
 // not rendered to the eye at all (hidden) unless motion is allowed, so a reduced-motion user sees a
@@ -41,7 +41,7 @@ export function StatusDotMark({
     <span
       aria-hidden="true"
       className={cx(
-        'relative size-[7px] shrink-0 rounded-full',
+        'relative size-dot shrink-0 rounded-full',
         dots[tone],
         pulse &&
           cx(

@@ -33,7 +33,7 @@ export const Pulsing: Story = {
 // The label is mandatory: a bare coloured dot fails for colour-blind users and in greyscale print.
 export const AllTones: Story = {
   render: () => (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-s3">
       <StatusDot tone="good" label="Stable" />
       <StatusDot tone="warn" label="Under observation" />
       <StatusDot tone="crit" label="Critical" />
@@ -60,16 +60,16 @@ const pulses = [
 
 function PulseGrid() {
   return (
-    <div className="grid w-fit grid-cols-[auto_repeat(4,max-content)] items-center gap-x-8 gap-y-3">
+    <div className="grid w-fit grid-cols-[auto_repeat(4,max-content)] items-center gap-x-s9 gap-y-s5">
       <span />
       {pulses.map(({ name }) => (
-        <span key={name} className="text-[12px] font-semibold text-ink-2">
+        <span key={name} className="text-label font-semibold text-ink-2">
           pulse: {name}
         </span>
       ))}
       {tones.map(({ tone, label }) => (
         <div key={tone} className="contents">
-          <span className="text-[12px] text-ink-3">{tone}</span>
+          <span className="text-label text-ink-3">{tone}</span>
           {pulses.map(({ name, pulse }) => (
             <StatusDot key={name} tone={tone} label={label} pulse={pulse} />
           ))}
@@ -83,14 +83,14 @@ function PulseGrid() {
 // Emulate prefers-reduced-motion in the browser's devtools to see every dot go still.
 export const PulseSpeedsLightAndDark: Story = {
   render: () => (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-s6">
       {(['light', 'dark'] as const).map((scheme) => (
         <NovaThemeProvider
           key={scheme}
           scheme={scheme}
-          className="nova-canvas rounded-lg p-6 text-ink"
+          className="nova-canvas rounded-overlay p-s8 text-ink"
         >
-          <p className="mb-3 text-[12px] font-semibold uppercase tracking-[.08em] text-ink-2">
+          <p className="mb-s5 text-label font-semibold uppercase tracking-eyebrow text-ink-2">
             {scheme}
           </p>
           <PulseGrid />
@@ -149,14 +149,12 @@ export const LiveQueue: Story = {
           {queue.map((patient) => (
             <li
               key={patient.name}
-              className="flex items-center gap-3 px-4 py-2.5"
+              className="flex items-center gap-s5 px-s6 py-s4"
             >
               <Avatar name={patient.name} size="sm" />
               <div className="min-w-0 flex-1">
-                <div className="text-[13.5px] font-semibold">
-                  {patient.name}
-                </div>
-                <div className="text-[12.5px] text-ink-2">{patient.detail}</div>
+                <div className="text-input font-semibold">{patient.name}</div>
+                <div className="text-body-sm text-ink-2">{patient.detail}</div>
               </div>
               <StatusDot
                 tone={patient.tone}

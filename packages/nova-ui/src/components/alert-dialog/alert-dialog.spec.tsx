@@ -274,11 +274,11 @@ describe('AlertDialog layout', () => {
   it('right-aligns the actions with an 8px gap, and draws no hairline dividers', () => {
     setup();
     expect(group().className).toContain('justify-end');
-    expect(group().className).toContain('gap-2');
+    expect(group().className).toContain('gap-s3');
     expect(group().className).not.toMatch(/divide-|border-y/);
     cleanup();
     setup([{ label: 'A' }, { label: 'B' }, { label: 'C' }]);
-    expect(group().className).toContain('gap-2');
+    expect(group().className).toContain('gap-s3');
     expect(group().className).not.toMatch(/divide-|border-y/);
   });
 });

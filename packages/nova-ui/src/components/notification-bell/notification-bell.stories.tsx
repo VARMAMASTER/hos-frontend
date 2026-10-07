@@ -5,7 +5,7 @@ import { NotificationBell } from './notification-bell';
 
 // The bell is the prototype's top bar icon button, drawn for the dark chrome, so it is shown on it.
 const onChrome: Decorator = (Story) => (
-  <Surface material="chrome" radius="md" className="inline-flex p-4">
+  <Surface material="chrome" radius="card" className="inline-flex p-s6">
     <Story />
   </Surface>
 );

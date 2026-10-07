@@ -76,16 +76,17 @@ describe('NotificationBell badge', () => {
     const badge = screen.getByText('7');
     expect(badge.className).toContain('bg-crit');
     expect(badge.className).toContain('rounded-full');
-    expect(badge.className).toContain('text-[9.5px]');
+    expect(badge.className).toContain('text-micro');
     expect(badge.className).toContain('font-bold');
-    expect(badge.className).toContain('h-4');
-    expect(badge.className).toContain('min-w-4');
-    expect(badge.className).toContain('border-2');
+    expect(badge.className).toContain('h-s6');
+    expect(badge.className).toContain('min-w-s6');
+    expect(badge.className).toContain('border-emphasis');
     // The .tb-dot ring is the chrome's own dark, not the ink colour.
     expect(badge.className).toContain('border-chrome-ring');
     expect(badge.className).not.toContain('border-ink');
-    expect(badge.className).toContain('-right-[3px]');
-    expect(badge.className).not.toMatch(/shadow|font-medium|text-micro/);
+    expect(badge.className).toContain('-right-s1');
+    expect(badge.className).toContain('-top-s1');
+    expect(badge.className).not.toMatch(/shadow|font-medium/);
   });
 });
 
@@ -103,12 +104,14 @@ describe('NotificationBell behaviour', () => {
     render(<NotificationBell count={1} />);
     const button = screen.getByRole('button');
     const classes = button.className;
-    expect(classes).toContain('h-[34px]');
-    expect(classes).toContain('w-[34px]');
-    expect(classes).toContain('rounded-sm');
+    expect(classes).toContain('size-topbar-ico');
+    expect(classes).toContain('duration-fast');
+    expect(classes).toContain('rounded-control');
     expect(classes).not.toContain('rounded-full');
     expect(classes).toContain('border');
     expect(classes).not.toMatch(/shadow|font-medium|h-11|w-11/);
-    expect(button.querySelector('svg')?.getAttribute('class')).toContain('h-4');
+    expect(button.querySelector('svg')?.getAttribute('class')).toContain(
+      'size-icon-md',
+    );
   });
 });

@@ -11,6 +11,7 @@ import {
 import { cx } from '../../primitives/cx';
 import { useControllableState } from '../../primitives/use-controllable-state';
 import { playMotion } from '../../primitives/motion';
+import { MOTION_DURATIONS_MS } from '../../tokens/scale';
 
 export interface OtpInputProps
   extends Omit<
@@ -56,12 +57,14 @@ function parseDigits(raw: string, length: number): string | null {
   return /^\d*$/.test(compact) ? compact.slice(0, length) : null;
 }
 
+// The error shake: the boxes swing s2 (6px) to each side, then s1 (4px), and settle. The offsets are
+// the spacing tokens, so the swing follows the scale.
 const SHAKE: Keyframe[] = [
   { transform: 'translateX(0)' },
-  { transform: 'translateX(-6px)' },
-  { transform: 'translateX(6px)' },
-  { transform: 'translateX(-4px)' },
-  { transform: 'translateX(4px)' },
+  { transform: 'translateX(calc(var(--nova-space-2) * -1))' },
+  { transform: 'translateX(var(--nova-space-2))' },
+  { transform: 'translateX(calc(var(--nova-space-1) * -1))' },
+  { transform: 'translateX(var(--nova-space-1))' },
   { transform: 'translateX(0)' },
 ];
 
@@ -99,7 +102,10 @@ export function OtpInput({
   const boxesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (error) playMotion(boxesRef.current, SHAKE, { duration: 240 });
+    if (error)
+      playMotion(boxesRef.current, SHAKE, {
+        duration: MOTION_DURATIONS_MS.slow,
+      });
   }, [error]);
 
   const commit = (raw: string) => {
@@ -114,13 +120,13 @@ export function OtpInput({
     cx(describedBy, hint ? hintId : null, error ? errorId : null) || undefined;
 
   return (
-    <div className={cx('flex flex-col gap-1', className)}>
-      {/* label.f-label: 12px, weight 600, ink-2. */}
-      <label htmlFor={inputId} className="text-[12px] font-semibold text-ink-2">
+    <div className={cx('flex flex-col gap-s1', className)}>
+      {/* label.f-label: the label role (12px), weight 600, ink-2. */}
+      <label htmlFor={inputId} className="text-label font-semibold text-ink-2">
         {label}
       </label>
       <div ref={boxesRef} className="relative w-full">
-        <div aria-hidden="true" className="flex w-full gap-2">
+        <div aria-hidden="true" className="flex w-full gap-s3">
           {Array.from({ length }, (_, index) => {
             const active = focused && !disabled && index === activeIndex;
             const filled = index < code.length;
@@ -130,11 +136,12 @@ export function OtpInput({
                 data-otp-box=""
                 data-active={active ? 'true' : undefined}
                 className={cx(
-                  // 01-login.html .otp-box: 44 x 50, a 1.5px edge, IBM Plex Mono 600 (20px: the nearest
-                  // hos.css size to the page's 19px), the row gap is --space-3. The boxes share the row and
-                  // shrink to fit it (min-w-0), capped at the prototype's 44px; the radius is --r-sm for
-                  // the prototype's 10px. The empty edge is the control edge (3:1), not --line-strong.
-                  'flex h-[50px] max-w-11 min-w-0 flex-1 basis-0 items-center justify-center rounded-sm border-[1.5px] font-mono text-[20px] font-semibold',
+                  // 01-login.html .otp-box: 44 x 50 (max-w-otp-box, h-otp-box), a 1.5px edge
+                  // (border-otp-box), IBM Plex Mono 600 (the headline role, 20px: the nearest hos.css size
+                  // to the page's 19px), the row gap is --space-3. The boxes share the row and shrink to
+                  // fit it (min-w-0), capped at the box width; the radius is the control corner for the
+                  // prototype's 10px. The empty edge is the control edge (3:1), not --line-strong.
+                  'flex h-otp-box max-w-otp-box min-w-0 flex-1 basis-0 items-center justify-center rounded-control border-otp-box font-mono text-headline font-semibold',
                   error
                     ? 'border-crit'
                     : active || filled
@@ -145,7 +152,9 @@ export function OtpInput({
                     ? 'bg-primary-soft text-primary-strong'
                     : 'bg-surface text-ink',
                   active &&
-                    (error ? 'ring-2 ring-crit' : 'ring-2 ring-primary'),
+                    (error
+                      ? 'ring-emphasis ring-crit'
+                      : 'ring-emphasis ring-primary'),
                   disabled && 'opacity-50',
                 )}
               >
@@ -187,12 +196,12 @@ export function OtpInput({
         />
       </div>
       {hint ? (
-        <p id={hintId} className="text-[12px] text-ink-2">
+        <p id={hintId} className="text-label text-ink-2">
           {hint}
         </p>
       ) : null}
       {error ? (
-        <p id={errorId} role="alert" className="text-[12px] text-crit-deep">
+        <p id={errorId} role="alert" className="text-label text-crit-deep">
           {error}
         </p>
       ) : null}
