@@ -41,12 +41,23 @@ function channels(hex: string): number[] {
   return [1, 3, 5].map((offset) => parseInt(hex.slice(offset, offset + 2), 16));
 }
 
+// The legibility proof measures the same few hundred colours tens of thousands of times (every brand,
+// scheme and material), so each colour's luminance is worked out once. A colour's luminance never
+// changes; the cache is bounded so a long-lived page cannot grow it without limit.
+const LUMINANCE_CACHE_LIMIT = 50_000;
+const luminances = new Map<string, number>();
+
 function relativeLuminance(hex: string): number {
+  const known = luminances.get(hex);
+  if (known !== undefined) return known;
   const [r, g, b] = channels(hex).map((value) => {
     const channel = value / 255;
     return channel <= 0.04045
       ? channel / 12.92
       : ((channel + 0.055) / 1.055) ** 2.4;
   });
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  if (luminances.size >= LUMINANCE_CACHE_LIMIT) luminances.clear();
+  luminances.set(hex, luminance);
+  return luminance;
 }

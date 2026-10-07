@@ -2,6 +2,7 @@ import { GLASS, MATERIAL_LEVELS, type NovaMaterial } from '../tokens/material';
 import { AI_SHEEN_PEAK } from '../tokens/scale';
 import { NOVA_DARK } from '../tokens/scheme';
 import { NOVA_DEFAULTS } from '../tokens/semantic';
+import { WHATSAPP_PAIRINGS } from '../tokens/whatsapp';
 import { contrastRatio, isHexColour, mixColours } from './contrast';
 import { rgbChannels, rgbToHex } from './colour';
 import type { NovaPalette } from './derive';
@@ -11,15 +12,35 @@ export type NovaSchemeName = 'light' | 'dark';
 // Every token's value in one scheme, for a hospital's palette (or HOS Violet's, with none).
 export type ResolvedPalette = Record<keyof typeof NOVA_DEFAULTS, string>;
 
+// Resolved once per palette and scheme, and frozen: the theme engine, the provider and the proofs ask
+// for the same brand's palette again and again, and the checks below are remembered per resolved
+// palette, so handing back the same object lets every material share the work.
+const HOS_VIOLET_RESOLVED: Readonly<Record<NovaSchemeName, ResolvedPalette>> = {
+  light: Object.freeze({ ...NOVA_DEFAULTS }),
+  dark: Object.freeze({ ...NOVA_DEFAULTS, ...NOVA_DARK }),
+};
+const resolved = new WeakMap<
+  NovaPalette,
+  Partial<Record<NovaSchemeName, ResolvedPalette>>
+>();
+
 export function resolvePalette(
   scheme: NovaSchemeName,
   palette?: NovaPalette,
 ): ResolvedPalette {
-  return {
-    ...NOVA_DEFAULTS,
-    ...(scheme === 'dark' ? NOVA_DARK : {}),
-    ...palette?.[scheme],
-  };
+  if (palette === undefined) return HOS_VIOLET_RESOLVED[scheme];
+  const build = () =>
+    Object.freeze({
+      ...NOVA_DEFAULTS,
+      ...(scheme === 'dark' ? NOVA_DARK : {}),
+      ...palette[scheme],
+    });
+  // Only a frozen palette (deriveNovaPalette's) can be remembered: anything else might change.
+  if (!Object.isFrozen(palette)) return build();
+  const known = resolved.get(palette) ?? {};
+  const value = known[scheme] ?? build();
+  resolved.set(palette, { ...known, [scheme]: value });
+  return value;
 }
 
 export interface LegibilityCheck {
@@ -52,11 +73,55 @@ export function screenColours(
   return mixColours(rgbToHex(screened), opacity, backdrop);
 }
 
+// The checks of a frozen palette (resolvePalette's), remembered per scheme and material: the theme
+// engine and the proofs measure the same palette more than once. Each caller gets its own array.
+const remembered = new WeakMap<
+  ResolvedPalette,
+  Map<string, LegibilityCheck[]>
+>();
+
 // Every pairing Nova draws, measured for one scheme and one material: text at 4.5:1, control edges,
 // marks and the focus ring at 3:1 (WCAG 1.4.3 and 1.4.11). The backdrops are built from the same
 // numbers theme.css paints with (MATERIAL_LEVELS, GLASS). A component that introduces a new pairing
-// adds it here, and every brand, scheme and material is then proven for it.
+// adds it here (the component pairings below, or this list when it depends on the material), and
+// every brand, scheme and material is then proven for it.
 export function legibilityChecks(
+  p: ResolvedPalette,
+  scheme: NovaSchemeName,
+  material: NovaMaterial,
+): LegibilityCheck[] {
+  if (!Object.isFrozen(p)) {
+    return [
+      ...materialChecks(p, scheme, material),
+      ...componentChecks(p, scheme),
+    ];
+  }
+  const byPalette = remembered.get(p) ?? new Map<string, LegibilityCheck[]>();
+  remembered.set(p, byPalette);
+  // The component pairings sit on opaque grounds, so they are measured once per scheme and shared
+  // by every material.
+  const shared = byPalette.get(scheme) ?? componentChecks(p, scheme);
+  byPalette.set(scheme, shared);
+  const key = `${scheme}|${material}`;
+  const checks = byPalette.get(key) ?? [
+    ...materialChecks(p, scheme, material),
+    ...shared,
+  ];
+  byPalette.set(key, checks);
+  return [...checks];
+}
+
+const hexOf =
+  (p: ResolvedPalette) =>
+  (token: keyof ResolvedPalette): string => {
+    const value = p[token];
+    if (!isHexColour(value)) {
+      throw new TypeError(`${token} is not a hex colour: ${value}`);
+    }
+    return value;
+  };
+
+function materialChecks(
   p: ResolvedPalette,
   scheme: NovaSchemeName,
   material: NovaMaterial,
@@ -81,13 +146,7 @@ export function legibilityChecks(
       brand,
     });
   };
-  const hex = (token: keyof ResolvedPalette): string => {
-    const value = p[token];
-    if (!isHexColour(value)) {
-      throw new TypeError(`${token} is not a hex colour: ${value}`);
-    }
-    return value;
-  };
+  const hex = hexOf(p);
 
   const primary = hex('--nova-color-primary');
   const strong = hex('--nova-color-primary-strong');
@@ -334,6 +393,446 @@ export function legibilityChecks(
   }
 
   return checks;
+}
+
+// The pairings individual components draw on opaque grounds (the AI wash, the approved wash, a card,
+// a bubble, the chrome-1 pill, the WhatsApp phone), the same under every material. Each is a named
+// check with the component that draws it, proven with everything above for every brand, in both
+// schemes. They were held in the components' own specs until 2026-10 (W3-1 moved them here).
+type Token = keyof ResolvedPalette;
+type Pairing = readonly [usedBy: string, fg: Token, bg: Token, minimum: number];
+
+// AiDraftBlock, AiSourceLine / WhyTrail, AiClassChip / TierCard and ApprovalBar (the AI trust batch):
+// the draft block's wash, the approved block's green wash, the status and tier chips, a card.
+export const AI_TRUST_PAIRINGS: readonly Pairing[] = [
+  [
+    'draft body text (ink) on the AI wash',
+    '--nova-color-ink',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'notices and Why trail reasons (ink-2) on the AI wash',
+    '--nova-color-ink-2',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'Why trail sources (ink-3) on the AI wash',
+    '--nova-color-ink-3',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'the source line (ai-deep) on the AI wash',
+    '--nova-color-ai-deep',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'the rejection note and the required mark (crit-deep) on the AI wash',
+    '--nova-color-crit-deep',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'the reason field edge on the AI wash',
+    '--nova-color-border-control',
+    '--nova-color-ai-ghost',
+    MARK,
+  ],
+  [
+    'the focus ring on the AI wash',
+    '--nova-color-primary',
+    '--nova-color-ai-ghost',
+    MARK,
+  ],
+  [
+    'the progress fill on its track',
+    '--nova-color-ai',
+    '--nova-color-ai-soft',
+    MARK,
+  ],
+  [
+    'approved body text (ink) on the green wash',
+    '--nova-color-ink',
+    '--nova-color-good-soft',
+    TEXT,
+  ],
+  [
+    'approved notices (ink-2) on the green wash',
+    '--nova-color-ink-2',
+    '--nova-color-good-soft',
+    TEXT,
+  ],
+  [
+    'the audit record and source line (good-deep) on the green wash',
+    '--nova-color-good-deep',
+    '--nova-color-good-soft',
+    TEXT,
+  ],
+  [
+    'the focus ring on the green wash',
+    '--nova-color-primary',
+    '--nova-color-good-soft',
+    MARK,
+  ],
+  [
+    'the low-confidence and blocked chips',
+    '--nova-color-warn-deep',
+    '--nova-color-warn-soft',
+    TEXT,
+  ],
+  [
+    'the rejected and RED tier chips',
+    '--nova-color-crit-deep',
+    '--nova-color-crit-soft',
+    TEXT,
+  ],
+  [
+    'the RED "why blocked" reason on a card',
+    '--nova-color-crit-deep',
+    '--nova-color-surface',
+    TEXT,
+  ],
+  [
+    'a tier rail on a card (green)',
+    '--nova-color-good',
+    '--nova-color-surface',
+    MARK,
+  ],
+  [
+    'a tier rail on a card (amber)',
+    '--nova-color-warn',
+    '--nova-color-surface',
+    MARK,
+  ],
+  [
+    'a tier rail on a card (red)',
+    '--nova-color-crit',
+    '--nova-color-surface',
+    MARK,
+  ],
+];
+
+// ChatAnswer, AiStreamText and AiCopilotDock (the AI conversation batch).
+export const AI_CONVERSATION_PAIRINGS: readonly Pairing[] = [
+  [
+    'answer text on the AI wash (ChatAnswer)',
+    '--nova-color-ink',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'gloss and small print on the AI wash (ChatAnswer, the dock header)',
+    '--nova-color-ink-2',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'the streaming caret on the AI wash (AiStreamText)',
+    '--nova-color-ai',
+    '--nova-color-ai-ghost',
+    MARK,
+  ],
+  [
+    'the dock pill label on chrome-1 (AiCopilotDock)',
+    '--nova-color-chrome-ink',
+    '--nova-color-chrome-1',
+    TEXT,
+  ],
+];
+
+// AmbientScribeRecorder, SoapDraftBlock and VoiceEntryCapture (the AI voice batch). The recording
+// pill is the dark chrome; a SOAP section is the panel at SOAP_SECTION_ALPHA over the block's wash.
+export const SOAP_SECTION_ALPHA = 0.55;
+
+export const AI_VOICE_PAIRINGS: readonly Pairing[] = [
+  [
+    'the recording pill text (chrome-ink) on chrome-1',
+    '--nova-color-chrome-ink',
+    '--nova-color-chrome-1',
+    TEXT,
+  ],
+  [
+    'the waveform bars (chrome-accent) on chrome-1',
+    '--nova-color-chrome-accent',
+    '--nova-color-chrome-1',
+    MARK,
+  ],
+  [
+    'the live dot (good) on chrome-1',
+    '--nova-color-good',
+    '--nova-color-chrome-1',
+    MARK,
+  ],
+  [
+    'the caret (ai) on the AI wash',
+    '--nova-color-ai',
+    '--nova-color-ai-ghost',
+    MARK,
+  ],
+  ['the caret (ai) on a card', '--nova-color-ai', '--nova-color-surface', MARK],
+  [
+    'the AI-filled field edge (ai) on its AI fill',
+    '--nova-color-ai',
+    '--nova-color-ai-ghost',
+    MARK,
+  ],
+  [
+    'the out-of-range flag (warn-deep) on the AI wash',
+    '--nova-color-warn-deep',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'the out-of-range flag (warn-deep) on the approved wash',
+    '--nova-color-warn-deep',
+    '--nova-color-good-soft',
+    TEXT,
+  ],
+  [
+    'the pane headings (ai-deep) on the approved wash',
+    '--nova-color-ai-deep',
+    '--nova-color-good-soft',
+    TEXT,
+  ],
+  [
+    'the last value (ink-3) on the approved wash',
+    '--nova-color-ink-3',
+    '--nova-color-good-soft',
+    TEXT,
+  ],
+  [
+    'the empty-plan edge (warn) on the AI wash',
+    '--nova-color-warn',
+    '--nova-color-ai-ghost',
+    MARK,
+  ],
+];
+
+// The SOAP sections, in the draft (over the AI wash) and once approved (over the green wash):
+// [used by, foreground, the wash the section sits on, minimum].
+export const SOAP_SECTION_PAIRINGS: readonly Pairing[] = [
+  [
+    'SOAP text (ink) on a draft section',
+    '--nova-color-ink',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'SOAP gloss (ink-2) on a draft section',
+    '--nova-color-ink-2',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'SOAP heading (ai-deep) on a draft section',
+    '--nova-color-ai-deep',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'SOAP text (ink) on a approved section',
+    '--nova-color-ink',
+    '--nova-color-good-soft',
+    TEXT,
+  ],
+  [
+    'SOAP gloss (ink-2) on a approved section',
+    '--nova-color-ink-2',
+    '--nova-color-good-soft',
+    TEXT,
+  ],
+  [
+    'SOAP heading (ai-deep) on a approved section',
+    '--nova-color-ai-deep',
+    '--nova-color-good-soft',
+    TEXT,
+  ],
+  [
+    'the empty-plan flag (warn-deep) on a draft section',
+    '--nova-color-warn-deep',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+];
+
+// CallTranscriptConsole and AiDraftReply (the messaging batch), on the product's own tokens. The
+// WhatsApp phone's pairings (tokens/whatsapp.ts) are measured with them.
+export const MESSAGING_PAIRINGS: readonly Pairing[] = [
+  [
+    'an AI turn (ink) on its bubble',
+    '--nova-color-ink',
+    '--nova-color-surface',
+    TEXT,
+  ],
+  [
+    'a caller turn (ink) on its bubble',
+    '--nova-color-ink',
+    '--nova-color-primary-soft',
+    TEXT,
+  ],
+  [
+    'the gloss (ink-2) on an AI turn',
+    '--nova-color-ink-2',
+    '--nova-color-surface',
+    TEXT,
+  ],
+  [
+    'the gloss (ink-2) on a caller turn',
+    '--nova-color-ink-2',
+    '--nova-color-primary-soft',
+    TEXT,
+  ],
+  [
+    'speaker and time (ink-3) on an AI turn',
+    '--nova-color-ink-3',
+    '--nova-color-surface',
+    TEXT,
+  ],
+  [
+    'speaker and time (ink-3) on a caller turn',
+    '--nova-color-ink-3',
+    '--nova-color-primary-soft',
+    TEXT,
+  ],
+  [
+    'a system pill (ink-2) on the panel',
+    '--nova-color-ink-2',
+    '--nova-color-surface',
+    TEXT,
+  ],
+  [
+    'the escalation pill (crit-deep) on its tint',
+    '--nova-color-crit-deep',
+    '--nova-color-crit-soft',
+    TEXT,
+  ],
+  [
+    'the escalation edge on the transcript',
+    '--nova-color-crit',
+    '--nova-color-surface-2',
+    MARK,
+  ],
+  [
+    'the typing dots (ink-3) on a bubble',
+    '--nova-color-ink-3',
+    '--nova-color-primary-soft',
+    MARK,
+  ],
+  [
+    'the transcript’s focus ring on panel-2',
+    '--nova-color-primary',
+    '--nova-color-surface-2',
+    MARK,
+  ],
+  [
+    'write-back detail (ink-2) on the footer',
+    '--nova-color-ink-2',
+    '--nova-color-surface',
+    TEXT,
+  ],
+  [
+    'the write-back tick (good) on the footer',
+    '--nova-color-good',
+    '--nova-color-surface',
+    MARK,
+  ],
+  [
+    'the reply’s recipient and consent (ink-2) on the AI wash',
+    '--nova-color-ink-2',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+  [
+    'the reply’s message (ink) on the AI wash',
+    '--nova-color-ink',
+    '--nova-color-ai-ghost',
+    TEXT,
+  ],
+];
+
+// ExtractedValuesReview (the extraction batch): what the review sets on a resting row and on the row
+// Table tints primary-ghost under the pointer.
+const EXTRACTION_GROUNDS: ReadonlyArray<readonly [string, Token]> = [
+  ['a resting row', '--nova-color-surface'],
+  ['a hovered row', '--nova-color-primary-ghost'],
+];
+const EXTRACTION_INKS: ReadonlyArray<readonly [string, Token, number]> = [
+  ['the test name and value (ink)', '--nova-color-ink', TEXT],
+  ['the unit, "AI read" and "Not filed" (ink-2)', '--nova-color-ink-2', TEXT],
+  ['the source line (ai-deep)', '--nova-color-ai-deep', TEXT],
+  ['the "Filed" mark (good-deep)', '--nova-color-good-deep', TEXT],
+  ['the empty-value error (crit-deep)', '--nova-color-crit-deep', TEXT],
+  ['the focus ring', '--nova-color-primary', MARK],
+];
+export const EXTRACTION_PAIRINGS: readonly Pairing[] =
+  EXTRACTION_GROUNDS.flatMap(([ground, bg]) =>
+    EXTRACTION_INKS.map(
+      ([usedBy, fg, minimum]) =>
+        [`${usedBy} on ${ground}`, fg, bg, minimum] as const,
+    ),
+  );
+
+// Fixed for every hospital (status on status), so a failure there is never the brand's to fix.
+const FIXED_TOKEN = /^--nova-(?:color-(?:good|warn|crit|info)(?:-|$)|chart-)/;
+
+function componentChecks(
+  p: ResolvedPalette,
+  scheme: NovaSchemeName,
+): LegibilityCheck[] {
+  const hex = hexOf(p);
+  const pairing = ([usedBy, fg, bg, minimum]: Pairing): LegibilityCheck => ({
+    usedBy,
+    foreground: hex(fg),
+    background: hex(bg),
+    backgroundName: hex(bg),
+    ratio: contrastRatio(hex(fg), hex(bg)),
+    minimum,
+    brand: !(FIXED_TOKEN.test(fg) && FIXED_TOKEN.test(bg)),
+  });
+  // A SOAP section is the panel at SOAP_SECTION_ALPHA over the wash in its pairing.
+  const section = ([usedBy, fg, wash, minimum]: Pairing): LegibilityCheck => {
+    const ground = mixColours(
+      hex('--nova-color-surface'),
+      SOAP_SECTION_ALPHA,
+      hex(wash),
+    );
+    return {
+      usedBy,
+      foreground: hex(fg),
+      background: ground,
+      backgroundName: ground,
+      ratio: contrastRatio(hex(fg), ground),
+      minimum,
+      brand: true,
+    };
+  };
+  const whatsapp = WHATSAPP_PAIRINGS.map(
+    ([usedBy, fg, bg, minimum]): LegibilityCheck => {
+      const foreground = fg(scheme, p);
+      const background = bg(scheme, p);
+      return {
+        usedBy: `WhatsApp: ${usedBy}`,
+        foreground,
+        background,
+        backgroundName: background,
+        ratio: contrastRatio(foreground, background),
+        minimum,
+        brand: true,
+      };
+    },
+  );
+  return [
+    ...AI_TRUST_PAIRINGS.map(pairing),
+    ...AI_CONVERSATION_PAIRINGS.map(pairing),
+    ...AI_VOICE_PAIRINGS.map(pairing),
+    ...SOAP_SECTION_PAIRINGS.map(section),
+    ...MESSAGING_PAIRINGS.map(pairing),
+    ...whatsapp,
+    ...EXTRACTION_PAIRINGS.map(pairing),
+  ];
 }
 
 export function legibilityFailures(

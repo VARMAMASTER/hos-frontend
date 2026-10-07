@@ -42,10 +42,26 @@ const fromLinear = (linear: number): number =>
   255 *
   (linear <= 0.0031308 ? linear * 12.92 : 1.055 * linear ** (1 / 2.4) - 0.055);
 
+// A colour's luminance and OKLCH never change, and the theme engine and its proofs ask for the same
+// colours again and again (every brand is moved from one template), so each is worked out once. The
+// caches are bounded so a long-lived page cannot grow them without limit.
+const CACHE_LIMIT = 50_000;
+
+function remember<T>(cache: Map<string, T>, key: string, value: T): T {
+  if (cache.size >= CACHE_LIMIT) cache.clear();
+  cache.set(key, value);
+  return value;
+}
+
+const luminances = new Map<string, number>();
+const oklchs = new Map<string, Readonly<Oklch>>();
+
 // WCAG 2.x relative luminance.
 export function relativeLuminance(hex: string): number {
+  const known = luminances.get(hex);
+  if (known !== undefined) return known;
   const [r, g, b] = rgbChannels(hex).map(toLinear);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return remember(luminances, hex, 0.2126 * r + 0.7152 * g + 0.0722 * b);
 }
 
 function linearToOklch([r, g, b]: readonly number[]): Oklch {
@@ -72,8 +88,15 @@ function oklchToLinear({ l: L, c, h }: Oklch): [number, number, number] {
   ];
 }
 
-export function toOklch(hex: string): Oklch {
-  return linearToOklch(rgbChannels(hex).map(toLinear));
+// Frozen, because one object is shared by every caller that asks for the same colour.
+export function toOklch(hex: string): Readonly<Oklch> {
+  const known = oklchs.get(hex);
+  if (known !== undefined) return known;
+  return remember(
+    oklchs,
+    hex,
+    Object.freeze(linearToOklch(rgbChannels(hex).map(toLinear))),
+  );
 }
 
 const inGamut = (linear: readonly number[]) =>

@@ -309,36 +309,43 @@ describe('the highlight family', () => {
 
   // The hero's far stop is the highlight on the chrome. It follows the brand, but blended over the
   // hero base over white it is never lighter than HOS Violet's, so white text on the hero keeps the
-  // ratio material.spec.ts proves for the prototype's own sky.
-  it("makes the chrome's sky glow (the hero's far stop) the brand's highlight, never lighter over the hero base than the prototype's", () => {
-    expect(BRAND_CHROME_TOKENS as readonly string[]).toContain(
-      '--nova-color-chrome-glow-2',
-    );
-    const glass = MATERIAL_LEVELS.glass;
-    const lightestHero = (palette: Record<string, string>) =>
-      relativeLuminance(
-        mixColours(
-          palette['--nova-color-chrome-glow-2'] ?? '',
-          glass.heroEndAlpha,
-          mixColours(
-            palette['--nova-color-chrome-1'] ?? '',
-            glass.heroBaseAlpha,
-            '#FFFFFF',
-          ),
-        ),
+  // ratio material.spec.ts proves for the prototype's own sky. It derives 72 brands, which is quick
+  // alone but was cut off by the default timeout on a loaded machine, so it has its own.
+  it(
+    "makes the chrome's sky glow (the hero's far stop) the brand's highlight, never lighter over the hero base than the prototype's",
+    {
+      timeout: 60_000,
+    },
+    () => {
+      expect(BRAND_CHROME_TOKENS as readonly string[]).toContain(
+        '--nova-color-chrome-glow-2',
       );
-    const ceiling = lightestHero(NOVA_DEFAULTS);
-    for (let hue = 0; hue < 360; hue += 15) {
-      for (const chroma of [0.05, 0.12, 0.3]) {
-        const primary = withLuminance(hue, chroma, 0.142, 'darker');
-        const { light } = deriveNovaPalette({ primary });
-        expect(lightestHero(light), primary).toBeLessThanOrEqual(ceiling);
+      const glass = MATERIAL_LEVELS.glass;
+      const lightestHero = (palette: Record<string, string>) =>
+        relativeLuminance(
+          mixColours(
+            palette['--nova-color-chrome-glow-2'] ?? '',
+            glass.heroEndAlpha,
+            mixColours(
+              palette['--nova-color-chrome-1'] ?? '',
+              glass.heroBaseAlpha,
+              '#FFFFFF',
+            ),
+          ),
+        );
+      const ceiling = lightestHero(NOVA_DEFAULTS);
+      for (let hue = 0; hue < 360; hue += 15) {
+        for (const chroma of [0.05, 0.12, 0.3]) {
+          const primary = withLuminance(hue, chroma, 0.142, 'darker');
+          const { light } = deriveNovaPalette({ primary });
+          expect(lightestHero(light), primary).toBeLessThanOrEqual(ceiling);
+        }
       }
-    }
-    expect(
-      deriveNovaPalette(teal).light['--nova-color-chrome-glow-2'],
-    ).not.toBe('#60A5FA');
-  });
+      expect(
+        deriveNovaPalette(teal).light['--nova-color-chrome-glow-2'],
+      ).not.toBe('#60A5FA');
+    },
+  );
 });
 
 describe('suggestNovaBrand', () => {

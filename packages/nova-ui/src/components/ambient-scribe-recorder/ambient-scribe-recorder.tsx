@@ -382,7 +382,7 @@ export function AmbientScribeRecorder({
 
   const glyph =
     // LiveDot's heartbeat in its good tone: a crit dot on the fixed dark chrome is under 3:1 in the
-    // light scheme (ai-voice-legibility.spec.ts). The words say "Recording"; the dot only beats.
+    // light scheme (theme/legibility.ts, AI_VOICE_PAIRINGS). The words say "Recording"; the dot only beats.
     status === 'recording' ? (
       <StatusDotMark tone="good" pulse />
     ) : status === 'paused' ? (

@@ -57,7 +57,7 @@ export function WhyTrail({
       </Button>
       {/* Always in the document, so aria-controls resolves; hidden while closed. It fades in, only
           when motion is welcome. Its 12px ink-2 and 11px ink-3 on the AI wash are proven in
-          ai-trust-legibility.spec.ts for every hospital brand, in both schemes. */}
+          theme/legibility.ts (AI_TRUST_PAIRINGS) for every hospital brand, in both schemes. */}
       <div
         id={regionId}
         role="region"

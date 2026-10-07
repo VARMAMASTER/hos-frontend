@@ -220,8 +220,8 @@ describe('the WhatsApp pairings', () => {
   });
 
   // The hospital's theme moves the chrome ink and the header tag: the 480-brand sweep is in
-  // components/call-transcript-console/messaging-legibility.spec.ts, which derives each brand's
-  // palette once for every messaging pairing.
+  // theme/legibility.spec.ts, where every WhatsApp pairing is a named check in legibilityChecks(), so each brand
+  // is derived once for every pairing.
   it('would catch a failing pair', () => {
     const palette = {
       ...resolvePalette('light'),

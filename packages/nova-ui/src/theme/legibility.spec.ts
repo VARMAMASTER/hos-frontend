@@ -1,12 +1,22 @@
+// @vitest-environment node
+// The legibility proof: every pairing Nova draws, for HOS Violet and 480 hospital brands, in both
+// schemes and on every material. Pure arithmetic, so it runs under node.
 import { describe, expect, it } from 'vitest';
 import { NOVA_MATERIALS } from '../tokens/material';
+import { WHATSAPP_PAIRINGS } from '../tokens/whatsapp';
 import { withLuminance } from './colour';
 import { createNovaTheme } from './create-theme';
 import { deriveNovaPalette, suggestNovaBrand } from './derive';
 import {
+  AI_CONVERSATION_PAIRINGS,
+  AI_TRUST_PAIRINGS,
+  AI_VOICE_PAIRINGS,
+  EXTRACTION_PAIRINGS,
   legibilityChecks,
   legibilityFailures,
+  MESSAGING_PAIRINGS,
   resolvePalette,
+  SOAP_SECTION_PAIRINGS,
 } from './legibility';
 
 const SCHEMES = ['light', 'dark'] as const;
@@ -92,6 +102,103 @@ describe('the legibility proof', () => {
     expect(failing).toContain('the highlight gradient as large display text');
   });
 
+  // The pairings the components draw on opaque grounds are named checks here, each with the use it
+  // proves, measured for every brand, scheme and material with the rest (the sweep below).
+  it.each([
+    ['the AI trust batch', AI_TRUST_PAIRINGS, 18],
+    ['the AI conversation batch', AI_CONVERSATION_PAIRINGS, 4],
+    ['the AI voice batch', AI_VOICE_PAIRINGS, 11],
+    ['the SOAP sections', SOAP_SECTION_PAIRINGS, 7],
+    ['the messaging batch', MESSAGING_PAIRINGS, 15],
+    ['the extraction review', EXTRACTION_PAIRINGS, 12],
+  ] as const)(
+    'measures every pairing of %s, in both schemes and every material',
+    (_, pairings, count) => {
+      expect(pairings).toHaveLength(count);
+      for (const scheme of SCHEMES) {
+        for (const material of NOVA_MATERIALS) {
+          const names = legibilityChecks(
+            resolvePalette(scheme),
+            scheme,
+            material,
+          ).map((check) => `${check.usedBy}@${check.minimum}`);
+          for (const [usedBy, , , minimum] of pairings) {
+            expect(names, `${scheme} ${material}`).toContain(
+              `${usedBy}@${minimum}`,
+            );
+          }
+        }
+      }
+    },
+  );
+
+  it('measures every WhatsApp pairing as a named check', () => {
+    const names = legibilityChecks(resolvePalette('dark'), 'dark', 'solid').map(
+      (check) => check.usedBy,
+    );
+    for (const [usedBy] of WHATSAPP_PAIRINGS) {
+      expect(names).toContain(`WhatsApp: ${usedBy}`);
+    }
+  });
+
+  // Each batch's own "would catch" case, kept from the spec that held it before.
+  it.each([
+    [
+      '--nova-color-ink-3',
+      '#C8C8C8',
+      'Why trail sources (ink-3) on the AI wash',
+    ],
+    [
+      '--nova-color-chrome-accent',
+      '#2A1B5C',
+      'the waveform bars (chrome-accent) on chrome-1',
+    ],
+    [
+      '--nova-color-primary-soft',
+      '#8F8F8F',
+      'speaker and time (ink-3) on a caller turn',
+    ],
+    [
+      '--nova-color-primary-ghost',
+      '#5A5A5A',
+      'the test name and value (ink) on a hovered row',
+    ],
+    ['--nova-color-chrome-ink', '#3A3A3A', 'WhatsApp: the header status tag'],
+    ['--nova-color-ink', '#8A8A8A', 'SOAP text (ink) on a draft section'],
+    [
+      '--nova-color-chrome-1',
+      '#8F8AA8',
+      'the dock pill label on chrome-1 (AiCopilotDock)',
+    ],
+  ] as const)(
+    'would catch a failing component pair: %s at %s fails "%s"',
+    (token, value, usedBy) => {
+      const palette = { ...resolvePalette('light'), [token]: value };
+      expect(
+        legibilityFailures(palette, 'light', 'solid').map((f) => f.usedBy),
+      ).toContain(usedBy);
+    },
+  );
+
+  it('remembers a derived palette: the same brand resolves to the same frozen palette and the same checks', () => {
+    const brand = suggestNovaBrand('#0F766E');
+    const palette = deriveNovaPalette(brand);
+    expect(deriveNovaPalette(brand)).toBe(palette);
+    expect(Object.isFrozen(palette.light)).toBe(true);
+    const resolved = resolvePalette('dark', palette);
+    expect(resolvePalette('dark', palette)).toBe(resolved);
+    expect(Object.isFrozen(resolved)).toBe(true);
+    const first = legibilityChecks(resolved, 'dark', 'frost');
+    const second = legibilityChecks(resolved, 'dark', 'frost');
+    expect(second).toEqual(first);
+    expect(second).not.toBe(first);
+    // An unfrozen palette is never remembered: a change to it is measured.
+    const edited = { ...resolved };
+    expect(legibilityFailures(edited, 'dark', 'frost')).toEqual([]);
+    edited['--nova-color-ink'] = edited['--nova-color-surface'];
+    expect(legibilityFailures(edited, 'dark', 'frost')).not.toEqual([]);
+  });
+
   it('would catch a failing pair: a pale primary under white text', () => {
     const palette = {
       ...resolvePalette('light'),
@@ -119,7 +226,9 @@ const BRANDS = HUES.flatMap((hue) =>
   ),
 );
 
-describe('every hospital brand', () => {
+// The sweep is the slowest proof in the library (a few seconds alone; much longer on a machine under
+// load), so it carries an explicit, generous timeout rather than the default.
+describe('every hospital brand', { timeout: 120_000 }, () => {
   it(`covers ${BRANDS.length} brands round the hue circle`, () => {
     expect(BRANDS.length).toBe(480);
     expect(new Set(BRANDS.map((b) => b.primary)).size).toBeGreaterThan(250);
@@ -152,5 +261,5 @@ describe('every hospital brand', () => {
     }
     expect(failures).toEqual([]);
     expect(tightest).toBeGreaterThanOrEqual(1);
-  }, 120_000);
+  });
 });

@@ -142,12 +142,31 @@ const CHART_COLOURS = {
   dark: CHART_SLOTS.map((slot) => schemeValue(`--nova-chart-${slot}`, 'dark')),
 };
 
+// The engine and its proofs derive the same brands again and again (createNovaTheme, the provider,
+// the 480-brand sweep), and every brand's AI search turns the same few template colours by the same
+// hues. Each pure step below is therefore worked out once per input. The caches are bounded so a
+// long-lived page cannot grow them without limit.
+const CACHE_LIMIT = 5_000;
+
+function memo<T>(cache: Map<string, T>, key: string, make: () => T): T {
+  const known = cache.get(key);
+  if (known !== undefined) return known;
+  const value = make();
+  if (cache.size >= CACHE_LIMIT) cache.clear();
+  cache.set(key, value);
+  return value;
+}
+
+const turns = new Map<string, string>();
+
 // One of HOS Violet's colours turned by `rotation` degrees of hue and pinned back to its luminance.
 function turn(hex: string, rotation: number): string {
   if (rotation === 0) return hex;
-  const { l, c, h } = toOklch(hex);
-  const turned = toOklch(fromOklch({ l, c, h: h + rotation }));
-  return withLuminance(turned.h, turned.c, relativeLuminance(hex));
+  return memo(turns, `${hex}|${rotation}`, () => {
+    const { l, c, h } = toOklch(hex);
+    const turned = toOklch(fromOklch({ l, c, h: h + rotation }));
+    return withLuminance(turned.h, turned.c, relativeLuminance(hex));
+  });
 }
 
 const STATUSES = ['good', 'warn', 'crit', 'info'] as const;
@@ -178,9 +197,24 @@ export function oklabDistance(a: string, b: string): number {
 // every floor in both schemes (AI_SEPARATION: hue and colour distance from each status and the brand,
 // colour distance from each chart series). `feasible` is false when no hue does, and the theme is
 // then rejected.
+const aiHues = new Map<string, { hue: number; feasible: boolean }>();
+
 export function chooseAiHue(
   primary: string,
   statusHues: readonly number[] = STATUS_HUES,
+): { hue: number; feasible: boolean } {
+  // The product's own status hues are fixed, so the answer for a brand is too; a test of the rule
+  // with status hues of its own is worked out every time.
+  if (statusHues !== STATUS_HUES) return searchAiHue(primary, statusHues);
+  const { hue, feasible } = memo(aiHues, primary.toUpperCase(), () =>
+    searchAiHue(primary, statusHues),
+  );
+  return { hue, feasible };
+}
+
+function searchAiHue(
+  primary: string,
+  statusHues: readonly number[],
 ): { hue: number; feasible: boolean } {
   const brand = toOklch(primary);
   const chromatic = brand.c >= AI_SEPARATION.greyChroma;
@@ -525,6 +559,9 @@ function movePalette(
 // the prototype's palette exactly. Any other brand moves every colour to its own hue at the same
 // WCAG luminance, so each contrast the prototype holds, it holds; the light brand family is the
 // hospital's own, and the dark one is pinned to DARK_BRAND_LUMINANCE.
+// Derived once per brand, and frozen, since one palette is shared by every caller that asks for it.
+const palettes = new Map<string, NovaPalette>();
+
 export function deriveNovaPalette(brand: BrandColours): NovaPalette {
   const primary = brand.primary.toUpperCase();
   const suggested =
@@ -541,7 +578,20 @@ export function deriveNovaPalette(brand: BrandColours): NovaPalette {
     suggested?.primarySoft ??
     ''
   ).toUpperCase();
+  return memo(palettes, `${primary}|${strong}|${soft}`, () => {
+    const { light, dark } = buildPalette(primary, strong, soft);
+    return Object.freeze({
+      light: Object.freeze(light),
+      dark: Object.freeze(dark),
+    });
+  });
+}
 
+function buildPalette(
+  primary: string,
+  strong: string,
+  soft: string,
+): NovaPalette {
   const isViolet = primary === HOS_VIOLET.toUpperCase();
   const move = isViolet ? (hex: string) => hex : mover(primary);
   const light = isViolet
