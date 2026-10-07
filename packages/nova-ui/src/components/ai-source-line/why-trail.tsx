@@ -82,7 +82,7 @@ export function WhyTrail({
           ))}
         </ul>
         {sources ? (
-          <p className="mt-s3 text-meta text-ink-3">
+          <p className="mt-s3 text-meta leading-relaxed text-ink-3">
             {sourcesLabel}: <span lang={contentLang}>{sources}</span>
           </p>
         ) : null}
