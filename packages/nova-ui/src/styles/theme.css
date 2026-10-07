@@ -27,6 +27,9 @@
      animations under motion-safe, so prefers-reduced-motion leaves a plain dot. */
   --nova-pulse-slow: 1400ms;
   --nova-pulse-fast: 900ms;
+  /* Nova's own md breakpoint (Tailwind's value), declared here so the md: variant and AppShell's
+     script media query (tokens/design.ts BREAKPOINT_REM; design.spec.ts compares) are one token. */
+  --breakpoint-md: 48rem;
 }
 
 /* A dialog scales in from 0.94 with a fade. */
@@ -482,6 +485,16 @@
   --container-5xl: var(--nova-measure-5xl);
   --container-6xl: var(--nova-measure-6xl);
 
+  /* Shared component tokens: the check box (Checkbox, Radio, DataTable's row box), the close square
+     (Dialog, Toast), the top bar's icon square (NotificationBell, the TopBar menu button), a menu
+     row (Menu, ModuleSwitcher, DataTable's Columns toggle) and a column's least width. */
+  --size-check: var(--nova-check);
+  --size-close: var(--nova-close-size);
+  --size-topbar-ico: var(--nova-topbar-ico);
+  --padding-menu-item: var(--nova-menu-item-p);
+  --gap-menu-item: var(--nova-menu-item-gap);
+  --min-width-column: var(--nova-column-min-w);
+
   /* The app frame. */
   --width-sidebar: var(--nova-sidebar-w);
   --width-rail: var(--nova-sidebar-rail-w);
@@ -804,6 +817,14 @@
   --nova-spinner: 1.1em;
   --nova-underline-offset-tight: var(--nova-space-0);
   --nova-underline-offset-loose: var(--nova-space-1);
+  /* Shared by more than one component family: the check box, .hos-x, .tb-ico, a .ws-item menu
+     row, and a column's least readable width. */
+  --nova-check: var(--nova-space-7);
+  --nova-close-size: 30px;
+  --nova-topbar-ico: 34px;
+  --nova-menu-item-p: var(--nova-space-3);
+  --nova-menu-item-gap: var(--nova-space-3);
+  --nova-column-min-w: 12rem;
   --nova-measure-xs: 20rem;
   --nova-measure-sm: 24rem;
   --nova-measure-md: 28rem;
@@ -825,7 +846,8 @@
 /* The values only these components need, each on the scale where the prototype's value is on it.
    Avatar: 20, 32, 40 and 48 across, and the verified seal's glyph beside each. Checkbox and Radio
    share one box. The Switch is a 48 by 28 track with a 24 thumb that travels the track less the
-   thumb and its three hairlines (the edge each side and the 1px rest). */
+   thumb and its three hairlines (the edge each side and the 1px rest). The check box they share
+   with DataTable is a shared token (--nova-check, "Design tokens"). */
 :root {
   --nova-avatar-xs: var(--nova-space-7);
   --nova-avatar-sm: var(--nova-space-9);
@@ -835,7 +857,6 @@
   --nova-avatar-glyph-sm: var(--nova-icon-sm);
   --nova-avatar-glyph-md: var(--nova-icon-md);
   --nova-avatar-glyph-lg: 18px;
-  --nova-check: var(--nova-space-7);
   --nova-switch-h: 28px;
   --nova-switch-w: var(--nova-space-10);
   --nova-switch-thumb: var(--nova-space-8);
@@ -865,7 +886,6 @@
   --size-avatar-glyph-sm: var(--nova-avatar-glyph-sm);
   --size-avatar-glyph-md: var(--nova-avatar-glyph-md);
   --size-avatar-glyph-lg: var(--nova-avatar-glyph-lg);
-  --size-check: var(--nova-check);
   --height-switch: var(--nova-switch-h);
   --width-switch: var(--nova-switch-w);
   --size-switch-thumb: var(--nova-switch-thumb);
@@ -906,10 +926,9 @@
   --nova-status-edge-tint: 18%;
   /* KpiTile's trailing visual (a Sparkline), beside the figure. */
   --nova-kpi-visual-w: 96px;
-  /* DataTable: the row checkbox, its column (the box and the row padding on both sides, which is
-     also where the pinned first column starts), the search box, and the scroll area's height. */
-  --nova-table-check: var(--nova-space-7);
-  --nova-table-select-w: calc(var(--nova-row-px) * 2 + var(--nova-table-check));
+  /* DataTable: the select column (the check box and the row padding on both sides, which is also
+     where the pinned first column starts), the search box, and the scroll area's height. */
+  --nova-table-select-w: calc(var(--nova-row-px) * 2 + var(--nova-check));
   --nova-table-search-w: 288px;
   --nova-table-max-h: 36rem;
   /* Charts: the tooltip's least width, and a legend key's stroke or band. */
@@ -928,7 +947,6 @@
   --height-nav-mark: var(--nova-nav-mark-h);
   --min-height-bed: var(--nova-bed-min-h);
   --width-kpi-visual: var(--nova-kpi-visual-w);
-  --size-table-check: var(--nova-table-check);
   --width-table-select: var(--nova-table-select-w);
   --min-width-table-select: var(--nova-table-select-w);
   --inset-table-select: var(--nova-table-select-w);
@@ -947,12 +965,9 @@
 /* ===== Component tokens: family b (end) ===== */
 
 /* ===== Component tokens: family c, AI components (begin) ===== */
-/* Reached as token references (min-w-(--nova-ai-column-min-w), max-w-(--nova-ai-bubble-max-w)), so
-   no new utility names. Values on the spacing scale point at it. */
+/* Reached as token references (max-w-(--nova-ai-bubble-max-w)), so no new utility names. A
+   column's least width is the shared min-w-column ("Design tokens"). Values on the spacing scale point at it. */
 :root {
-  /* A column or a filter that must not squeeze below a readable width: AiActionFeed's filters,
-     ExtractedValuesReview's source column, FleetKillSwitch's worker column. */
-  --nova-ai-column-min-w: 12rem;
   /* A stat or reading cell in an auto-fit grid (VoiceEntryCapture's readings, the workforce hero). */
   --nova-ai-stat-min-w: 132px;
   /* The AI conversation (.cop-q, .cop-a): a question or an answer fills at most 88% of the thread. */
@@ -1002,7 +1017,8 @@
 /* ===== Component tokens: family c (end) ===== */
 
 /* ===== Component tokens: family d, the newer catalogue (begin) =====
-   Toast, OtpInput, NotificationBell and FilterChip's own dimensions. Each is on the scale where the
+   Toast, OtpInput and FilterChip's own dimensions (the close square and the top bar's icon square
+   are shared tokens, in "Design tokens"). Each is on the scale where the
    prototype's value sits on it; the rest are literals here, the one place to change them. */
 :root {
   /* .hos-toasts: a toast stack is as wide as its widest toast up to 360px, and never wider than the
@@ -1012,10 +1028,6 @@
     var(--nova-toast-w),
     calc(100vw - var(--nova-space-7) * 2)
   );
-  /* .hos-x: the square close button of a toast. */
-  --nova-close-size: 30px;
-  /* .tb-ico: the 34px square icon button of the top bar (NotificationBell). */
-  --nova-topbar-ico: 34px;
   /* 01-login.html .otp-box: 44 x 50, an edge between the hairline and the emphasis edge. */
   --nova-otp-box-w: var(--nova-touch);
   --nova-otp-box-h: 50px;
@@ -1027,8 +1039,6 @@
 
 @theme inline {
   --container-toast: var(--nova-toast-max-w);
-  --size-close: var(--nova-close-size);
-  --size-topbar-ico: var(--nova-topbar-ico);
   --container-otp-box: var(--nova-otp-box-w);
   --height-otp-box: var(--nova-otp-box-h);
   --border-width-otp-box: var(--nova-otp-box-edge);

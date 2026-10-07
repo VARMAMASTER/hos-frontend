@@ -257,7 +257,7 @@ export function FleetKillSwitch({
       )}
       {...rest}
     >
-      <div className="min-w-(--nova-ai-column-min-w) flex-1">
+      <div className="min-w-column flex-1">
         <div className="flex flex-wrap items-center gap-s3">
           <Heading
             id={headingId}

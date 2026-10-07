@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { menuItem } from '../../primitives/menu-item';
 import { useControllableState } from '../../primitives/use-controllable-state';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 import { Chip } from '../chip/chip';
@@ -73,15 +74,6 @@ const triggerClasses =
   'group flex w-full items-center gap-s3 rounded-card border border-chrome-ink/15 bg-chrome-ink/5 ' +
   'px-nav-item py-nav-item text-left text-on-primary transition-colors hover:border-chrome-ink/20 hover:bg-chrome-ink/10 ' +
   'aria-expanded:border-chrome-accent/45 aria-expanded:bg-chrome-accent-soft';
-
-// Menu's own item treatment (the prototype's .ws-item), so a module row and any other menu row look
-// alike: 13px at 500 (text-control), 8px all round and between its parts (p-s3, gap-s3).
-const itemClasses = cx(
-  'flex w-full items-center gap-s3 rounded-control p-s3 text-left text-control font-medium text-ink transition-colors',
-  'hover:bg-primary-soft focus:bg-primary-soft',
-  focusRing,
-  'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
-);
 
 // Every item of the open menu, as Menu itself counts them: reachable by the arrow keys unless natively
 // disabled (a module that is merely unavailable is aria-disabled and stays reachable).
@@ -157,7 +149,9 @@ function ModuleRow({
     tabIndex: -1,
     'data-module': module.id,
     className: cx(
-      itemClasses,
+      // Menu's own item treatment (the prototype's .ws-item), so a module row and any other menu
+      // row look alike.
+      menuItem,
       current && 'bg-primary-soft font-semibold text-primary-strong',
     ),
     onKeyDown,

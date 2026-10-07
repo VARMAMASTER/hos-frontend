@@ -118,13 +118,38 @@ describe('the design-token layer', () => {
 // A media query in script cannot read a custom property, so the breakpoints a component matches in
 // script (AppShell's drawer below md) are numbers here, held to the ones Tailwind compiles md: with.
 describe('breakpoints', () => {
-  it('match the ones Tailwind compiles, so a script media query and an md: variant switch together', () => {
-    const tailwindDir = dirname(
-      createRequire(import.meta.url).resolve('tailwindcss/package.json'),
-    );
-    const theme = readFileSync(join(tailwindDir, 'theme.css'), 'utf8');
+  it('are declared by theme.css itself, so a script media query and an md: variant switch together', () => {
     for (const [name, rem] of Object.entries(BREAKPOINT_REM)) {
-      expect(theme, name).toContain(`--breakpoint-${name}: ${rem}rem;`);
+      expect(css, name).toMatch(
+        new RegExp(`--breakpoint-${name}:\\s*${rem}rem;`),
+      );
+    }
+  });
+});
+
+// Values two or more components share are one token in the shared layer, never a copy per family.
+describe('shared component tokens', () => {
+  it('holds each shared value once, at the prototype size', () => {
+    // The check box: Checkbox, Radio and DataTable's row checkbox.
+    expect(px('--nova-check')).toBe(20);
+    // .hos-x, the square close button: Dialog and Toast.
+    expect(px('--nova-close-size')).toBe(30);
+    // .tb-ico, the top bar's square icon button: NotificationBell and the TopBar menu button.
+    expect(px('--nova-topbar-ico')).toBe(34);
+    // .ws-item, a menu row: Menu, ModuleSwitcher and DataTable's Columns toggle.
+    expect(px('--nova-menu-item-p')).toBe(8);
+    expect(px('--nova-menu-item-gap')).toBe(8);
+    // A column or a filter that must not squeeze below a readable width.
+    expect(NOVA_DESIGN_TOKENS['--nova-column-min-w']).toBe('12rem');
+  });
+
+  it('retires the per-family copies', () => {
+    for (const name of [
+      '--nova-table-check',
+      '--nova-ai-column-min-w',
+      'size-table-check',
+    ]) {
+      expect(css, name).not.toContain(name);
     }
   });
 });

@@ -701,8 +701,8 @@ describe('ModuleSwitcher tokens', () => {
     const row = item(/Billing/);
     expect([...row.classList]).toEqual(
       expect.arrayContaining([
-        'p-s3',
-        'gap-s3',
+        'p-menu-item',
+        'gap-menu-item',
         'rounded-control',
         'text-control',
       ]),

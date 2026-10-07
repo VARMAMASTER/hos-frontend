@@ -54,8 +54,10 @@ function useChartConfig(): ChartConfig {
   return useContext(ChartContext)?.config ?? {};
 }
 
+// The prototype draws a chart inside a .card (--r-md): the card corner, as KpiTile, Table and
+// ActivityFeed, not a floating layer's.
 function DataSurface(props: HTMLAttributes<HTMLDivElement>) {
-  return <Surface material="data" radius="overlay" {...props} />;
+  return <Surface material="data" radius="card" {...props} />;
 }
 
 export interface ChartContainerProps

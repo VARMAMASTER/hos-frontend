@@ -1199,7 +1199,7 @@ function ExtractedRow({
           <span className="text-label text-ink-2">{words.notCompared}</span>
         )}
       </TableCell>
-      <TableCell className="min-w-(--nova-ai-column-min-w)">
+      <TableCell className="min-w-column">
         <AiSourceLine
           label={words.sourceLabel}
           confidence={value.confidence}

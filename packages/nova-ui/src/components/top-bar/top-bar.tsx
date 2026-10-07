@@ -22,9 +22,10 @@ export interface TopBarProps extends HTMLAttributes<HTMLElement> {
 // (py-s5, px-s8), 16px between its parts (gap-s6), sticky above the page.
 const bar = 'sticky top-0 z-50 flex items-center gap-s6 px-s8 py-s5';
 
-// A 36px square (the chrome tile, as the brand mark is) in the chrome's ink; hover lifts it with a faint white, as a nav item does.
+// The top bar's icon square (.tb-ico, size-topbar-ico, the control corner), as NotificationBell's, in
+// the chrome's ink; hover lifts it with a faint white, as a nav item does.
 const menuButton =
-  'inline-flex size-chrome-tile shrink-0 cursor-pointer items-center justify-center rounded-card text-on-primary transition-colors hover:bg-chrome-ink/10 md:hidden';
+  'inline-flex size-topbar-ico shrink-0 cursor-pointer items-center justify-center rounded-control text-on-primary transition-colors hover:bg-chrome-ink/10 md:hidden';
 
 export function TopBar({
   search,

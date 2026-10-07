@@ -867,7 +867,7 @@ describe('DataTable tokens', () => {
     );
     const box = select.querySelector('input') as HTMLElement;
     expect([...box.classList]).toEqual(
-      expect.arrayContaining(['size-table-check', 'rounded-control']),
+      expect.arrayContaining(['size-check', 'rounded-control']),
     );
   });
 });

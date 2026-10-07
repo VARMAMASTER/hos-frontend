@@ -194,7 +194,9 @@ describe('ChartContainer', () => {
       screen.getByRole('figure', { name: 'Revenue by month' }).classList,
     );
     expect(classes).toContain('nova-data');
-    expect(classes).toContain('rounded-overlay');
+    // A chart sits in a .card in the prototype: the card corner, as KpiTile, Table and ActivityFeed.
+    expect(classes).toContain('rounded-card');
+    expect(classes).not.toContain('rounded-overlay');
     expect(classes).toContain('w-96');
     expect(classes).not.toContain('nova-surface');
   });

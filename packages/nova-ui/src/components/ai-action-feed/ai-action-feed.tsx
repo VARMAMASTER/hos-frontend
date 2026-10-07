@@ -248,7 +248,7 @@ export function AiActionFeed({
         <div className="flex flex-wrap items-end gap-s5">
           <Select
             label={words.agentFilter}
-            className="min-w-(--nova-ai-column-min-w)"
+            className="min-w-column"
             value={agent ?? EMPTY}
             onChange={(event) => setAgent(event.target.value || null)}
             options={[
@@ -258,7 +258,7 @@ export function AiActionFeed({
           />
           <Select
             label={words.resolutionFilter}
-            className="min-w-(--nova-ai-column-min-w)"
+            className="min-w-column"
             value={resolution ?? EMPTY}
             onChange={(event) =>
               setResolution(

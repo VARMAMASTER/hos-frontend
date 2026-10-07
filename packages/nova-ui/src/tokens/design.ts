@@ -113,6 +113,18 @@ export const DIMENSION_TOKENS = {
   // Underline offsets for links.
   '--nova-underline-offset-tight': space(0),
   '--nova-underline-offset-loose': space(1),
+  // Shared by components of more than one family, so each is one token, never a copy per family:
+  // the check box of Checkbox, Radio and DataTable's row checkbox; .hos-x, the square close button
+  // of a Dialog or a Toast; .tb-ico, the top bar's square icon button (NotificationBell, the TopBar
+  // menu button); .ws-item, a menu row (Menu, ModuleSwitcher, DataTable's Columns toggle), padded
+  // and spaced alike; and the least width of a column or a filter that must stay readable
+  // (AiActionFeed, ExtractedValuesReview, FleetKillSwitch).
+  '--nova-check': space(7),
+  '--nova-close-size': '30px',
+  '--nova-topbar-ico': '34px',
+  '--nova-menu-item-p': space(3),
+  '--nova-menu-item-gap': space(3),
+  '--nova-column-min-w': '12rem',
 } as const satisfies Record<NovaVariable, string>;
 
 // Layout measures: how wide a block of content may grow (a form, a dialog, a page column, a story
@@ -138,9 +150,9 @@ export const MEASURE_TOKENS = Object.fromEntries(
   ]),
 ) as Record<NovaVariable, string>;
 
-// Tailwind's responsive breakpoints, in rem, for a component that must match a responsive variant
-// in script: AppShell's sidebar is a drawer below md (a media query cannot read a custom property).
-// design.spec.ts holds each to Tailwind's own --breakpoint-*.
+// The responsive breakpoints Nova declares in theme.css (--breakpoint-md), in rem, for a component
+// that must match a responsive variant in script: AppShell's sidebar is a drawer below md (a media
+// query cannot read a custom property). design.spec.ts holds each to theme.css.
 export const BREAKPOINT_REM = { md: 48 } as const;
 
 // The whole layer, in the order theme.css declares it.

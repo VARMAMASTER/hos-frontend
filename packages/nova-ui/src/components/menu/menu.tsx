@@ -12,7 +12,7 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../primitives/cx';
-import { focusRing } from '../../primitives/focus-ring';
+import { menuItem } from '../../primitives/menu-item';
 import { Surface } from '../../primitives/surface';
 import { useControllableState } from '../../primitives/use-controllable-state';
 
@@ -330,14 +330,8 @@ export interface MenuItemProps
   description?: ReactNode;
 }
 
-// The prototype's .ws-item: 13px at 500, 8px all round, 8px between its parts (its 9px radius is off
-// the --r-* scale, so sm).
-const item = cx(
-  'flex w-full items-center gap-s3 rounded-control p-s3 text-left text-control font-medium text-ink transition-colors',
-  'hover:bg-primary-soft focus:bg-primary-soft',
-  focusRing,
-  'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
-);
+// Each item is the prototype's .ws-item (primitives/menu-item.ts; its 9px radius is off the --r-*
+// scale, so the control corner).
 
 type ItemRole = 'menuitem' | 'menuitemradio';
 
@@ -368,7 +362,7 @@ const Item = forwardRef<
   return (
     <button
       ref={ref}
-      className={cx(item, className)}
+      className={cx(menuItem, className)}
       {...rest}
       type="button"
       role={role}

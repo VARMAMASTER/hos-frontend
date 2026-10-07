@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { menuItem } from '../../primitives/menu-item';
 import { Button } from '../button/button';
 import type { Density, SortDirection } from './types';
 
@@ -151,7 +152,7 @@ export function SelectBox({
   }, [indeterminate]);
   return (
     <label className="relative -m-s3 flex cursor-pointer items-center justify-center p-s3">
-      <span className="relative flex size-table-check">
+      <span className="relative flex size-check">
         <input
           ref={ref}
           type="checkbox"
@@ -159,7 +160,7 @@ export function SelectBox({
           checked={checked}
           onChange={onChange}
           className={cx(
-            'nova-field peer size-table-check cursor-pointer appearance-none rounded-control',
+            'nova-field peer size-check cursor-pointer appearance-none rounded-control',
             'checked:bg-primary indeterminate:bg-primary indeterminate:[--nova-field-edge:var(--nova-color-primary)]',
             focusRing,
           )}
@@ -204,11 +205,7 @@ export function ColumnToggle({
         event.preventDefault();
         onToggle();
       }}
-      className={cx(
-        'flex w-full items-center gap-s3 rounded-control p-s3 text-left text-control font-medium text-ink transition-colors',
-        'hover:bg-primary-soft focus:bg-primary-soft',
-        focusRing,
-      )}
+      className={menuItem}
     >
       <span
         aria-hidden="true"

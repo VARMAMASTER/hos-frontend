@@ -224,6 +224,7 @@ function DialogLayer({
               </p>
             ) : null}
           </div>
+          {/* .hos-x: the close square (size-close, 30px, the control corner), as a Toast's. */}
           {hideClose ? null : (
             <button
               ref={closeRef}
@@ -231,7 +232,7 @@ function DialogLayer({
               aria-label={closeLabel}
               onClick={() => onClose()}
               className={cx(
-                '-mr-s3 -mt-s1 inline-flex size-s9 shrink-0 items-center justify-center rounded-card text-ink-2 transition-colors hover:bg-surface-2',
+                '-mr-s3 -mt-s1 inline-flex size-close shrink-0 items-center justify-center rounded-control text-ink-2 transition-colors hover:bg-surface-2',
                 focusRing,
               )}
             >
