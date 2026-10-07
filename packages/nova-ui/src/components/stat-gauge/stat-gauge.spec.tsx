@@ -84,7 +84,7 @@ describe('StatGauge look', () => {
   it('has the prototype 5px track (.sb-bar) with its gradient fill', () => {
     render(<StatGauge label="L" value={25} />);
     const track = screen.getByRole('meter');
-    expect(track.className).toContain('h-[5px]');
+    expect(track.className).toContain('h-(--nova-dot-sm)');
     expect(track.className).toContain('rounded-full');
     expect(track.className).not.toContain('h-1.5');
     const fill = track.firstElementChild as HTMLElement;
@@ -101,17 +101,17 @@ describe('StatGauge look', () => {
       <StatGauge label="L" value={25} data-testid="g" />,
     );
     const label = screen.getByText('L');
-    expect(label.className).toContain('text-[12px]');
+    expect(label.className).toContain('text-label');
     expect(label.className).toContain('font-medium');
     expect(label.className).toContain('text-ink-2');
     const figure = screen.getByText('25%');
-    expect(figure.className).toContain('text-[26px]');
+    expect(figure.className).toContain('text-kpi');
     expect(figure.className).toContain('font-bold');
     expect(figure.className).toContain('tabular-nums');
     const root = screen.getByTestId('g');
-    expect(root.className).toContain('rounded-md');
+    expect(root.className).toContain('rounded-card');
     expect(root.className).toContain('shadow-sm');
-    expect(root.className).toContain('p-4');
+    expect(root.className).toContain('p-card');
     expect(root.className).toContain('border-border');
     expect(container.innerHTML).not.toMatch(
       /text-(?:headline|caption)|shadow-elevation|rounded-lg/,

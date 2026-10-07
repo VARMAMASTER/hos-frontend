@@ -8,6 +8,7 @@ import {
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
 import { playMotion } from '../../primitives/motion';
+import { MOTION_DURATIONS_MS, MOTION_EASINGS } from '../../tokens/scale';
 
 export type ToastVariant = 'info' | 'success' | 'error';
 
@@ -96,17 +97,18 @@ export function Toaster({
   const items = useSyncExternalStore(subscribe, snapshot, snapshot);
   const calm = items.filter((toast) => toast.variant !== 'error');
   const errors = items.filter((toast) => toast.variant === 'error');
-  // empty:-mt-2 takes back the host's gap for a region with nothing in it, so a lone toast sits
-  // exactly 20px from the corner. The regions stay in the page (and the accessibility tree) either way.
-  const region = 'flex w-full flex-col gap-2 empty:-mt-2';
+  // empty:-mt-s3 takes back the host's gap for a region with nothing in it, so a lone toast sits
+  // exactly one corner inset (s7) from the corner. The regions stay in the page (and the
+  // accessibility tree) either way.
+  const region = 'flex w-full flex-col gap-s3 empty:-mt-s3';
   return (
     <div
       // Dialog leaves a live region alone when it makes the page inert, so toasts are still heard.
       data-nova-live-region=""
       className={cx(
-        // .hos-toasts: fixed 20px from the bottom right corner, as wide as its widest toast up to 360px,
-        // an 8px gap.
-        'pointer-events-none fixed bottom-5 right-5 z-[60] flex w-max max-w-[min(360px,calc(100vw-40px))] flex-col gap-2 font-sans',
+        // .hos-toasts: fixed one inset (s7) from the bottom right corner, as wide as its widest toast
+        // up to --nova-toast-w and never past the viewport less both insets (max-w-toast), an s3 gap.
+        'pointer-events-none fixed bottom-s7 right-s7 z-60 flex w-max max-w-toast flex-col gap-s3 font-sans',
         className,
       )}
     >
@@ -152,11 +154,19 @@ function ToastView({
     playMotion(
       ref.current,
       [
-        // sim.css @keyframes toast-in: .28s cubic-bezier(.2,.8,.2,1).
-        { opacity: 0, transform: 'translateY(10px) scale(.98)' },
+        // sim.css @keyframes toast-in: a rise of s4 and a 2% scale. A surface entering takes the
+        // emphasized curve over the slow duration (the prototype's own 280ms and curve are the
+        // nearest tokens, 240ms and ease-emphasized).
+        {
+          opacity: 0,
+          transform: 'translateY(var(--nova-space-4)) scale(.98)',
+        },
         { opacity: 1, transform: 'none' },
       ],
-      { duration: 280, easing: 'cubic-bezier(.2, .8, .2, 1)' },
+      {
+        duration: MOTION_DURATIONS_MS.slow,
+        easing: MOTION_EASINGS.emphasized,
+      },
     );
   }, []);
 
@@ -191,9 +201,10 @@ function ToastView({
         }
       }}
       className={cx(
-        // .hos-toast: 13px, --r-md, 12px 16px padding, an 8px gap, a 1px line border, --shadow-md. The
-        // 3px left edge takes the variant colour; border-l-[3px] is the prototype's own value.
-        'pointer-events-auto flex w-full items-start gap-2 rounded-md border border-l-[3px] border-border bg-surface px-4 py-3 text-[13px] text-ink shadow-md',
+        // .hos-toast: the control text role, the card corner, 12px 16px padding (s5, s6), an s3 gap, a
+        // 1px line border, --shadow-md. The left edge takes the variant colour, and is the rail width
+        // (border-l-rail), the prototype's 3px.
+        'pointer-events-auto flex w-full items-start gap-s3 rounded-card border border-l-rail border-border bg-surface px-s6 py-s5 text-control text-ink shadow-md',
         variants[toast.variant].edge,
       )}
     >
@@ -207,8 +218,9 @@ function ToastView({
           dismissToast(toast.id);
         }}
         className={cx(
-          // .hos-x: a 30px square, --r-sm, line border on --panel-2, ink-2; hover fills with the line.
-          '-my-1 inline-flex h-[30px] w-[30px] shrink-0 items-center justify-center self-center rounded-sm border border-border bg-surface-2 text-ink-2 transition-colors hover:bg-border',
+          // .hos-x: the close-button square (size-close, 30px), the control corner, line border on
+          // --panel-2, ink-2; hover fills with the line.
+          '-my-s1 inline-flex size-close shrink-0 items-center justify-center self-center rounded-control border border-border bg-surface-2 text-ink-2 transition-colors hover:bg-border',
           focusRing,
         )}
       >
@@ -220,7 +232,7 @@ function ToastView({
           strokeLinecap="round"
           aria-hidden="true"
           focusable="false"
-          className="h-4 w-4"
+          className="size-icon-md"
         >
           <path d="M5 5l10 10M15 5L5 15" />
         </svg>
@@ -231,12 +243,12 @@ function ToastView({
 
 // .ht-ic: a 20px tile in the variant colour with a white glyph. A different glyph per variant (an
 // i, a tick, a !), like Banner's, so the variant never rests on colour alone. The tile's radius is
-// --r-sm (8px); the prototype's 6px is not on the radius scale.
+// the control corner (8px); the prototype's 6px is not on the radius scale.
 function ToastIcon({ variant }: { variant: ToastVariant }) {
   return (
     <span
       className={cx(
-        'mt-px grid h-5 w-5 shrink-0 place-items-center rounded-sm text-on-primary',
+        'mt-px grid size-icon-lg shrink-0 place-items-center rounded-control text-on-primary',
         variants[variant].tile,
       )}
     >
@@ -249,7 +261,7 @@ function ToastIcon({ variant }: { variant: ToastVariant }) {
         strokeLinejoin="round"
         aria-hidden="true"
         focusable="false"
-        className="h-3.5 w-3.5"
+        className="size-icon-sm"
       >
         {variant === 'info' ? <path d="M10 9v5M10 5.75h.01" /> : null}
         {variant === 'success' ? <path d="M4.5 10.5l3.5 3.5 7.5-8" /> : null}

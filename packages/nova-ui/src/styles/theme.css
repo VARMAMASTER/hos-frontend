@@ -907,7 +907,39 @@
 /* ===== Component tokens: family c, AI components (begin) ===== */
 /* ===== Component tokens: family c (end) ===== */
 
-/* ===== Component tokens: family d, the newer catalogue (begin) ===== */
+/* ===== Component tokens: family d, the newer catalogue (begin) =====
+   Toast, OtpInput, NotificationBell and FilterChip's own dimensions. Each is on the scale where the
+   prototype's value sits on it; the rest are literals here, the one place to change them. */
+:root {
+  /* .hos-toasts: a toast stack is as wide as its widest toast up to 360px, and never wider than the
+     viewport less one corner inset (s7) on each side. */
+  --nova-toast-w: 360px;
+  --nova-toast-max-w: min(
+    var(--nova-toast-w),
+    calc(100vw - var(--nova-space-7) * 2)
+  );
+  /* .hos-x: the square close button of a toast. */
+  --nova-close-size: 30px;
+  /* .tb-ico: the 34px square icon button of the top bar (NotificationBell). */
+  --nova-topbar-ico: 34px;
+  /* 01-login.html .otp-box: 44 x 50, an edge between the hairline and the emphasis edge. */
+  --nova-otp-box-w: var(--nova-touch);
+  --nova-otp-box-h: 50px;
+  --nova-otp-box-edge: 1.5px;
+  /* .fchip: pressing a FilterChip morphs its corners from the control corner to this one, a pill
+     that is still a number, so the whole transition shows (a 999px radius would finish at once). */
+  --nova-filter-chip-radius-on: var(--nova-radius-lg);
+}
+
+@theme inline {
+  --container-toast: var(--nova-toast-max-w);
+  --size-close: var(--nova-close-size);
+  --size-topbar-ico: var(--nova-topbar-ico);
+  --container-otp-box: var(--nova-otp-box-w);
+  --height-otp-box: var(--nova-otp-box-h);
+  --border-width-otp-box: var(--nova-otp-box-edge);
+  --radius-filter-on: var(--nova-filter-chip-radius-on);
+}
 /* ===== Component tokens: family d (end) ===== */
 
 /* The scheme: light (the prototype, and the default with no attribute), dark, or system, which
