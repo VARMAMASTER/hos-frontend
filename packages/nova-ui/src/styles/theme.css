@@ -849,6 +849,58 @@
 /* ===== Component tokens: family b (end) ===== */
 
 /* ===== Component tokens: family c, AI components (begin) ===== */
+/* Reached as token references (min-w-(--nova-ai-column-min-w), max-w-(--nova-ai-bubble-max-w)), so
+   no new utility names. Values on the spacing scale point at it. */
+:root {
+  /* A column or a filter that must not squeeze below a readable width: AiActionFeed's filters,
+     ExtractedValuesReview's source column, FleetKillSwitch's worker column. */
+  --nova-ai-column-min-w: 12rem;
+  /* A stat or reading cell in an auto-fit grid (VoiceEntryCapture's readings, the workforce hero). */
+  --nova-ai-stat-min-w: 132px;
+  /* The AI conversation (.cop-q, .cop-a): a question or an answer fills at most 88% of the thread. */
+  --nova-ai-bubble-max-w: 88%;
+  /* ChatBubble: 92% of the thread (86% on the WhatsApp wall), its system note 96%. */
+  --nova-chat-bubble-max-w: 92%;
+  --nova-chat-bubble-max-w-wa: 86%;
+  --nova-chat-note-max-w: 96%;
+  /* The typing dots' hop (AiThinking, ChatBubble's typing state). */
+  --nova-typing-hop: 3px;
+  /* An inline glyph set on the text's baseline (ChatBubble's critical-note warning glyph). */
+  --nova-glyph-baseline: -0.125em;
+  /* AiCopilotDock (.hos-copilot-fab, .hos-copilot): the orb, its halo and ring, its press, and the
+     panel: 408px wide at most (24px clear of a narrow window), 560px tall at most, 88px above the
+     window's foot when docked in the corner; a phone's bottom sheet is 85% of the window. */
+  --nova-copilot-orb: 54px;
+  --nova-copilot-orb-halo: 7px;
+  --nova-copilot-orb-ring: 3px;
+  --nova-copilot-press-scale: 0.97;
+  --nova-copilot-panel-w: min(408px, calc(100vw - var(--nova-space-8)));
+  --nova-copilot-panel-h: 560px;
+  --nova-copilot-panel-bottom: 88px;
+  --nova-copilot-panel-max-h: min(
+    var(--nova-copilot-panel-h),
+    calc(100vh - 160px)
+  );
+  --nova-copilot-panel-max-h-top: min(
+    var(--nova-copilot-panel-h),
+    calc(100vh - 110px)
+  );
+  --nova-copilot-sheet-max-h: 85vh;
+  /* CallTranscriptConsole: the transcript scrolls between 240 and 460px. */
+  --nova-transcript-min-h: 240px;
+  --nova-transcript-max-h: 460px;
+  /* AiQualityScorecard: a metric cell's minimum, and its bar's. */
+  --nova-scorecard-cell-min-w: 11rem;
+  --nova-scorecard-bar-min-w: 64px;
+  /* WorkerCard: the fleet grid's minimum card width. */
+  --nova-worker-card-min-w: 13rem;
+  /* AmbientScribeRecorder: one bar of the level meter. */
+  --nova-scribe-bar-w: 3px;
+  /* ExtractedValuesReview (.ext-val): the value input's width. */
+  --nova-extracted-value-w: 80px;
+  /* PhoneFrame: the wall's least height. */
+  --nova-phone-wall-min-h: 200px;
+}
 /* ===== Component tokens: family c (end) ===== */
 
 /* ===== Component tokens: family d, the newer catalogue (begin) ===== */
