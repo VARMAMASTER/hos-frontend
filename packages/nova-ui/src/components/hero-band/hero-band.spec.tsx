@@ -52,10 +52,10 @@ describe('HeroBand', () => {
     );
     const root = screen.getByTestId('hero');
     expect(root.classList.contains('nova-hero')).toBe(true);
-    // The prototype's .page-head.glass-hero: radius xl, 20px by 24px.
-    expect(root.classList.contains('rounded-xl')).toBe(true);
-    expect(root.classList.contains('px-6')).toBe(true);
-    expect(root.classList.contains('py-5')).toBe(true);
+    // The prototype's .page-head.glass-hero: the hero corner, 20px by 24px.
+    expect(root.classList.contains('rounded-hero')).toBe(true);
+    expect(root.classList.contains('px-s8')).toBe(true);
+    expect(root.classList.contains('py-s7')).toBe(true);
     expect(root.classList.contains('max-w-3xl')).toBe(true);
     expect(root.id).toBe('today');
   });
@@ -68,7 +68,7 @@ describe('HeroBand', () => {
     expect(
       description.classList.contains('text-(color:--nova-hero-ink-2)'),
     ).toBe(true);
-    expect(description.classList.contains('text-[13px]')).toBe(true);
+    expect(description.classList.contains('text-control')).toBe(true);
     expect(
       Array.from(description.classList).some((name) =>
         name.startsWith('text-on-primary/'),

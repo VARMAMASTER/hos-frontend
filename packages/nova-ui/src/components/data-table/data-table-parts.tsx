@@ -43,7 +43,7 @@ export function SearchIcon() {
 
 export function ColumnsIcon() {
   return (
-    <Icon className="size-4">
+    <Icon className="size-icon-md">
       <rect x="3" y="4" width="14" height="12" rx="2" />
       <path d="M8 4v12M13 4v12" />
     </Icon>
@@ -52,7 +52,7 @@ export function ColumnsIcon() {
 
 export function MoreIcon() {
   return (
-    <Icon className="size-4" fill="currentColor" stroke="none">
+    <Icon className="size-icon-md" fill="currentColor" stroke="none">
       <circle cx="4.5" cy="10" r="1.5" />
       <circle cx="10" cy="10" r="1.5" />
       <circle cx="15.5" cy="10" r="1.5" />
@@ -66,20 +66,26 @@ export function MoreIcon() {
 export function SortIcon({ direction }: { direction: SortDirection | null }) {
   if (direction === 'asc') {
     return (
-      <Icon data-sort="asc" className="size-3.5 shrink-0 text-highlight-deep">
+      <Icon
+        data-sort="asc"
+        className="size-icon-sm shrink-0 text-highlight-deep"
+      >
         <path d="M10 16V4M5 9l5-5 5 5" />
       </Icon>
     );
   }
   if (direction === 'desc') {
     return (
-      <Icon data-sort="desc" className="size-3.5 shrink-0 text-highlight-deep">
+      <Icon
+        data-sort="desc"
+        className="size-icon-sm shrink-0 text-highlight-deep"
+      >
         <path d="M10 4v12M5 11l5 5 5-5" />
       </Icon>
     );
   }
   return (
-    <Icon data-sort="none" className="size-3.5 shrink-0 opacity-60">
+    <Icon data-sort="none" className="size-icon-sm shrink-0 opacity-60">
       <path d="M6 8l4-4 4 4M6 12l4 4 4-4" />
     </Icon>
   );
@@ -102,7 +108,7 @@ export function SortButton({
       type="button"
       onClick={onClick}
       className={cx(
-        'relative -mx-1 inline-flex items-center gap-1.5 rounded-sm px-1 uppercase transition-colors hover:text-ink',
+        'relative -mx-s1 inline-flex items-center gap-s2 rounded-control px-s1 uppercase transition-colors hover:text-ink',
         direction ? 'text-ink' : 'text-ink-2',
         focusRing,
       )}
@@ -115,7 +121,7 @@ export function SortButton({
         <span
           aria-hidden="true"
           data-slot="sort-marker"
-          className="nova-highlight-grad pointer-events-none absolute inset-x-1 -bottom-0.5 h-0.5 rounded-full"
+          className="nova-highlight-grad pointer-events-none absolute inset-x-s1 -bottom-s0 h-s0 rounded-full"
         />
       ) : null}
     </button>
@@ -144,8 +150,8 @@ export function SelectBox({
     if (ref.current) ref.current.indeterminate = indeterminate;
   }, [indeterminate]);
   return (
-    <label className="relative -m-2 flex cursor-pointer items-center justify-center p-2">
-      <span className="relative flex size-5">
+    <label className="relative -m-s3 flex cursor-pointer items-center justify-center p-s3">
+      <span className="relative flex size-table-check">
         <input
           ref={ref}
           type="checkbox"
@@ -153,7 +159,7 @@ export function SelectBox({
           checked={checked}
           onChange={onChange}
           className={cx(
-            'nova-field peer size-5 cursor-pointer appearance-none rounded-sm',
+            'nova-field peer size-table-check cursor-pointer appearance-none rounded-control',
             'checked:bg-primary indeterminate:bg-primary indeterminate:[--nova-field-edge:var(--nova-color-primary)]',
             focusRing,
           )}
@@ -161,13 +167,13 @@ export function SelectBox({
         {/* A tick for checked and a dash for some: the state is a shape, never colour alone. */}
         <Icon
           strokeWidth="2.25"
-          className="pointer-events-none absolute inset-0 m-auto size-3.5 text-on-primary opacity-0 peer-checked:opacity-100 peer-indeterminate:opacity-0"
+          className="pointer-events-none absolute inset-0 m-auto size-icon-sm text-on-primary opacity-0 peer-checked:opacity-100 peer-indeterminate:opacity-0"
         >
           <path d="M4.5 10.5l3.5 3.5 7.5-8" />
         </Icon>
         <Icon
           strokeWidth="2.25"
-          className="pointer-events-none absolute inset-0 m-auto size-3.5 text-on-primary opacity-0 peer-indeterminate:opacity-100"
+          className="pointer-events-none absolute inset-0 m-auto size-icon-sm text-on-primary opacity-0 peer-indeterminate:opacity-100"
         >
           <path d="M5 10h10" />
         </Icon>
@@ -199,7 +205,7 @@ export function ColumnToggle({
         onToggle();
       }}
       className={cx(
-        'flex w-full items-center gap-2 rounded-sm p-2 text-left text-[13px] font-medium text-ink transition-colors',
+        'flex w-full items-center gap-s3 rounded-control p-s3 text-left text-control font-medium text-ink transition-colors',
         'hover:bg-primary-soft focus:bg-primary-soft',
         focusRing,
       )}
@@ -207,12 +213,12 @@ export function ColumnToggle({
       <span
         aria-hidden="true"
         className={cx(
-          'flex size-4 shrink-0 items-center justify-center rounded-sm border text-on-primary',
+          'flex size-icon-md shrink-0 items-center justify-center rounded-control border text-on-primary',
           checked ? 'border-primary bg-primary' : 'border-border-control',
         )}
       >
         {checked ? (
-          <Icon strokeWidth="2.5" className="size-3">
+          <Icon strokeWidth="2.5" className="size-icon-xs">
             <path d="M4.5 10.5l3.5 3.5 7.5-8" />
           </Icon>
         ) : null}
@@ -233,7 +239,7 @@ export function DensityToggle({
 }) {
   const options: Density[] = ['comfortable', 'compact'];
   return (
-    <div role="group" aria-label="Row density" className="inline-flex gap-1">
+    <div role="group" aria-label="Row density" className="inline-flex gap-s1">
       {options.map((option) => (
         <Button
           key={option}
@@ -259,7 +265,7 @@ export function SkeletonBar({ index }: { index: number }) {
     <div
       data-skeleton=""
       className={cx(
-        'h-3 rounded-sm bg-border motion-safe:animate-pulse',
+        'h-s5 rounded-control bg-border motion-safe:animate-pulse',
         BAR_WIDTHS[index % BAR_WIDTHS.length],
       )}
     />

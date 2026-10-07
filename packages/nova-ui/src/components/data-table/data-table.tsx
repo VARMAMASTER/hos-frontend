@@ -105,7 +105,8 @@ export interface DataTableProps<Row>
   // The Comfortable / Compact toggle. On by default.
   densityToggle?: boolean;
 
-  // The height at which the body starts to scroll under a sticky header. A number is pixels.
+  // The height at which the body starts to scroll under a sticky header. A number is pixels. The
+  // default is the --nova-table-max-h token (36rem).
   maxHeight?: string | number;
   stickyHeader?: boolean;
   // Keeps the first column (after the select column, if any) in view while the table scrolls sideways.
@@ -132,8 +133,9 @@ export interface DataTableProps<Row>
 
 const DEFAULT_PAGINATION: PaginationState = { page: 1, pageSize: 25 };
 
-// The checkbox column is as wide as its padding and the box: the first data column pins after it.
-const SELECT_COLUMN = 'w-13 min-w-13';
+// The checkbox column is as wide as its padding and the box (--nova-table-select-w): the first data
+// column pins after it, at left-table-select.
+const SELECT_COLUMN = 'w-table-select min-w-table-select';
 
 // The overlay menu is absolutely positioned under its trigger and clipped by the table's scroller,
 // so a row's menu opens toward the table's inside: aligned to the trigger's end, and upward from
@@ -141,7 +143,7 @@ const SELECT_COLUMN = 'w-13 min-w-13';
 const MENU_END =
   '[&>[data-surface=overlay]]:right-0 [&>[data-surface=overlay]]:left-auto';
 const MENU_UP =
-  '[&>[data-surface=overlay]]:top-auto [&>[data-surface=overlay]]:bottom-full [&>[data-surface=overlay]]:mt-0 [&>[data-surface=overlay]]:mb-1';
+  '[&>[data-surface=overlay]]:top-auto [&>[data-surface=overlay]]:bottom-full [&>[data-surface=overlay]]:mt-0 [&>[data-surface=overlay]]:mb-s1';
 
 function labelOf<Row>(column: DataTableColumn<Row>): string {
   return (
@@ -206,7 +208,7 @@ export function DataTable<Row>({
   defaultDensity = 'comfortable',
   onDensityChange,
   densityToggle = true,
-  maxHeight = '36rem',
+  maxHeight = 'var(--nova-table-max-h)',
   stickyHeader = true,
   stickyFirstColumn = false,
   rowActions,
@@ -397,7 +399,7 @@ export function DataTable<Row>({
     if (hasError) {
       return (
         <tr>
-          <td colSpan={columnCount} className="p-4">
+          <td colSpan={columnCount} className="p-s6">
             <div role="alert">{error}</div>
           </td>
         </tr>
@@ -427,7 +429,7 @@ export function DataTable<Row>({
         ));
     return (
       <tr>
-        <td colSpan={columnCount} className="p-4">
+        <td colSpan={columnCount} className="p-s6">
           {state}
         </td>
       </tr>
@@ -435,13 +437,13 @@ export function DataTable<Row>({
   }
 
   return (
-    <div className={cx('flex flex-col gap-3', className)} {...rest}>
+    <div className={cx('flex flex-col gap-s5', className)} {...rest}>
       {hasToolbar ? (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-s3">
           {searchable ? (
             <TextField
               type="search"
-              className="-mt-1 w-72 max-w-full"
+              className="-mt-s1 w-table-search max-w-full"
               label={<VisuallyHidden>{searchLabel}</VisuallyHidden>}
               placeholder={searchPlaceholder}
               leadingIcon={<SearchIcon />}
@@ -450,7 +452,7 @@ export function DataTable<Row>({
             />
           ) : null}
           {toolbar}
-          <div className="ml-auto flex flex-wrap items-center gap-2">
+          <div className="ml-auto flex flex-wrap items-center gap-s3">
             {showColumns ? (
               <Menu
                 header="Show columns"
@@ -487,11 +489,11 @@ export function DataTable<Row>({
         <div
           role="region"
           aria-label="Bulk actions"
-          className="flex flex-wrap items-center gap-3 rounded-md border border-primary bg-primary-soft px-4 py-2"
+          className="flex flex-wrap items-center gap-s5 rounded-card border border-primary bg-primary-soft px-s6 py-s3"
         >
           <span
             aria-live="polite"
-            className="text-[13px] font-semibold tabular-nums slashed-zero text-primary-strong"
+            className="text-control font-semibold tabular-nums slashed-zero text-primary-strong"
           >
             {selectedIds.length} selected
           </span>
@@ -544,7 +546,9 @@ export function DataTable<Row>({
                       ? undefined
                       : { width: column.width }
                   }
-                  className={cx(pinned && (selectable ? 'left-13' : 'left-0'))}
+                  className={cx(
+                    pinned && (selectable ? 'left-table-select' : 'left-0'),
+                  )}
                   aria-sort={
                     column.sortable
                       ? active
@@ -566,7 +570,7 @@ export function DataTable<Row>({
                     column.header
                   )}
                   {column.filter ? (
-                    <div className="mt-1.5 text-[13px] font-normal tracking-normal normal-case">
+                    <div className="mt-s2 text-control font-normal tracking-normal normal-case">
                       {column.filter}
                     </div>
                   ) : null}
@@ -574,7 +578,7 @@ export function DataTable<Row>({
               );
             })}
             {rowActions ? (
-              <TableHeaderCell align="right" className="w-12">
+              <TableHeaderCell align="right" className="w-s10">
                 <VisuallyHidden>Actions</VisuallyHidden>
               </TableHeaderCell>
             ) : null}
@@ -650,7 +654,8 @@ export function DataTable<Row>({
                             mono={column.mono}
                             stickyStart={pinned}
                             className={cx(
-                              pinned && (selectable ? 'left-13' : 'left-0'),
+                              pinned &&
+                                (selectable ? 'left-table-select' : 'left-0'),
                               column.nowrap && 'whitespace-nowrap',
                             )}
                           >

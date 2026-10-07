@@ -621,13 +621,15 @@ describe('DataTable: density', () => {
     expect(comfortable.getAttribute('aria-pressed')).toBe('true');
     expect(compact.getAttribute('aria-pressed')).toBe('false');
     expect(
-      bodyRows()[0]?.querySelector('td')?.classList.contains('py-2.5'),
+      bodyRows()[0]
+        ?.querySelector('td')
+        ?.classList.contains('py-row-comfortable'),
     ).toBe(true);
 
     fireEvent.click(compact);
     expect(compact.getAttribute('aria-pressed')).toBe('true');
     expect(
-      bodyRows()[0]?.querySelector('td')?.classList.contains('py-1.5'),
+      bodyRows()[0]?.querySelector('td')?.classList.contains('py-row-compact'),
     ).toBe(true);
   });
 
@@ -671,8 +673,8 @@ describe('DataTable: scrolling', () => {
     expect(select.classList.contains('sticky')).toBe(true);
     expect(select.classList.contains('left-0')).toBe(true);
     expect(name.classList.contains('sticky')).toBe(true);
-    expect(name.classList.contains('left-13')).toBe(true);
-    expect(header('Name').classList.contains('left-13')).toBe(true);
+    expect(name.classList.contains('left-table-select')).toBe(true);
+    expect(header('Name').classList.contains('left-table-select')).toBe(true);
   });
 
   it('pins the first column at the edge when there is no select column', () => {
@@ -851,5 +853,21 @@ describe('DataTable: health data stays out of the logs', () => {
     } finally {
       for (const spy of spies) spy.mockRestore();
     }
+  });
+});
+
+// Tokens only: the checkbox column is the box plus the row padding on both sides, one token that
+// the pinned first column starts at too.
+describe('DataTable tokens', () => {
+  it('sizes the select column and its box from the table tokens', () => {
+    renderTable({ selectable: true });
+    const select = bodyRows()[0]?.querySelector('td') as HTMLElement;
+    expect([...select.classList]).toEqual(
+      expect.arrayContaining(['w-table-select', 'min-w-table-select']),
+    );
+    const box = select.querySelector('input') as HTMLElement;
+    expect([...box.classList]).toEqual(
+      expect.arrayContaining(['size-table-check', 'rounded-control']),
+    );
   });
 });

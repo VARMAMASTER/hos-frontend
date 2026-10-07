@@ -96,9 +96,12 @@ const nodeTones: Record<Exclude<ChipTone, 'ai'>, string> = {
   info: 'border border-info bg-info-soft text-info-deep',
 };
 
+// The node is 24px (s8) holding a 14px glyph, or 20px (s7) holding a 12px one when compact; the
+// node's column, the rail's position and the rail's ends below are the same steps (the column is the
+// node, the rail runs down its centre).
 const nodeSizes: Record<TimelineDensity, string> = {
-  comfortable: 'size-6 [&_svg]:size-3.5',
-  compact: 'size-5 [&_svg]:size-3',
+  comfortable: 'size-s8 [&_svg]:size-icon-sm',
+  compact: 'size-s7 [&_svg]:size-icon-xs',
 };
 
 type GlyphName = 'dot' | 'check' | 'alert' | 'cross' | 'info';
@@ -143,20 +146,20 @@ type Rail = 'from-node' | 'full' | 'to-node';
 
 const rails: Record<TimelineDensity, Record<Rail, string>> = {
   comfortable: {
-    'from-node': 'top-3 bottom-0',
+    'from-node': 'top-s5 bottom-0',
     full: 'inset-y-0',
-    'to-node': 'top-0 h-3',
+    'to-node': 'top-0 h-s5',
   },
   compact: {
-    'from-node': 'top-2.5 bottom-0',
+    'from-node': 'top-s4 bottom-0',
     full: 'inset-y-0',
-    'to-node': 'top-0 h-2.5',
+    'to-node': 'top-0 h-s4',
   },
 };
 
 const railPosition: Record<TimelineDensity, string> = {
-  comfortable: 'left-3',
-  compact: 'left-2.5',
+  comfortable: 'left-s5',
+  compact: 'left-s4',
 };
 
 function RailLine({
@@ -173,7 +176,7 @@ function RailLine({
       data-connector={rail}
       aria-hidden="true"
       className={cx(
-        'absolute w-0.5 -translate-x-1/2 rounded-full bg-border-strong',
+        'absolute w-s0 -translate-x-1/2 rounded-full bg-border-strong',
         railPosition[density],
         classes ?? rails[density][rail],
       )}
@@ -195,9 +198,9 @@ function TimeRow({
 }) {
   const at = toDate(item.at);
   if (item.time !== undefined && at === null) {
-    // The prototype's .tl-date: small print in capitals, tracked.
+    // The prototype's .tl-date: small print in capitals, tracked (text-meta, tracking-label).
     return (
-      <div className="text-[11px] font-semibold uppercase tracking-[.04em] text-ink-3">
+      <div className="text-meta font-semibold uppercase tracking-label text-ink-3">
         {item.time}
       </div>
     );
@@ -205,7 +208,7 @@ function TimeRow({
   if (at === null) return null;
   const relative = formatRelative(at, now);
   return (
-    <div className="text-[11px] font-semibold text-ink-3">
+    <div className="text-meta font-semibold text-ink-3">
       <time dateTime={at.toISOString()}>
         {item.time !== undefined ? (
           item.time
@@ -230,7 +233,7 @@ function TimeRow({
 function Actor({ actor }: { actor: TimelineActor }) {
   const showAvatar = actor.avatar === true || actor.src !== undefined;
   return (
-    <div className="mt-1 flex items-center gap-1.5 text-[12px] text-ink-3">
+    <div className="mt-s1 flex items-center gap-s2 text-label text-ink-3">
       {showAvatar ? (
         // The name is in the text beside it; the avatar is only for the eye.
         <span aria-hidden="true" className="inline-flex">
@@ -273,8 +276,8 @@ function Event({
     <li
       className={cx(
         'relative flex',
-        compact ? 'gap-2.5' : 'gap-3',
-        last ? null : compact ? 'pb-3' : 'pb-5',
+        compact ? 'gap-s4' : 'gap-s5',
+        last ? null : compact ? 'pb-s5' : 'pb-s7',
       )}
     >
       {rail ? <RailLine rail={rail} density={density} /> : null}
@@ -282,7 +285,7 @@ function Event({
         aria-hidden="true"
         className={cx(
           'relative z-10 flex shrink-0 justify-center',
-          compact ? 'w-5' : 'w-6',
+          compact ? 'w-s7' : 'w-s8',
         )}
       >
         <span
@@ -298,7 +301,7 @@ function Event({
                 ? cx(
                     // AI is never marked by colour alone: its node carries the spark.
                     'nova-ai-grad leading-none text-on-primary',
-                    compact ? 'text-[10px]' : 'text-[12px]',
+                    compact ? 'text-badge' : 'text-label',
                   )
                 : nodeTones[tone],
           )}
@@ -313,14 +316,14 @@ function Event({
             ))}
         </span>
       </div>
-      <div className={cx('min-w-0 flex-1', compact ? 'pt-0' : 'pt-0.5')}>
+      <div className={cx('min-w-0 flex-1', compact ? 'pt-0' : 'pt-s0')}>
         <TimeRow item={item} clock={clock} now={now} grouped={grouped} />
         {/* The tone is a visible word (or the AI badge) before the title, so a critical event and
             a good one differ in greyscale and are announced differently. */}
         <div
           className={cx(
-            'mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 font-semibold text-ink',
-            compact ? 'text-[13px]' : 'text-[14px]',
+            'mt-s0 flex flex-wrap items-center gap-x-s3 gap-y-s1 font-semibold text-ink',
+            compact ? 'text-control' : 'text-body',
           )}
         >
           <ToneLabel tone={tone} />
@@ -330,8 +333,8 @@ function Event({
         {item.description ? (
           <div
             className={cx(
-              'mt-0.5 text-ink-2',
-              compact ? 'text-[12.5px]' : 'text-[13px]',
+              'mt-s0 text-ink-2',
+              compact ? 'text-body-sm' : 'text-control',
             )}
           >
             {item.description}
@@ -348,7 +351,7 @@ function Event({
               aria-describedby={titleId}
               onClick={() => setExpanded(!expanded)}
               className={cx(
-                'mt-1 inline-flex items-center gap-1 rounded-sm text-[12px] font-semibold text-primary-strong hover:underline',
+                'mt-s1 inline-flex items-center gap-s1 rounded-control text-label font-semibold text-primary-strong hover:underline',
                 focusRing,
               )}
             >
@@ -357,7 +360,7 @@ function Event({
                 focusable="false"
                 viewBox="0 0 16 16"
                 className={cx(
-                  'size-3 transition-transform duration-150 motion-reduce:transition-none',
+                  'size-icon-xs transition-transform duration-fast ease-standard motion-reduce:transition-none',
                   expanded && 'rotate-90',
                 )}
               >
@@ -379,7 +382,7 @@ function Event({
               role="region"
               aria-labelledby={buttonId}
               hidden={!expanded}
-              className="mt-2 rounded-md border border-border bg-surface-2 p-3 text-[13px] text-ink-2"
+              className="mt-s3 rounded-card border border-border bg-surface-2 p-s5 text-control text-ink-2"
             >
               {expanded ? item.details : null}
             </div>
@@ -407,8 +410,8 @@ function DayHeader({
     <Heading
       data-day-header=""
       className={cx(
-        'relative flex items-center pb-2',
-        compact ? 'gap-2.5' : 'gap-3',
+        'relative flex items-center pb-s3',
+        compact ? 'gap-s4' : 'gap-s5',
       )}
     >
       {/* The heading's own stretch of the rail, with a small marker on it. The first heading starts
@@ -422,12 +425,12 @@ function DayHeader({
         aria-hidden="true"
         className={cx(
           'relative z-10 flex shrink-0 justify-center',
-          compact ? 'w-5' : 'w-6',
+          compact ? 'w-s7' : 'w-s8',
         )}
       >
-        <span className="size-2 rounded-full bg-border-strong" />
+        <span className="size-s3 rounded-full bg-border-strong" />
       </span>
-      <span className="rounded-full border border-border bg-surface-2 px-2 py-0.5 text-[11.5px] font-semibold text-ink-2">
+      <span className="rounded-chip border border-border bg-surface-2 px-chip py-chip text-caption font-semibold text-ink-2">
         {label}
       </span>
     </Heading>
@@ -458,8 +461,8 @@ function Skeleton({
             data-skeleton-row=""
             className={cx(
               'relative flex',
-              compact ? 'gap-2.5' : 'gap-3',
-              index === count - 1 ? null : compact ? 'pb-3' : 'pb-5',
+              compact ? 'gap-s4' : 'gap-s5',
+              index === count - 1 ? null : compact ? 'pb-s5' : 'pb-s7',
             )}
           >
             {count > 1 ? (
@@ -477,18 +480,18 @@ function Skeleton({
             <div
               className={cx(
                 'relative z-10 flex shrink-0 justify-center',
-                compact ? 'w-5' : 'w-6',
+                compact ? 'w-s7' : 'w-s8',
               )}
             >
               <span
                 data-skeleton=""
-                className={cx(bar, compact ? 'size-5' : 'size-6')}
+                className={cx(bar, compact ? 'size-s7' : 'size-s8')}
               />
             </div>
-            <div className="flex-1 space-y-1.5 pt-1">
-              <span data-skeleton="" className={cx(bar, 'block h-2.5 w-16')} />
-              <span data-skeleton="" className={cx(bar, 'block h-3 w-2/3')} />
-              <span data-skeleton="" className={cx(bar, 'block h-2.5 w-1/2')} />
+            <div className="flex-1 space-y-s2 pt-s1">
+              <span data-skeleton="" className={cx(bar, 'block h-s4 w-s10')} />
+              <span data-skeleton="" className={cx(bar, 'block h-s5 w-2/3')} />
+              <span data-skeleton="" className={cx(bar, 'block h-s4 w-1/2')} />
             </div>
           </div>
         ))}
