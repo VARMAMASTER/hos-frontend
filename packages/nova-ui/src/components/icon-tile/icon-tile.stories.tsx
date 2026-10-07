@@ -2,7 +2,7 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { IconTile } from './icon-tile';
 
 const decorate: Decorator = (Story) => (
-  <div className="nova-chrome w-64 rounded-lg p-4">
+  <div className="nova-chrome w-xs rounded-overlay p-s6">
     <Story />
   </div>
 );
@@ -42,7 +42,7 @@ export const Ai: Story = { args: { tone: 'ai', children: '✦' } };
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-s5">
       <IconTile size="sm">Ph</IconTile>
       <IconTile size="md">Ph</IconTile>
       <IconTile size="sm">{glyph}</IconTile>
@@ -54,7 +54,7 @@ export const Sizes: Story = {
 export const BesideALabel: Story = {
   name: 'Beside a label (decorative, hidden from screen readers)',
   render: () => (
-    <div className="flex items-center gap-3 text-[13px] font-semibold text-on-primary">
+    <div className="flex items-center gap-s5 text-control font-semibold text-on-primary">
       <IconTile>{glyph}</IconTile>
       <span>Beds</span>
     </div>

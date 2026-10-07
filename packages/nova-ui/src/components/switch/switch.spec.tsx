@@ -191,11 +191,15 @@ describe('Switch, iOS-style', () => {
     render(<Switch label="Ramesh SMS" />);
     const track = screen.getByRole('switch');
     expect([...track.classList]).toEqual(
-      expect.arrayContaining(['rounded-full', 'h-7', 'w-12']),
+      expect.arrayContaining(['rounded-full', 'h-switch', 'w-switch']),
     );
     const thumb = track.querySelector('span') as HTMLElement;
     expect([...thumb.classList]).toEqual(
-      expect.arrayContaining(['bg-on-primary', 'rounded-full', 'size-6']),
+      expect.arrayContaining([
+        'bg-on-primary',
+        'rounded-full',
+        'size-switch-thumb',
+      ]),
     );
     expect(thumb.className).not.toMatch(/bg-ink-3/);
   });
@@ -214,8 +218,8 @@ describe('Switch, iOS-style', () => {
   it('gives the row a 44px minimum touch target and the prototype 13.5px label text', () => {
     render(<Switch label="Ramesh SMS" />);
     const row = screen.getByRole('switch').parentElement as HTMLElement;
-    expect(row.classList).toContain('min-h-11');
-    expect(screen.getByText('Ramesh SMS').classList).toContain('text-[13.5px]');
+    expect(row.classList).toContain('min-h-touch');
+    expect(screen.getByText('Ramesh SMS').classList).toContain('text-input');
   });
 });
 

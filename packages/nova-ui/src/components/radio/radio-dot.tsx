@@ -15,16 +15,16 @@ export interface RadioDotProps
 export const RadioDot = forwardRef<HTMLInputElement, RadioDotProps>(
   function RadioDot({ boxClassName, className, ...rest }, ref) {
     return (
-      <span className={cx('relative flex h-5 w-5 shrink-0', boxClassName)}>
+      <span className={cx('relative flex size-check shrink-0', boxClassName)}>
         <input
           {...rest}
           ref={ref}
           type="radio"
           // nova-field draws the 3:1 edge and turns it primary when checked; checked fills too.
           className={cx(
-            'nova-field peer h-5 w-5 appearance-none rounded-full',
+            'nova-field peer size-check appearance-none rounded-full',
             'checked:bg-primary',
-            'motion-safe:transition-[background-color,border-color,transform] motion-safe:duration-150 motion-safe:ease-out motion-safe:active:scale-90',
+            'motion-safe:transition-[background-color,border-color,transform] motion-safe:duration-fast motion-safe:ease-standard motion-safe:active:scale-90',
             focusRing,
             'disabled:cursor-not-allowed',
             className,
@@ -35,7 +35,7 @@ export const RadioDot = forwardRef<HTMLInputElement, RadioDotProps>(
           fill="currentColor"
           aria-hidden="true"
           focusable="false"
-          className="pointer-events-none absolute inset-0 m-auto h-2 w-2 scale-50 text-on-primary opacity-0 peer-checked:scale-100 peer-checked:opacity-100 motion-safe:transition-[transform,opacity] motion-safe:duration-200 motion-safe:ease-out"
+          className="pointer-events-none absolute inset-0 m-auto size-s3 scale-50 text-on-primary opacity-0 peer-checked:scale-100 peer-checked:opacity-100 motion-safe:transition-[transform,opacity] motion-safe:duration-base motion-safe:ease-standard"
         >
           <circle cx="10" cy="10" r="10" />
         </svg>

@@ -16,8 +16,9 @@ export interface TextareaProps
 // Same contract and the same label / hint / error markup as TextField (through FieldShell); only
 // the element and its sizing differ.
 const base = cx(
-  // The prototype's textarea.f-input: 13.5px, 8px by 10px.
-  'nova-field block min-h-24 w-full resize-y rounded-sm px-2.5 py-2 text-[13.5px] text-ink placeholder:text-ink-3 transition-colors',
+  // The prototype's textarea.f-input: 13.5px, the field inset (px-field) and the control's vertical
+  // padding, at least --nova-textarea-min-h tall.
+  'nova-field block min-h-textarea w-full resize-y rounded-control px-field py-control-md text-input text-ink placeholder:text-ink-3 transition-colors',
   focusRing,
   'disabled:cursor-not-allowed disabled:opacity-50',
 );

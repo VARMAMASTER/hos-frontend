@@ -229,15 +229,19 @@ describe('Toast dismissal', () => {
 });
 
 describe('Toast styling rules', () => {
-  // sim.css .hos-toast: 13px, --r-md, a 1px line border with a 3px coloured left edge, --shadow-md.
-  it('is the prototype toast: 13px, the md radius, a coloured left edge, and no shadow but shadow-md', () => {
+  // sim.css .hos-toast: 13px, --r-md, a 1px line border with a 3px coloured left edge, --shadow-md, 12px
+  // 16px padding, an 8px gap: the control text role, the card corner, the rail edge and the scale.
+  it('is the prototype toast: the control text role, the card corner, a coloured rail edge, and no shadow but shadow-md', () => {
     render(<Toaster />);
     show('Saved');
     const classes = (toasts()[0] as HTMLElement).className;
-    expect(classes).toContain('text-[13px]');
-    expect(classes).toContain('rounded-md');
+    expect(classes).toContain('text-control');
+    expect(classes).toContain('rounded-card');
     expect(classes).toContain('bg-surface');
-    expect(classes).toContain('border-l-[3px]');
+    expect(classes).toContain('border-l-rail');
+    expect(classes).toContain('px-s6');
+    expect(classes).toContain('py-s5');
+    expect(classes).toContain('gap-s3');
     expect(classes.match(/\S*shadow\S*/g)).toEqual(['shadow-md']);
     expect(classes).not.toContain('font-medium');
     expect(classes).not.toMatch(
@@ -272,7 +276,9 @@ describe('Toast styling rules', () => {
   it('sits bottom right, like the prototype .hos-toasts', () => {
     render(<Toaster />);
     const host = screen.getByRole('status').parentElement as HTMLElement;
-    expect(host.className).toContain('bottom-5');
-    expect(host.className).toContain('right-5');
+    expect(host.className).toContain('bottom-s7');
+    expect(host.className).toContain('right-s7');
+    expect(host.className).toContain('max-w-toast');
+    expect(host.className).toContain('z-60');
   });
 });

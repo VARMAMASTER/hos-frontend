@@ -215,7 +215,7 @@ describe('Tooltip placement and material', () => {
     const trigger = renderTooltip();
     fireEvent.mouseEnter(trigger);
     // Padding on the positioned box (inside the hover area) rather than a margin outside it.
-    expect(screen.getByRole('tooltip').classList).toContain('pb-2');
+    expect(screen.getByRole('tooltip').classList).toContain('pb-s3');
   });
 
   it('draws the tooltip on the nova-overlay material', () => {

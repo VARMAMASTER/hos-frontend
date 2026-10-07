@@ -89,10 +89,10 @@ describe('Avatar', () => {
   });
 
   it.each([
-    ['xs', 'size-5'],
-    ['sm', 'size-8'],
-    ['md', 'size-10'],
-    ['lg', 'size-12'],
+    ['xs', 'size-avatar-xs'],
+    ['sm', 'size-avatar-sm'],
+    ['md', 'size-avatar-md'],
+    ['lg', 'size-avatar-lg'],
   ] as const)('draws the %s size as %s (20 / 32 / 40 / 48px)', (size, box) => {
     const { container } = render(<Avatar name="Asha Rao" size={size} />);
     const root = container.firstElementChild as HTMLElement;
@@ -123,8 +123,8 @@ describe('Avatar', () => {
     expect(root.dataset['tone']).toBe('chrome');
     expect([...root.classList]).toEqual(
       expect.arrayContaining([
-        'size-8',
-        'text-[12.5px]',
+        'size-avatar-sm',
+        'text-body-sm',
         'bg-chrome-ink/15',
         'border-chrome-ink/35',
         'text-chrome-ink',

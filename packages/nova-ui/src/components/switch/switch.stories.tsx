@@ -21,13 +21,13 @@ export const DisabledOn: Story = {
 function ControlledSwitch() {
   const [on, setOn] = useState(false);
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-s3">
       <Switch
         label="Isolation precautions"
         checked={on}
         onCheckedChange={setOn}
       />
-      <p className="text-[13px] text-ink-2" aria-live="polite">
+      <p className="text-control text-ink-2" aria-live="polite">
         {on ? 'Staff will be told to gown up.' : 'Standard precautions.'}
       </p>
     </div>

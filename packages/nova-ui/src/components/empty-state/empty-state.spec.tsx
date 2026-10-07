@@ -83,17 +83,17 @@ describe('EmptyState, in the prototype vocabulary', () => {
     );
     const heading = screen.getByRole('heading', { name: 'No beds free' });
     expect([...heading.classList]).toEqual(
-      expect.arrayContaining(['text-[17px]', 'font-semibold']),
+      expect.arrayContaining(['text-title', 'font-semibold']),
     );
     const body = screen.getByText('Ramesh is first on the waitlist.');
     expect([...body.classList]).toEqual(
-      expect.arrayContaining(['text-[13px]', 'max-w-80']),
+      expect.arrayContaining(['text-control', 'max-w-xs']),
     );
     const root = heading.parentElement as HTMLElement;
     expect([...root.classList]).toEqual(
-      expect.arrayContaining(['py-12', 'items-center', 'text-center']),
+      expect.arrayContaining(['py-s10', 'items-center', 'text-center']),
     );
     const icon = screen.getByTestId('icon').parentElement as HTMLElement;
-    expect(icon.classList).toContain('[&_svg]:size-10');
+    expect(icon.classList).toContain('[&_svg]:size-empty-icon');
   });
 });

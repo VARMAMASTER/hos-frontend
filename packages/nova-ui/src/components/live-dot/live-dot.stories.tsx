@@ -39,7 +39,7 @@ export const BareDot: Story = {
 
 export const Tones: Story = {
   render: () => (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-s3">
       <LiveDot tone="good" label="Live" />
       <LiveDot tone="warn" label="Delayed" />
       <LiveDot tone="crit" label="Recording" pulse="fast" />
@@ -58,18 +58,18 @@ export const InACardHeader: Story = {
         description="Bed 4A, refreshed every second"
         actions={<LiveDot label="Live" />}
       />
-      <CardBody className="grid grid-cols-3 gap-3 text-[13.5px]">
+      <CardBody className="grid grid-cols-3 gap-s5 text-input">
         <div>
-          <div className="text-[12.5px] text-ink-2">Heart rate</div>
-          <div className="text-[17px] font-semibold">82 bpm</div>
+          <div className="text-body-sm text-ink-2">Heart rate</div>
+          <div className="text-title font-semibold">82 bpm</div>
         </div>
         <div>
-          <div className="text-[12.5px] text-ink-2">SpO2</div>
-          <div className="text-[17px] font-semibold">97%</div>
+          <div className="text-body-sm text-ink-2">SpO2</div>
+          <div className="text-title font-semibold">97%</div>
         </div>
         <div>
-          <div className="text-[12.5px] text-ink-2">BP</div>
-          <div className="text-[17px] font-semibold">118/76</div>
+          <div className="text-body-sm text-ink-2">BP</div>
+          <div className="text-title font-semibold">118/76</div>
         </div>
       </CardBody>
     </Card>

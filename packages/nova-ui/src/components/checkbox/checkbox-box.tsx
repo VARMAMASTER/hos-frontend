@@ -37,7 +37,7 @@ export const CheckboxBox = forwardRef<HTMLInputElement, CheckboxBoxProps>(
       if (input.current) input.current.indeterminate = indeterminate;
     });
     return (
-      <span className={cx('relative flex h-5 w-5 shrink-0', boxClassName)}>
+      <span className={cx('relative flex size-check shrink-0', boxClassName)}>
         <input
           {...rest}
           ref={(node) => {
@@ -47,9 +47,9 @@ export const CheckboxBox = forwardRef<HTMLInputElement, CheckboxBoxProps>(
           type="checkbox"
           // nova-field draws the 3:1 edge and turns it primary when checked or mixed; both fill too.
           className={cx(
-            'nova-field peer h-5 w-5 appearance-none rounded-sm',
+            'nova-field peer size-check appearance-none rounded-control',
             'checked:bg-primary indeterminate:bg-primary indeterminate:[--nova-field-edge:var(--nova-color-primary)]',
-            'motion-safe:transition-[background-color,border-color,transform] motion-safe:duration-150 motion-safe:ease-out motion-safe:active:scale-90',
+            'motion-safe:transition-[background-color,border-color,transform] motion-safe:duration-fast motion-safe:ease-standard motion-safe:active:scale-90',
             focusRing,
             'disabled:cursor-not-allowed',
             className,
@@ -66,10 +66,10 @@ export const CheckboxBox = forwardRef<HTMLInputElement, CheckboxBoxProps>(
           aria-hidden="true"
           focusable="false"
           className={cx(
-            'pointer-events-none absolute inset-0 m-auto h-3.5 w-3.5 text-on-primary opacity-0',
+            'pointer-events-none absolute inset-0 m-auto size-icon-sm text-on-primary opacity-0',
             '[stroke-dasharray:1] [stroke-dashoffset:1]',
             'peer-[:checked:not(:indeterminate)]:opacity-100 peer-[:checked:not(:indeterminate)]:[stroke-dashoffset:0]',
-            'motion-safe:transition-[stroke-dashoffset,opacity] motion-safe:duration-200 motion-safe:ease-out',
+            'motion-safe:transition-[stroke-dashoffset,opacity] motion-safe:duration-base motion-safe:ease-standard',
           )}
         >
           <path d="M4.5 10.5l3.5 3.5 7.5-8" pathLength="1" />
@@ -83,7 +83,7 @@ export const CheckboxBox = forwardRef<HTMLInputElement, CheckboxBoxProps>(
           strokeLinecap="round"
           aria-hidden="true"
           focusable="false"
-          className="pointer-events-none absolute inset-0 m-auto h-3.5 w-3.5 text-on-primary opacity-0 peer-indeterminate:opacity-100 motion-safe:transition-opacity motion-safe:duration-150 motion-safe:ease-out"
+          className="pointer-events-none absolute inset-0 m-auto size-icon-sm text-on-primary opacity-0 peer-indeterminate:opacity-100 motion-safe:transition-opacity motion-safe:duration-fast motion-safe:ease-standard"
         >
           <path d="M5 10h10" />
         </svg>

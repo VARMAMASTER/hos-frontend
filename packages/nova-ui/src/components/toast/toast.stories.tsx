@@ -17,7 +17,7 @@ export const Variants: Story = {
   render: () => (
     <>
       <Toaster />
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-s5">
         <Button onClick={() => showToast('Vitals saved to the chart')}>
           Info
         </Button>

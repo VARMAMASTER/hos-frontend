@@ -843,7 +843,63 @@
    in their own section: a :root block of --nova-* values, each pointing at the scale where the value
    is on it, and an @theme inline block naming the utilities. Never a literal in a component. */
 /* ===== Component tokens: family a, core controls, forms and overlays (begin) ===== */
-/* ===== Component tokens: family a (end) ===== */
+/* The values only these components need, each on the scale where the prototype's value is on it.
+   Avatar: 20, 32, 40 and 48 across, and the verified seal's glyph beside each. Checkbox and Radio
+   share one box. The Switch is a 48 by 28 track with a 24 thumb that travels the track less the
+   thumb and its three hairlines (the edge each side and the 1px rest). */
+:root {
+  --nova-avatar-xs: var(--nova-space-7);
+  --nova-avatar-sm: var(--nova-space-9);
+  --nova-avatar-md: 40px;
+  --nova-avatar-lg: var(--nova-space-10);
+  --nova-avatar-glyph-xs: var(--nova-space-4);
+  --nova-avatar-glyph-sm: var(--nova-icon-sm);
+  --nova-avatar-glyph-md: var(--nova-icon-md);
+  --nova-avatar-glyph-lg: 18px;
+  --nova-check: var(--nova-space-7);
+  --nova-switch-h: 28px;
+  --nova-switch-w: var(--nova-space-10);
+  --nova-switch-thumb: var(--nova-space-8);
+  --nova-switch-travel: calc(
+    var(--nova-switch-w) - var(--nova-switch-thumb) -
+      var(--nova-border-hairline) * 3
+  );
+  --nova-textarea-min-h: 96px;
+  --nova-menu-min-w: 192px;
+  --nova-menu-max-h: 70vh;
+  --nova-menu-room: 224px;
+  --nova-link-field-min-w: 192px;
+  --nova-dialog-w-sm: 280px;
+  --nova-empty-icon: 40px;
+  --nova-split-2-1: 2fr 1fr;
+  --nova-split-1-2: 1fr 2fr;
+  --nova-split-3-2: 3fr 2fr;
+  --nova-split-2-3: 2fr 3fr;
+}
+
+@theme inline {
+  --size-avatar-xs: var(--nova-avatar-xs);
+  --size-avatar-sm: var(--nova-avatar-sm);
+  --size-avatar-md: var(--nova-avatar-md);
+  --size-avatar-lg: var(--nova-avatar-lg);
+  --size-avatar-glyph-xs: var(--nova-avatar-glyph-xs);
+  --size-avatar-glyph-sm: var(--nova-avatar-glyph-sm);
+  --size-avatar-glyph-md: var(--nova-avatar-glyph-md);
+  --size-avatar-glyph-lg: var(--nova-avatar-glyph-lg);
+  --size-check: var(--nova-check);
+  --height-switch: var(--nova-switch-h);
+  --width-switch: var(--nova-switch-w);
+  --size-switch-thumb: var(--nova-switch-thumb);
+  --translate-switch-travel: var(--nova-switch-travel);
+  --min-height-textarea: var(--nova-textarea-min-h);
+  --min-width-menu: var(--nova-menu-min-w);
+  --max-height-menu: var(--nova-menu-max-h);
+  --min-height-menu-room: var(--nova-menu-room);
+  --min-width-link-field: var(--nova-link-field-min-w);
+  --max-width-dialog-sm: var(--nova-dialog-w-sm);
+  --size-empty-icon: var(--nova-empty-icon);
+}
+/* ===== Component tokens: family a (end) =====
 
 /* ===== Component tokens: family b, shell, navigation, data, tables and charts (begin) ===== */
 :root {
@@ -914,7 +970,39 @@
 /* ===== Component tokens: family c, AI components (begin) ===== */
 /* ===== Component tokens: family c (end) ===== */
 
-/* ===== Component tokens: family d, the newer catalogue (begin) ===== */
+/* ===== Component tokens: family d, the newer catalogue (begin) =====
+   Toast, OtpInput, NotificationBell and FilterChip's own dimensions. Each is on the scale where the
+   prototype's value sits on it; the rest are literals here, the one place to change them. */
+:root {
+  /* .hos-toasts: a toast stack is as wide as its widest toast up to 360px, and never wider than the
+     viewport less one corner inset (s7) on each side. */
+  --nova-toast-w: 360px;
+  --nova-toast-max-w: min(
+    var(--nova-toast-w),
+    calc(100vw - var(--nova-space-7) * 2)
+  );
+  /* .hos-x: the square close button of a toast. */
+  --nova-close-size: 30px;
+  /* .tb-ico: the 34px square icon button of the top bar (NotificationBell). */
+  --nova-topbar-ico: 34px;
+  /* 01-login.html .otp-box: 44 x 50, an edge between the hairline and the emphasis edge. */
+  --nova-otp-box-w: var(--nova-touch);
+  --nova-otp-box-h: 50px;
+  --nova-otp-box-edge: 1.5px;
+  /* .fchip: pressing a FilterChip morphs its corners from the control corner to this one, a pill
+     that is still a number, so the whole transition shows (a 999px radius would finish at once). */
+  --nova-filter-chip-radius-on: var(--nova-radius-lg);
+}
+
+@theme inline {
+  --container-toast: var(--nova-toast-max-w);
+  --size-close: var(--nova-close-size);
+  --size-topbar-ico: var(--nova-topbar-ico);
+  --container-otp-box: var(--nova-otp-box-w);
+  --height-otp-box: var(--nova-otp-box-h);
+  --border-width-otp-box: var(--nova-otp-box-edge);
+  --radius-filter-on: var(--nova-filter-chip-radius-on);
+}
 /* ===== Component tokens: family d (end) ===== */
 
 /* The scheme: light (the prototype, and the default with no attribute), dark, or system, which

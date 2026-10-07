@@ -24,10 +24,10 @@ export interface SearchFieldProps
 // label is visually hidden, so the placeholder is the only visible one. White is `on-primary`: the stock `white` is removed from
 // the theme. The shared focus ring is the brand's; the white rim turning solid keeps focus visible
 // on the dark chrome, where the brand alone would not be.
-// It is the prototype's .topbar-search: 13px type, 8px by 10px, a faint white rim (its 10px radius
+// It is the prototype's .topbar-search: 13px type at h-control-md, the field inset (10px), a faint white rim (its 10px radius
 // is off the --r-* scale, so sm); focused, the rim turns the chrome accent.
 const field =
-  'w-full rounded-sm border border-chrome-ink/15 bg-(--nova-chrome-field) py-2 text-[13px] text-on-primary [color-scheme:dark] ' +
+  'w-full h-control-md rounded-control border border-chrome-ink/15 bg-(--nova-chrome-field) text-control text-on-primary [color-scheme:dark] ' +
   'placeholder:text-[color:var(--nova-chrome-ink-2)] focus-visible:border-chrome-accent/60 ' +
   'disabled:pointer-events-none disabled:opacity-50';
 
@@ -64,7 +64,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
         {icon ? (
           <span
             aria-hidden="true"
-            className={cx(adornment, 'left-2.5 [&_svg]:size-[15px]')}
+            className={cx(adornment, 'left-field [&_svg]:size-icon-tile')}
           >
             {icon}
           </span>
@@ -78,15 +78,15 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
           className={cx(
             field,
             focusRing,
-            icon ? 'pl-8' : 'pl-2.5',
-            shortcutHint ? 'pr-12' : 'pr-2.5',
+            icon ? 'pl-s9' : 'pl-field',
+            shortcutHint ? 'pr-s10' : 'pr-field',
             className,
           )}
         />
         {shortcutHint ? (
-          <span aria-hidden="true" className={cx(adornment, 'right-2.5')}>
+          <span aria-hidden="true" className={cx(adornment, 'right-field')}>
             {/* The prototype's kbd hint: IBM Plex Mono at 10.5px on a faint white key. */}
-            <span className="rounded-sm border border-chrome-ink/20 bg-chrome-ink/10 px-1.5 py-px font-mono text-[10.5px]">
+            <span className="rounded-control border border-chrome-ink/20 bg-chrome-ink/10 px-s2 py-px font-mono text-overline">
               {shortcutHint}
             </span>
           </span>

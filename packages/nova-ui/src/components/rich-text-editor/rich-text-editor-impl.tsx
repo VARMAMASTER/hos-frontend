@@ -48,21 +48,21 @@ const BASE_ATTRIBUTES = {
 // The prototype's type for rich content: 13.5px body at its 1.55 line height; h1 23px, h2 17px and
 // h3 14px in the display face at weight 600; code in the mono face at 12px; a quote with a left rule.
 const CONTENT_CLASS = cx(
-  'block w-full px-3 py-2.5 text-[13.5px] leading-[1.55] text-ink outline-none',
-  '[&>*+*]:mt-2',
-  '[&_h1]:font-display [&_h1]:text-[23px] [&_h1]:font-semibold [&_h1]:tracking-[-0.015em]',
-  '[&_h2]:font-display [&_h2]:text-[17px] [&_h2]:font-semibold [&_h2]:tracking-[-0.01em]',
-  '[&_h3]:font-display [&_h3]:text-[14px] [&_h3]:font-semibold [&_h3]:tracking-[-0.005em]',
+  'block w-full px-s5 py-s4 text-input leading-body text-ink outline-none',
+  '[&>*+*]:mt-s3',
+  '[&_h1]:font-display [&_h1]:text-display [&_h1]:font-semibold [&_h1]:tracking-h1',
+  '[&_h2]:font-display [&_h2]:text-title [&_h2]:font-semibold [&_h2]:tracking-h2',
+  '[&_h3]:font-display [&_h3]:text-body [&_h3]:font-semibold [&_h3]:tracking-h3',
   '[&_strong]:font-bold [&_em]:italic [&_u]:underline [&_s]:line-through',
-  '[&_a]:text-primary-strong [&_a]:underline [&_a]:underline-offset-2',
-  '[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li>p]:my-0',
+  '[&_a]:text-primary-strong [&_a]:underline [&_a]:underline-offset-tight',
+  '[&_ul]:list-disc [&_ul]:pl-s7 [&_ol]:list-decimal [&_ol]:pl-s7 [&_li>p]:my-0',
   "[&_ul[data-type='taskList']]:list-none [&_ul[data-type='taskList']]:pl-0",
-  '[&_li[data-checked]]:flex [&_li[data-checked]]:items-start [&_li[data-checked]]:gap-2',
-  '[&_li[data-checked]>label]:mt-0.5 [&_li[data-checked]>div]:flex-1',
+  '[&_li[data-checked]]:flex [&_li[data-checked]]:items-start [&_li[data-checked]]:gap-s3',
+  '[&_li[data-checked]>label]:mt-s0 [&_li[data-checked]>div]:flex-1',
   "[&_li[data-checked='true']>div]:text-ink-2 [&_li[data-checked='true']>div]:line-through",
-  '[&_input[type=checkbox]]:size-4 [&_input[type=checkbox]]:accent-primary',
-  '[&_blockquote]:border-l-2 [&_blockquote]:border-primary [&_blockquote]:pl-3 [&_blockquote]:text-ink-2',
-  '[&_code]:rounded-sm [&_code]:border [&_code]:border-border [&_code]:bg-surface-2 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[12px]',
+  '[&_input[type=checkbox]]:size-icon-md [&_input[type=checkbox]]:accent-primary',
+  '[&_blockquote]:border-l-emphasis [&_blockquote]:border-primary [&_blockquote]:pl-s5 [&_blockquote]:text-ink-2',
+  '[&_code]:rounded-control [&_code]:border [&_code]:border-border [&_code]:bg-surface-2 [&_code]:px-s1 [&_code]:py-s0 [&_code]:font-mono [&_code]:text-label',
   // The placeholder is the first empty paragraph's data-placeholder, drawn before it.
   '[&_p.is-editor-empty:first-child]:before:pointer-events-none [&_p.is-editor-empty:first-child]:before:float-left [&_p.is-editor-empty:first-child]:before:h-0 [&_p.is-editor-empty:first-child]:before:text-ink-3 [&_p.is-editor-empty:first-child]:before:content-[attr(data-placeholder)]',
 );
@@ -317,9 +317,9 @@ function EditorField(props: EditorFieldProps) {
         className={cx(
           // The prototype's .f-input: the field edge, radius and fill, and its edge turns primary on
           // focus. The keyboard ring shows when anything inside takes focus-visible.
-          'nova-field overflow-hidden rounded-sm transition-colors',
+          'nova-field overflow-hidden rounded-control transition-colors',
           'focus-within:[--nova-field-edge:var(--nova-color-primary)] data-[invalid=true]:[--nova-field-edge:var(--nova-color-crit)]',
-          'has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--nova-focus-ring,var(--nova-color-primary))]',
+          'has-[:focus-visible]:outline-focus has-[:focus-visible]:outline-offset-focus has-[:focus-visible]:outline-[var(--nova-focus-ring,var(--nova-color-primary))]',
           'data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50',
           readOnly && 'bg-surface-2',
         )}
@@ -347,7 +347,7 @@ function EditorField(props: EditorFieldProps) {
           <p
             id={countId}
             className={cx(
-              'mt-1 flex justify-end gap-2 text-[12px]',
+              'mt-s1 flex justify-end gap-s3 text-label',
               atLimit ? 'font-semibold text-crit-deep' : 'text-ink-2',
             )}
           >

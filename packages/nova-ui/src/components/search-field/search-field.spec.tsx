@@ -114,10 +114,10 @@ describe('SearchField', () => {
     );
     const plain = screen.getByRole('searchbox', { name: 'Plain' });
     const decorated = screen.getByRole('searchbox', { name: 'Decorated' });
-    expect(plain.classList.contains('pl-2.5')).toBe(true);
-    expect(plain.classList.contains('pr-2.5')).toBe(true);
-    expect(decorated.classList.contains('pl-8')).toBe(true);
-    expect(decorated.classList.contains('pr-12')).toBe(true);
+    expect(plain.classList.contains('pl-field')).toBe(true);
+    expect(plain.classList.contains('pr-field')).toBe(true);
+    expect(decorated.classList.contains('pl-s9')).toBe(true);
+    expect(decorated.classList.contains('pr-s10')).toBe(true);
   });
 
   it('is drawn for the dark chrome as the prototype .topbar-search: faint white fill and rim, the shared focus ring, secondary-ink placeholder', () => {
@@ -127,8 +127,8 @@ describe('SearchField', () => {
       'bg-(--nova-chrome-field)',
       'border',
       'border-chrome-ink/15',
-      'text-[13px]',
-      'py-2',
+      'text-control',
+      'h-control-md',
       ...focusRing.split(' '),
       'placeholder:text-[color:var(--nova-chrome-ink-2)]',
     ]) {

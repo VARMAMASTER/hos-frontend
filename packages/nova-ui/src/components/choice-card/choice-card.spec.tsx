@@ -91,7 +91,7 @@ describe('ChoiceCard', () => {
     const root = container.firstElementChild as HTMLElement;
     expect(root.dataset['surface']).toBe('card');
     expect([...root.classList]).toEqual(
-      expect.arrayContaining(['rounded-md', 'p-4']),
+      expect.arrayContaining(['rounded-card', 'p-card']),
     );
     expect(root.className).not.toMatch(/shadow|corner-shape|backdrop/);
   });
@@ -186,10 +186,10 @@ describe('ChoiceCard', () => {
   it('gives the title the prototype 13.5px semibold and the description 12.5px ink-2', () => {
     render(<ChoiceCard name="a" title="Planned" description="Booked ahead." />);
     expect([...screen.getByText('Planned').classList]).toEqual(
-      expect.arrayContaining(['text-[13.5px]', 'font-semibold', 'text-ink']),
+      expect.arrayContaining(['text-input', 'font-semibold', 'text-ink']),
     );
     expect([...screen.getByText('Booked ahead.').classList]).toEqual(
-      expect.arrayContaining(['text-[12.5px]', 'text-ink-2']),
+      expect.arrayContaining(['text-body-sm', 'text-ink-2']),
     );
   });
 });
@@ -304,7 +304,7 @@ describe('ChoiceCardGroup, single', () => {
     );
     const grid = screen.getByRole('radio').closest('[data-slot="cards"]');
     expect([...(grid as HTMLElement).classList]).toEqual(
-      expect.arrayContaining(['grid', 'gap-3', 'sm:grid-cols-2']),
+      expect.arrayContaining(['grid', 'gap-s5', 'sm:grid-cols-2']),
     );
   });
 

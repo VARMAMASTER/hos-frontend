@@ -54,7 +54,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     return (
       <div
         className={cx(
-          'inline-flex min-h-11 items-start gap-3',
+          'inline-flex min-h-touch items-start gap-s5',
           disabled && 'opacity-50',
           className,
         )}
@@ -63,7 +63,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           ref={ref}
           id={id}
           // The 44px row centres the 20px box: 12px down.
-          boxClassName="mt-3"
+          boxClassName="mt-s5"
           indeterminate={indeterminate}
           disabled={disabled}
           checked={isChecked}
@@ -73,7 +73,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         <label
           htmlFor={id}
           className={cx(
-            'flex min-h-11 items-center py-2 text-[13.5px] text-ink',
+            'flex min-h-touch items-center py-s3 text-input text-ink',
             disabled ? 'cursor-not-allowed' : 'cursor-pointer',
           )}
         >

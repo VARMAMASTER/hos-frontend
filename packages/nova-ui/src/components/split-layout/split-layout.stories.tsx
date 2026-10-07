@@ -10,7 +10,7 @@ const meta = {
     primary: (
       <Card>
         <CardHeader title="Primary" description="The wider region" />
-        <CardBody className="text-[13px] text-ink-2">
+        <CardBody className="text-control text-ink-2">
           Collapses to one column below the md breakpoint.
         </CardBody>
       </Card>
@@ -18,7 +18,7 @@ const meta = {
     secondary: (
       <Card>
         <CardHeader title="Secondary" description="The narrower region" />
-        <CardBody className="text-[13px] text-ink-2">Side content.</CardBody>
+        <CardBody className="text-control text-ink-2">Side content.</CardBody>
       </Card>
     ),
   },
@@ -38,10 +38,10 @@ export const WideTableCannotPushThePageWider: Story = {
       <Card>
         <CardHeader title="A very wide table" />
         <CardBody className="overflow-x-auto">
-          <table className="w-[60rem] text-left text-[13px] text-ink">
+          <table className="w-5xl text-left text-control text-ink">
             <tbody>
               <tr>
-                <td className="p-2">The region scrolls, the page does not.</td>
+                <td className="p-s3">The region scrolls, the page does not.</td>
               </tr>
             </tbody>
           </table>

@@ -107,9 +107,9 @@ function AlertActions({
       data-alert-actions=""
       data-layout={layout}
       className={cx(
-        // The prototype's footer: the buttons right-aligned, an 8px gap (.hos-dialog-f). No overflow
-        // clip: it would cut off the focus ring of the buttons inside.
-        'flex gap-2',
+        // The prototype's footer: the buttons right-aligned, an s3 (8px) gap (.hos-dialog-f). No
+        // overflow clip: it would cut off the focus ring of the buttons inside.
+        'flex gap-s3',
         layout === 'row' ? 'flex-row flex-wrap justify-end' : 'flex-col',
       )}
     >

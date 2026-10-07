@@ -143,7 +143,7 @@ export function TabList({ className, ...rest }: TabListProps) {
       {...rest}
       role="tablist"
       className={cx(
-        'nova-tabbar inline-flex max-w-full items-center gap-0.5 overflow-x-auto rounded-md p-1.5',
+        'nova-tabbar inline-flex max-w-full items-center gap-s0 overflow-x-auto rounded-card p-s2',
         className,
       )}
     />
@@ -158,7 +158,7 @@ export interface TabProps
 // The prototype's .tab: 13px semibold, 8px by 16px, 6px between its parts (its 10px radius is off the
 // --r-* scale, so sm).
 const tab =
-  'relative inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-sm px-4 py-2 text-[13px] font-semibold transition-[color,background-color,box-shadow] duration-150 ease-out motion-reduce:transition-none disabled:pointer-events-none disabled:opacity-50';
+  'relative inline-flex cursor-pointer items-center gap-s2 whitespace-nowrap rounded-control px-control-md py-control-md text-control font-semibold transition-[color,background-color,box-shadow] duration-fast ease-standard motion-reduce:transition-none disabled:pointer-events-none disabled:opacity-50';
 
 const NAVIGATION_KEYS = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
 
@@ -238,7 +238,7 @@ export function Tab({
         // it: a shape as well as a tint. The label is the primary ink (the prototype's chrome-1 is
         // the same near-black in the light scheme, but stays dark on a dark panel).
         selected
-          ? 'bg-surface text-ink shadow-sm ring-1 ring-inset ring-border'
+          ? 'bg-surface text-ink shadow-sm ring-hairline ring-inset ring-border'
           : 'text-ink-2 hover:bg-chrome-2/6 hover:text-ink',
         className,
       )}
@@ -255,7 +255,7 @@ export function Tab({
         <span
           aria-hidden="true"
           data-slot="indicator"
-          className="nova-highlight-grad pointer-events-none absolute inset-x-4 bottom-1 h-0.5 rounded-full"
+          className="nova-highlight-grad pointer-events-none absolute inset-x-s6 bottom-s1 h-s0 rounded-full"
         />
       ) : null}
     </button>
@@ -277,7 +277,7 @@ export function TabPanel({ value, className, ...rest }: TabPanelProps) {
       aria-labelledby={tabId(baseId, value)}
       // A panel with no focusable content would otherwise be unreachable from the keyboard.
       tabIndex={0}
-      className={cx('rounded-md', focusRing, className)}
+      className={cx('rounded-card', focusRing, className)}
     />
   );
 }

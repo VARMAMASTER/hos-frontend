@@ -42,8 +42,8 @@ describe('SplitLayout', () => {
 
   it.each([
     ['1-1', 'md:grid-cols-2'],
-    ['2-1', 'md:grid-cols-[2fr_1fr]'],
-    ['3-2', 'md:grid-cols-[3fr_2fr]'],
+    ['2-1', 'md:grid-cols-(--nova-split-2-1)'],
+    ['3-2', 'md:grid-cols-(--nova-split-3-2)'],
   ] as const)('maps the %s ratio to %s', (ratio, expected) => {
     render(
       <SplitLayout
@@ -99,8 +99,12 @@ describe('SplitLayout', () => {
         secondary="b"
       />,
     );
-    expect(root().classList.contains('md:grid-cols-[1fr_2fr]')).toBe(true);
-    expect(root().classList.contains('md:grid-cols-[2fr_1fr]')).toBe(false);
+    expect(root().classList.contains('md:grid-cols-(--nova-split-1-2)')).toBe(
+      true,
+    );
+    expect(root().classList.contains('md:grid-cols-(--nova-split-2-1)')).toBe(
+      false,
+    );
   });
 
   it('merges a caller className', () => {

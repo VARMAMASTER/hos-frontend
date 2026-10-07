@@ -53,7 +53,7 @@ export const WithAction: Story = {
 
 export const AllTones: Story = {
   render: () => (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-s5">
       <Banner tone="info" title="Ward round at 4 pm" />
       <Banner tone="good" title="Discharge summary filed" />
       <Banner tone="warn" title="Penicillin allergy on file" />

@@ -25,10 +25,10 @@ function SignInCard() {
     else setError('That code is not right. Try again.');
   };
   return (
-    <Card className="flex max-w-sm flex-col gap-4 p-5">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-[17px] font-bold text-ink">Sign in</h2>
-        <p className="text-[13px] text-ink-2">
+    <Card className="flex max-w-sm flex-col gap-s6 p-s7">
+      <div className="flex flex-col gap-s1">
+        <h2 className="text-title font-bold text-ink">Sign in</h2>
+        <p className="text-control text-ink-2">
           Enter the code we sent to +91 98xxx xx210.
         </p>
       </div>
@@ -61,7 +61,7 @@ export const SignInWithOtp: Story = {
 
 export const DashboardGauges: Story = {
   render: () => (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div className="grid grid-cols-1 gap-s6 sm:grid-cols-3">
       <StatGauge label="Bed occupancy" value={72} />
       <StatGauge
         label="ICU beds in use"
@@ -80,11 +80,11 @@ function Bell() {
     // The bell is a .tb-ico top-bar control, so it is shown on the chrome it belongs to.
     <Surface
       material="chrome"
-      radius="md"
-      className="flex items-center gap-3 px-6 py-3"
+      radius="card"
+      className="flex items-center gap-s5 px-s8 py-s5"
     >
       <NotificationBell count={count} onClick={() => setCount(0)} />
-      <span className="text-[13px] text-(color:--nova-chrome-ink-2)">
+      <span className="text-control text-(color:--nova-chrome-ink-2)">
         Press the bell to mark them read.
       </span>
     </Surface>
@@ -97,7 +97,7 @@ export const ToastTrigger: Story = {
   render: () => (
     <>
       <Toaster />
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-s5">
         <Button onClick={() => showToast('Vitals saved to the chart')}>
           Save vitals
         </Button>

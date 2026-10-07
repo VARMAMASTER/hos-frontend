@@ -83,14 +83,14 @@ export function Tooltip({
           data-placement={placement}
           className={cx(
             'absolute left-1/2 z-50 -translate-x-1/2',
-            placement === 'top' ? 'bottom-full pb-2' : 'top-full pt-2',
+            placement === 'top' ? 'bottom-full pb-s3' : 'top-full pt-s3',
           )}
         >
           <Surface
             as="span"
             material="overlay"
-            radius="md"
-            className="block w-max max-w-xs px-2.5 py-1.5 text-[12px] text-ink"
+            radius="card"
+            className="block w-max max-w-xs px-s4 py-s2 text-label text-ink"
           >
             {content}
           </Surface>

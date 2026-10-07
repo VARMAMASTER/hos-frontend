@@ -20,17 +20,17 @@ function AdmissionTabs({ withDisabled = false }: { withDisabled?: boolean }) {
         </Tab>
         <Tab value="history">History</Tab>
       </TabList>
-      <TabPanel value="overview" className="mt-4 text-ink-2">
+      <TabPanel value="overview" className="mt-s6 text-ink-2">
         Overview panel. Left and Right move between the tabs, Home and End jump
         to the first and last.
       </TabPanel>
-      <TabPanel value="claims" className="mt-4 text-ink-2">
+      <TabPanel value="claims" className="mt-s6 text-ink-2">
         Claims panel.
       </TabPanel>
-      <TabPanel value="notes" className="mt-4 text-ink-2">
+      <TabPanel value="notes" className="mt-s6 text-ink-2">
         Notes panel.
       </TabPanel>
-      <TabPanel value="history" className="mt-4 text-ink-2">
+      <TabPanel value="history" className="mt-s6 text-ink-2">
         History panel.
       </TabPanel>
     </Tabs>

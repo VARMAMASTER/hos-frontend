@@ -63,7 +63,7 @@ function PhoneIcon() {
       strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-4 w-4"
+      className="size-icon-md"
     >
       <rect x="6" y="2.5" width="8" height="15" rx="2" />
       <path d="M9 14.5h2" />
@@ -124,7 +124,7 @@ export function AdmissionForm() {
         }
       />
       <CardBody>
-        <form noValidate onSubmit={submit} className="flex flex-col gap-5">
+        <form noValidate onSubmit={submit} className="flex flex-col gap-s7">
           {admitted ? (
             <Banner
               tone="good"
@@ -156,7 +156,7 @@ export function AdmissionForm() {
             </Banner>
           )}
 
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid gap-s7 sm:grid-cols-2">
             <TextField
               label="Patient name"
               required
@@ -194,8 +194,8 @@ export function AdmissionForm() {
           </div>
 
           <fieldset>
-            <legend className="text-[13px] font-semibold text-ink">Sex</legend>
-            <div className="mt-2 flex flex-wrap gap-x-6 gap-y-3">
+            <legend className="text-control font-semibold text-ink">Sex</legend>
+            <div className="mt-s3 flex flex-wrap gap-x-s8 gap-y-s5">
               {[
                 ['f', 'Female'],
                 ['m', 'Male'],
@@ -221,7 +221,7 @@ export function AdmissionForm() {
             onChange={(event) => set('complaint', event.target.value)}
           />
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-s5">
             <Checkbox
               label="The patient has consented to treatment"
               required
@@ -235,7 +235,7 @@ export function AdmissionForm() {
             />
           </div>
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-s3">
             <Button
               type="button"
               variant="ghost"

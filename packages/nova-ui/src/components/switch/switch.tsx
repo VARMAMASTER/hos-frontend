@@ -57,7 +57,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
     return (
       <div
         className={cx(
-          'inline-flex min-h-11 items-center gap-3',
+          'inline-flex min-h-touch items-center gap-s5',
           disabled && 'opacity-50',
           className,
         )}
@@ -73,9 +73,9 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
           // backdrop, material.spec.ts), so the track is its own boundary and the white thumb reads
           // on it at 4.8:1. On, it fills with the primary, which nova-field also edges.
           className={cx(
-            'nova-field group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full',
+            'nova-field group relative inline-flex h-switch w-switch shrink-0 items-center rounded-full',
             '[--nova-field-fill:var(--nova-color-border-control)] hover:[--nova-field-fill:var(--nova-color-ink-2)]',
-            'motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out aria-checked:bg-primary',
+            'motion-safe:transition-colors motion-safe:duration-base motion-safe:ease-standard aria-checked:bg-primary',
             focusRing,
             'disabled:cursor-not-allowed',
           )}
@@ -88,9 +88,9 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
           <span
             aria-hidden="true"
             className={
-              'pointer-events-none grid size-6 translate-x-px origin-left place-items-center rounded-full bg-on-primary ' +
-              'motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out ' +
-              'group-aria-checked:origin-right group-aria-checked:translate-x-5.25 group-active:scale-x-125'
+              'pointer-events-none grid size-switch-thumb translate-x-px origin-left place-items-center rounded-full bg-on-primary ' +
+              'motion-safe:transition-transform motion-safe:duration-base motion-safe:ease-standard ' +
+              'group-aria-checked:origin-right group-aria-checked:translate-x-switch-travel group-active:scale-x-125'
             }
           >
             <svg
@@ -102,7 +102,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
               strokeLinejoin="round"
               aria-hidden="true"
               focusable="false"
-              className="size-3.5 text-primary opacity-0 group-aria-checked:opacity-100 motion-safe:transition-opacity motion-safe:duration-200 motion-safe:ease-out"
+              className="size-icon-sm text-primary opacity-0 group-aria-checked:opacity-100 motion-safe:transition-opacity motion-safe:duration-base motion-safe:ease-standard"
             >
               <path d="M4.5 10.5l3.5 3.5 7.5-8" />
             </svg>
@@ -111,7 +111,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         <label
           htmlFor={id}
           className={cx(
-            'text-[13.5px] text-ink',
+            'text-input text-ink',
             disabled ? 'cursor-not-allowed' : 'cursor-pointer',
           )}
         >

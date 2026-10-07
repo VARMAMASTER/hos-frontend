@@ -478,9 +478,9 @@ describe('Tabs', () => {
       expect([...list.classList]).toEqual(
         expect.arrayContaining([
           'nova-tabbar',
-          'rounded-md',
-          'p-1.5',
-          'gap-0.5',
+          'rounded-card',
+          'p-s2',
+          'gap-s0',
         ]),
       );
       expect(list.className).not.toMatch(/bg-primary/);
@@ -497,7 +497,7 @@ describe('Tabs', () => {
           // dark scheme's dark surface it was dark on dark.
           'text-ink',
           'shadow-sm',
-          'ring-1',
+          'ring-hairline',
           'ring-inset',
         ]),
       );
@@ -523,17 +523,17 @@ describe('Tabs', () => {
 });
 
 describe('Tabs, the prototype .tab', () => {
-  it('sets every tab label at 13px semibold on 8px by 16px, with a quick ease-out transition', () => {
+  it('sets every tab label at 13px semibold on 8px by 16px, with a quick standard-curve transition', () => {
     render(<Harness />);
     for (const name of ['Overview', 'Claims', 'Notes']) {
       expect([...tab(name).classList]).toEqual(
         expect.arrayContaining([
-          'text-[13px]',
+          'text-control',
           'font-semibold',
-          'px-4',
-          'py-2',
-          'duration-150',
-          'ease-out',
+          'px-control-md',
+          'py-control-md',
+          'duration-fast',
+          'ease-standard',
         ]),
       );
       expect(tab(name).className).not.toMatch(

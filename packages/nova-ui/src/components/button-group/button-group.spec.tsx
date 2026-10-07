@@ -258,10 +258,15 @@ describe('ButtonGroup, the shape', () => {
     render(<View />);
     const group = screen.getByRole('radiogroup');
     expect([...group.classList]).toEqual(
-      expect.arrayContaining(['inline-flex', 'gap-0.5', 'relative']),
+      expect.arrayContaining(['inline-flex', 'gap-s0', 'relative']),
     );
     expect([...radio('List').classList]).toEqual(
-      expect.arrayContaining(['px-4', 'py-2', 'text-[13px]', 'font-semibold']),
+      expect.arrayContaining([
+        'px-control-md',
+        'py-control-md',
+        'text-control',
+        'font-semibold',
+      ]),
     );
     cleanup();
     render(
@@ -270,7 +275,7 @@ describe('ButtonGroup, the shape', () => {
       </ButtonGroup>,
     );
     expect([...radio('List').classList]).toEqual(
-      expect.arrayContaining(['px-2.5', 'py-1.5', 'text-[12px]']),
+      expect.arrayContaining(['px-control-sm', 'py-control-sm', 'text-label']),
     );
     expect(radio('List').dataset['size']).toBe('sm');
   });
@@ -278,10 +283,10 @@ describe('ButtonGroup, the shape', () => {
   // 8px to 18px: the segments are 30 to 36px tall, so 18px is already the full pill.
   it('morphs a segment from soft corners to a pill when selected, animating the radius under motion-safe', () => {
     render(<View defaultValue="grid" />);
-    expect([...radio('List').classList]).toContain('rounded-sm');
-    expect([...radio('List').classList]).not.toContain('rounded-lg');
-    expect([...radio('Grid').classList]).toContain('rounded-lg');
-    expect([...radio('Grid').classList]).not.toContain('rounded-sm');
+    expect([...radio('List').classList]).toContain('rounded-control');
+    expect([...radio('List').classList]).not.toContain('rounded-overlay');
+    expect([...radio('Grid').classList]).toContain('rounded-overlay');
+    expect([...radio('Grid').classList]).not.toContain('rounded-control');
     for (const name of ['List', 'Grid']) {
       const cls = radio(name).className;
       expect(cls).toMatch(/motion-safe:transition-\[[^\]]*border-radius/);
@@ -319,8 +324,8 @@ describe('ButtonGroup, the shape', () => {
         .parentElement?.getAttribute('aria-hidden'),
     ).toBe('true');
     // Square, not padded like a text segment.
-    expect([...list.classList]).toContain('p-2');
-    expect([...list.classList]).not.toContain('px-4');
+    expect([...list.classList]).toContain('p-s3');
+    expect([...list.classList]).not.toContain('px-control-md');
   });
 
   it('shows an icon beside a label', () => {
@@ -392,7 +397,7 @@ describe('ButtonGroup, the sliding indicator', () => {
     expect(bar.style.transform).toBe('translateX(62px)');
     expect(bar.style.width).toBe('70px');
     expect([...bar.classList]).toEqual(
-      expect.arrayContaining(['absolute', 'bg-primary', 'rounded-lg']),
+      expect.arrayContaining(['absolute', 'bg-primary', 'rounded-overlay']),
     );
   });
 

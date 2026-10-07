@@ -42,7 +42,7 @@ export interface DialogProps {
 export type DialogSize = 'sm' | 'md';
 
 const sizes: Record<DialogSize, string> = {
-  sm: 'max-w-[280px]',
+  sm: 'max-w-dialog-sm',
   md: 'max-w-lg',
 };
 
@@ -186,7 +186,7 @@ function DialogLayer({
     <div
       ref={layerRef}
       data-nova-layer=""
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 font-sans text-ink"
+      className="fixed inset-0 z-50 flex items-center justify-center p-s6 font-sans text-ink"
     >
       {/* Cancelling mousedown stops a press on the scrim from moving focus to <body>. A click on it
           does not close the dialog: a stray click should not throw away what a clinician typed. */}
@@ -198,7 +198,7 @@ function DialogLayer({
       <Surface
         ref={panelRef}
         material="overlay"
-        radius="lg"
+        radius="overlay"
         role={role}
         aria-modal="true"
         aria-labelledby={titleId}
@@ -210,16 +210,16 @@ function DialogLayer({
           className,
         )}
       >
-        <div className="flex items-start justify-between gap-3 px-5 pt-4">
+        <div className="flex items-start justify-between gap-s5 px-overlay pt-s6">
           <div className="min-w-0">
             <h2
               id={titleId}
-              className="font-display text-[17px] font-semibold tracking-h2 text-ink"
+              className="font-display text-title font-semibold tracking-h2 text-ink"
             >
               {title}
             </h2>
             {description ? (
-              <p id={descriptionId} className="mt-0.5 text-[13px] text-ink-2">
+              <p id={descriptionId} className="mt-s0 text-control text-ink-2">
                 {description}
               </p>
             ) : null}
@@ -231,7 +231,7 @@ function DialogLayer({
               aria-label={closeLabel}
               onClick={() => onClose()}
               className={cx(
-                '-mr-2 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-surface-2',
+                '-mr-s3 -mt-s1 inline-flex size-s9 shrink-0 items-center justify-center rounded-card text-ink-2 transition-colors hover:bg-surface-2',
                 focusRing,
               )}
             >
@@ -243,18 +243,18 @@ function DialogLayer({
                 strokeLinecap="round"
                 aria-hidden="true"
                 focusable="false"
-                className="h-4 w-4"
+                className="size-icon-md"
               >
                 <path d="M5 5l10 10M15 5L5 15" />
               </svg>
             </button>
           )}
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 text-[14px] text-ink">
+        <div className="min-h-0 flex-1 overflow-y-auto px-overlay py-overlay text-body text-ink">
           {children}
         </div>
         {footer ? (
-          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border px-5 py-3">
+          <div className="flex flex-wrap items-center justify-end gap-s3 border-t border-border px-overlay py-overlay-bar">
             {footer}
           </div>
         ) : null}
