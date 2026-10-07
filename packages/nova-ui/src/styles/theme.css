@@ -838,6 +838,22 @@
 }
 /* ===== Design tokens (end) ===== */
 
+/* Component tokens, one marked section per conversion family, so the agents converting the
+   families in parallel each add their component's own values (a dock's orb, a phone frame's width)
+   in their own section: a :root block of --nova-* values, each pointing at the scale where the value
+   is on it, and an @theme inline block naming the utilities. Never a literal in a component. */
+/* ===== Component tokens: family a, core controls, forms and overlays (begin) ===== */
+/* ===== Component tokens: family a (end) ===== */
+
+/* ===== Component tokens: family b, shell, navigation, data, tables and charts (begin) ===== */
+/* ===== Component tokens: family b (end) ===== */
+
+/* ===== Component tokens: family c, AI components (begin) ===== */
+/* ===== Component tokens: family c (end) ===== */
+
+/* ===== Component tokens: family d, the newer catalogue (begin) ===== */
+/* ===== Component tokens: family d (end) ===== */
+
 /* The scheme: light (the prototype, and the default with no attribute), dark, or system, which
    follows prefers-color-scheme. A scheme is only a color-scheme: every colour that changes with it is
    light-dark(light, dark) (below, and in each hospital theme's inline palette), which the browser

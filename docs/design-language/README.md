@@ -25,24 +25,141 @@ Nova's semantic names stay the API (`--nova-color-primary`, `bg-surface`, `text-
 | `--ai-grad`                                                                                                                                                 | `--nova-gradient-ai`                                 | `nova-ai-grad`                                           | AI bright → AI → the brand, as the prototype's `var(--teal)` (follows the hospital theme) |
 | `--ai-mark`                                                                                                                                                 | `--nova-ai-mark`                                     | `nova-ai-mark`                                           | the four-hue conic spark, on the mark only; its tints are `--nova-color-ai-mark-1…4`      |
 | `--f-display`, `--f-body`, `--f-mono`                                                                                                                       | `--nova-font-display`, `-body`, `-mono`              | `font-display`, `font-sans`, `font-mono`                 | Google Sans Flex; IBM Plex Mono                                                           |
-| `--sidebar-w`                                                                                                                                               | `--nova-sidebar-w`                                   |                                                          | `248px`                                                                                   |
+| `--sidebar-w`                                                                                                                                               | `--nova-sidebar-w`                                   | `w-sidebar`                                              | `248px`                                                                                   |
 
-Fonts load from the prototype's own Google Fonts URL (`family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=IBM+Plex+Mono:wght@500;600`) in `apps/web/index.html` and Storybook's `preview-head.html` and `manager-head.html`. The body is the prototype's: 14px on a 1.55 line with optical sizing (`theme.css`, `@layer base`), so a component that sets only a size inherits the prototype's line height.
+Fonts load from the prototype's own Google Fonts URL (`family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=IBM+Plex+Mono:wght@500;600`) in `apps/web/index.html` and Storybook's `preview-head.html` and `manager-head.html`. The body is the prototype's: `text-body` (14px) on the 1.55 body line (`--nova-leading-body`) with optical sizing (`theme.css`, `@layer base`). Every type role carries that line height, so text reads at the prototype's inherited line wherever a component sets a role.
 
-## Scales
+## Design tokens
 
-| Scale    | Prototype                                                                                                  | Nova, in components                                                        |
-| -------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------ | ------------------------------- | ---------- | --------------------- | --- | ------ |
-| Spacing  | `--space-0 … 10`: 2, 4, 6, 8, 10, 12, 16, 20, 24, 32, 48 px                                                | Tailwind steps `0.5 1 1.5 2 2.5 3 4 5 6 8 12`, plus `0` and `px`           |
-| Radius   | `--r-sm 8`, `--r-md 12`, `--r-lg 18`, `--r-xl 22`, `--r-full 999`                                          | `rounded-sm                                                                | md     | lg                              | xl         | full`, `rounded-none` |
-| Type     | every `font-size` in `hos.css`: 9.5, 10, 10.5, 11, 11.5, 12, 12.5, 13, 13.5, 14, 15, 16, 17, 20, 23, 26 px | `text-[12.5px]` and so on, from `PROTOTYPE_TYPE_SIZES` (`tokens/scale.ts`) |
-| Weight   | 400, 500, 600, 700                                                                                         | `font-normal                                                               | medium | semibold                        | bold`      |
-| Shadow   | `--shadow-sm                                                                                               | md                                                                         | lg     | glass`, on hue `262deg 45% 27%` | `shadow-sm | md                    | lg  | glass` |
-| Headings | h1 23/600/-0.015em, h2 17/600/-0.01em, h3 14/600/-0.005em                                                  | `tracking-h1                                                               | h2     | h3` with the size and weight    |
+The owner's rule (2026-10-06): every component uses tokens only. Padding, spacing, radius, type and motion are named tokens, so changing a token restyles every place that uses it. A component never writes a number.
 
-Corners are plain `border-radius`: the prototype has no `corner-shape`. Where the prototype writes a literal radius off its own scale (`.btn` 9px, `.tab` 10px, `.tabbar` 14px, `.ic` 7px, `.brand-mark` 11px), Nova uses the nearest `--r-*` step.
+The layers:
 
-`primitives/conventions.spec.ts` enforces all of it in every component: only these spacing steps, radii, type sizes, weights and shadows; no stock `text-xs|sm|…`, no raw hex, no stock palette, no private backdrop-filter, outline classes or `corner-shape`, and no hand-written gradient.
+1. **The scales**: the prototype's own values (`--nova-space-*`, `--nova-radius-sm … xl`, the type sizes, `--nova-shadow-*`, the motion tokens).
+2. **The roles and component tokens**: what a value is for (`--nova-text-label`, `--nova-radius-control`, `--nova-control-px-md`). Each points at a step of a scale wherever the prototype's value is on one, so editing the scale moves them too.
+3. **The utilities**: the Tailwind names a component writes (`text-label`, `rounded-control`, `px-control-md`).
+
+The values live in `styles/theme.css`: the plain `:root` block holds the prototype defaults (`tokens/semantic.ts`) and the "Design tokens" `:root` block holds everything else (`tokens/design.ts`, with `TYPE_ROLES`, `LEADING`, `TRACKING_EM` and `RADIUS_ROLES` in `tokens/scale.ts`). `semantic.spec.ts` and `design.spec.ts` compare the CSS with the TypeScript.
+
+Tailwind's own scales are removed, as the palette always was: numeric spacing and size steps (`p-4`, `w-64`), the radius names, type sizes, line heights, tracking, container widths and easings. Until every component is converted, a marked **conversion bridge** in `theme.css` keeps the old numeric steps, scale radii, stock tracking and easings compiling for the files still listed in `primitives/conversion-baseline.json` (see [Conversion](#conversion)).
+
+### The spacing scale
+
+`p-`, `m-`, `gap-`, `space-x-`, `w-`, `h-`, `size-`, `inset-`, `top-` and `translate-` all take these names. They are the prototype's own step numbers, so a name can never be read as one of Tailwind's 4px steps: `p-4` does not exist, and `p-s4` is 10px.
+
+| Name  | Prototype    | Value |
+| ----- | ------------ | ----- |
+| `s0`  | `--space-0`  | 2px   |
+| `s1`  | `--space-1`  | 4px   |
+| `s2`  | `--space-2`  | 6px   |
+| `s3`  | `--space-3`  | 8px   |
+| `s4`  | `--space-4`  | 10px  |
+| `s5`  | `--space-5`  | 12px  |
+| `s6`  | `--space-6`  | 16px  |
+| `s7`  | `--space-7`  | 20px  |
+| `s8`  | `--space-8`  | 24px  |
+| `s9`  | `--space-9`  | 32px  |
+| `s10` | `--space-10` | 48px  |
+
+`0` is zero, `px` is the 1px hairline and `auto` is auto. `full`, `screen`, fractions (`w-1/2`) and intrinsic keywords (`min-w-0`, `w-fit`) are not values and stay.
+
+### Type roles
+
+Each role is a size and its line height (`--nova-text-<role>`, `--nova-text-<role>-leading`, the body's 1.55 by default), written `text-<role>`.
+
+| Utility         | Size   | Where `hos.css` uses it                                     |
+| --------------- | ------ | ----------------------------------------------------------- |
+| `text-micro`    | 9.5px  | `.wa-time`, `.ws-group`, `.sb-aside-l`, the `.tb-dot` count |
+| `text-badge`    | 10px   | `.tab-badge` and the nav count pill, the `.ic` monogram     |
+| `text-overline` | 10.5px | `.nav-label`, `.sf-role`, `.sb-aside-n`, `.tag-offline`     |
+| `text-meta`     | 11px   | `.feed-t`, `.tl-date`, `thead th`, `.brand-sub`             |
+| `text-caption`  | 11.5px | `.chip`, `.kpi-d`, `.ai-src`, `.role-badge`                 |
+| `text-label`    | 12px   | `label.f-label`, `.kpi-l`, `.tiny`, `.legend`, `.btn-sm`    |
+| `text-body-sm`  | 12.5px | `.wa-msg`, `.sf-name`, sub-tabs, `.chart .dl`               |
+| `text-control`  | 13px   | `.btn`, `.tab`, table cells, `.feed-item`: dense UI text    |
+| `text-input`    | 13.5px | `.f-input`, `.nav a`, `.ai-block-h b`                       |
+| `text-body`     | 14px   | the body, `h3`                                              |
+| `text-lead`     | 15px   | `.ws-chev`                                                  |
+| `text-subtitle` | 16px   | `.brand-name`                                               |
+| `text-title`    | 17px   | `h2`                                                        |
+| `text-headline` | 20px   | `.token .t-no`                                              |
+| `text-display`  | 23px   | `h1`                                                        |
+| `text-kpi`      | 26px   | `.kpi-v`                                                    |
+
+Line heights: `leading-none` 1, `leading-tight` 1.3, `leading-snug` 1.4, `leading-normal` 1.45, `leading-body` 1.55, `leading-relaxed` 1.62.
+
+Letter-spacing is its own token, because the same size is set with and without it: `tracking-h1` -0.015em, `tracking-h2` -0.01em, `tracking-h3` -0.005em, `tracking-normal` 0, `tracking-initials` 0.01em (avatar and `.ic` initials), `tracking-label` 0.04em (`.tl-date`), `tracking-caps` 0.06em (`thead th`), `tracking-eyebrow` 0.08em (`.nav-label`) and `tracking-group` 0.09em (`.ws-group`). A heading is its role, its weight and its tracking: `text-title font-semibold tracking-h2`.
+
+### Radius roles
+
+A component names what the corner belongs to, never a step of the scale (which lives only in the token layer).
+
+| Utility           | Token                   | Value          | For                                            |
+| ----------------- | ----------------------- | -------------- | ---------------------------------------------- |
+| `rounded-control` | `--nova-radius-control` | `--r-sm`, 8px  | buttons that are not pills, fields, menu items |
+| `rounded-card`    | `--nova-radius-card`    | `--r-md`, 12px | cards, tiles, the tab rail                     |
+| `rounded-overlay` | `--nova-radius-overlay` | `--r-lg`, 18px | menus, popovers, dialogs, the copilot panel    |
+| `rounded-hero`    | `--nova-radius-hero`    | `--r-xl`, 22px | the hero band and large glass panels           |
+| `rounded-chip`    | `--nova-radius-chip`    | `--r-full`     | a chip                                         |
+| `rounded-tag`     | `--nova-radius-tag`     | `--r-sm`       | a tag                                          |
+| `rounded-pill`    | `--nova-radius-pill`    | `--r-full`     | anything drawn as a pill on purpose            |
+| `rounded-full`    | `--nova-radius-full`    | 999px          | a true circle (a dot, an avatar)               |
+| `rounded-none`    |                         | 0              | a square corner                                |
+
+Per-side and per-corner forms take the same names (`rounded-t-card`). `Surface` takes the roles too: `radius="control" | "card" | "overlay" | "hero"`.
+
+### Component dimensions
+
+Components that should match share one token.
+
+| Utilities                                                        | Token                                                       | Value                                           |
+| ---------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------- |
+| `h-control-md`, `min-h-control-md`                               | `--nova-control-h-md`                                       | padding + `text-control` line + border, 38.15px |
+| `h-control-sm`, `min-h-control-sm`                               | `--nova-control-h-sm`                                       | padding + `text-label` line + border, 32.6px    |
+| `px-control-md`, `py-control-md`                                 | `--nova-control-px-md`, `--nova-control-py-md`              | `s6` by `s3` (16 by 8, `.btn`)                  |
+| `px-control-sm`, `py-control-sm`                                 | `--nova-control-px-sm`, `--nova-control-py-sm`              | `s4` by `s2` (10 by 6, `.btn-sm`)               |
+| `gap-control`                                                    | `--nova-control-gap`                                        | `s3`                                            |
+| `px-field` (`pl-`, `pr-`), `left-field`, `right-field`           | `--nova-field-px`                                           | `s4` (`.f-input`)                               |
+| `pl-field-icon`, `pr-field-icon`                                 | `--nova-field-icon-inset`                                   | field inset + `icon-md` + `s2`                  |
+| `p-card` (`px-`, `py-`, `pt-` …), `gap-card`                     | `--nova-card-p`, `--nova-card-gap`                          | `s6`, `s5` (`.card-b`, `.card-h`)               |
+| `py-card-bar`                                                    | `--nova-card-bar-py`                                        | `s5` (a card's header and footer rows)          |
+| `p-overlay`, `px-overlay`, `py-overlay`, `py-overlay-bar`        | `--nova-overlay-px`, `-py`, `-bar-py`                       | `s7`, `s6`, `s5` (a dialog)                     |
+| `px-chip`, `py-chip`, `gap-chip`                                 | `--nova-chip-px`, `-py`, `-gap`                             | `s3`, `s0`, `s2` (`.chip`)                      |
+| `px-tag`, `py-tag`                                               | `--nova-tag-px`, `-py`                                      | `s3`, `s0`                                      |
+| `px-badge`, `py-badge`                                           | `--nova-badge-px`, `-py`                                    | `s2`, the hairline (a count pill)               |
+| `px-row`, `py-row-comfortable`, `py-row-compact`                 | `--nova-row-px`, `-py-comfortable`, `-py-compact`           | `s6`, `s4`, `s2` (table, list, menu rows)       |
+| `min-h-touch`, `min-w-touch`, `h-touch`, `w-touch`, `size-touch` | `--nova-touch`                                              | 44px                                            |
+| `size-touch-sm`                                                  | `--nova-touch-sm`                                           | `s8`, 24px (WCAG 2.5.8)                         |
+| `size-icon-xs`, `-sm`, `-tile`, `-md`, `-lg`                     | `--nova-icon-*`                                             | 12, 14, 15 (`.ic svg`), 16, 20px                |
+| `size-dot-sm`, `size-dot`, `size-mark`, `size-tile`              | `--nova-dot-sm`, `--nova-dot`, `--nova-mark`, `--nova-tile` | 5, 7 (`.dot`), 22 (`.ai-spark`), 24px (`.ic`)   |
+| `size-spinner`                                                   | `--nova-spinner`                                            | 1.1em                                           |
+| `w-sidebar`, `w-rail`                                            | `--nova-sidebar-w`, `--nova-sidebar-rail-w`                 | 248px, 68px                                     |
+| `max-w-xs` … `max-w-6xl`                                         | `--nova-measure-*`                                          | 20 … 72rem: how wide a block may grow           |
+
+Edges: `border` is the 1px hairline; `border-emphasis` (2px, a selected edge) and `border-rail` (3px, an accent rail) take side forms (`border-l-rail`); `ring-hairline` and `ring-emphasis`; the focus ring is `outline-focus outline-offset-focus` (inside `focusRing`); links take `underline-offset-tight` or `-loose`.
+
+### Motion roles
+
+Transitions use only the motion roles: `duration-fast | base | slow` and `ease-spring | standard | emphasized` (see [Motion](#motion)). A transition that names no duration or curve takes `duration-fast` on `ease-standard`. Stock easings (`ease-out`) and numeric durations (`duration-150`) are refused.
+
+### Weights and shadows
+
+Weights are the prototype's 400, 500, 600 and 700: `font-normal`, `font-medium`, `font-semibold`, `font-bold`. Shadows are the prototype's `--shadow-sm`, `-md`, `-lg` and `-glass` on the hue `262deg 45% 27%`, as `shadow-sm`, `shadow-md`, `shadow-lg` and `shadow-glass` (or through a surface's lift token); `shadow-none` turns one off.
+
+### How to add a value
+
+1. If the value is a step of a scale, use the scale's name (`gap-s3`, `text-label`, `rounded-card`).
+2. If it is what a role or a kind of component needs (every chip's padding, every row's height), use its component token, or add one: a `--nova-*` token in `tokens/design.ts` and the "Design tokens" `:root` block of `theme.css` (pointing at a scale token where the prototype's value is on one), and its utility in the "Design tokens: the Tailwind names" block (a theme key such as `--padding-card`, or an `@utility` when x and y differ, such as `px-control-md`).
+3. If only one component needs it (an orb's size, a phone frame's width), it is still a token: add it in that component family's marked "Component tokens" section of `theme.css` and reference it as a utility or as a token reference (`w-(--nova-phone-w)`).
+4. Never a literal in a component: no `p-4`, `text-[12px]`, `h-[5px]`, `rounded-md`, `duration-150` or `style={{ width: 54 }}`.
+
+`primitives/conventions.spec.ts` refuses everything else, with one planted violation per rule: numeric steps, names the token layer does not define (each class is compiled against the token layer with the bridge cut out), stock easings, arbitrary values (except a token reference such as `w-[var(--nova-sidebar-rail-w)]`, a transition's property list, generated content and an `fr` grid template), raw `px`/`rem`/`em` literals outside a class, bare numbers on length properties in a `style` object, and scale-named `Surface` radii. `primitives/token-reach.spec.tsx` proves the reach: it overrides the scale, a component token, the radius scale and the type roles, and Button, TextField, Card and Chip follow.
+
+### Conversion
+
+`primitives/conversion-baseline.json` lists every component, story and primitive file that still breaks the rules, with how many offences. A file not listed must be clean; a listed file must match its count exactly. Converting a file means lowering its count or, when it is clean, deleting its entry: `NOVA_RATCHET_BASELINE=1` rewrites the file downwards only (it never adds a file or raises a count), and `NOVA_TOKEN_REPORT=<file>` writes every remaining offence for a work list. When the baseline is empty, the conversion bridge in `theme.css` must be deleted (the guard checks), and from then on the guard is absolute.
+
+Corners are plain `border-radius`: the prototype has no `corner-shape`. Where the prototype writes a literal radius off its own scale (`.btn` 9px, `.tab` 10px, `.tabbar` 14px, `.ic` 7px, `.brand-mark` 11px), Nova uses the nearest step's role.
 
 ## Surfaces and gradients
 
@@ -50,7 +167,7 @@ Each prototype surface is one utility in `theme.css`, reached through `Surface` 
 
 | Role       | Utility         | Prototype                                                                                              |
 | ---------- | --------------- | ------------------------------------------------------------------------------------------------------ |
-| `card`     | `nova-card`     | `.card`: panel, `--line` edge, `--shadow-sm`, radius md                                                |
+| `card`     | `nova-card`     | `.card`: panel, `--line` edge, `--shadow-sm`, the card corner                                          |
 | `data`     | `nova-data`     | `.card` plus `.edge-premium`, the 1px violet-to-cyan gradient edge (KPI tiles swap in the `.kpi` edge) |
 | `surface`  | `nova-surface`  | `.glass-panel` on glass, heavier on frost, the card on solid                                           |
 | `overlay`  | `nova-overlay`  | `.glass-card` (menus, dialogs, tooltips)                                                               |
@@ -224,7 +341,7 @@ Named curves and durations, as tokens (`--nova-ease-*`, `--nova-duration-*`) and
 | `duration-base`   | 200ms                               |                                      |
 | `duration-slow`   | 240ms                               |                                      |
 
-Components apply them under `motion-safe`, so `prefers-reduced-motion` still turns motion off.
+Components apply them under `motion-safe`, so `prefers-reduced-motion` still turns motion off. They are the only durations and curves a component may use: `conventions.spec.ts` refuses `duration-150`, `ease-out` and the other stock values, and a transition with none named takes `duration-fast` on `ease-standard`.
 
 ## Held by a proof
 
@@ -255,3 +372,4 @@ These prototype values fail an accessibility proof (`tokens/material.spec.ts`, w
 - AI is never colour-only and never mistaken for the brand or a status: the ✦ spark and a text label always go with it, and its colours keep the separation floors below for every brand.
 - Every interactive element takes its focus ring from `focusRing`; motion is off under `prefers-reduced-motion`.
 - Components compose the primitives (`cx`, `focusRing`, `Surface`, `useControllableState`).
+- Tokens only: a component names a token's utility for every design value (spacing, size, type, radius, edges, motion), never a number or an arbitrary value. See [Design tokens](#design-tokens).
