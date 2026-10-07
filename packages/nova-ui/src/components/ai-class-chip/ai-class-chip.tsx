@@ -93,10 +93,10 @@ export function AiClassChip({
 
   return (
     <span
-      className={cx('inline-flex flex-col items-start gap-1.5', className)}
+      className={cx('inline-flex flex-col items-start gap-s2', className)}
       {...rest}
     >
-      <span className="inline-flex flex-wrap items-center gap-2">
+      <span className="inline-flex flex-wrap items-center gap-s3">
         <Chip
           tone={TIER_TONES[tier]}
           data-tier={tier}
@@ -122,7 +122,7 @@ export function AiClassChip({
         <span
           id={reasonId}
           hidden={!open}
-          className="text-[12px] text-crit-deep motion-safe:animate-fade-in"
+          className="text-label text-crit-deep motion-safe:animate-fade-in"
         >
           {reason}
         </span>

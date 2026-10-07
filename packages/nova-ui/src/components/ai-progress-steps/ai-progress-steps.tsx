@@ -46,8 +46,8 @@ const complete = (total: number) => `All ${total} steps done`;
 
 const densities: Record<AiProgressDensity, string> = {
   // .ai-progress-line: 12.5px, 4px above and below, the icon 8px from its text.
-  compact: 'gap-2 py-1 text-[12.5px]',
-  comfortable: 'gap-2.5 py-1.5 text-[13.5px]',
+  compact: 'gap-s3 py-s1 text-body-sm',
+  comfortable: 'gap-s4 py-s2 text-input',
 };
 
 const svg = {
@@ -69,7 +69,7 @@ function StepIcon({ status }: { status: AiStepStatus }) {
         {...svg}
         data-icon="check"
         strokeWidth="2.5"
-        className="size-3 shrink-0 text-good"
+        className="size-icon-xs shrink-0 text-good"
       >
         <path d="M3 8.5l3.2 3.2L13 4.5" />
       </svg>
@@ -81,7 +81,7 @@ function StepIcon({ status }: { status: AiStepStatus }) {
         {...svg}
         data-icon="spinner"
         strokeWidth="2"
-        className="size-3 shrink-0 text-ai motion-safe:animate-spin"
+        className="size-icon-xs shrink-0 text-ai motion-safe:animate-spin"
       >
         <circle cx="8" cy="8" r="6" opacity="0.25" />
         <path d="M14 8a6 6 0 0 0-6-6" />
@@ -93,7 +93,7 @@ function StepIcon({ status }: { status: AiStepStatus }) {
       {...svg}
       data-icon="pending"
       strokeWidth="1.5"
-      className="size-3 shrink-0 text-ink-3"
+      className="size-icon-xs shrink-0 text-ink-3"
     >
       <circle cx="8" cy="8" r="5" />
     </svg>
@@ -153,7 +153,7 @@ export function AiProgressSteps({
   const caption = (
     <p
       id={labelId}
-      className="mb-1 inline-flex items-center gap-1.5 text-[12px] font-semibold text-ai-deep"
+      className="mb-s1 inline-flex items-center gap-s2 text-label font-semibold text-ai-deep"
     >
       <span aria-hidden="true" className="text-ai">
         ✦
@@ -188,7 +188,7 @@ export function AiProgressSteps({
         ))}
       </ol>
       {allDone && summary ? (
-        <p className="mt-1 text-[12px] text-ink-2">{summary}</p>
+        <p className="mt-s1 text-label text-ink-2">{summary}</p>
       ) : null}
       <VisuallyHidden role="status" lang={lang}>
         {announcement}

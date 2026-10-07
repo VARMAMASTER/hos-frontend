@@ -395,14 +395,14 @@ export function AiQualityScorecard({
     <section
       aria-labelledby={headingId}
       data-status={current}
-      className={cx('flex flex-col gap-4', className)}
+      className={cx('flex flex-col gap-s6', className)}
       {...rest}
     >
-      <header className="flex flex-col gap-1">
-        <div className="flex flex-wrap items-center gap-2">
+      <header className="flex flex-col gap-s1">
+        <div className="flex flex-wrap items-center gap-s3">
           <Heading
             id={headingId}
-            className="font-display text-[16px] font-semibold tracking-h3 text-ink"
+            className="font-display text-subtitle font-semibold tracking-h3 text-ink"
           >
             {name}
           </Heading>
@@ -413,11 +413,11 @@ export function AiQualityScorecard({
           />
         </div>
         {description ? (
-          <p lang={contentLang} className="text-[12px] text-ink-2">
+          <p lang={contentLang} className="text-label text-ink-2">
             {description}
           </p>
         ) : null}
-        <p data-rule="" className="text-[11.5px] text-ink-2">
+        <p data-rule="" className="text-caption text-ink-2">
           {words.formatRule(thresholds, line)}
         </p>
       </header>
@@ -436,14 +436,14 @@ export function AiQualityScorecard({
             </p>
           ))}
           {driftMessage ? (
-            <p lang={contentLang} className="mt-1 font-normal">
+            <p lang={contentLang} className="mt-s1 font-normal">
               {driftMessage}
             </p>
           ) : null}
         </Banner>
       ) : null}
 
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-3">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(var(--nova-scorecard-cell-min-w),1fr))] gap-s5">
         <KpiTile
           label={words.metrics.drafts}
           value={number(metrics.drafts, [0, 0])}
@@ -483,24 +483,24 @@ export function AiQualityScorecard({
       {fleet && fleetTone ? (
         <div
           data-compare=""
-          className="flex flex-wrap items-center gap-3 text-[12.5px] text-ink"
+          className="flex flex-wrap items-center gap-s5 text-body-sm text-ink"
         >
           <span className="min-w-0 flex-1 font-semibold">{words.compare}</span>
           <span
             data-bar=""
             aria-hidden="true"
-            className="relative h-2 min-w-16 flex-1 rounded-full border border-border bg-surface-2"
+            className="relative h-s3 min-w-(--nova-scorecard-bar-min-w) flex-1 rounded-full border border-border bg-surface-2"
           >
             <span
               className={cx('block h-full rounded-full', barTones[fleetTone])}
               style={{ width: `${clamp(metrics.approvedAsIs)}%` }}
             />
             <span
-              className="absolute -inset-y-1 w-0.5 bg-ink"
+              className="absolute -inset-y-s1 w-s0 bg-ink"
               style={{ left: `${clamp(fleet.approvedAsIs)}%` }}
             />
           </span>
-          <span className="font-mono text-[12px] whitespace-nowrap">
+          <span className="font-mono text-label whitespace-nowrap">
             {words.here(figure('approvedAsIs', metrics.approvedAsIs))}
             <span className="text-ink-2">
               {' / '}
@@ -509,7 +509,7 @@ export function AiQualityScorecard({
           </span>
           <span
             className={cx(
-              'text-[11.5px] font-semibold',
+              'text-caption font-semibold',
               fleetTone === 'good' ? 'text-good-deep' : 'text-crit-deep',
             )}
           >
@@ -519,8 +519,8 @@ export function AiQualityScorecard({
       ) : null}
 
       {corrections && corrections.length > 0 ? (
-        <div className="flex flex-col gap-2">
-          <SubHeading className="font-display text-[13.5px] font-semibold text-ink">
+        <div className="flex flex-col gap-s3">
+          <SubHeading className="font-display text-input font-semibold text-ink">
             {words.corrections}
           </SubHeading>
           <Table caption={words.corrections} density="compact">
@@ -562,8 +562,8 @@ export function AiQualityScorecard({
       ) : null}
 
       {rejections && rejections.length > 0 ? (
-        <div className="flex flex-col gap-2">
-          <SubHeading className="font-display text-[13.5px] font-semibold text-ink">
+        <div className="flex flex-col gap-s3">
+          <SubHeading className="font-display text-input font-semibold text-ink">
             {words.rejections}
           </SubHeading>
           <Table caption={words.rejections} density="compact">
@@ -582,10 +582,10 @@ export function AiQualityScorecard({
                 <TableRow key={row.id}>
                   <TableCell lang={contentLang}>{row.reason}</TableCell>
                   <TableCell numeric>{number(row.count, [0, 0])}</TableCell>
-                  <TableCell className="text-[12px] text-ink-2">
+                  <TableCell className="text-label text-ink-2">
                     {row.worker}
                   </TableCell>
-                  <TableCell className="text-[12px] text-ink-2">
+                  <TableCell className="text-label text-ink-2">
                     {row.outcome}
                   </TableCell>
                 </TableRow>

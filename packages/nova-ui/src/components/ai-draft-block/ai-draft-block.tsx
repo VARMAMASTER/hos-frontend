@@ -536,10 +536,10 @@ export function AiDraftBlock({
         </>
       }
       footer={
-        <div ref={footerRef} className="flex flex-col gap-2">
-          {notice ? <p className="text-[12.5px] text-ink-2">{notice}</p> : null}
+        <div ref={footerRef} className="flex flex-col gap-s3">
+          {notice ? <p className="text-body-sm text-ink-2">{notice}</p> : null}
           {rejecting ? (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-s3">
               <TextField
                 ref={reasonRef}
                 data-action="reason"
@@ -554,7 +554,7 @@ export function AiDraftBlock({
                 onKeyDown={onReasonKeyDown}
                 className="max-w-md"
               />
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-s3">
                 <Button
                   id={`${ids}-confirm-reject`}
                   variant="danger"
@@ -602,8 +602,8 @@ export function AiDraftBlock({
               actions={actions}
             />
           ) : status === 'rejected' ? (
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-[12.5px] text-crit-deep">
+            <div className="flex flex-wrap items-center gap-s3">
+              <p className="text-body-sm text-crit-deep">
                 {words.rejectedNote(rejectionWho, rejectionText)}
               </p>
               {undoable ? (
@@ -621,7 +621,7 @@ export function AiDraftBlock({
               {actions}
             </div>
           ) : !rejecting && actions ? (
-            <div className="flex flex-wrap items-center gap-2">{actions}</div>
+            <div className="flex flex-wrap items-center gap-s3">{actions}</div>
           ) : null}
         </div>
       }
@@ -635,7 +635,7 @@ export function AiDraftBlock({
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={progressValue}
-          className="mt-2.5 h-1 w-full overflow-hidden rounded-full bg-ai-soft"
+          className="mt-s4 h-s1 w-full overflow-hidden rounded-full bg-ai-soft"
         >
           <div
             className="h-full rounded-full bg-ai motion-safe:transition-[width] motion-safe:duration-base motion-safe:ease-standard"
@@ -643,7 +643,7 @@ export function AiDraftBlock({
           />
         </div>
       ) : null}
-      {source ? <div className="mt-2.5">{source}</div> : null}
+      {source ? <div className="mt-s4">{source}</div> : null}
     </AiPanel>
   );
 }

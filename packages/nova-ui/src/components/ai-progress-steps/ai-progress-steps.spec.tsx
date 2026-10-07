@@ -172,11 +172,11 @@ describe('AiProgressSteps', () => {
       <AiProgressSteps steps={STEPS} currentIndex={0} />,
     );
     expect(list().dataset['density']).toBe('compact');
-    expect(items()[0]?.className).toContain('text-[12.5px]');
+    expect(items()[0]?.className).toContain('text-body-sm');
     rerender(
       <AiProgressSteps steps={STEPS} currentIndex={0} density="comfortable" />,
     );
     expect(list().dataset['density']).toBe('comfortable');
-    expect(items()[0]?.className).toContain('text-[13.5px]');
+    expect(items()[0]?.className).toContain('text-input');
   });
 });

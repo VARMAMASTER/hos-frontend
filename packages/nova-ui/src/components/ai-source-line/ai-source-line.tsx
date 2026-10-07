@@ -34,7 +34,7 @@ const glyph = {
   viewBox: '0 0 12 12',
   'aria-hidden': true,
   focusable: false,
-  className: 'size-3 shrink-0',
+  className: 'size-icon-xs shrink-0',
 } as const;
 
 // A different shape per level, so the level survives greyscale and colour blindness: a full disc,
@@ -82,7 +82,7 @@ function ConfidenceIcon({ level }: { level: AiConfidence }) {
 }
 
 const eventLink = cx(
-  'cursor-pointer rounded-sm font-semibold underline underline-offset-2',
+  'cursor-pointer rounded-control font-semibold underline underline-offset-tight',
   focusRing,
 );
 
@@ -104,7 +104,7 @@ export function AiSourceLine({
   return (
     <p
       className={cx(
-        'text-[11.5px] text-ai-deep in-data-[approved=true]:text-good-deep',
+        'text-caption text-ai-deep in-data-[approved=true]:text-good-deep',
         className,
       )}
       {...rest}
@@ -115,7 +115,7 @@ export function AiSourceLine({
           {' · '}
           <span
             data-confidence={confidence}
-            className="inline-flex items-center gap-1 align-middle"
+            className="inline-flex items-center gap-s1 align-middle"
           >
             <ConfidenceIcon level={confidence} />
             {words[confidence]}

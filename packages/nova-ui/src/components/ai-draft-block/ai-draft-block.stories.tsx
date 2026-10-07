@@ -11,7 +11,7 @@ const meta = {
     title: 'Discharge summary — S. Lakshmi, 62F',
     approverName: 'Dr. Meera Iyer',
     children: (
-      <p className="text-[13px] leading-[1.62]">
+      <p className="text-control leading-relaxed">
         Admitted 12 Oct with a community-acquired chest infection and treated
         with IV ceftriaxone. Fever settled within 48 hours. Potassium was 5.6 on
         14 Oct and 4.6 on recheck. Discharged on oral amoxicillin for five days.

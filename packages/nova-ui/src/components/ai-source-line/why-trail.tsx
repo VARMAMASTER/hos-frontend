@@ -64,16 +64,16 @@ export function WhyTrail({
         aria-labelledby={toggleId}
         hidden={!open}
         className={cx(
-          'mt-2 rounded-none border-l-2 border-ai-line bg-ai-ghost px-3 py-2.5 text-[12px] leading-[1.6] text-ink-2',
+          'mt-s3 rounded-none border-l-emphasis border-ai-line bg-ai-ghost px-s5 py-s4 text-label leading-relaxed text-ink-2',
           'motion-safe:animate-fade-in',
         )}
       >
-        <ul lang={contentLang} className="flex flex-col gap-1.5">
+        <ul lang={contentLang} className="flex flex-col gap-s2">
           {reasons.map((reason, index) => (
-            <li key={index} className="relative pl-3">
+            <li key={index} className="relative pl-s5">
               <span
                 aria-hidden="true"
-                className="absolute left-2 font-bold text-ai"
+                className="absolute left-s3 font-bold text-ai"
               >
                 ·
               </span>
@@ -82,7 +82,7 @@ export function WhyTrail({
           ))}
         </ul>
         {sources ? (
-          <p className="mt-2 text-[11px] text-ink-3">
+          <p className="mt-s3 text-meta text-ink-3">
             {sourcesLabel}: <span lang={contentLang}>{sources}</span>
           </p>
         ) : null}

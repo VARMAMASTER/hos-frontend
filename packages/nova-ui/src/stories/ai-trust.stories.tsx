@@ -20,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 const DARK = { scheme: 'dark' } as const;
 
 const body = (
-  <p className="text-[13px] leading-[1.62]">
+  <p className="text-control leading-relaxed">
     Admitted 12 Oct with a community-acquired chest infection, treated with IV
     ceftriaxone. Fever settled within 48 hours; discharged on oral amoxicillin.
   </p>
@@ -71,7 +71,7 @@ const STATES: Array<{ name: string } & Partial<AiDraftBlockProps>> = [
 
 function AllStatesGrid() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-s6 md:grid-cols-2 xl:grid-cols-3">
       {STATES.map(({ name, ...props }) => (
         <AiDraftBlock
           key={name}
@@ -123,7 +123,7 @@ export const RejectWithReason: Story = {
         verb="Send"
         onEdit={() => undefined}
       >
-        <p className="text-[13px] leading-[1.62]">
+        <p className="text-control leading-relaxed">
           Namaskaram. Your review with the orthopaedic surgeon moves to Monday
           27 Jul at 10:30 AM, because the OPD is closed on Sunday.
         </p>
@@ -140,7 +140,7 @@ function DischargeSummaryDraft() {
         approverName="Dr. P. Anil Kumar"
         badges={<AiClassChip tier="green" detail="drafted from the record" />}
         source={
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-s3">
             <AiSourceLine confidence="medium" eventHref="#discharge-events">
               Theatre log · anaesthesia chart · eMAR · lab results 18–22 Jul
             </AiSourceLine>
@@ -156,7 +156,7 @@ function DischargeSummaryDraft() {
           </div>
         }
       >
-        <div className="flex flex-col gap-2 text-[13px] leading-[1.62]">
+        <div className="flex flex-col gap-s3 text-control leading-relaxed">
           <p>
             Right total hip replacement on 18 Jul under spinal anaesthesia.
             Uneventful recovery; mobilising with a walker from day 2.
@@ -189,7 +189,7 @@ export const DischargeSummaryDark: Story = {
 // and by the surgeon whose credential signs it.
 export const DelegatedSignature: Story = {
   render: () => (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-s6 md:grid-cols-2">
       {(['Mary Grace', 'Dr. P. Anil Kumar'] as const).map((viewer) => (
         <AiDraftBlock
           key={viewer}
@@ -199,7 +199,7 @@ export const DelegatedSignature: Story = {
           signatory="Dr. P. Anil Kumar"
           badges={<AiClassChip tier="green" />}
         >
-          <p className="text-[13px] leading-[1.62]">
+          <p className="text-control leading-relaxed">
             Wheels-in 09:02, incision 09:31, wheels-out 11:18. Three implants
             scanned from the trolley; no intra-operative events recorded.
           </p>
@@ -212,7 +212,7 @@ export const DelegatedSignature: Story = {
 // A two-person control: the nurse who counted cannot also witness; a second nurse completes it.
 export const TwoPersonWitness: Story = {
   render: () => (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-s6 md:grid-cols-2">
       {(['Mary Grace', 'Sister Vasavi'] as const).map((viewer) => (
         <AiDraftBlock
           key={viewer}
@@ -232,7 +232,7 @@ export const TwoPersonWitness: Story = {
             </Button>
           }
         >
-          <p className="text-[13px] leading-[1.62]">
+          <p className="text-control leading-relaxed">
             The physical count matches the register on both lines. Counted by
             Mary Grace at 10:40.
           </p>
@@ -244,7 +244,7 @@ export const TwoPersonWitness: Story = {
 
 function Tiers() {
   return (
-    <div className="grid max-w-4xl gap-4 md:grid-cols-3">
+    <div className="grid max-w-4xl gap-s6 md:grid-cols-3">
       <TierCard
         tier="green"
         title="Discharge Drafter"

@@ -104,7 +104,7 @@ function Live() {
     time: 'Just now',
   })).reverse();
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-s5">
       <div>
         <Button variant="ai" size="sm" onClick={() => setAdded(added + 1)}>
           Simulate an AI action

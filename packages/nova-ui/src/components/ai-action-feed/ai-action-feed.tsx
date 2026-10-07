@@ -222,7 +222,7 @@ export function AiActionFeed({
       <>
         <span
           data-agent=""
-          className="font-display text-[12px] font-semibold text-ai-deep"
+          className="font-display text-label font-semibold text-ai-deep"
         >
           {action.agent}
         </span>
@@ -243,12 +243,12 @@ export function AiActionFeed({
   }));
 
   return (
-    <div className={cx('flex flex-col gap-3', className)} {...rest}>
+    <div className={cx('flex flex-col gap-s5', className)} {...rest}>
       {showFilters ? (
-        <div className="flex flex-wrap items-end gap-3">
+        <div className="flex flex-wrap items-end gap-s5">
           <Select
             label={words.agentFilter}
-            className="min-w-48"
+            className="min-w-(--nova-ai-column-min-w)"
             value={agent ?? EMPTY}
             onChange={(event) => setAgent(event.target.value || null)}
             options={[
@@ -258,7 +258,7 @@ export function AiActionFeed({
           />
           <Select
             label={words.resolutionFilter}
-            className="min-w-48"
+            className="min-w-(--nova-ai-column-min-w)"
             value={resolution ?? EMPTY}
             onChange={(event) =>
               setResolution(

@@ -54,9 +54,9 @@ describe('AiBadge', () => {
   });
 
   it('merges a custom className and passes attributes through', () => {
-    render(<AiBadge className="ml-2" id="draft-badge" />);
+    render(<AiBadge className="ml-s3" id="draft-badge" />);
     const badge = screen.getByText('AI draft');
-    expect(badge.classList.contains('ml-2')).toBe(true);
+    expect(badge.classList.contains('ml-s3')).toBe(true);
     expect(badge.classList.contains('bg-ai-soft')).toBe(true);
     expect(badge.id).toBe('draft-badge');
   });

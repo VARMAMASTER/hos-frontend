@@ -73,9 +73,9 @@ function DraftSummary({ size = 'md' }: { size?: 'sm' | 'md' }) {
 
 export const Interactive: Story = {
   render: () => (
-    <div className="flex flex-col items-start gap-3">
+    <div className="flex flex-col items-start gap-s5">
       <DraftSummary />
-      <p className="max-w-md text-[12px] text-ink-2">
+      <p className="max-w-md text-label text-ink-2">
         Press it: idle, then thinking for about two seconds, then done, then
         back to idle. A timer stands in for the real work.
       </p>
@@ -101,16 +101,16 @@ function Grid({
     <NovaThemeProvider
       scheme={scheme}
       material={material}
-      className="nova-canvas flex flex-col gap-4 rounded-lg p-4 text-ink"
+      className="nova-canvas flex flex-col gap-s6 rounded-overlay p-s6 text-ink"
     >
-      <div className="grid grid-cols-[auto_repeat(2,max-content)_max-content] items-center gap-x-4 gap-y-3">
+      <div className="grid grid-cols-[auto_repeat(2,max-content)_max-content] items-center gap-x-s6 gap-y-s5">
         <span />
-        <span className="text-[11px] font-semibold text-ink-2">md</span>
-        <span className="text-[11px] font-semibold text-ink-2">sm</span>
-        <span className="text-[11px] font-semibold text-ink-2">Disabled</span>
+        <span className="text-meta font-semibold text-ink-2">md</span>
+        <span className="text-meta font-semibold text-ink-2">sm</span>
+        <span className="text-meta font-semibold text-ink-2">Disabled</span>
         {STATES.map(({ name, state, idle }) => (
           <div key={name} className="contents">
-            <span className="text-[12px] text-ink-2">{name}</span>
+            <span className="text-label text-ink-2">{name}</span>
             <AiButton state={state} idle={idle}>
               Draft summary
             </AiButton>
@@ -132,7 +132,7 @@ function Grid({
 // toolbar says).
 export const AllStates: StoryObj = {
   render: () => (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid gap-s6 lg:grid-cols-2">
       <Grid scheme="light" />
       <Grid scheme="dark" />
     </div>
@@ -142,7 +142,7 @@ export const AllStates: StoryObj = {
 // The same button under each material, in both schemes: glass, frost and solid.
 export const Materials: StoryObj = {
   render: () => (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid gap-s6 lg:grid-cols-2">
       {(['glass', 'frost', 'solid'] as const).flatMap((material) =>
         (['light', 'dark'] as const).map((scheme) => (
           <Grid
@@ -159,7 +159,7 @@ export const Materials: StoryObj = {
 // An ordinary Button beside the AI one: only the AI button moves.
 export const BesidePlainButtons: StoryObj = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center gap-s5">
       <Button>Register patient</Button>
       <Button variant="outline">Edit</Button>
       <AiButton>Draft summary</AiButton>
@@ -171,7 +171,7 @@ export const BesidePlainButtons: StoryObj = {
 // Telugu and Hindi labels: the words are the caller's, and so are the fixed labels.
 export const Multilingual: StoryObj = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center gap-s5">
       <AiButton lang="te" thinkingLabel="ఆలోచిస్తోంది…" doneLabel="పూర్తయింది">
         సారాంశం రూపొందించండి
       </AiButton>

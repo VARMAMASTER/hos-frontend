@@ -31,20 +31,21 @@ export interface AiButtonProps
 }
 
 // The prototype's .btn-ai (os/public/assets/hos.css), the AI fill with white text, made playful. It
-// keeps .btn's 13px semibold label, 8px by 16px padding and 8px radius, and is 44px tall at md.
+// keeps .btn's semibold label and the Button's control tokens (text-control, px-control-md by
+// py-control-md, gap-control, rounded-control), and is a 44px touch target (min-h-touch) at md.
 // Every moving part is motion-safe (see the keyframes beside animate-heartbeat in theme.css), so
 // under prefers-reduced-motion nothing moves and each state is still told apart by its fill, its
 // label, the ✦ and the check.
 const base = cx(
-  'group/ai relative inline-flex items-center justify-center gap-2 rounded-sm border border-transparent font-semibold text-on-primary',
+  'group/ai relative inline-flex items-center justify-center gap-control rounded-control border border-transparent font-semibold text-on-primary',
   focusRing,
   'disabled:pointer-events-none disabled:opacity-50',
   'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
 );
 
 const sizes: Record<AiButtonSize, string> = {
-  sm: 'px-2.5 py-1.5 text-[12px]',
-  md: 'min-h-11 px-4 py-2 text-[13px]',
+  sm: 'px-control-sm py-control-sm text-label',
+  md: 'min-h-touch px-control-md py-control-md text-control',
 };
 
 // The press squashes and springs back (ease-spring overshoots on release); the edge picks up the
@@ -156,7 +157,7 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
               twinkle={available}
               burst={playing}
             >
-              <span className="inline-flex items-center gap-1.5">
+              <span className="inline-flex items-center gap-s2">
                 {state === 'done' ? (
                   <Check animate={playing} />
                 ) : (
@@ -181,7 +182,7 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
   },
 );
 
-const checkSlot = 'inline-block size-3.5 shrink-0';
+const checkSlot = 'inline-block size-icon-sm shrink-0';
 
 function Label({
   name,
@@ -203,7 +204,7 @@ function Label({
       data-label={name}
       aria-hidden={live ? undefined : true}
       className={cx(
-        'col-start-1 row-start-1 inline-flex items-center gap-2 whitespace-nowrap',
+        'col-start-1 row-start-1 inline-flex items-center gap-control whitespace-nowrap',
         !live && 'invisible',
       )}
     >
@@ -268,7 +269,7 @@ function Burst() {
           key={angle}
           style={{ '--nova-ai-angle': `${angle}deg` } as CSSProperties}
           className={cx(
-            'absolute top-0 left-0 size-1 rounded-full motion-safe:animate-ai-burst',
+            'absolute top-0 left-0 size-s1 rounded-full motion-safe:animate-ai-burst',
             index % 2 === 0 ? 'bg-on-primary' : 'bg-ai-bright',
           )}
         />
@@ -284,10 +285,10 @@ function Orbit() {
     <span
       aria-hidden="true"
       data-layer="orbit"
-      className="pointer-events-none absolute inset-1 motion-reduce:hidden"
+      className="pointer-events-none absolute inset-s1 motion-reduce:hidden"
     >
       <span className="absolute inset-y-0 left-0 motion-safe:animate-ai-orbit-x">
-        <span className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 text-[9.5px] leading-none motion-safe:animate-ai-orbit-y">
+        <span className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 text-micro leading-none motion-safe:animate-ai-orbit-y">
           ✦
         </span>
       </span>

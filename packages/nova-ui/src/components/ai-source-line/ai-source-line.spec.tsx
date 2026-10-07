@@ -26,7 +26,7 @@ describe('AiSourceLine', () => {
   it('is the prototype .ai-src: 11.5px in the AI ink, green once its block is approved', () => {
     const { container } = render(<AiSourceLine>Theatre log</AiSourceLine>);
     const line = container.firstElementChild as HTMLElement;
-    expect(line.className).toContain('text-[11.5px]');
+    expect(line.className).toContain('text-caption');
     expect(line.className).toContain('text-ai-deep');
     expect(line.className).toContain('in-data-[approved=true]:text-good-deep');
   });
@@ -119,12 +119,12 @@ describe('AiSourceLine', () => {
 
   it('passes attributes through and merges a className', () => {
     const { container } = render(
-      <AiSourceLine id="src" className="mt-2">
+      <AiSourceLine id="src" className="mt-s3">
         x
       </AiSourceLine>,
     );
     const line = container.firstElementChild as HTMLElement;
     expect(line.id).toBe('src');
-    expect(line.classList.contains('mt-2')).toBe(true);
+    expect(line.classList.contains('mt-s3')).toBe(true);
   });
 });

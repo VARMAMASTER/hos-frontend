@@ -27,7 +27,7 @@ export const Red: Story = {
 
 export const Cards: Story = {
   render: () => (
-    <div className="grid max-w-3xl gap-4 md:grid-cols-3">
+    <div className="grid max-w-3xl gap-s6 md:grid-cols-3">
       <TierCard
         tier="green"
         title="Discharge Drafter"

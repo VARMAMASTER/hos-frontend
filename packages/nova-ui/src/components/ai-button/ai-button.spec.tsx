@@ -79,7 +79,28 @@ describe('AiButton: structure', () => {
 
   it('is at least 44px tall at md (the touch target)', () => {
     render(<AiButton>Draft summary</AiButton>);
-    expect(button().classList).toContain('min-h-11');
+    expect(button().classList).toContain('min-h-touch');
+  });
+
+  it('takes its padding, gap, corner and type from the control tokens, as Button does', () => {
+    render(
+      <>
+        <AiButton>Draft summary</AiButton>
+        <AiButton size="sm">Draft note</AiButton>
+      </>,
+    );
+    for (const cls of [
+      'rounded-control',
+      'gap-control',
+      'px-control-md',
+      'py-control-md',
+      'text-control',
+    ]) {
+      expect(button().classList).toContain(cls);
+    }
+    for (const cls of ['px-control-sm', 'py-control-sm', 'text-label']) {
+      expect(button('Draft note').classList).toContain(cls);
+    }
   });
 
   it('draws its fill and text from the AI tokens, with the proven hover fill', () => {

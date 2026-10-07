@@ -116,7 +116,7 @@ export function ApprovalBar({
       }}
     >
       {approved ? null : (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-s3">
           <Button
             ref={approveRef}
             variant="ai"
@@ -155,7 +155,7 @@ export function ApprovalBar({
           {actions}
         </div>
       )}
-      <div className={cx(approved && 'flex flex-wrap items-center gap-2')}>
+      <div className={cx(approved && 'flex flex-wrap items-center gap-s3')}>
         {/* Always mounted, so a screen reader announces the approval when it appears; a live region
             that arrives together with its text is often missed. Focusable from script only, so focus
             has somewhere to land when the controls go. */}
@@ -164,7 +164,7 @@ export function ApprovalBar({
           role={announce ? 'status' : undefined}
           tabIndex={approved ? -1 : undefined}
           className={cx(
-            'w-fit rounded-sm text-[12.5px] text-good-deep',
+            'w-fit rounded-control text-body-sm text-good-deep',
             focusRing,
           )}
         >

@@ -254,19 +254,19 @@ export function AiDraftReply({
         }
         {...rest}
       >
-        <div className="flex flex-col gap-1.5">
-          <p data-slot="recipient" className="text-[12px] text-ink-2">
+        <div className="flex flex-col gap-s2">
+          <p data-slot="recipient" className="text-label text-ink-2">
             {words.to} <b className="font-semibold text-ink">{recipient}</b>
           </p>
           <p
             data-slot="message"
             lang={contentLang}
-            className="whitespace-pre-wrap text-[13px] text-ink"
+            className="whitespace-pre-wrap text-control text-ink"
           >
             {message}
           </p>
           {consent !== undefined && consent !== null ? (
-            <p data-slot="consent" className="text-[11.5px] text-ink-2">
+            <p data-slot="consent" className="text-caption text-ink-2">
               {consent}
             </p>
           ) : null}
@@ -298,7 +298,7 @@ export function AiDraftReply({
             if (event.target.value.trim()) setDraftEmpty(false);
           }}
         />
-        <p className="mt-2 text-[12px] text-ink-2">{words.note(channelName)}</p>
+        <p className="mt-s3 text-label text-ink-2">{words.note(channelName)}</p>
       </Dialog>
     </>
   );

@@ -54,7 +54,7 @@ function UndoFlow() {
   const [approvedBy, setApprovedBy] = useState<string | undefined>();
   return (
     <>
-      <h3 id="undo-flow-title" className="mb-2 text-[13.5px] font-bold">
+      <h3 id="undo-flow-title" className="mb-s3 text-input font-bold">
         Discharge summary
       </h3>
       <ApprovalBar

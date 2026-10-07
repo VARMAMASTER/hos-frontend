@@ -302,10 +302,10 @@ describe('ApprovalBar', () => {
       <ApprovalBar
         onApprove={noop}
         aria-label="Vérifier la sortie IA"
-        className="mt-2"
+        className="mt-s3"
       />,
     );
     const group = screen.getByRole('group', { name: 'Vérifier la sortie IA' });
-    expect(group.classList.contains('mt-2')).toBe(true);
+    expect(group.classList.contains('mt-s3')).toBe(true);
   });
 });

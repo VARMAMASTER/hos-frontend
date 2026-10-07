@@ -161,11 +161,11 @@ describe('AiPanel', () => {
 
   it('merges a custom className and passes attributes through', () => {
     render(
-      <AiPanel title="Discharge summary" className="mt-4" id="summary">
+      <AiPanel title="Discharge summary" className="mt-s6" id="summary">
         Body
       </AiPanel>,
     );
-    expect(panel().classList.contains('mt-4')).toBe(true);
+    expect(panel().classList.contains('mt-s6')).toBe(true);
     expect(panel().classList.contains('nova-ai-block')).toBe(true);
     expect(panel().id).toBe('summary');
   });

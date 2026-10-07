@@ -18,7 +18,7 @@ const meta = {
   args: { steps: STEPS },
   decorators: [
     (Story) => (
-      <div className="max-w-[420px]">
+      <div className="max-w-md">
         <Story />
       </div>
     ),
@@ -59,7 +59,7 @@ export const Live: Story = {
       return () => window.clearTimeout(timer);
     }, [index]);
     return (
-      <div className="flex flex-col items-start gap-3">
+      <div className="flex flex-col items-start gap-s5">
         <AiProgressSteps
           {...args}
           currentIndex={index}

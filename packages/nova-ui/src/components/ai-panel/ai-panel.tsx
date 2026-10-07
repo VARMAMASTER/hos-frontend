@@ -48,7 +48,7 @@ export function AiPanel({
     // approved it settles to green (theme.css), and says so in words.
     <Surface
       material="ai-block"
-      radius="md"
+      radius="card"
       role="group"
       aria-labelledby={titleId}
       data-state={state}
@@ -57,13 +57,13 @@ export function AiPanel({
       {...rest}
     >
       {/* .ai-block-h: the spark, the title in bold at 13.5px, then the badges, 8px apart. */}
-      <div className="mb-2.5 flex flex-wrap items-center gap-2">
+      <div className="mb-s4 flex flex-wrap items-center gap-s3">
         <span aria-hidden="true" className="nova-ai-spark">
           {spark ?? (state === 'approved' ? '✓' : '✦')}
         </span>
         <Heading
           id={titleId}
-          className="font-display text-[13.5px] font-bold text-ink"
+          className="font-display text-input font-bold text-ink"
         >
           {title}
         </Heading>
@@ -74,9 +74,9 @@ export function AiPanel({
         {status ??
           (state === 'approved' ? <Chip tone="good">Approved</Chip> : null)}
       </div>
-      <div className="text-[14px] text-ink">{children}</div>
+      <div className="text-body text-ink">{children}</div>
       {/* .ai-actions: 12px below the body. */}
-      {footer ? <div className="mt-3">{footer}</div> : null}
+      {footer ? <div className="mt-s5">{footer}</div> : null}
     </Surface>
   );
 }

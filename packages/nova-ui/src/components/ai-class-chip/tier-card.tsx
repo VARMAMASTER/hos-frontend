@@ -51,19 +51,19 @@ export function TierCard({
       aria-labelledby={titleId}
       data-tier={tier}
       className={cx(
-        'rounded-md border border-l-3 border-border bg-surface p-3',
+        'rounded-card border border-l-rail border-border bg-surface p-s5',
         rails[tier],
         className,
       )}
       {...rest}
     >
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-s3">
         <span aria-hidden="true" className="nova-ai-spark">
           ✦
         </span>
         <Heading
           id={titleId}
-          className="font-display text-[13.5px] font-bold text-ink"
+          className="font-display text-input font-bold text-ink"
         >
           {title}
         </Heading>
@@ -74,7 +74,7 @@ export function TierCard({
           labels={labels}
         />
       </div>
-      <p lang={contentLang} className="mt-2 text-[12px] text-ink-2">
+      <p lang={contentLang} className="mt-s3 text-label text-ink-2">
         {description}
       </p>
     </div>
