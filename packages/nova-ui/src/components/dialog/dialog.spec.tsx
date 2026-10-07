@@ -808,7 +808,7 @@ describe('Dialog and live regions', () => {
       </div>,
     );
     render(<Dialog open onClose={() => undefined} title="Discharge" />);
-    act(() => void showToast('Save failed', 'error'));
+    act(() => void showToast('Save failed', 'crit'));
     const region = document.querySelector('[data-nova-live-region]');
     expect(region).not.toBeNull();
     for (

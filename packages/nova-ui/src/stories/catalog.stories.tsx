@@ -21,7 +21,7 @@ function SignInCard() {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | undefined>();
   const verify = (done: string) => {
-    if (done === '123456') showToast('Signed in', 'success');
+    if (done === '123456') showToast('Signed in', 'good');
     else setError('That code is not right. Try again.');
   };
   return (
@@ -102,7 +102,7 @@ export const ToastTrigger: Story = {
           Save vitals
         </Button>
         <Button
-          onClick={() => showToast('Could not reach the lab system.', 'error')}
+          onClick={() => showToast('Could not reach the lab system.', 'crit')}
         >
           Simulate an error
         </Button>
@@ -127,7 +127,7 @@ function DischargeConfirm() {
           {
             label: 'Discharge',
             role: 'destructive',
-            onSelect: () => showToast('Patient discharged', 'success'),
+            onSelect: () => showToast('Patient discharged', 'good'),
           },
         ]}
       />

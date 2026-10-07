@@ -8,9 +8,12 @@ import {
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
 import { playMotion } from '../../primitives/motion';
+import type { Tone } from '../../primitives/types';
 import { MOTION_DURATIONS_MS, MOTION_EASINGS } from '../../tokens/scale';
 
-export type ToastVariant = 'info' | 'success' | 'error';
+// The shared tones a toast takes: info (the default, drawn in the brand as the prototype's toast is),
+// good (a confirmation) and crit (an error).
+export type ToastTone = Extract<Tone, 'info' | 'good' | 'crit'>;
 
 export interface ToastOptions {
   // How long the toast stays, in milliseconds. 0 keeps it until someone dismisses it. The timer
@@ -21,7 +24,7 @@ export interface ToastOptions {
 interface ToastItem {
   id: number;
   message: ReactNode;
-  variant: ToastVariant;
+  tone: ToastTone;
   duration: number;
 }
 
@@ -49,13 +52,13 @@ const snapshot = () => toasts;
 // errors; when the user must choose, use an AlertDialog instead.
 export function showToast(
   message: ReactNode,
-  variant: ToastVariant = 'info',
+  tone: ToastTone = 'info',
   options: ToastOptions = {},
 ): number {
   const id = nextId++;
   publish([
     ...toasts,
-    { id, message, variant, duration: options.duration ?? TOAST_DURATION },
+    { id, message, tone, duration: options.duration ?? TOAST_DURATION },
   ]);
   return id;
 }
@@ -73,11 +76,11 @@ export function clearToasts(): void {
 // The prototype's .hos-toast (assets/sim.css): a panel with a 1px line border and a 3px coloured left
 // edge, and a small coloured tile holding a white glyph. The default toast is the brand (the
 // prototype's teal), good is green; an error takes crit (the prototype's .warn toast carries its
-// crit items). The variant is also drawn as a glyph shape, so it never depends on colour alone.
-const variants: Record<ToastVariant, { edge: string; tile: string }> = {
+// crit items). The tone is also drawn as a glyph shape, so it never depends on colour alone.
+const tones: Record<ToastTone, { edge: string; tile: string }> = {
   info: { edge: 'border-l-primary', tile: 'bg-primary' },
-  success: { edge: 'border-l-good', tile: 'bg-good' },
-  error: { edge: 'border-l-crit', tile: 'bg-crit' },
+  good: { edge: 'border-l-good', tile: 'bg-good' },
+  crit: { edge: 'border-l-crit', tile: 'bg-crit' },
 };
 
 export interface ToasterProps {
@@ -88,15 +91,15 @@ export interface ToasterProps {
 
 // Mount once, near the root of the app. Two live regions sit in the page from the start (a region
 // has to exist before its content changes for a screen reader to announce the change): info and
-// success are announced politely, after the current speech; an error is announced assertively.
+// good are announced politely, after the current speech; an error is announced assertively.
 // aria-atomic is off, so a new toast is read on its own, not the whole stack again.
 export function Toaster({
   dismissLabel = 'Dismiss notification',
   className,
 }: ToasterProps) {
   const items = useSyncExternalStore(subscribe, snapshot, snapshot);
-  const calm = items.filter((toast) => toast.variant !== 'error');
-  const errors = items.filter((toast) => toast.variant === 'error');
+  const calm = items.filter((toast) => toast.tone !== 'crit');
+  const errors = items.filter((toast) => toast.tone === 'crit');
   // empty:-mt-s3 takes back the host's gap for a region with nothing in it, so a lone toast sits
   // exactly one corner inset (s7) from the corner. The regions stay in the page (and the
   // accessibility tree) either way.
@@ -190,7 +193,7 @@ function ToastView({
     <div
       ref={ref}
       data-toast=""
-      data-variant={toast.variant}
+      data-tone={toast.tone}
       onClick={() => dismissToast(toast.id)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -202,13 +205,13 @@ function ToastView({
       }}
       className={cx(
         // .hos-toast: the control text role, the card corner, 12px 16px padding (s5, s6), an s3 gap, a
-        // 1px line border, --shadow-md. The left edge takes the variant colour, and is the rail width
+        // 1px line border, --shadow-md. The left edge takes the tone's colour, and is the rail width
         // (border-l-rail), the prototype's 3px.
         'pointer-events-auto flex w-full items-start gap-s3 rounded-card border border-l-rail border-border bg-surface px-s6 py-s5 text-control text-ink shadow-md',
-        variants[toast.variant].edge,
+        tones[toast.tone].edge,
       )}
     >
-      <ToastIcon variant={toast.variant} />
+      <ToastIcon tone={toast.tone} />
       <div className="min-w-0 flex-1 font-semibold">{toast.message}</div>
       <button
         type="button"
@@ -241,15 +244,15 @@ function ToastView({
   );
 }
 
-// .ht-ic: a 20px tile in the variant colour with a white glyph. A different glyph per variant (an
-// i, a tick, a !), like Banner's, so the variant never rests on colour alone. The tile's radius is
+// .ht-ic: a 20px tile in the tone's colour with a white glyph. A different glyph per tone (an i, a
+// tick, a !), like Banner's, so the tone never rests on colour alone. The tile's radius is
 // the control corner (8px); the prototype's 6px is not on the radius scale.
-function ToastIcon({ variant }: { variant: ToastVariant }) {
+function ToastIcon({ tone }: { tone: ToastTone }) {
   return (
     <span
       className={cx(
         'mt-px grid size-icon-lg shrink-0 place-items-center rounded-control text-on-primary',
-        variants[variant].tile,
+        tones[tone].tile,
       )}
     >
       <svg
@@ -263,9 +266,9 @@ function ToastIcon({ variant }: { variant: ToastVariant }) {
         focusable="false"
         className="size-icon-sm"
       >
-        {variant === 'info' ? <path d="M10 9v5M10 5.75h.01" /> : null}
-        {variant === 'success' ? <path d="M4.5 10.5l3.5 3.5 7.5-8" /> : null}
-        {variant === 'error' ? <path d="M10 5v6M10 14.5h.01" /> : null}
+        {tone === 'info' ? <path d="M10 9v5M10 5.75h.01" /> : null}
+        {tone === 'good' ? <path d="M4.5 10.5l3.5 3.5 7.5-8" /> : null}
+        {tone === 'crit' ? <path d="M10 5v6M10 14.5h.01" /> : null}
       </svg>
     </span>
   );

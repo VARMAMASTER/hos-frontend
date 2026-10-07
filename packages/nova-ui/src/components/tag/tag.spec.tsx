@@ -40,10 +40,10 @@ describe('Tag', () => {
 
   it.each([
     ['solid', 'neutral', ['bg-chrome-1', 'text-chrome-ink']],
-    ['solid', 'primary', ['bg-primary', 'text-on-primary']],
+    ['solid', 'brand', ['bg-primary', 'text-on-primary']],
     ['solid', 'ai', ['bg-ai', 'text-on-primary']],
     ['outline', 'neutral', ['border-border-strong', 'text-ink-2']],
-    ['outline', 'primary', ['border-primary', 'text-primary-strong']],
+    ['outline', 'brand', ['border-primary', 'text-primary-strong']],
     ['outline', 'ai', ['border-ai', 'text-ai-deep']],
   ] as const)('maps %s + %s to its classes', (variant, tone, expected) => {
     render(

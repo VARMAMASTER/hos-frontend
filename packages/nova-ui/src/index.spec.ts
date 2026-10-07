@@ -20,11 +20,13 @@ import type {
   RadialGaugeProps,
   SearchFieldProps,
   SidebarProps,
+  Size,
   SparklineProps,
   TabListProps,
   TabPanelProps,
   TabProps,
   TabsProps,
+  Tone,
   TopBarProps,
   VitalsChartProps,
   VitalsConfig,
@@ -248,6 +250,13 @@ describe('@hos/nova-ui public API', () => {
       tone: 'good',
     };
     expect([card, hero, kpi]).toHaveLength(3);
+  });
+
+  // The shared vocabulary every component's size and tone come from.
+  it('exports the shared Size and Tone types (checked by tsc)', () => {
+    const sizes: Size[] = ['sm', 'md'];
+    const tones: Tone[] = ['good', 'warn', 'crit', 'info', 'neutral', 'ai'];
+    expect([...sizes, ...tones]).toHaveLength(8);
   });
 
   it('exports the prop types of the shell components', () => {

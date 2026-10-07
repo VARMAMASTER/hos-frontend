@@ -1,6 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import type { Size } from '../../primitives/types';
 
 // `secondary` is the old name of `outline`, kept so no caller breaks.
 // @deprecated value 'secondary': use 'outline'.
@@ -11,7 +12,7 @@ export type ButtonVariant =
   | 'danger'
   | 'ai'
   | 'secondary';
-export type ButtonSize = 'sm' | 'md';
+export type ButtonSize = Size;
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;

@@ -6,9 +6,10 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import type { Size } from '../../primitives/types';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 
-export type AiButtonSize = 'sm' | 'md';
+export type AiButtonSize = Size;
 export type AiButtonState = 'idle' | 'thinking' | 'done';
 
 export interface AiButtonProps

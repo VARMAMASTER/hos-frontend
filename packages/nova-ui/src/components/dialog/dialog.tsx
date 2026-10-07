@@ -11,6 +11,7 @@ import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
 import { Surface } from '../../primitives/surface';
 import { useControllableState } from '../../primitives/use-controllable-state';
+import type { Size } from '../../primitives/types';
 import { getTabbables, trapTab } from './focus';
 import { inertOutside } from './inert';
 
@@ -39,7 +40,7 @@ export interface DialogProps {
   size?: DialogSize;
 }
 
-export type DialogSize = 'sm' | 'md';
+export type DialogSize = Size;
 
 const sizes: Record<DialogSize, string> = {
   sm: 'max-w-dialog-sm',

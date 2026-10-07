@@ -12,8 +12,9 @@ import { MOTION_DURATIONS_MS, MOTION_EASINGS } from '../../tokens/scale';
 
 // Which side of the conversation: in (the other party, on the left) or out (this side, on the right).
 export type ChatBubbleDirection = 'in' | 'out';
-// default is a message; ai is a message a machine wrote (marked with the ✦ and a word); system is an
-// event between messages ("Call ended · 2:12"), drawn as a centred pill rather than a bubble.
+// Not a status Tone: who is speaking. default is a message; ai is a message a machine wrote (marked
+// with the ✦ and a word); system is an event between messages ("Call ended · 2:12"), drawn as a
+// centred pill rather than a bubble.
 export type ChatBubbleTone = 'default' | 'ai' | 'system';
 // nova is the product's own colours (the call transcript); whatsapp is WhatsApp's brand, from the
 // --nova-wa-* tokens, for a thread drawn as the patient sees it.

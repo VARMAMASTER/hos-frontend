@@ -1,9 +1,11 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
+import type { Size, Tone } from '../../primitives/types';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 
-export type IconTileTone = 'chrome' | 'ai';
-export type IconTileSize = 'sm' | 'md';
+// chrome is not a status Tone: the dark chrome's tile (the prototype's .ic); ai is the shared tone.
+export type IconTileTone = 'chrome' | Extract<Tone, 'ai'>;
+export type IconTileSize = Size;
 
 export interface IconTileProps
   extends Omit<HTMLAttributes<HTMLSpanElement>, 'children'> {

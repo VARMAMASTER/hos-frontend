@@ -1,11 +1,12 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
+import type { Tone } from '../../primitives/types';
 import { Surface } from '../../primitives/surface';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 import { TONE_WORDS } from '../chip/chip';
 
 export type KpiTrend = 'up' | 'down' | 'flat';
-export type KpiTone = 'default' | 'good' | 'warn' | 'crit';
+export type KpiTone = Extract<Tone, 'neutral' | 'good' | 'warn' | 'crit'>;
 
 export interface KpiTileProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -36,7 +37,7 @@ const trends: Record<KpiTrend, { glyph: string; label: string }> = {
 // The prototype's .kpi-d: the delta is text in the -deep status ink (the pairing that holds 4.5:1 on
 // the panel); neutral is the small-print ink.
 const deltaTones: Record<KpiTone, string> = {
-  default: 'text-ink-3',
+  neutral: 'text-ink-3',
   good: 'text-good-deep',
   warn: 'text-warn-deep',
   crit: 'text-crit-deep',
@@ -62,7 +63,7 @@ export function KpiTile({
   value,
   delta,
   trend,
-  tone = 'default',
+  tone = 'neutral',
   visual,
   highlight = false,
   className,
@@ -120,7 +121,7 @@ export function KpiTile({
           {delta}
           {/* The sentiment as a word, not only the pill's colour: "up" is not good or bad news on
               its own, and a colour-blind reader or a greyscale print must still be told which. */}
-          {tone === 'default' ? null : (
+          {tone === 'neutral' ? null : (
             <span data-sentiment="" className="ml-s1 font-semibold">
               {TONE_WORDS[tone]}
             </span>

@@ -1,3 +1,4 @@
+import type { Tone } from '../../primitives/types';
 import { SURFACE } from './chart-shared';
 
 // The hospital charts keep Nova's four colour families apart. Series take the data palette; a status
@@ -28,7 +29,7 @@ export function missed(value: number, target: number, goal: Goal): boolean {
   return goal === 'at-least' ? value < target : value > target;
 }
 
-export type StatusLevel = 'warn' | 'crit';
+export type StatusLevel = Extract<Tone, 'warn' | 'crit'>;
 
 export const STATUS_COLOUR: Record<StatusLevel, string> = {
   warn: WARN,

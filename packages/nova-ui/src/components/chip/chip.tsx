@@ -8,9 +8,13 @@ import {
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
+import type { Tone } from '../../primitives/types';
 import { HighlightMark } from './highlight-mark';
 
-export type ChipTone = 'neutral' | 'good' | 'warn' | 'crit' | 'info' | 'ai';
+export type ChipTone = Extract<
+  Tone,
+  'neutral' | 'good' | 'warn' | 'crit' | 'info' | 'ai'
+>;
 
 // The word every tone is shown with, wherever a tone appears (a timeline event, a feed row, a KPI's
 // sentiment). Severity is never carried by colour alone; neutral says nothing.
@@ -25,7 +29,7 @@ export const TONE_WORDS: Readonly<Record<ChipTone, string | null>> = {
 
 // A chip's look: a status tone, or the highlight, which is emphasis ("New", "Featured") and not a
 // status, so it has no tone word and is not a ChipTone the timeline or the feed can carry.
-export type ChipStyleTone = ChipTone | 'highlight';
+export type ChipStyleTone = ChipTone | Extract<Tone, 'highlight'>;
 
 export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
   tone?: ChipStyleTone;

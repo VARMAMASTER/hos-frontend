@@ -36,10 +36,10 @@ describe('Toaster live regions', () => {
     );
   });
 
-  it('announces info and success politely', () => {
+  it('announces info and good news politely', () => {
     render(<Toaster />);
     show('Saved', 'info');
-    show('Discharged', 'success');
+    show('Discharged', 'good');
     const status = screen.getByRole('status');
     expect(status.textContent).toContain('Saved');
     expect(status.textContent).toContain('Discharged');
@@ -48,7 +48,7 @@ describe('Toaster live regions', () => {
 
   it('announces an error assertively', () => {
     render(<Toaster />);
-    show('Could not save the chart', 'error');
+    show('Could not save the chart', 'crit');
     const alert = screen.getByRole('alert');
     expect(alert.getAttribute('aria-live')).toBe('assertive');
     expect(alert.textContent).toContain('Could not save the chart');
@@ -69,11 +69,11 @@ describe('Toaster live regions', () => {
     expect(screen.getByRole('status').textContent).toContain('Hello');
   });
 
-  it('shows the variant as an icon shape as well as colour', () => {
+  it('shows the tone as an icon shape as well as colour', () => {
     render(<Toaster />);
     show('a', 'info');
-    show('b', 'success');
-    show('c', 'error');
+    show('b', 'good');
+    show('c', 'crit');
     const shapes = toasts().map(
       (toast) => toast.querySelector('svg')?.innerHTML ?? '',
     );
@@ -87,7 +87,7 @@ describe('Toast elevation', () => {
   it('lifts every toast at shadow-md, like the prototype', () => {
     render(<Toaster />);
     show('a', 'info');
-    show('b', 'error');
+    show('b', 'crit');
     for (const toast of toasts()) {
       expect(toast.classList).toContain('shadow-md');
     }
@@ -115,7 +115,7 @@ describe('Toast auto-dismiss', () => {
 
   it('stays until dismissed when the duration is 0', () => {
     render(<Toaster />);
-    show('Sticky', 'error', { duration: 0 });
+    show('Sticky', 'crit', { duration: 0 });
     wait(60_000);
     expect(screen.queryByText('Sticky')).not.toBeNull();
   });
@@ -257,19 +257,19 @@ describe('Toast styling rules', () => {
 
   it.each([
     ['info', 'border-l-primary', 'bg-primary'],
-    ['success', 'border-l-good', 'bg-good'],
-    ['error', 'border-l-crit', 'bg-crit'],
+    ['good', 'border-l-good', 'bg-good'],
+    ['crit', 'border-l-crit', 'bg-crit'],
   ] as const)(
-    'the %s variant has a %s edge and a %s icon tile',
-    (variant, edge, tile) => {
+    'the %s tone has a %s edge and a %s icon tile',
+    (tone, edge, tile) => {
       render(<Toaster />);
-      show('x', variant);
+      show('x', tone);
       const toast = toasts()[0] as HTMLElement;
       expect(toast.className).toContain(edge);
       expect(toast.querySelector('svg')?.parentElement?.className).toContain(
         tile,
       );
-      expect(toast.dataset['variant']).toBe(variant);
+      expect(toast.dataset['tone']).toBe(tone);
     },
   );
 

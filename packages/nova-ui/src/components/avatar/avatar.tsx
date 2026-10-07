@@ -1,9 +1,13 @@
 import { useState, type HTMLAttributes } from 'react';
 import { cx } from '../../primitives/cx';
+import type { Size } from '../../primitives/types';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 
-export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg';
-// surface is for light content; chrome is the prototype's .avatar on the dark top bar or sidebar.
+// The shared sizes plus the two an avatar truly has beyond them: xs (a 20px face in a dense row) and
+// lg (a 48px profile header).
+export type AvatarSize = 'xs' | Size | 'lg';
+// Not a status Tone: the ground the avatar sits on. surface is for light content; chrome is the
+// prototype's .avatar on the dark top bar or sidebar.
 export type AvatarTone = 'surface' | 'chrome';
 
 export interface AvatarProps

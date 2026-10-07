@@ -13,7 +13,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // The Toaster is mounted once; showToast can be called from anywhere.
-export const Variants: Story = {
+export const Tones: Story = {
   render: () => (
     <>
       <Toaster />
@@ -21,12 +21,12 @@ export const Variants: Story = {
         <Button onClick={() => showToast('Vitals saved to the chart')}>
           Info
         </Button>
-        <Button onClick={() => showToast('Patient discharged', 'success')}>
+        <Button onClick={() => showToast('Patient discharged', 'good')}>
           Success
         </Button>
         <Button
           onClick={() =>
-            showToast('Could not reach the lab system. Try again.', 'error')
+            showToast('Could not reach the lab system. Try again.', 'crit')
           }
         >
           Error
@@ -42,7 +42,7 @@ export const StaysUntilDismissed: Story = {
       <Toaster />
       <Button
         onClick={() =>
-          showToast('Oxygen saturation below 90% in bed 12', 'error', {
+          showToast('Oxygen saturation below 90% in bed 12', 'crit', {
             duration: 0,
           })
         }
@@ -53,13 +53,13 @@ export const StaysUntilDismissed: Story = {
   ),
 };
 
-// All three variants at once, kept up, for looking at the stack the way the prototype stacks them.
+// All three tones at once, kept up, for looking at the stack the way the prototype stacks them.
 function Stack() {
   useEffect(() => {
     clearToasts();
     showToast('Vitals saved to the chart', 'info', { duration: 0 });
-    showToast('Patient discharged', 'success', { duration: 0 });
-    showToast('Could not reach the lab system. Try again.', 'error', {
+    showToast('Patient discharged', 'good', { duration: 0 });
+    showToast('Could not reach the lab system. Try again.', 'crit', {
       duration: 0,
     });
     return clearToasts;

@@ -1,10 +1,14 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import type { Tone } from '../../primitives/types';
 import { HighlightMark } from '../chip/highlight-mark';
 
 // highlight is an announcement ("New in this release"): emphasis, never a status.
-export type BannerTone = 'info' | 'good' | 'warn' | 'crit' | 'ai' | 'highlight';
+export type BannerTone = Extract<
+  Tone,
+  'info' | 'good' | 'warn' | 'crit' | 'ai' | 'highlight'
+>;
 
 export interface BannerProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'role'> {

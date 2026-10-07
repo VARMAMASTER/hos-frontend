@@ -86,7 +86,7 @@ describe('KpiTile', () => {
 describe('KpiTile tone', () => {
   // The delta sits on the -soft fill in the -deep ink of its status; neutral uses the surface tokens.
   const expected = {
-    default: ['text-ink-3'],
+    neutral: ['text-ink-3'],
     good: ['text-good-deep'],
     warn: ['text-warn-deep'],
     crit: ['text-crit-deep'],
@@ -96,15 +96,15 @@ describe('KpiTile tone', () => {
     render(
       <KpiTile label="Beds free" value="14" delta="+2" data-testid="tile" />,
     );
-    expect(screen.getByTestId('tile').dataset['tone']).toBe('default');
+    expect(screen.getByTestId('tile').dataset['tone']).toBe('neutral');
     const delta = classesOf(screen.getByText('+2'));
-    for (const name of expected.default) expect(delta).toContain(name);
+    for (const name of expected.neutral) expect(delta).toContain(name);
     for (const status of ['good', 'warn', 'crit']) {
       expect(delta.some((name) => name.includes(status))).toBe(false);
     }
   });
 
-  it.each(['default', 'good', 'warn', 'crit'] as const)(
+  it.each(['neutral', 'good', 'warn', 'crit'] as const)(
     'maps the %s tone to its text ink (the prototype .kpi-d), and fills nothing',
     (tone) => {
       render(

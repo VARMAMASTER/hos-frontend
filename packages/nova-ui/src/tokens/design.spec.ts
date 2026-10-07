@@ -2,8 +2,6 @@
 // The design-token layer (tokens/design.ts) against theme.css: the same tokens, the same values, and
 // every component token tied to the scale wherever the prototype's value sits on it.
 import { readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { BREAKPOINT_REM, DIMENSION_TOKENS, NOVA_DESIGN_TOKENS } from './design';

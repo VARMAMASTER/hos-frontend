@@ -1,7 +1,8 @@
 import { cx } from '../../primitives/cx';
+import type { StatusTone, Tone } from '../../primitives/types';
 
 // No `ai` tone: AI output is marked by AiBadge (a spark and a text label), never by a bare dot.
-export type StatusDotTone = 'good' | 'warn' | 'crit' | 'info' | 'neutral';
+export type StatusDotTone = StatusTone | Extract<Tone, 'neutral'>;
 
 // false (or omitted) is a still dot. true is the slow heartbeat (about 1.4s); 'fast' is about 0.9s.
 export type StatusDotPulse = boolean | 'slow' | 'fast';

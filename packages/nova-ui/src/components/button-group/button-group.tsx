@@ -14,9 +14,10 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import type { Size } from '../../primitives/types';
 import { useChoiceValue, type ChoiceValueProps } from './use-choice-value';
 
-export type ButtonGroupSize = 'sm' | 'md';
+export type ButtonGroupSize = Size;
 
 interface RegisteredItem {
   element: HTMLElement;

@@ -1,9 +1,11 @@
 import type { HTMLAttributes } from 'react';
 import { cx } from '../../primitives/cx';
+import type { Tone } from '../../primitives/types';
 import { HighlightMark } from '../chip/highlight-mark';
 
 export type TagVariant = 'solid' | 'outline';
-export type TagTone = 'neutral' | 'primary' | 'ai' | 'highlight';
+// brand is the hospital's primary colour, as on every component that has it.
+export type TagTone = Extract<Tone, 'neutral' | 'brand' | 'ai' | 'highlight'>;
 
 // A Tag labels or categorises ("Offline", "Beta"). It carries no status: a Chip does that.
 export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
@@ -22,14 +24,14 @@ const base =
 const styles: Record<TagVariant, Record<TagTone, string>> = {
   solid: {
     neutral: 'bg-chrome-1 text-chrome-ink',
-    primary: 'bg-primary text-on-primary',
+    brand: 'bg-primary text-on-primary',
     ai: 'bg-ai text-on-primary',
     // The highlight never carries white text (it is a mark), so its "solid" tag is the wash.
     highlight: 'nova-highlight-wash gap-s1 text-highlight-deep',
   },
   outline: {
     neutral: 'border border-border-strong text-ink-2',
-    primary: 'border border-primary text-primary-strong',
+    brand: 'border border-primary text-primary-strong',
     ai: 'border border-ai text-ai-deep',
     highlight: 'gap-s1 border border-highlight text-highlight-deep',
   },
