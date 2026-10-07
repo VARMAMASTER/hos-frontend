@@ -39,7 +39,7 @@ describe('TopBar menu button', () => {
     expect(
       screen
         .getByRole('button', { name: 'Open menu' })
-        .className.includes('focus-visible:outline-2'),
+        .className.includes('focus-visible:outline-focus'),
     ).toBe(true);
   });
 });

@@ -15,10 +15,11 @@ export interface TextFieldProps
   trailingIcon?: ReactNode;
 }
 
-// The prototype's .f-input: 13.5px, 8px by 10px, an opaque panel (its 9px radius is off the --r-*
-// scale, so sm).
+// The prototype's .f-input, in tokens only: the input type role (13.5px), the field inset (px-field,
+// 10px) and the control corner (its 9px radius is off the --r-* scale, so --r-sm) on an opaque panel,
+// at h-control-md, the one height every md control shares, so a field lines up with a Button.
 const base = cx(
-  'nova-field peer block w-full rounded-sm py-2 text-[13.5px] text-ink placeholder:text-ink-3 transition-colors',
+  'nova-field peer block w-full rounded-control h-control-md text-input text-ink placeholder:text-ink-3 transition-colors',
   focusRing,
   'disabled:cursor-not-allowed disabled:opacity-50',
 );
@@ -26,7 +27,7 @@ const base = cx(
 // The edge (3:1 at rest, ink-2 on hover, crit when aria-invalid) is nova-field's own: see theme.css.
 
 const iconSlot =
-  'pointer-events-none absolute flex text-ink-3 peer-disabled:opacity-50 [&_svg]:size-4';
+  'pointer-events-none absolute flex text-ink-3 peer-disabled:opacity-50 [&_svg]:size-icon-md';
 
 // `className` styles the wrapper (the field as a block in a layout); everything else goes to the <input>.
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -65,19 +66,19 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
               data-invalid={field['aria-invalid'] ? 'true' : undefined}
               className={cx(
                 base,
-                leadingIcon ? 'pl-8' : 'pl-2.5',
-                trailingIcon ? 'pr-8' : 'pr-2.5',
+                leadingIcon ? 'pl-field-icon' : 'pl-field',
+                trailingIcon ? 'pr-field-icon' : 'pr-field',
               )}
               {...rest}
               {...field}
             />
             {leadingIcon ? (
-              <span aria-hidden="true" className={`${iconSlot} left-2.5`}>
+              <span aria-hidden="true" className={`${iconSlot} left-field`}>
                 {leadingIcon}
               </span>
             ) : null}
             {trailingIcon ? (
-              <span aria-hidden="true" className={`${iconSlot} right-2.5`}>
+              <span aria-hidden="true" className={`${iconSlot} right-field`}>
                 {trailingIcon}
               </span>
             ) : null}

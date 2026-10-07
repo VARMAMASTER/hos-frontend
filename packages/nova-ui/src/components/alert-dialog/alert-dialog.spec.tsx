@@ -343,7 +343,7 @@ describe('AlertDialog look', () => {
     setup();
     for (const button of screen.getAllByRole('button')) {
       expect(button.getAttribute('type')).toBe('button');
-      expect(button.className).toContain('focus-visible:outline-2');
+      expect(button.className).toContain('focus-visible:outline-focus');
     }
   });
 });

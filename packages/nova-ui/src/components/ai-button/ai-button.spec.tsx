@@ -74,7 +74,7 @@ describe('AiButton: structure', () => {
 
   it('takes its keyboard ring from the shared focus ring', () => {
     render(<AiButton>Draft summary</AiButton>);
-    expect(button().className).toContain('focus-visible:outline-2');
+    expect(button().className).toContain('focus-visible:outline-focus');
   });
 
   it('is at least 44px tall at md (the touch target)', () => {

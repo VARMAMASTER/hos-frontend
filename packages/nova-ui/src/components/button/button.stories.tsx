@@ -33,7 +33,7 @@ export const FullWidth: Story = {
 // flat fills, shadow-md on hover.
 export const AllVariants: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center gap-s5">
       <Button>Primary</Button>
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>

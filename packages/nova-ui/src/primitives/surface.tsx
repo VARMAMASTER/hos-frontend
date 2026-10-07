@@ -23,7 +23,23 @@ export const SURFACE_MATERIALS = [
 ] as const;
 
 export type SurfaceMaterial = (typeof SURFACE_MATERIALS)[number];
-export type SurfaceRadius = 'sm' | 'md' | 'lg' | 'xl';
+// The corner is a radius role (tokens/scale.ts RADIUS_ROLES): control, card, overlay or hero. The
+// scale names sm | md | lg | xl are the same corners, kept only until every caller names its role:
+// conventions.spec.ts counts each one left (radius-scale) in primitives/conversion-baseline.json, and
+// once none is left they go, with this file's entry there.
+export type SurfaceRadius =
+  | 'control'
+  | 'card'
+  | 'overlay'
+  | 'hero'
+  /** @deprecated name the role: 'control' */
+  | 'sm'
+  /** @deprecated name the role: 'card' */
+  | 'md'
+  /** @deprecated name the role: 'overlay' */
+  | 'lg'
+  /** @deprecated name the role: 'hero' */
+  | 'xl';
 
 // Whole class names, so Tailwind's scanner finds each utility.
 const materials: Record<SurfaceMaterial, string> = {
@@ -39,6 +55,12 @@ const materials: Record<SurfaceMaterial, string> = {
 };
 
 const radii: Record<SurfaceRadius, string> = {
+  control: 'rounded-control',
+  card: 'rounded-card',
+  overlay: 'rounded-overlay',
+  hero: 'rounded-hero',
+  // The scale names keep drawing their scale classes (compiled by the conversion bridge) until every
+  // caller names its role, so no component, and no spec, changes before it is converted.
   sm: 'rounded-sm',
   md: 'rounded-md',
   lg: 'rounded-lg',
@@ -52,7 +74,8 @@ export type SurfaceProps = {
 } & Omit<ComponentPropsWithoutRef<'div'>, 'color'>;
 
 // The primitive every container is built from: Card, HeroBand, KpiTile, menus, dialogs, tables. The
-// default radius stays lg; the prototype's card radius is md, which each card-like component asks for.
+// prototype's card corner is card, which each card-like component asks for. The default is still the
+// scale name lg (the overlay's corner) while callers are converted; it becomes 'overlay' with them.
 export const Surface = forwardRef<HTMLElement, SurfaceProps>(function Surface(
   { as: Element = 'div', material, radius = 'lg', className, ...rest },
   ref,

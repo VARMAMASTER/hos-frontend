@@ -74,7 +74,7 @@ describe('Card variant', () => {
         </Card>,
       );
       const card = screen.getByText(`merged ${variant}`);
-      expect(card.classList.contains('rounded-md')).toBe(true);
+      expect(card.classList.contains('rounded-card')).toBe(true);
       expect(card.classList.contains('max-w-xl')).toBe(true);
       expect(card.id).toBe('claims');
     },
@@ -86,10 +86,10 @@ describe('Card, the prototype .card-h and .card-b', () => {
     render(<CardHeader title="Ward 4B" description="12 of 18 beds" />);
     const title = screen.getByRole('heading', { name: 'Ward 4B' });
     expect([...title.classList]).toEqual(
-      expect.arrayContaining(['text-[17px]', 'font-semibold', 'tracking-h2']),
+      expect.arrayContaining(['text-title', 'font-semibold', 'tracking-h2']),
     );
     expect([...screen.getByText('12 of 18 beds').classList]).toEqual(
-      expect.arrayContaining(['text-[12px]', 'text-ink-2']),
+      expect.arrayContaining(['text-label', 'text-ink-2']),
     );
   });
 
@@ -97,7 +97,7 @@ describe('Card, the prototype .card-h and .card-b', () => {
     render(<CardHeader title="Vitals" headingLevel={3} />);
     expect([
       ...screen.getByRole('heading', { name: 'Vitals' }).classList,
-    ]).toEqual(expect.arrayContaining(['text-[14px]', 'font-semibold']));
+    ]).toEqual(expect.arrayContaining(['text-body', 'font-semibold']));
   });
 
   it('pads the header 12 by 16 on the tinted head, the body 16, and lays the footer out space-between', () => {
@@ -114,9 +114,14 @@ describe('Card, the prototype .card-h and .card-b', () => {
     const header = screen.getByRole('heading', { name: 'Claims' })
       .parentElement as HTMLElement;
     expect([...header.classList]).toEqual(
-      expect.arrayContaining(['nova-card-head', 'px-4', 'py-3', 'border-b']),
+      expect.arrayContaining([
+        'nova-card-head',
+        'px-card',
+        'py-card-bar',
+        'border-b',
+      ]),
     );
-    expect(screen.getByText('body').classList).toContain('p-4');
+    expect(screen.getByText('body').classList).toContain('p-card');
     const footer = screen.getByText('3 open').parentElement as HTMLElement;
     expect([...footer.classList]).toEqual(
       expect.arrayContaining(['flex', 'justify-between', 'border-t']),
@@ -144,7 +149,7 @@ describe('Card, the prototype .card-h and .card-b', () => {
         expect.arrayContaining([
           `hover:[--nova-${token}-lift:var(--nova-shadow-md)]`,
           'hover:border-border-strong',
-          'motion-safe:hover:-translate-y-0.5',
+          'motion-safe:hover:-translate-y-s0',
           'motion-reduce:transition-none',
         ]),
       );

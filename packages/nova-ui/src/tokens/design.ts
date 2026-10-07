@@ -115,6 +115,29 @@ export const DIMENSION_TOKENS = {
   '--nova-underline-offset-loose': space(1),
 } as const satisfies Record<NovaVariable, string>;
 
+// Layout measures: how wide a block of content may grow (a form, a dialog, a page column, a story
+// frame), as max-w-xs ... max-w-6xl. The values are Tailwind's container widths, named as Nova
+// tokens so the measures of the whole product move together.
+export const MEASURE_REM = {
+  xs: 20,
+  sm: 24,
+  md: 28,
+  lg: 32,
+  xl: 36,
+  '2xl': 42,
+  '3xl': 48,
+  '4xl': 56,
+  '5xl': 64,
+  '6xl': 72,
+} as const;
+
+export const MEASURE_TOKENS = Object.fromEntries(
+  Object.entries(MEASURE_REM).map(([name, rem]) => [
+    `--nova-measure-${name}`,
+    `${rem}rem`,
+  ]),
+) as Record<NovaVariable, string>;
+
 // The whole layer, in the order theme.css declares it.
 export const NOVA_DESIGN_TOKENS: Readonly<Record<NovaVariable, string>> = {
   ...TYPE_TOKENS,
@@ -122,4 +145,5 @@ export const NOVA_DESIGN_TOKENS: Readonly<Record<NovaVariable, string>> = {
   ...TRACKING_TOKENS,
   ...RADIUS_ROLE_TOKENS,
   ...DIMENSION_TOKENS,
+  ...MEASURE_TOKENS,
 };

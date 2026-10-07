@@ -1,11 +1,11 @@
 /* Nova is the HOS prototype (os/public/assets/hos.css, "HOS Design System v3"): its tokens, shapes and
    sizes, under Nova's semantic names. Every stock Tailwind scale a design value could come from is
    removed, so a component can only name a Nova token: the palette (never bg-red-500), the radii,
-   the shadows, the numeric spacing and size steps (p-4, w-64), the container widths (max-w-md), the
-   type sizes, line heights and tracking, and the easings. What replaces them is the design-token
-   layer below ("Design tokens"): the spacing scale (p-s5), type roles (text-label), component
-   dimensions (h-control-md, p-card), radius roles (rounded-control) and motion roles
-   (duration-base, ease-standard). Change a token and every component that names it follows.
+   the shadows, the numeric spacing and size steps (p-4, w-64), the container widths, the type
+   sizes, line heights and tracking, and the easings. What replaces them is the design-token layer
+   below ("Design tokens"): the spacing scale (p-s5), type roles (text-label), component dimensions
+   (h-control-md, p-card), radius roles (rounded-control), layout measures (max-w-md, now a Nova
+   token) and motion roles (duration-base, ease-standard). Change a token and every component that names it follows.
    conventions.spec.ts enforces tokens only; token-reach.spec.tsx proves the reach. */
 @theme {
   --color-*: initial;
@@ -470,6 +470,18 @@
   --size-tile: var(--nova-tile);
   --size-spinner: var(--nova-spinner);
 
+  /* Layout measures: how wide a form, a dialog, a page column or a story frame may grow. */
+  --container-xs: var(--nova-measure-xs);
+  --container-sm: var(--nova-measure-sm);
+  --container-md: var(--nova-measure-md);
+  --container-lg: var(--nova-measure-lg);
+  --container-xl: var(--nova-measure-xl);
+  --container-2xl: var(--nova-measure-2xl);
+  --container-3xl: var(--nova-measure-3xl);
+  --container-4xl: var(--nova-measure-4xl);
+  --container-5xl: var(--nova-measure-5xl);
+  --container-6xl: var(--nova-measure-6xl);
+
   /* The app frame. */
   --width-sidebar: var(--nova-sidebar-w);
   --width-rail: var(--nova-sidebar-rail-w);
@@ -560,26 +572,12 @@
 /* ===== Design tokens: the Tailwind names (end) ===== */
 
 /* ===== Conversion bridge (begin) =====
-   TEMPORARY. Tailwind's numeric spacing steps (p-4), the radius scale names (rounded-md), the
-   container widths (max-w-md) and the stock tracking and easings that components not yet converted
-   to tokens still use. conventions.spec.ts already refuses all of them in any file that is not in
+   TEMPORARY. Tailwind's numeric spacing steps (p-4), the radius scale names (rounded-md) and the
+   stock tracking and easings that components not yet converted to tokens still use. conventions.spec.ts already refuses all of them in any file that is not in
    primitives/conversion-baseline.json, and checks every class against the token layer with this
    bridge removed. When the baseline is empty, delete this block (the guard then requires it). */
 @theme {
   --spacing: 4px;
-  --container-3xs: 16rem;
-  --container-2xs: 18rem;
-  --container-xs: 20rem;
-  --container-sm: 24rem;
-  --container-md: 28rem;
-  --container-lg: 32rem;
-  --container-xl: 36rem;
-  --container-2xl: 42rem;
-  --container-3xl: 48rem;
-  --container-4xl: 56rem;
-  --container-5xl: 64rem;
-  --container-6xl: 72rem;
-  --container-7xl: 80rem;
   --tracking-wider: 0.05em;
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
@@ -827,6 +825,16 @@
   --nova-spinner: 1.1em;
   --nova-underline-offset-tight: var(--nova-space-0);
   --nova-underline-offset-loose: var(--nova-space-1);
+  --nova-measure-xs: 20rem;
+  --nova-measure-sm: 24rem;
+  --nova-measure-md: 28rem;
+  --nova-measure-lg: 32rem;
+  --nova-measure-xl: 36rem;
+  --nova-measure-2xl: 42rem;
+  --nova-measure-3xl: 48rem;
+  --nova-measure-4xl: 56rem;
+  --nova-measure-5xl: 64rem;
+  --nova-measure-6xl: 72rem;
 }
 /* ===== Design tokens (end) ===== */
 

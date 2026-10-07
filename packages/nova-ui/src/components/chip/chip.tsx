@@ -81,8 +81,9 @@ const glyph = {
   focusable: false,
 } as const;
 
-// The prototype's .chip: an 11.5px semibold pill, padded 2px by 8px, 6px between its parts, never
-// wrapping (.chip-neutral and .chip-ai add their 1px edge). A toned chip keeps
+// The prototype's .chip, in tokens only: the caption type role (11.5px) semibold, the chip corner (a
+// pill), the chip padding (px-chip by py-chip, 8px by 2px) and gap-chip (6px) between its parts,
+// never wrapping (.chip-neutral and .chip-ai add their hairline edge). A toned chip keeps
 // the accessible -soft / -deep pair and always carries a word (or an icon), never colour alone.
 // It can lead with an icon or an avatar, show it is selected (a tick and a spoken word), and become
 // an input chip with a remove button. It is a non-interactive span unless it is removable.
@@ -126,9 +127,9 @@ export function Chip({
       }
       tabIndex={removable ? 0 : undefined}
       className={cx(
-        'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-[11.5px] font-semibold',
+        'inline-flex items-center gap-chip whitespace-nowrap rounded-chip px-chip py-chip text-caption font-semibold',
         tones[tone],
-        selected && 'ring-1 ring-inset ring-primary',
+        selected && 'ring-hairline ring-inset ring-primary',
         removable && cx('cursor-default', focusRing),
         className,
       )}
@@ -138,20 +139,20 @@ export function Chip({
       {avatar ? (
         <span
           data-slot="avatar"
-          className="-ml-1 inline-flex shrink-0 items-center"
+          className="-ml-s1 inline-flex shrink-0 items-center"
         >
           {avatar}
         </span>
       ) : null}
       {selected ? (
-        <svg {...glyph} className="size-3 shrink-0">
+        <svg {...glyph} className="size-icon-xs shrink-0">
           <path d="M4.5 10.5l3.5 3.5 7.5-8" />
         </svg>
       ) : leading ? (
         <span
           aria-hidden="true"
           data-slot="icon"
-          className="inline-flex shrink-0 items-center [&_svg]:size-3"
+          className="inline-flex shrink-0 items-center [&_svg]:size-icon-xs"
         >
           {leading}
         </span>
@@ -168,13 +169,14 @@ export function Chip({
           aria-label={removeLabel ?? `Remove ${name}`}
           onClick={() => onRemove()}
           className={cx(
-            // A 24px target (WCAG 2.5.8), pulled into the chip's padding so the chip stays compact.
-            '-my-0.5 -mr-1 inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full',
+            // A 24px target (WCAG 2.5.8: size-touch-sm), pulled into the chip's padding so the chip
+            // stays compact.
+            '-my-s0 -mr-s1 inline-flex size-touch-sm shrink-0 cursor-pointer items-center justify-center rounded-full',
             'motion-safe:transition-colors hover:bg-ink/10',
             focusRing,
           )}
         >
-          <svg {...glyph} className="size-3">
+          <svg {...glyph} className="size-icon-xs">
             <path d="M5.5 5.5l9 9M14.5 5.5l-9 9" />
           </svg>
         </button>

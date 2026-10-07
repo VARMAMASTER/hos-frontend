@@ -10,7 +10,7 @@ function SearchIcon() {
       strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-4 w-4"
+      className="size-icon-md"
     >
       <circle cx="9" cy="9" r="5.5" />
       <path d="M13.5 13.5L17 17" />

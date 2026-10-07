@@ -60,7 +60,7 @@ describe('EmptyState', () => {
     );
     const root = container.firstElementChild as HTMLElement;
     expect(root.classList.contains('text-center')).toBe(true);
-    expect(root.classList.contains('rounded-md')).toBe(true);
+    expect(root.classList.contains('rounded-card')).toBe(true);
     expect(
       screen.getByText('Try another filter.').classList.contains('text-ink-2'),
     ).toBe(true);

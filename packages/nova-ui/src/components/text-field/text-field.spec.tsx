@@ -261,48 +261,58 @@ describe('TextField icons', () => {
   it('makes room for each icon only when it is present', () => {
     const { rerender } = render(<TextField label="Search" />);
     const plain = screen.getByLabelText('Search').classList;
-    expect([...plain]).toEqual(expect.arrayContaining(['pl-2.5', 'pr-2.5']));
-    expect(plain).not.toContain('pl-8');
+    expect([...plain]).toEqual(
+      expect.arrayContaining(['pl-field', 'pr-field']),
+    );
+    expect(plain).not.toContain('pl-field-icon');
     rerender(
       <TextField label="Search" leadingIcon={<svg />} trailingIcon={<svg />} />,
     );
     const withIcons = screen.getByLabelText('Search').classList;
-    expect([...withIcons]).toEqual(expect.arrayContaining(['pl-8', 'pr-8']));
-    expect(withIcons).not.toContain('pl-2.5');
-    expect(withIcons).not.toContain('pr-4');
+    expect([...withIcons]).toEqual(
+      expect.arrayContaining(['pl-field-icon', 'pr-field-icon']),
+    );
+    expect(withIcons).not.toContain('pl-field');
+    expect(withIcons).not.toContain('pr-field');
   });
 });
 
 describe('TextField, the prototype .f-label and .f-input', () => {
-  it('sets the label at 12px semibold, the field at 13.5px padded 10 x 8, and the hint at 12px', () => {
+  it('sets the label in the label role semibold, the field in the input role at the control height, and the hint in the label role', () => {
     render(<TextField label="Patient" hint="As on the ID card" />);
     const label = screen.getByText('Patient');
     expect([...label.classList]).toEqual(
-      expect.arrayContaining(['text-[12px]', 'font-semibold']),
+      expect.arrayContaining(['text-label', 'font-semibold']),
     );
     const input = screen.getByLabelText('Patient');
     expect([...input.classList]).toEqual(
-      expect.arrayContaining(['text-[13.5px]', 'py-2', 'rounded-sm']),
+      expect.arrayContaining([
+        'text-input',
+        'h-control-md',
+        'pl-field',
+        'pr-field',
+        'rounded-control',
+      ]),
     );
     expect(input.className).not.toMatch(/\bh-10\b|text-sm/);
     expect(screen.getByText('As on the ID card').classList).toContain(
-      'text-[12px]',
+      'text-label',
     );
   });
 
-  it('draws the error line at 12px in crit', () => {
+  it('draws the error line in the label role in crit', () => {
     render(<TextField label="Patient" error="Enter the full name of Ramesh" />);
     const error = screen.getByText('Enter the full name of Ramesh');
     expect([...error.classList]).toEqual(
-      expect.arrayContaining(['text-[12px]', 'text-crit-deep']),
+      expect.arrayContaining(['text-label', 'text-crit-deep']),
     );
   });
 
-  it('sizes the decorative icons at 16px', () => {
+  it('sizes the decorative icons at the md icon size (16px)', () => {
     render(
       <TextField label="Search" leadingIcon={<svg data-testid="lead" />} />,
     );
     const slot = screen.getByTestId('lead').parentElement as HTMLElement;
-    expect(slot.classList).toContain('[&_svg]:size-4');
+    expect(slot.classList).toContain('[&_svg]:size-icon-md');
   });
 });

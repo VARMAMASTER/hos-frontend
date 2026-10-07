@@ -30,7 +30,7 @@ const lifts: Record<CardVariant, string> = {
   glass: 'hover:[--nova-surface-lift:var(--nova-shadow-md)]',
 };
 
-// The prototype card (.card): radius md (12px), a 1px --line edge, --shadow-sm.
+// The prototype card (.card): the card corner (--r-md, 12px), a hairline --line edge, --shadow-sm.
 export function Card({
   variant = 'panel',
   interactive = false,
@@ -41,13 +41,13 @@ export function Card({
   return (
     <Surface
       material={materials[variant]}
-      radius="md"
+      radius="card"
       data-variant={variant}
       data-interactive={interactive ? 'true' : undefined}
       data-selected={selected ? 'true' : undefined}
       className={cx(
         interactive &&
-          'cursor-pointer transition-[transform,box-shadow,border-color] duration-150 ease-out motion-reduce:transition-none hover:border-border-strong motion-safe:hover:-translate-y-0.5',
+          'cursor-pointer transition-[transform,box-shadow,border-color] duration-fast ease-standard motion-reduce:transition-none hover:border-border-strong motion-safe:hover:-translate-y-s0',
         interactive && lifts[variant],
         className,
       )}
@@ -63,13 +63,14 @@ export interface CardHeaderProps {
   headingLevel?: 2 | 3 | 4;
 }
 
-// The prototype's .card-h: one row, 12px by 16px, a hairline below and a whisper of top-lit tint.
-// The title is the prototype's h2 (17px) or h3 (14px), the description its .tiny small print beside
-// it, and the actions sit at the far end.
+// The prototype's .card-h: one row (px-card by py-card-bar, 16px by 12px, gap-card between its
+// parts), a hairline below and a whisper of top-lit tint. The title is the prototype's h2 (the title
+// role) or h3 (the body role), each with its tracking, the description its .tiny small print (the
+// label role) beside it, and the actions sit at the far end, --space-4 apart (.card-h-act).
 const headings = {
-  2: 'text-[17px] font-semibold tracking-h2',
-  3: 'text-[14px] font-semibold tracking-h3',
-  4: 'text-[14px] font-semibold tracking-h3',
+  2: 'text-title font-semibold tracking-h2',
+  3: 'text-body font-semibold tracking-h3',
+  4: 'text-body font-semibold tracking-h3',
 } as const;
 
 export function CardHeader({
@@ -80,17 +81,17 @@ export function CardHeader({
 }: CardHeaderProps) {
   const Heading = `h${headingLevel}` as const;
   return (
-    <div className="nova-card-head flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+    <div className="nova-card-head flex items-center justify-between gap-card border-b border-border px-card py-card-bar">
       <Heading
         className={cx('min-w-0 font-display text-ink', headings[headingLevel])}
       >
         {title}
       </Heading>
       {description ? (
-        <p className="min-w-0 text-[12px] text-ink-2">{description}</p>
+        <p className="min-w-0 text-label text-ink-2">{description}</p>
       ) : null}
       {actions ? (
-        <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2.5">
+        <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-s4">
           {actions}
         </div>
       ) : null}
@@ -98,16 +99,17 @@ export function CardHeader({
   );
 }
 
-// The prototype's .card-b: 16px of padding.
+// The prototype's .card-b: the card padding (--space-6, 16px).
 export function CardBody({
   className,
   ...rest
 }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cx('p-4', className)} {...rest} />;
+  return <div className={cx('p-card', className)} {...rest} />;
 }
 
 // A footer row (a total, a meta line, an action): ends pushed apart, divided from the body by a
-// hairline, in the prototype's 13px secondary text.
+// hairline, on the header's bar padding, in the prototype's 13px secondary text (the control role:
+// the dense UI text of rows).
 export function CardFooter({
   className,
   ...rest
@@ -115,7 +117,7 @@ export function CardFooter({
   return (
     <div
       className={cx(
-        'flex items-center justify-between gap-2 border-t border-border px-4 py-3 text-[13px] text-ink-2',
+        'flex items-center justify-between gap-s3 border-t border-border px-card py-card-bar text-control text-ink-2',
         className,
       )}
       {...rest}

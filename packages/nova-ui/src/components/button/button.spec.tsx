@@ -169,15 +169,26 @@ describe('Button', () => {
       const md = screen.getByRole('button', { name: 'Admit' });
       const sm = screen.getByRole('button', { name: 'Hold' });
       for (const button of [md, sm]) {
-        expect(button.classList.contains('rounded-sm')).toBe(true);
+        expect(button.classList.contains('rounded-control')).toBe(true);
         expect(button.classList.contains('font-semibold')).toBe(true);
         expect(button.className).not.toMatch(/corner-shape|rounded-full/);
       }
+      // The control tokens (token-reach.spec.tsx resolves them to 16 x 8 at 13px and 10 x 6 at 12px).
       expect([...md.classList]).toEqual(
-        expect.arrayContaining(['px-4', 'py-2', 'text-[13px]']),
+        expect.arrayContaining([
+          'min-h-control-md',
+          'px-control-md',
+          'py-control-md',
+          'text-control',
+        ]),
       );
       expect([...sm.classList]).toEqual(
-        expect.arrayContaining(['px-2.5', 'py-1.5', 'text-[12px]']),
+        expect.arrayContaining([
+          'min-h-control-sm',
+          'px-control-sm',
+          'py-control-sm',
+          'text-label',
+        ]),
       );
     });
 

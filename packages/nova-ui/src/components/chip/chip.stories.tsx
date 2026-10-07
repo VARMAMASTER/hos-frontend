@@ -12,7 +12,7 @@ type Story = StoryObj<typeof meta>;
 
 export const AllTones: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-s3">
       <Chip>Pending</Chip>
       <Chip tone="good">Filed</Chip>
       <Chip tone="warn">Query raised</Chip>
@@ -25,7 +25,7 @@ export const AllTones: Story = {
 
 export const WithIconAndAvatar: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-s3">
       <Chip
         tone="good"
         icon={
@@ -48,7 +48,7 @@ export const WithIconAndAvatar: Story = {
 
 export const Selected: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-s3">
       <Chip selected>Medicine</Chip>
       <Chip tone="info" selected>
         Cardiology
@@ -63,7 +63,7 @@ export const Removable: Story = {
   render: function Render() {
     const [tags, setTags] = useState(['Cardiology', 'Nephrology']);
     return (
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-s3">
         {tags.map((tag) => (
           <Chip
             key={tag}

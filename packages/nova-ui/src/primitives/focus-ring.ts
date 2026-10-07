@@ -3,6 +3,7 @@
 // --nova-focus-ring token where a surface sets one (the dark chrome and the brand hero turn it
 // white, because the brand ring is ~2:1 there and a focus indicator needs 3:1), and the brand
 // primary everywhere else. Every light surface utility sets it back to the primary, so a menu or a
-// card nested inside the chrome or the hero never inherits the white ring.
+// card nested inside the chrome or the hero never inherits the white ring. Its width and offset are
+// the focus tokens (--nova-focus-width, --nova-focus-offset).
 export const focusRing =
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--nova-focus-ring,var(--nova-color-primary))]';
+  'focus-visible:outline-focus focus-visible:outline-offset-focus focus-visible:outline-[var(--nova-focus-ring,var(--nova-color-primary))]';

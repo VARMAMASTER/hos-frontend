@@ -25,13 +25,16 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 type DrawnVariant = Exclude<ButtonVariant, 'secondary'>;
 
-// The prototype's .btn (os/public/assets/hos.css): a 13px semibold label, 8px by 16px of padding, an
-// 8px radius (the prototype's own 9px is off its --r-* scale) and a 1px border, transparent unless the
-// variant draws one, so a row of mixed variants shares one height. It lifts to shadow-md on hover and
-// presses down 1px to shadow-sm, only when motion is welcome.
+// The prototype's .btn (os/public/assets/hos.css), in tokens only: the control type role
+// (text-control, 13px) semibold, the control padding (px-control-md by py-control-md, 16px by 8px),
+// the control corner (rounded-control: the prototype's own 9px is off its --r-* scale, so --r-sm)
+// and the hairline border, transparent unless the variant draws one. min-h-control-md is the height
+// every md control shares (TextField, Select, a Tabs trigger), so a row of mixed controls lines up.
+// It lifts to shadow-md on hover and presses down 1px to shadow-sm, only when motion is welcome, on
+// the motion roles.
 const base = cx(
-  'relative inline-flex items-center justify-center rounded-sm border font-semibold',
-  'transition-[color,background-color,border-color,box-shadow,transform] duration-150 ease-out motion-reduce:transition-none',
+  'relative inline-flex items-center justify-center rounded-control border font-semibold',
+  'transition-[color,background-color,border-color,box-shadow,transform] duration-fast ease-standard motion-reduce:transition-none',
   'hover:shadow-md motion-safe:active:translate-y-px active:shadow-sm aria-disabled:active:translate-y-0 aria-busy:active:translate-y-0',
   focusRing,
   'disabled:pointer-events-none disabled:opacity-50',
@@ -57,10 +60,10 @@ const variants: Record<DrawnVariant, string> = {
 // an approval bar). The animated, playful AI button is AiButton (components/ai-button).
 const AI_SPARK = "before:content-['✦'_/_'']";
 
-// md is .btn, sm is .btn-sm (6px by 10px, 12px type; its 7px radius is off-scale too).
+// md is .btn, sm is .btn-sm (10px by 6px, the label type role; its 7px radius is off-scale too).
 const sizes: Record<ButtonSize, string> = {
-  sm: 'px-2.5 py-1.5 text-[12px]',
-  md: 'px-4 py-2 text-[13px]',
+  sm: 'min-h-control-sm px-control-sm py-control-sm text-label',
+  md: 'min-h-control-md px-control-md py-control-md text-control',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -107,7 +110,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             so the button keeps its width; the spinner sits over it. */}
         <span
           className={cx(
-            'inline-flex items-center justify-center gap-2',
+            'inline-flex items-center justify-center gap-control',
             // The AI spark is decoration: generated content with empty alternative text, so it is
             // neither in the accessible name nor in the button's text.
             drawn === 'ai' && AI_SPARK,
@@ -136,7 +139,7 @@ function Spinner() {
         strokeWidth="2"
         strokeLinecap="round"
         focusable="false"
-        className="size-[1.1em] animate-spin motion-reduce:animate-none"
+        className="size-spinner animate-spin motion-reduce:animate-none"
       >
         <circle cx="10" cy="10" r="7.5" opacity="0.3" />
         <path d="M17.5 10a7.5 7.5 0 0 0-7.5-7.5" />

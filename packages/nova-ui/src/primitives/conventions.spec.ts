@@ -366,7 +366,7 @@ describe('the weights', () => {
 //                  (p-4, gap-1.5, w-64, h-0.5, top-3, -translate-y-px is fine, border-2, ring-1,
 //                  outline-offset-2, leading-6, duration-150, delay-75). 0, px, auto, full, screen,
 //                  fractions (w-1/2) and intrinsic keywords (min-w-0, w-fit) are not values.
-//   not-a-token    a named value the token layer does not define (rounded-md, max-w-md, text-xs,
+//   not-a-token    a named value the token layer does not define (rounded-md, max-w-7xl, text-xs,
 //                  tracking-wider, ease-out, leading-loose): checked by compiling the class against
 //                  the token layer with the conversion bridge removed.
 //   stock-easing   ease-linear | in | out | in-out: transitions take the motion roles only
@@ -732,7 +732,7 @@ describe('tokens only: every design value is a named token', () => {
       'rounded-md',
       'rounded-t-lg',
       'rounded',
-      'max-w-md',
+      'max-w-7xl',
       'text-xs',
       'leading-6',
       'tracking-wider',
@@ -778,6 +778,8 @@ describe('tokens only: every design value is a named token', () => {
       'size-mark',
       'w-rail',
       'w-sidebar',
+      'max-w-md',
+      'max-w-3xl',
       'rounded-control',
       'rounded-card',
       'rounded-overlay',
@@ -850,8 +852,8 @@ describe('tokens only: every design value is a named token', () => {
     'rounded',
     'rounded-2xl',
     'rounded-t-lg',
-    'max-w-md',
-    'max-w-2xl',
+    'max-w-7xl',
+    'max-w-3xs',
     'text-xs',
     'text-base',
     'tracking-wider',

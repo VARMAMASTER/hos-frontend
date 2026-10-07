@@ -18,17 +18,17 @@ describe('Chip', () => {
     },
   );
 
-  it('is the prototype .chip: an 11.5px semibold pill padded 8 x 2, 6px between its parts', () => {
+  it('is the prototype .chip: the caption role semibold, the chip corner, the chip padding and gap', () => {
     render(<Chip tone="warn">Warning</Chip>);
     const chip = screen.getByText('Warning');
     expect([...chip.classList]).toEqual(
       expect.arrayContaining([
-        'rounded-full',
-        'px-2',
-        'py-0.5',
-        'gap-1.5',
+        'rounded-chip',
+        'px-chip',
+        'py-chip',
+        'gap-chip',
         'whitespace-nowrap',
-        'text-[11.5px]',
+        'text-caption',
         'font-semibold',
       ]),
     );
@@ -159,7 +159,7 @@ describe('Chip as an input chip (removable)', () => {
     render(<Chip onRemove={() => undefined}>Cardiology</Chip>);
     expect(
       screen.getByRole('button', { name: 'Remove Cardiology' }).classList,
-    ).toContain('size-6');
+    ).toContain('size-touch-sm');
   });
 
   it('changes colour only under motion-safe, so reduced motion is instant', () => {

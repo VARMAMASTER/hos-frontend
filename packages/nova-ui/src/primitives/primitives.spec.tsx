@@ -26,8 +26,9 @@ describe('cx', () => {
 });
 
 describe('focusRing', () => {
-  it('only shows the ring for keyboard focus', () => {
-    expect(focusRing).toContain('focus-visible:outline-2');
+  it('only shows the ring for keyboard focus, at the focus width and offset tokens', () => {
+    expect(focusRing).toContain('focus-visible:outline-focus');
+    expect(focusRing).toContain('focus-visible:outline-offset-focus');
     expect(focusRing).not.toMatch(/(^|\s)focus:/);
   });
 
@@ -67,21 +68,37 @@ describe('Surface', () => {
     }
   });
 
-  it('defaults to a large radius and lets a caller choose another', () => {
+  it('lets a caller name a radius role (the default keeps the overlay corner on its old class while callers are converted)', () => {
     render(
       <>
         <Surface material="surface">default</Surface>
-        <Surface material="surface" radius="sm">
-          small
+        <Surface material="surface" radius="control">
+          control
+        </Surface>
+        <Surface material="card" radius="card">
+          card
         </Surface>
       </>,
     );
-    expect(screen.getByText('default').classList.contains('rounded-lg')).toBe(
-      true,
+    expect(screen.getByText('default').className).toContain('rounded-lg');
+    expect(screen.getByText('control').className).toContain('rounded-control');
+    expect(screen.getByText('card').className).toContain('rounded-card');
+  });
+
+  // The scale names stay only until every caller names its role, drawing their old classes.
+  it('keeps a scale-named radius on its old class while callers are converted', () => {
+    render(
+      <>
+        <Surface material="surface" radius="sm">
+          sm
+        </Surface>
+        <Surface material="surface" radius="xl">
+          xl
+        </Surface>
+      </>,
     );
-    expect(screen.getByText('small').classList.contains('rounded-sm')).toBe(
-      true,
-    );
+    expect(screen.getByText('sm').className).toContain('rounded-sm');
+    expect(screen.getByText('xl').className).toContain('rounded-xl');
   });
 
   it('renders as another element, merges className and forwards its ref', () => {
