@@ -43,7 +43,7 @@ const withHospitalTheme: Decorator = (Story, context) => {
       theme={EXAMPLE_THEMES[themeKey] ?? EXAMPLE_THEMES.hosViolet}
       material={isNovaMaterial(material) ? material : NOVA_DEFAULT_MATERIAL}
       scheme={isNovaScheme(scheme) ? scheme : NOVA_DEFAULT_SCHEME}
-      className="nova-canvas min-h-screen p-6 font-sans text-ink"
+      className="nova-canvas min-h-screen p-s8 font-sans text-ink"
     >
       <Story />
     </NovaThemeProvider>

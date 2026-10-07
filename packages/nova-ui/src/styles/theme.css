@@ -571,27 +571,6 @@
 }
 /* ===== Design tokens: the Tailwind names (end) ===== */
 
-/* ===== Conversion bridge (begin) =====
-   TEMPORARY. Tailwind's numeric spacing steps (p-4), the radius scale names (rounded-md) and the
-   stock tracking and easings that components not yet converted to tokens still use. conventions.spec.ts already refuses all of them in any file that is not in
-   primitives/conversion-baseline.json, and checks every class against the token layer with this
-   bridge removed. When the baseline is empty, delete this block (the guard then requires it). */
-@theme {
-  --spacing: 4px;
-  --tracking-wider: 0.05em;
-  --ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@theme inline {
-  --radius-sm: var(--nova-radius-sm);
-  --radius-md: var(--nova-radius-md);
-  --radius-lg: var(--nova-radius-lg);
-  --radius-xl: var(--nova-radius-xl);
-}
-/* ===== Conversion bridge (end) ===== */
-
 /* Motion durations as duration-fast | base | slow. Tailwind has no duration namespace in @theme, so
    each is a utility over its token. Components apply them under motion-safe. */
 @utility duration-fast {

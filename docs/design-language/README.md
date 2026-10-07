@@ -41,7 +41,7 @@ The layers:
 
 The values live in `styles/theme.css`: the plain `:root` block holds the prototype defaults (`tokens/semantic.ts`) and the "Design tokens" `:root` block holds everything else (`tokens/design.ts`, with `TYPE_ROLES`, `LEADING`, `TRACKING_EM` and `RADIUS_ROLES` in `tokens/scale.ts`). `semantic.spec.ts` and `design.spec.ts` compare the CSS with the TypeScript.
 
-Tailwind's own scales are removed, as the palette always was: numeric spacing and size steps (`p-4`, `w-64`), the radius names, type sizes, line heights, tracking, container widths and easings. Until every component is converted, a marked **conversion bridge** in `theme.css` keeps the old numeric steps, scale radii, stock tracking and easings compiling for the files still listed in `primitives/conversion-baseline.json` (see [Conversion](#conversion)).
+Tailwind's own scales are removed, as the palette always was: numeric spacing and size steps (`p-4`, `w-64`), the radius names, type sizes, line heights, tracking, container widths and easings. None of them compiles: `p-4`, `rounded-md`, `text-sm`, `tracking-wider` and `ease-out` produce no CSS at all (`conventions.spec.ts` compiles `theme.css` and checks).
 
 ### The spacing scale
 
@@ -106,7 +106,7 @@ A component names what the corner belongs to, never a step of the scale (which l
 | `rounded-full`    | `--nova-radius-full`    | 999px          | a true circle (a dot, an avatar)               |
 | `rounded-none`    |                         | 0              | a square corner                                |
 
-Per-side and per-corner forms take the same names (`rounded-t-card`). `Surface` takes the roles too: `radius="control" | "card" | "overlay" | "hero"`.
+Per-side and per-corner forms take the same names (`rounded-t-card`). `Surface` takes the roles too, and `none` for a square frame (the sidebar, the top bar): `radius="none" | "control" | "card" | "overlay" | "hero" | "chip" | "tag" | "pill"`, `overlay` by default.
 
 ### Component dimensions
 
@@ -153,11 +153,9 @@ Weights are the prototype's 400, 500, 600 and 700: `font-normal`, `font-medium`,
 3. If only one component needs it (an orb's size, a phone frame's width), it is still a token: add it in that component family's marked "Component tokens" section of `theme.css` and reference it as a utility or as a token reference (`w-(--nova-phone-w)`).
 4. Never a literal in a component: no `p-4`, `text-[12px]`, `h-[5px]`, `rounded-md`, `duration-150` or `style={{ width: 54 }}`.
 
-`primitives/conventions.spec.ts` refuses everything else, with one planted violation per rule: numeric steps, names the token layer does not define (each class is compiled against the token layer with the bridge cut out), stock easings, arbitrary values (except a token reference such as `w-[var(--nova-sidebar-rail-w)]`, a transition's property list, generated content and an `fr` grid template), raw `px`/`rem`/`em` literals outside a class, bare numbers on length properties in a `style` object, and scale-named `Surface` radii. `primitives/token-reach.spec.tsx` proves the reach: it overrides the scale, a component token, the radius scale and the type roles, and Button, TextField, Card and Chip follow.
+`primitives/conventions.spec.ts` refuses everything else, with one planted violation per rule: numeric steps, names the token layer does not define (each class is compiled against `theme.css`), stock easings, arbitrary values (except a token reference such as `w-[var(--nova-sidebar-rail-w)]`, a transition's property list, generated content and an `fr` grid template), raw `px`/`rem`/`em` literals outside a class, bare numbers on length properties in a `style` object, and scale-named `Surface` radii. `primitives/token-reach.spec.tsx` proves the reach: it overrides the scale, a component token, the radius scale and the type roles, and Button, TextField, Card and Chip follow.
 
-### Conversion
-
-`primitives/conversion-baseline.json` lists every component, story and primitive file that still breaks the rules, with how many offences. A file not listed must be clean; a listed file must match its count exactly. Converting a file means lowering its count or, when it is clean, deleting its entry: `NOVA_RATCHET_BASELINE=1` rewrites the file downwards only (it never adds a file or raises a count), and `NOVA_TOKEN_REPORT=<file>` writes every remaining offence for a work list. When the baseline is empty, the conversion bridge in `theme.css` must be deleted (the guard checks), and from then on the guard is absolute.
+The guard is absolute: every component, story and primitive file, and the Storybook preview, must be clean. There is no baseline of exceptions.
 
 Corners are plain `border-radius`: the prototype has no `corner-shape`. Where the prototype writes a literal radius off its own scale (`.btn` 9px, `.tab` 10px, `.tabbar` 14px, `.ic` 7px, `.brand-mark` 11px), Nova uses the nearest step's role.
 

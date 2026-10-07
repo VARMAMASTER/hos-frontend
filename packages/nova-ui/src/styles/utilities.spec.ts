@@ -903,7 +903,7 @@ describe('theme.css Tailwind theme mapping', () => {
     );
   });
 
-  it('maps the radius roles, and the circle, onto Nova tokens (the scale names live only in the conversion bridge)', () => {
+  it('maps the radius roles, and the circle, onto Nova tokens (the scale names stay inside the token layer)', () => {
     const radii = Object.entries(designBlock()).filter(([name]) =>
       name.startsWith('--radius-'),
     );

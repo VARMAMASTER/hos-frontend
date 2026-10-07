@@ -56,8 +56,8 @@ export function App({ api }: AppProps) {
   }, [api]);
 
   return (
-    <main className="mx-auto max-w-3xl p-6">
-      <h1 className="mb-6 text-2xl font-semibold">HOS</h1>
+    <main className="mx-auto max-w-3xl p-s8">
+      <h1 className="mb-s8 text-display font-semibold tracking-h1">HOS</h1>
       <Card>
         <CardHeader
           title="System status"
@@ -66,7 +66,7 @@ export function App({ api }: AppProps) {
         />
         {status.kind === 'unreachable' ? (
           <CardBody>
-            <p className="text-sm text-ink-2">{status.reason}</p>
+            <p className="text-body text-ink-2">{status.reason}</p>
           </CardBody>
         ) : null}
       </Card>

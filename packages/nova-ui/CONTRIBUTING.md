@@ -28,7 +28,7 @@ Every design value is a named token. A component writes the token's utility, nev
 
 A token reference in an arbitrary value is allowed (`w-[var(--nova-sidebar-rail-w)]`, `bg-(--nova-chrome-field)`, `hover:[--nova-surface-lift:var(--nova-shadow-md)]`), and so are a transition's property list, generated content and an `fr` grid template. If no token fits, add one (README, "How to add a value"); a value only this component needs goes in its family's "Component tokens" section of `src/styles/theme.css`.
 
-`src/primitives/conventions.spec.ts` checks all of this. A new file must be clean; it is never added to `primitives/conversion-baseline.json`.
+`src/primitives/conventions.spec.ts` checks all of this, in every component, story and primitive, with no exceptions.
 
 ## 3. The API
 

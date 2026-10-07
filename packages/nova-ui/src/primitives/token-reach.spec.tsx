@@ -1,6 +1,6 @@
 // Changing a token changes the component. The four reference components (Button, TextField, Card,
-// Chip) are rendered, their classes compiled by Tailwind against the token layer alone (theme.css
-// with the conversion bridge cut out, so a class that is not a token has no style at all), and each
+// Chip) are rendered, their classes compiled by Tailwind against the token layer (theme.css, which
+// defines nothing else, so a class that is not a token has no style at all), and each
 // element's padding, height, radius and type worked out the way the browser would: the matching
 // utility rules in stylesheet order, every var() chain followed through theme.css's :root tokens,
 // and calc() evaluated. jsdom computes no custom properties and no cascade from a stylesheet, so this
@@ -24,13 +24,9 @@ afterEach(() => cleanup());
 // A path, not new URL(…): under jsdom, URL resolves against the page's origin, not the file.
 const srcDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const themeCss = readFileSync(join(srcDir, 'styles/theme.css'), 'utf8');
-const tokenLayerCss = themeCss.replace(
-  /\/\* ===== Conversion bridge \(begin\) =====[\s\S]*?\/\* ===== Conversion bridge \(end\) ===== \*\//,
-  '',
-);
 const requireFrom = createRequire(import.meta.url);
 const tailwindDir = dirname(requireFrom.resolve('tailwindcss/package.json'));
-const compiler = await compile(`@import 'tailwindcss';\n${tokenLayerCss}`, {
+const compiler = await compile(`@import 'tailwindcss';\n${themeCss}`, {
   base: srcDir,
   loadStylesheet: async (id, base) => {
     const path = id === 'tailwindcss' ? join(tailwindDir, 'index.css') : id;

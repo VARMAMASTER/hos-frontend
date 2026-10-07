@@ -52,16 +52,9 @@ describe('the spacing scale (hos.css --space-0 … --space-10)', () => {
     expect(declared('--spacing-px')).toBe('1px');
   });
 
-  // The numeric multiplier survives only in the conversion bridge, for the components still listed
-  // in primitives/conversion-baseline.json.
-  it('keeps the 4px numeric multiplier only inside the conversion bridge', () => {
-    const begin = css.indexOf('===== Conversion bridge (begin) =====');
-    const end = css.indexOf('===== Conversion bridge (end) =====');
-    const multiplier = css.search(/--spacing:\s*4px;/);
-    if (multiplier !== -1) {
-      expect(multiplier).toBeGreaterThan(begin);
-      expect(multiplier).toBeLessThan(end);
-    }
+  // No numeric multiplier: p-4 has nothing to multiply, so only the named steps exist.
+  it('declares no numeric spacing multiplier, and resets the stock spacing scale', () => {
+    expect(css).not.toMatch(/--spacing:\s*[\d.]+px;/);
     expect(css).toMatch(/--spacing-\*:\s*initial;/);
   });
 });

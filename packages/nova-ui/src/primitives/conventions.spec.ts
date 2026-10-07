@@ -5,9 +5,9 @@
 // The scales are the HOS prototype's (os/public/assets/hos.css), as the design-token layer: every
 // design value is a named token ("TOKENS ONLY" below), and the other rules keep colour, material,
 // shadow, gradient and weight on their tokens too.
-import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compile } from 'tailwindcss';
 import { describe, expect, it } from 'vitest';
@@ -368,7 +368,7 @@ describe('the weights', () => {
 //                  fractions (w-1/2) and intrinsic keywords (min-w-0, w-fit) are not values.
 //   not-a-token    a named value the token layer does not define (rounded-md, max-w-7xl, text-xs,
 //                  tracking-wider, ease-out, leading-loose): checked by compiling the class against
-//                  the token layer with the conversion bridge removed.
+//                  theme.css, which defines nothing but the token layer.
 //   stock-easing   ease-linear | in | out | in-out: transitions take the motion roles only
 //                  (duration-fast | base | slow, ease-spring | standard | emphasized).
 //   arbitrary      any arbitrary value, [..] or (..), on any utility (text-[12px], h-[5px], size-[7px],
@@ -381,14 +381,14 @@ describe('the weights', () => {
 //   style-number   a bare number on a length property in a style object (style={{ width: 54 }}).
 //   radius-scale   a Surface radius named by the scale (radius="md"): name the role (radius="card").
 //
-// primitives/conversion-baseline.json lists the files that still break these rules, with how many
-// times. A file not listed must be clean; a listed file must match its count exactly, so converting
-// a file means lowering its count or deleting its entry. When the baseline is empty the guard is
-// absolute and the conversion bridge in theme.css must go.
+// The guard is absolute: every component, story and primitive file, and the Storybook preview, must
+// be clean. There is no baseline and no bridge: theme.css compiles only the token layer, so a stock
+// name (p-4, rounded-md, ease-out, tracking-wider, text-sm) has no style at all.
 // ---------------------------------------------------------------------------------------------------
 
 const srcDir = fileURLToPath(new URL('..', import.meta.url));
-const TOKEN_SCOPES = ['components', 'stories', 'primitives'];
+// The Storybook preview frames every story, so it is held to the same rules.
+const TOKEN_SCOPES = ['components', 'stories', 'primitives', '../.storybook'];
 
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -400,28 +400,22 @@ function walk(dir: string): string[] {
 
 const tokenFiles = TOKEN_SCOPES.flatMap((scope) => walk(join(srcDir, scope)))
   .map((path) => ({
-    path: path.slice(srcDir.length).replace(/\\/g, '/').replace(/^\//, ''),
+    path: relative(srcDir, path).replace(/\\/g, '/'),
     text: readFileSync(path, 'utf8'),
   }))
   .sort((a, b) => a.path.localeCompare(b.path));
 
-// The token layer as Tailwind compiles it, with the conversion bridge cut out: what a component may
-// name once every file is converted.
+// The token layer as Tailwind compiles it: theme.css as shipped, the only names a component may use.
 const themeCss = readFileSync(join(srcDir, 'styles/theme.css'), 'utf8');
-const BRIDGE =
-  /\/\* ===== Conversion bridge \(begin\) =====[\s\S]*?\/\* ===== Conversion bridge \(end\) ===== \*\//;
 const requireFrom = createRequire(import.meta.url);
 const tailwindDir = dirname(requireFrom.resolve('tailwindcss/package.json'));
-const tokenLayer = await compile(
-  `@import 'tailwindcss';\n${themeCss.replace(BRIDGE, '')}`,
-  {
-    base: srcDir,
-    loadStylesheet: async (id, base) => {
-      const path = id === 'tailwindcss' ? join(tailwindDir, 'index.css') : id;
-      return { path, base, content: readFileSync(path, 'utf8') };
-    },
+const tokenLayer = await compile(`@import 'tailwindcss';\n${themeCss}`, {
+  base: srcDir,
+  loadStylesheet: async (id, base) => {
+    const path = id === 'tailwindcss' ? join(tailwindDir, 'index.css') : id;
+    return { path, base, content: readFileSync(path, 'utf8') };
   },
-);
+});
 
 // Which of these bare utilities the token layer defines.
 function existing(utilities: readonly string[]): Set<string> {
@@ -462,7 +456,8 @@ const PLACEMENT =
   /^(?:top|bottom|left|right|start|end)-(?:top|bottom|left|right|start|end|center)(?:-(?:start|end))?$/;
 
 // Arbitrary values that carry no design value: which properties a transition animates, generated
-// content, and a grid template of fr tracks, repeat counts and keywords.
+// content, and a grid template of fr tracks, repeat counts and keywords. A track ends at the next
+// separator (an underscore, a comma or a bracket), so 2fr_1fr is two tracks.
 const VALUE_FREE_ARBITRARY = /^(?:transition|content|will-change)$/;
 const GRID_TEMPLATE = /^(?:grid-cols|grid-rows|col|row|col-span|row-span)$/;
 // Arbitrary properties whose numbers are geometry, not design values: a path drawn with pathLength
@@ -559,7 +554,10 @@ function classify(cls: string): ClassCheck | undefined {
         (root === 'content' || !/\d/.test(value))) ||
       (GRID_TEMPLATE.test(root) &&
         !/\d/.test(
-          value.replace(/\d+(?:\.\d+)?fr\b|repeat\(\d+|minmax\(0,/g, ''),
+          value.replace(
+            /\d+(?:\.\d+)?fr(?![a-z\d])|repeat\(\d+|minmax\(0,/g,
+            '',
+          ),
         ));
     return allowed
       ? undefined
@@ -637,39 +635,9 @@ function tokenOffences(text: string): Offence[] {
   return offences;
 }
 
-const BASELINE_PATH = fileURLToPath(
-  new URL('./conversion-baseline.json', import.meta.url),
-);
-const baseline: Record<string, number> = JSON.parse(
-  readFileSync(BASELINE_PATH, 'utf8'),
-);
 const measured = Object.fromEntries(
   tokenFiles.map((file) => [file.path, tokenOffences(file.text)]),
 );
-
-// NOVA_TOKEN_REPORT=<file> writes every file's remaining offences, rule and class, as JSON: the
-// work list for converting a family of components.
-const report = process.env['NOVA_TOKEN_REPORT'];
-if (report)
-  writeFileSync(
-    report,
-    `${JSON.stringify(measured, null, 1)}
-`,
-  );
-
-// NOVA_RATCHET_BASELINE=1 rewrites the baseline after a conversion, but only downwards: it lowers
-// counts and deletes converted files, and never adds a file or raises a count (those still fail).
-if (process.env['NOVA_RATCHET_BASELINE'] === '1') {
-  const lowered = Object.fromEntries(
-    Object.entries(baseline)
-      .map(
-        ([path, count]) =>
-          [path, Math.min(count, measured[path]?.length ?? 0)] as const,
-      )
-      .filter(([, count]) => count > 0),
-  );
-  writeFileSync(BASELINE_PATH, `${JSON.stringify(lowered, null, 2)}\n`);
-}
 
 describe('tokens only: every design value is a named token', () => {
   it('finds the components, stories and primitives it polices', () => {
@@ -679,51 +647,34 @@ describe('tokens only: every design value is a named token', () => {
     );
   });
 
-  it('holds every file not in the conversion baseline to tokens only', () => {
-    const unlisted = Object.entries(measured)
-      .filter(([path, found]) => found.length > 0 && !(path in baseline))
+  it('holds every component, story, primitive and the preview to tokens only', () => {
+    const offending = Object.entries(measured)
+      .filter(([, found]) => found.length > 0)
       .map(([path, found]) => ({
         path,
         offences: found.map((offence) => `${offence.rule}: ${offence.found}`),
       }));
-    expect(unlisted).toEqual([]);
+    expect(offending).toEqual([]);
   });
 
-  it('keeps each baseline count exact: a converted file lowers its count, a clean file leaves the baseline', () => {
-    const drift = Object.entries(baseline)
-      .filter(([path, count]) => (measured[path]?.length ?? 0) !== count)
-      .map(([path, count]) => {
-        const now = measured[path]?.length ?? 0;
-        const left = (measured[path] ?? [])
-          .map((offence) => `${offence.rule}: ${offence.found}`)
-          .join(', ');
-        return now === 0
-          ? `${path}: clean now, delete its entry`
-          : `${path}: baseline ${count}, now ${now}${now > count ? ' (new offences: convert them)' : ' (lower the count)'}: ${left}`;
-      });
-    expect(drift).toEqual([]);
+  it('polices the Storybook preview too', () => {
+    expect(Object.keys(measured)).toContain('../.storybook/preview.tsx');
   });
 
-  it('lists only files that exist, in path order', () => {
-    const paths = Object.keys(baseline);
-    expect(paths).toEqual([...paths].sort((a, b) => a.localeCompare(b)));
-    for (const path of paths) {
-      expect(measured, path).toHaveProperty([path]);
-    }
+  // The conversion is finished: nothing in theme.css keeps a stock name compiling.
+  it('keeps no conversion bridge and no stock scale in theme.css', () => {
+    expect(themeCss).not.toMatch(/Conversion bridge/i);
+    expect(themeCss).not.toMatch(/--spacing:\s/);
+    expect(themeCss).not.toMatch(/--radius-(?:sm|md|lg|xl)\s*:/);
+    expect(themeCss).not.toMatch(/--tracking-wider\s*:/);
+    expect(themeCss).not.toMatch(/--ease-(?:in|out|in-out|linear)\s*:/);
   });
 
-  // The bridge exists only while there is something to convert.
-  it('removes the conversion bridge from theme.css once the baseline is empty', () => {
-    if (Object.keys(baseline).length === 0) {
-      expect(themeCss).not.toMatch(BRIDGE);
-    } else {
-      expect(themeCss).toMatch(BRIDGE);
-    }
-  });
-
-  it('compiles no numeric step, scale radius, container width or stock type without the bridge', () => {
+  it('compiles no numeric step, scale radius, container width, stock type or easing from theme.css', () => {
     const stock = [
       'p-4',
+      'px-2.5',
+      'm-1',
       'gap-1.5',
       'w-64',
       'h-0.5',
@@ -732,11 +683,20 @@ describe('tokens only: every design value is a named token', () => {
       'rounded-md',
       'rounded-t-lg',
       'rounded',
+      'rounded-sm',
+      'rounded-lg',
+      'rounded-xl',
       'max-w-7xl',
       'text-xs',
+      'text-sm',
+      'text-base',
+      'text-2xl',
       'leading-6',
       'tracking-wider',
+      'tracking-wide',
       'ease-out',
+      'ease-in',
+      'ease-in-out',
     ];
     expect([...existing(stock)]).toEqual([]);
     const tokens = [
@@ -893,6 +853,8 @@ describe('tokens only: every design value is a named token', () => {
     'bg-[white]',
     'w-[var(--nova-sidebar-rail-w,4.25rem)]',
     'grid-cols-[16rem_minmax(0,1fr)]',
+    'grid-cols-[2fr_120px]',
+    'grid-cols-[1fr_3]',
     '[--nova-ai-angle:45deg]',
   ])('arbitrary refuses %s', (cls) => {
     expect(rules(cls)).toEqual(['arbitrary']);
@@ -962,6 +924,9 @@ describe('tokens only: every design value is a named token', () => {
     "before:content-['✦'_/_'']",
     'grid-cols-[auto_1fr]',
     'grid-cols-[auto_repeat(2,max-content)_max-content]',
+    'grid-cols-[2fr_1fr]',
+    'md:grid-cols-[3fr_2fr]',
+    'grid-rows-[1fr_2.5fr_auto]',
     'w-[var(--nova-sidebar-rail-w)]',
     'bg-(--nova-chrome-field)',
     'text-[color:var(--nova-chrome-ink-2)]',
