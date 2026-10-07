@@ -125,9 +125,9 @@ describe('Checkbox, the prototype form control', () => {
     render(<Checkbox label="Ramesh consents" />);
     const control = screen.getByLabelText('Ramesh consents');
     const row = control.closest('div') as HTMLElement;
-    expect(row.classList).toContain('min-h-11');
+    expect(row.classList).toContain('min-h-touch');
     const label = screen.getByText('Ramesh consents');
-    expect(label.classList).toContain('text-[13.5px]');
+    expect(label.classList).toContain('text-input');
     expect(label.className).not.toMatch(/text-sm/);
   });
 });
@@ -205,7 +205,7 @@ describe('Checkbox, indeterminate', () => {
   it('keeps the 44px row', () => {
     render(<Checkbox label="All wards" indeterminate />);
     const row = screen.getByLabelText('All wards').closest('div');
-    expect(row?.classList).toContain('min-h-11');
+    expect(row?.classList).toContain('min-h-touch');
   });
 
   it('still forwards its ref to the input', () => {

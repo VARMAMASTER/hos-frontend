@@ -204,7 +204,12 @@ describe('Select, the prototype form control', () => {
     render(<Select label="Ward" options={[{ value: 'a', label: 'A' }]} />);
     const select = screen.getByLabelText('Ward');
     expect([...select.classList]).toEqual(
-      expect.arrayContaining(['text-[13.5px]', 'pl-2.5', 'py-2', 'rounded-sm']),
+      expect.arrayContaining([
+        'text-input',
+        'pl-field',
+        'h-control-md',
+        'rounded-control',
+      ]),
     );
     expect(select.className).not.toMatch(/\bh-10\b|text-sm/);
   });

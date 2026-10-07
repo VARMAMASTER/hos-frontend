@@ -28,7 +28,7 @@ export const Admission: StoryObj<FormsArgs> = {
   render: ({ material }) => (
     <NovaThemeProvider
       material={material}
-      className="nova-canvas -m-6 min-h-screen p-6"
+      className="nova-canvas -m-s8 min-h-screen p-s8"
     >
       <AdmissionForm />
     </NovaThemeProvider>

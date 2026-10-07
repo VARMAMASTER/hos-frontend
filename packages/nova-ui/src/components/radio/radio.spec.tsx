@@ -170,9 +170,9 @@ describe('Radio, the prototype form control', () => {
     render(<Radio name="triage" label="Ramesh consents" />);
     const control = screen.getByLabelText('Ramesh consents');
     const row = control.closest('div') as HTMLElement;
-    expect(row.classList).toContain('min-h-11');
+    expect(row.classList).toContain('min-h-touch');
     const label = screen.getByText('Ramesh consents');
-    expect(label.classList).toContain('text-[13.5px]');
+    expect(label.classList).toContain('text-input');
     expect(label.className).not.toMatch(/text-sm/);
   });
 });

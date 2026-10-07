@@ -27,8 +27,9 @@ export interface SelectProps
 }
 
 const base = cx(
-  // The prototype's select.f-input: 13.5px, 8px by 10px, room on the right for the chevron.
-  'nova-field peer block w-full appearance-none rounded-sm py-2 pl-2.5 pr-8 text-[13.5px] text-ink transition-colors',
+  // The prototype's select.f-input: 13.5px, the field inset, room on the right for the chevron, at
+  // h-control-md like TextField and Button.
+  'nova-field peer block h-control-md w-full appearance-none rounded-control pl-field pr-field-icon text-input text-ink transition-colors',
   focusRing,
   'disabled:cursor-not-allowed disabled:opacity-50',
 );
@@ -103,7 +104,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               strokeLinejoin="round"
               aria-hidden="true"
               focusable="false"
-              className="pointer-events-none absolute right-2.5 size-4 text-ink-3 peer-disabled:opacity-50"
+              className="pointer-events-none absolute right-field size-icon-md text-ink-3 peer-disabled:opacity-50"
             >
               <path d="M5 8l5 5 5-5" />
             </svg>

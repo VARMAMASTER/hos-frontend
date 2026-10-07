@@ -32,8 +32,8 @@ export default meta;
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-4">
-      <h2 className="text-[17px] font-bold text-ink">{title}</h2>
+    <section className="flex flex-col gap-s6">
+      <h2 className="text-title font-bold text-ink">{title}</h2>
       {children}
     </section>
   );
@@ -41,9 +41,9 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-[12px] text-ink-3">{label}</p>
-      <div className="flex flex-wrap items-center gap-3">{children}</div>
+    <div className="flex flex-col gap-s3">
+      <p className="text-label text-ink-3">{label}</p>
+      <div className="flex flex-wrap items-center gap-s5">{children}</div>
     </div>
   );
 }
@@ -75,7 +75,7 @@ const SUN =
 function InputChips() {
   const [tags, setTags] = useState(['Cardiology', 'Nephrology', 'Dr Rao']);
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-s3">
       {tags.map((tag) => (
         <Chip
           key={tag}
@@ -88,7 +88,7 @@ function InputChips() {
         </Chip>
       ))}
       {tags.length === 0 ? (
-        <span className="text-[12.5px] text-ink-2">
+        <span className="text-body-sm text-ink-2">
           No referrals. Press Backspace on a focused chip to remove it.
         </span>
       ) : null}
@@ -99,7 +99,7 @@ function InputChips() {
 function SelectableChips() {
   const [picked, setPicked] = useState('Medicine');
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-s3">
       {['ICU', 'Medicine', 'Surgery'].map((ward) => (
         <button
           key={ward}
@@ -121,7 +121,7 @@ function WardFilters({ label }: { label: string }) {
   const wards = ['ICU', 'Medicine', 'Surgery', 'Paediatrics'];
   const [active, setActive] = useState(['ICU']);
   return (
-    <div role="group" aria-label={label} className="flex flex-wrap gap-2">
+    <div role="group" aria-label={label} className="flex flex-wrap gap-s3">
       {wards.map((ward) => (
         <FilterChip
           key={ward}
@@ -144,7 +144,7 @@ function Groups() {
   const [view, setView] = useState('list');
   const [shifts, setShifts] = useState(['day']);
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-s8">
       <Row label="Single select: radio group, roving tabindex, arrow keys. The fill slides; corners morph.">
         <ButtonGroup aria-label="Bed view" value={view} onValueChange={setView}>
           <ButtonGroupItem value="list" icon={<Glyph d={LIST} />}>
@@ -157,7 +157,7 @@ function Groups() {
             Floor map
           </ButtonGroupItem>
         </ButtonGroup>
-        <span className="text-[12.5px] text-ink-2" aria-live="polite">
+        <span className="text-body-sm text-ink-2" aria-live="polite">
           Showing the {view === 'map' ? 'floor map' : view}.
         </span>
       </Row>
@@ -219,7 +219,7 @@ function Groups() {
 function Cards() {
   const [needs, setNeeds] = useState(['oxygen']);
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-s8">
       <ChoiceCardGroup
         legend="Admission type"
         name="cards-admission"
@@ -283,7 +283,7 @@ function ClinicalForm() {
         title="Admit Ramesh Kumar"
         description="UHID 20-4471 · 58 years · Male"
       />
-      <CardBody className="flex flex-col gap-6">
+      <CardBody className="flex flex-col gap-s8">
         <ChoiceCardGroup
           legend="Admission type"
           name="form-admission"
@@ -311,9 +311,9 @@ function ClinicalForm() {
           />
         </ChoiceCardGroup>
 
-        <div className="flex flex-col gap-2">
-          <p className="text-[13px] font-semibold text-ink">Wards to search</p>
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col gap-s3">
+          <p className="text-control font-semibold text-ink">Wards to search</p>
+          <div className="flex flex-wrap items-center gap-s3">
             <Checkbox
               label="All wards"
               checked={wards.length === allWards.length}
@@ -323,7 +323,11 @@ function ClinicalForm() {
               }
             />
           </div>
-          <div role="group" aria-label="Wards" className="flex flex-wrap gap-2">
+          <div
+            role="group"
+            aria-label="Wards"
+            className="flex flex-wrap gap-s3"
+          >
             {allWards.map((ward) => (
               <FilterChip
                 key={ward}
@@ -340,9 +344,11 @@ function ClinicalForm() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="text-[13px] font-semibold text-ink">Bed list</span>
+        <div className="flex flex-wrap items-center justify-between gap-s6">
+          <div className="flex items-center gap-s5">
+            <span className="text-control font-semibold text-ink">
+              Bed list
+            </span>
             <ButtonGroup
               aria-label="Bed list view"
               size="sm"
@@ -364,7 +370,7 @@ function ClinicalForm() {
           />
         </div>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-s3">
           <Button variant="ghost">Cancel</Button>
           <Button>Admit patient</Button>
         </div>
@@ -375,7 +381,7 @@ function ClinicalForm() {
 
 export const Choices: StoryObj = {
   render: () => (
-    <div className="flex max-w-5xl flex-col gap-10 p-8">
+    <div className="flex max-w-5xl flex-col gap-s9 p-s9">
       <Section title="Chip">
         <Row label="Status tones: soft and deep pairs, always a word">
           <Chip>Pending</Chip>
@@ -434,7 +440,7 @@ export const Choices: StoryObj = {
       </Section>
 
       <Section title="Checkbox, radio and switch">
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-s8 md:grid-cols-3">
           <Row label="Checkbox: the tick draws in">
             <Checkbox label="Unchecked" />
             <Checkbox label="Checked" defaultChecked />

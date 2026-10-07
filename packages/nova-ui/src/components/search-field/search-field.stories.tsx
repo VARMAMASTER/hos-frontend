@@ -3,7 +3,7 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { SearchField } from './search-field';
 
 const onChrome: Decorator = (Story) => (
-  <div className="nova-chrome max-w-md rounded-lg p-4">
+  <div className="nova-chrome max-w-md rounded-overlay p-s6">
     <Story />
   </div>
 );
@@ -30,7 +30,7 @@ function SearchIcon() {
       stroke="currentColor"
       strokeWidth="1.6"
       strokeLinecap="round"
-      className="size-4"
+      className="size-icon-md"
     >
       <circle cx="9" cy="9" r="5" />
       <path d="m13 13 3.5 3.5" />
@@ -55,14 +55,14 @@ export const Disabled: Story = {
 function LiveSearch() {
   const [value, setValue] = useState('');
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-s5">
       <SearchField
         label="Search patients"
         icon={<SearchIcon />}
         placeholder="Type to search"
         onValueChange={setValue}
       />
-      <p className="text-[13px] text-[color:var(--nova-chrome-ink-2)]">
+      <p className="text-control text-[color:var(--nova-chrome-ink-2)]">
         onValueChange received: {value === '' ? 'nothing yet' : `"${value}"`}
       </p>
     </div>
