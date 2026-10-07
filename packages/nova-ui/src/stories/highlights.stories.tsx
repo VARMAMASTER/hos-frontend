@@ -55,7 +55,7 @@ function Section({
   return (
     <Card>
       <CardHeader title={title} description={note} headingLevel={3} />
-      <CardBody className="flex flex-col gap-4">{children}</CardBody>
+      <CardBody className="flex flex-col gap-s6">{children}</CardBody>
     </Card>
   );
 }
@@ -64,7 +64,7 @@ function Section({
 // highlight is the second accent beside it, and no ordinary button carries a gradient.
 function Showcase() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-s6">
       <HeroBand
         title="Highlights"
         description="The hero's glow stop is this hospital's highlight; white text holds 4.5:1 across it."
@@ -80,7 +80,7 @@ function Showcase() {
       <Banner tone="highlight" title="New in this release">
         Discharge summaries now draft themselves from the ward round notes.
       </Banner>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-s6 md:grid-cols-3">
         <KpiTile
           highlight
           label="Collections today"
@@ -97,7 +97,7 @@ function Showcase() {
           valueText="42 of 60"
         />
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-s6 lg:grid-cols-2">
         <Section
           title="Tabs and choices"
           note="The active tab's underline, a selected segment, a chosen card"
@@ -108,13 +108,16 @@ function Showcase() {
               <Tab value="claims">Claims</Tab>
               <Tab value="notes">Notes</Tab>
             </TabList>
-            <TabPanel value="overview" className="pt-3 text-[13px] text-ink-2">
+            <TabPanel
+              value="overview"
+              className="pt-s5 text-control text-ink-2"
+            >
               Overview
             </TabPanel>
-            <TabPanel value="claims" className="pt-3 text-[13px] text-ink-2">
+            <TabPanel value="claims" className="pt-s5 text-control text-ink-2">
               Two claims are waiting on the insurer.
             </TabPanel>
-            <TabPanel value="notes" className="pt-3 text-[13px] text-ink-2">
+            <TabPanel value="notes" className="pt-s5 text-control text-ink-2">
               Notes
             </TabPanel>
           </Tabs>
@@ -155,7 +158,7 @@ function Showcase() {
           title="Chips, tags and people"
           note="A star marker, never colour alone"
         >
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-s3">
             <Chip tone="highlight">New</Chip>
             <Chip tone="highlight">Featured clinic</Chip>
             <Chip tone="info">Info stays a status</Chip>
@@ -164,16 +167,16 @@ function Showcase() {
               Pilot
             </Tag>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-s6">
             <Avatar name="Dr. Meera Iyer" highlight highlightLabel="On call" />
             <Avatar name="Asha Rao" />
-            <span className="text-[13px] text-ink-2">
+            <span className="text-control text-ink-2">
               The ringed clinician is on call (announced as "On call").
             </span>
           </div>
         </Section>
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-s6 lg:grid-cols-2">
         <Section
           title="Data"
           note="A selected row's rail, the sorted column's marker"
@@ -240,7 +243,7 @@ function Showcase() {
 // Follows the toolbar: switch the hospital theme, the material and the scheme.
 export const Highlights: StoryObj = {
   render: () => (
-    <div className="p-2">
+    <div className="p-s3">
       <Showcase />
     </div>
   ),
@@ -250,9 +253,9 @@ export const Highlights: StoryObj = {
 // says.
 function Strip() {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-s5">
       <Banner tone="highlight" title="New in this release" />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-s5">
         <KpiTile highlight label="Collections" value="₹4.2L" />
         <StatGauge label="Occupied" value={42} max={60} valueText="42 of 60" />
       </div>
@@ -262,7 +265,7 @@ function Strip() {
           <Tab value="claims">Claims</Tab>
         </TabList>
       </Tabs>
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-s3">
         <Chip tone="highlight">New</Chip>
         <Tag tone="highlight">Beta</Tag>
         <Avatar name="Asha Rao" size="sm" highlight />
@@ -278,16 +281,16 @@ function Strip() {
 export const EveryPreset: StoryObj = {
   name: 'Every preset, light and dark',
   render: () => (
-    <div className="grid gap-4 p-2 lg:grid-cols-2">
+    <div className="grid gap-s6 p-s3 lg:grid-cols-2">
       {Object.values(EXAMPLE_THEMES).flatMap((theme) =>
         (['light', 'dark'] as const).map((scheme) => (
           <NovaThemeProvider
             key={`${theme.name}-${scheme}`}
             theme={theme}
             scheme={scheme}
-            className="nova-canvas flex flex-col gap-3 rounded-lg p-4 text-ink"
+            className="nova-canvas flex flex-col gap-s5 rounded-overlay p-s6 text-ink"
           >
-            <p className="text-[13px] font-semibold">
+            <p className="text-control font-semibold">
               {theme.name}, {scheme}
             </p>
             <Strip />

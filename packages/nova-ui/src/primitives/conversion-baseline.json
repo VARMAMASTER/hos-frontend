@@ -106,16 +106,8 @@
   "stories/ai-trust.stories.tsx": 16,
   "stories/ai-voice.stories.tsx": 5,
   "stories/ai-workforce.stories.tsx": 12,
-  "stories/app-shell.stories.tsx": 18,
   "stories/catalog.stories.tsx": 12,
   "stories/choices.stories.tsx": 24,
   "stories/core-controls.stories.tsx": 41,
-  "stories/dashboard.stories.tsx": 3,
-  "stories/forms.stories.tsx": 2,
-  "stories/highlights.stories.tsx": 24,
-  "stories/materials.stories.tsx": 22,
-  "stories/patient-record.stories.tsx": 11,
-  "stories/theme-preview.stories.tsx": 13,
-  "stories/themes.stories.tsx": 18,
-  "stories/ward-board.stories.tsx": 11
+  "stories/forms.stories.tsx": 2
 }
