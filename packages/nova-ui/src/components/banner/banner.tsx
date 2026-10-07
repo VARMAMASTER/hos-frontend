@@ -60,7 +60,7 @@ export function Banner({
       data-tone={tone}
       className={cx(
         // The prototype's .banner: 13px at 500, 10px by 16px, radius md, 10px between its parts.
-        'flex items-center gap-2.5 rounded-md px-4 py-2.5 text-[13px] font-medium',
+        'flex items-center gap-s4 rounded-card px-row py-row-comfortable text-control font-medium',
         tones[tone],
         className,
       )}
@@ -69,7 +69,7 @@ export function Banner({
       <ToneIcon tone={tone} />
       <div className="min-w-0 flex-1">
         <p className="font-semibold">{title}</p>
-        {children ? <div className="mt-0.5">{children}</div> : null}
+        {children ? <div className="mt-s0">{children}</div> : null}
       </div>
       {action ? <div className="shrink-0 self-center">{action}</div> : null}
       {onDismiss ? (
@@ -78,7 +78,7 @@ export function Banner({
           aria-label={dismissLabel}
           onClick={() => onDismiss()}
           className={cx(
-            '-my-1 -mr-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-surface/60',
+            '-my-s1 -mr-s1 inline-flex size-s9 shrink-0 items-center justify-center rounded-card transition-colors hover:bg-surface/60',
             focusRing,
           )}
         >
@@ -90,7 +90,7 @@ export function Banner({
             strokeLinecap="round"
             aria-hidden="true"
             focusable="false"
-            className="h-4 w-4"
+            className="size-icon-md"
           >
             <path d="M5 5l10 10M15 5L5 15" />
           </svg>
@@ -103,7 +103,7 @@ export function Banner({
 // A different shape per tone (circle-i, circle-tick, triangle, octagon, the AI spark, the highlight
 // star), so the tone never depends on colour alone.
 function ToneIcon({ tone }: { tone: BannerTone }) {
-  if (tone === 'highlight') return <HighlightMark className="size-4" />;
+  if (tone === 'highlight') return <HighlightMark className="size-icon-md" />;
   return (
     <svg
       viewBox="0 0 20 20"
@@ -114,7 +114,7 @@ function ToneIcon({ tone }: { tone: BannerTone }) {
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
-      className="size-4 shrink-0"
+      className="size-icon-md shrink-0"
     >
       {tone === 'info' ? (
         <>

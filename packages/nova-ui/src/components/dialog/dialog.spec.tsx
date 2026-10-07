@@ -170,10 +170,10 @@ describe('Dialog semantics', () => {
   it('is md wide by default and 280px wide at size sm, never both', () => {
     render(<Dialog open onClose={() => undefined} title="Hi" />);
     expect(dialog().classList).toContain('max-w-lg');
-    expect(dialog().classList).not.toContain('max-w-[280px]');
+    expect(dialog().classList).not.toContain('max-w-dialog-sm');
     cleanup();
     render(<Dialog open onClose={() => undefined} title="Hi" size="sm" />);
-    expect(dialog().classList).toContain('max-w-[280px]');
+    expect(dialog().classList).toContain('max-w-dialog-sm');
     expect(dialog().classList).not.toContain('max-w-lg');
   });
 

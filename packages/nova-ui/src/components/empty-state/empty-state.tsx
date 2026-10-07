@@ -27,23 +27,23 @@ export function EmptyState({
   return (
     <Card
       className={cx(
-        'flex flex-col items-center gap-3 px-6 py-12 text-center',
+        'flex flex-col items-center gap-s5 px-s8 py-s10 text-center',
         className,
       )}
       {...rest}
     >
       {icon ? (
-        <div aria-hidden="true" className="text-ink-3 [&_svg]:size-10">
+        <div aria-hidden="true" className="text-ink-3 [&_svg]:size-empty-icon">
           {icon}
         </div>
       ) : null}
-      <Heading className="font-display text-[17px] font-semibold tracking-h2 text-ink">
+      <Heading className="font-display text-title font-semibold tracking-h2 text-ink">
         {title}
       </Heading>
       {description ? (
-        <p className="max-w-80 text-[13px] text-ink-2">{description}</p>
+        <p className="max-w-xs text-control text-ink-2">{description}</p>
       ) : null}
-      {action ? <div className="mt-2">{action}</div> : null}
+      {action ? <div className="mt-s3">{action}</div> : null}
     </Card>
   );
 }
