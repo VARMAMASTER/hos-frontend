@@ -2,18 +2,16 @@
 // Nova's component rules, enforced. Components are composed from tokens and primitives (SOLID:
 // each primitive has one job, components depend on them instead of re-implementing them), so a
 // change to class merging, the focus ring or a surface happens in one place and reaches all of them.
-// The scales they police are the HOS prototype's (os/public/assets/hos.css), from tokens/scale.ts.
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+// The scales are the HOS prototype's (os/public/assets/hos.css), as the design-token layer: every
+// design value is a named token ("TOKENS ONLY" below), and the other rules keep colour, material,
+// shadow, gradient and weight on their tokens too.
+import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { compile } from 'tailwindcss';
 import { describe, expect, it } from 'vitest';
-import {
-  FONT_WEIGHT_UTILITIES,
-  PROTOTYPE_TYPE_SIZES,
-  RADIUS_UTILITIES,
-  SHADOW_UTILITIES,
-  SPACING_STEPS,
-} from '../tokens/scale';
+import { FONT_WEIGHT_UTILITIES, SHADOW_UTILITIES } from '../tokens/scale';
 
 const componentsDir = fileURLToPath(new URL('../components', import.meta.url));
 
@@ -53,69 +51,6 @@ const code = (text: string) =>
 function bare(cls: string): string {
   return cls.slice(cls.lastIndexOf(':') + 1);
 }
-
-// Padding, margin, gap and space utilities, with a numeric, px, auto or arbitrary value, negative
-// margins included. Sizes (h-, w-, size-), insets and translate are not spacing and are not matched.
-const SPACING_UTILITY = new RegExp(
-  CLASS_START +
-    /-?(?:p|px|py|pt|pr|pb|pl|ps|pe|m|mx|my|mt|mr|mb|ml|ms|me|gap|gap-x|gap-y|space-x|space-y)-(?:\[[^\]]*\]|\([^)]*\)|\d+(?:\.\d+)?|px|auto)(?![\w.-])/
-      .source,
-  'g',
-);
-const isMargin = (utility: string) => /^-?m[xytrblse]?-/.test(utility);
-
-function spacingOffences(text: string): string[] {
-  return [...code(text).matchAll(SPACING_UTILITY)]
-    .map((match) => match[0])
-    .filter((utility) => {
-      const step = utility.slice(utility.lastIndexOf('-') + 1);
-      // A negative step names its positive value; auto is only a margin; anything else is arbitrary.
-      if (step === 'auto') return !isMargin(utility);
-      return !SPACING_STEPS.includes(step) || /[[(]/.test(utility);
-    });
-}
-
-// Every rounded-* class must be one of RADIUS_UTILITIES: that leaves out the bare rounded, the stock
-// 2xl / 3xl, the per-side and per-corner forms and arbitrary values.
-const ROUNDED_UTILITY = new RegExp(
-  CLASS_START + /rounded(?:-[^\s'"`),]+)?(?![\w-])/.source,
-  'g',
-);
-const radiusOffences = (text: string): string[] =>
-  [...code(text).matchAll(ROUNDED_UTILITY)]
-    .map((match) => match[0])
-    .filter(
-      (utility) => !(RADIUS_UTILITIES as readonly string[]).includes(utility),
-    );
-
-// A text size is one of the prototype's, written text-[Npx] with N in PROTOTYPE_TYPE_SIZES. Tailwind's
-// stock sizes, the retired Apple ramp, an arbitrary size off the list and a variable size all fail.
-// An arbitrary colour (text-[color:…], text-[var(--…)]) is a colour, not a size.
-const NAMED_TEXT_SIZE = new RegExp(
-  CLASS_START +
-    /(?:[\w-]+:)*text-(?:xs|sm|base|lg|xl|\d+xl|micro|caption|callout|body|headline|title\d)(?![\w-])/
-      .source,
-  'g',
-);
-const ARBITRARY_TEXT_SIZE = new RegExp(
-  CLASS_START +
-    /(?:[\w-]+:)*text-(?:\[(?!color:|#|rgb|hsl|oklch|var\()[^\]]*\]|\(length:[^)]*\))/
-      .source,
-  'g',
-);
-const isPrototypeSize = (utility: string) => {
-  const px = /^text-\[(\d+(?:\.\d+)?)px\]$/.exec(bare(utility));
-  return (
-    px !== null &&
-    (PROTOTYPE_TYPE_SIZES as readonly number[]).includes(Number(px[1]))
-  );
-};
-const typeOffences = (text: string): string[] => [
-  ...[...code(text).matchAll(NAMED_TEXT_SIZE)].map((match) => match[0]),
-  ...[...code(text).matchAll(ARBITRARY_TEXT_SIZE)]
-    .map((match) => match[0])
-    .filter((utility) => !isPrototypeSize(utility)),
-];
 
 // Weights are the prototype's 400 / 500 / 600 / 700, written as FONT_WEIGHT_UTILITIES.
 const WEIGHT_UTILITY = new RegExp(
@@ -336,129 +271,6 @@ describe('component conventions', () => {
       expect(highlightOffences(good), good).toEqual([]);
     }
   });
-
-  // The prototype's sizes (PROTOTYPE_TYPE_SIZES) are the only sizes.
-  it('sizes text only with the prototype sizes, written text-[Npx]', () => {
-    expect(offences(typeOffences)).toEqual([]);
-  });
-
-  // The spacing scale (tokens/scale.ts): every padding, margin and gap is a step of it.
-  it('spaces boxes only on the spacing scale, never an off-scale step or an arbitrary value', () => {
-    expect(offences(spacingOffences)).toEqual([]);
-  });
-
-  // The radius grammar (tokens/scale.ts): sm / md / lg / xl, full for pills and circles, none.
-  it('rounds corners only with the radius grammar, never a per-side form or an arbitrary radius', () => {
-    expect(offences(radiusOffences)).toEqual([]);
-  });
-
-  it('the spacing guard rejects off-scale and arbitrary spacing and accepts the scale', () => {
-    for (const bad of [
-      'p-1.25',
-      'py-3.5',
-      'pl-10',
-      'pr-14',
-      'gap-7',
-      'px-7',
-      '-mt-3.5',
-      'md:gap-x-10',
-      'hover:p-16',
-      '[&>svg]:ms-9',
-      'space-y-16',
-      'p-[13px]',
-      'mx-[var(--x)]',
-      'gap-(--gap)',
-      'py-20',
-    ]) {
-      expect(spacingOffences(`'${bad}'`), bad).toEqual([bare(bad)]);
-    }
-    for (const good of [
-      'p-0',
-      'p-px',
-      'p-0.5',
-      'p-1.5',
-      'py-2.5',
-      'px-3',
-      'py-12',
-      'gap-x-2',
-      'gap-y-1',
-      'gap-1.5',
-      '-mr-2',
-      'sm:px-6',
-      'mx-auto',
-      'mt-auto',
-      'space-y-4',
-      'size-2.5',
-      'h-11',
-      'min-h-16',
-      'pl-4',
-      'top-1.5',
-      'translate-x-5',
-      'text-[11px]',
-      'pointer-events-none',
-      'space-x-reverse',
-    ]) {
-      expect(spacingOffences(`'${good}'`), good).toEqual([]);
-    }
-    // Margins may be auto; paddings and gaps may not.
-    expect(spacingOffences("'p-auto'")).toEqual(['p-auto']);
-  });
-
-  it('the radius guard rejects per-side, per-corner, bare and arbitrary radii and accepts the grammar', () => {
-    for (const bad of [
-      'rounded',
-      'rounded-xs',
-      'rounded-2xl',
-      'rounded-3xl',
-      'rounded-t-lg',
-      'rounded-tl-md',
-      'rounded-s-sm',
-      'rounded-[3px]',
-      'rounded-[inherit]',
-      'hover:rounded-t-xl',
-    ]) {
-      expect(radiusOffences(`'${bad}'`), bad).toEqual([bare(bad)]);
-    }
-    for (const good of RADIUS_UTILITIES) {
-      expect(radiusOffences(`'${good} p-4'`), good).toEqual([]);
-    }
-    expect(radiusOffences("'md:rounded-lg'")).toEqual([]);
-  });
-
-  it('the type guard rejects stock, retired-ramp, off-list and variable sizes and accepts the prototype sizes and text colours', () => {
-    for (const bad of [
-      'text-xs',
-      'text-sm',
-      'text-base',
-      'text-lg',
-      'text-xl',
-      'text-2xl',
-      'md:text-9xl',
-      'text-caption',
-      'text-callout',
-      'text-body',
-      'text-title3',
-      'text-[17.5px]',
-      'text-[1rem]',
-      'text-[length:var(--x)]',
-      'text-(length:--x)',
-      'sm:text-[18px]',
-    ]) {
-      expect(typeOffences(`'${bad}'`).map(bare), bad).toEqual([bare(bad)]);
-    }
-    for (const good of [
-      ...PROTOTYPE_TYPE_SIZES.map((px) => `text-[${px}px]`),
-      'md:text-[13.5px]',
-      'text-ink-2',
-      'text-left',
-      'text-center',
-      'text-primary',
-      'text-[color:var(--nova-chrome-ink-2)]',
-      'text-[var(--nova-sidebar-ink-2)]',
-    ]) {
-      expect(typeOffences(`'${good}'`), good).toEqual([]);
-    }
-  });
 });
 
 // The weights are the prototype's 400 / 500 / 600 / 700 everywhere, stories included.
@@ -541,5 +353,627 @@ describe('the weights', () => {
     }
     expect(weightOffences('{ fontWeight: 500 }')).toEqual([]);
     expect(weightOffences("'font-sans font-mono font-display'")).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------
+// TOKENS ONLY (the owner, 2026-10-06): "each and every component should use the tokens only … even
+// the padding, spacing, radius … so that if we update the tokens, all places where the components
+// are used will change." Every design value a component, story or primitive writes must be a named
+// token from the design-token layer (theme.css "Design tokens"; tokens/design.ts, tokens/scale.ts):
+//
+//   numeric-step   a Tailwind numeric step on a spacing, size, position, edge, type or motion utility
+//                  (p-4, gap-1.5, w-64, h-0.5, top-3, -translate-y-px is fine, border-2, ring-1,
+//                  outline-offset-2, leading-6, duration-150, delay-75). 0, px, auto, full, screen,
+//                  fractions (w-1/2) and intrinsic keywords (min-w-0, w-fit) are not values.
+//   not-a-token    a named value the token layer does not define (rounded-md, max-w-md, text-xs,
+//                  tracking-wider, ease-out, leading-loose): checked by compiling the class against
+//                  the token layer with the conversion bridge removed.
+//   stock-easing   ease-linear | in | out | in-out: transitions take the motion roles only
+//                  (duration-fast | base | slow, ease-spring | standard | emphasized).
+//   arbitrary      any arbitrary value, [..] or (..), on any utility (text-[12px], h-[5px], size-[7px],
+//                  inset-[3px], translate-x-[2px], rounded-[3px], gap-[6px], leading-[1.4],
+//                  tracking-[.04em]), except a token reference (w-[var(--nova-sidebar-rail-w)],
+//                  bg-(--nova-chrome-field), [--nova-data-edge:var(--nova-gradient-edge-kpi)]) and
+//                  three value-free forms: a transition's property list, generated content, and a
+//                  grid template of fr tracks and keywords (grid-cols-[auto_1fr]).
+//   raw-length     a px, rem or em literal outside a class (a style object, a keyframe, a constant).
+//   style-number   a bare number on a length property in a style object (style={{ width: 54 }}).
+//   radius-scale   a Surface radius named by the scale (radius="md"): name the role (radius="card").
+//
+// primitives/conversion-baseline.json lists the files that still break these rules, with how many
+// times. A file not listed must be clean; a listed file must match its count exactly, so converting
+// a file means lowering its count or deleting its entry. When the baseline is empty the guard is
+// absolute and the conversion bridge in theme.css must go.
+// ---------------------------------------------------------------------------------------------------
+
+const srcDir = fileURLToPath(new URL('..', import.meta.url));
+const TOKEN_SCOPES = ['components', 'stories', 'primitives'];
+
+function walk(dir: string): string[] {
+  return readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name);
+    if (statSync(path).isDirectory()) return walk(path);
+    return /\.tsx?$/.test(name) && !/\.spec\.tsx?$/.test(name) ? [path] : [];
+  });
+}
+
+const tokenFiles = TOKEN_SCOPES.flatMap((scope) => walk(join(srcDir, scope)))
+  .map((path) => ({
+    path: path.slice(srcDir.length).replace(/\\/g, '/').replace(/^\//, ''),
+    text: readFileSync(path, 'utf8'),
+  }))
+  .sort((a, b) => a.path.localeCompare(b.path));
+
+// The token layer as Tailwind compiles it, with the conversion bridge cut out: what a component may
+// name once every file is converted.
+const themeCss = readFileSync(join(srcDir, 'styles/theme.css'), 'utf8');
+const BRIDGE =
+  /\/\* ===== Conversion bridge \(begin\) =====[\s\S]*?\/\* ===== Conversion bridge \(end\) ===== \*\//;
+const requireFrom = createRequire(import.meta.url);
+const tailwindDir = dirname(requireFrom.resolve('tailwindcss/package.json'));
+const tokenLayer = await compile(
+  `@import 'tailwindcss';\n${themeCss.replace(BRIDGE, '')}`,
+  {
+    base: srcDir,
+    loadStylesheet: async (id, base) => {
+      const path = id === 'tailwindcss' ? join(tailwindDir, 'index.css') : id;
+      return { path, base, content: readFileSync(path, 'utf8') };
+    },
+  },
+);
+
+// Which of these bare utilities the token layer defines.
+function existing(utilities: readonly string[]): Set<string> {
+  const css = tokenLayer.build([...utilities]);
+  const selector = (utility: string) =>
+    `.${utility.replace(/[^a-zA-Z0-9_-]/g, (c) => `\\${c}`)}`;
+  return new Set(
+    utilities.filter((utility) =>
+      new RegExp(
+        `${selector(utility).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w-])`,
+      ).test(css),
+    ),
+  );
+}
+
+// The utilities whose value is a design value (the longest root wins: rounded-tl before rounded).
+const VALUE_ROOTS = [
+  ...['p', 'px', 'py', 'pt', 'pr', 'pb', 'pl', 'ps', 'pe'],
+  ...['m', 'mx', 'my', 'mt', 'mr', 'mb', 'ml', 'ms', 'me'],
+  ...['gap', 'gap-x', 'gap-y', 'space-x', 'space-y', 'scroll-m', 'scroll-p'],
+  ...['w', 'h', 'size', 'min-w', 'min-h', 'max-w', 'max-h', 'basis', 'indent'],
+  ...['inset', 'inset-x', 'inset-y', 'inset-s', 'inset-e'],
+  ...['top', 'right', 'bottom', 'left', 'start', 'end'],
+  ...['translate', 'translate-x', 'translate-y'],
+  ...['border', 'border-x', 'border-y', 'border-t', 'border-r', 'border-b'],
+  ...['border-l', 'border-s', 'border-e', 'divide-x', 'divide-y'],
+  ...['ring', 'ring-offset', 'outline', 'outline-offset', 'underline-offset'],
+  ...['decoration', 'stroke', 'text', 'leading', 'tracking'],
+  ...['rounded', 'rounded-t', 'rounded-r', 'rounded-b', 'rounded-l'],
+  ...['rounded-s', 'rounded-e', 'rounded-tl', 'rounded-tr', 'rounded-br'],
+  ...['rounded-bl', 'rounded-ss', 'rounded-se', 'rounded-es', 'rounded-ee'],
+  ...['duration', 'delay', 'ease'],
+].sort((a, b) => b.length - a.length);
+
+const BARE_UTILITIES =
+  /^(?:border(?:-[xytrblse])?|ring|outline|rounded(?:-\w+)?)$/;
+const PLACEMENT =
+  /^(?:top|bottom|left|right|start|end)-(?:top|bottom|left|right|start|end|center)(?:-(?:start|end))?$/;
+
+// Arbitrary values that carry no design value: which properties a transition animates, generated
+// content, and a grid template of fr tracks, repeat counts and keywords.
+const VALUE_FREE_ARBITRARY = /^(?:transition|content|will-change)$/;
+const GRID_TEMPLATE = /^(?:grid-cols|grid-rows|col|row|col-span|row-span)$/;
+// Arbitrary properties whose numbers are geometry, not design values: a path drawn with pathLength
+// 1 (stroke-dasharray, stroke-dashoffset), a clip shape in percentages.
+const GEOMETRY_PROPERTIES =
+  /^(?:stroke-dasharray|stroke-dashoffset|clip-path)$/;
+
+// A token reference: var(--x) (with token fallbacks), the (--x) shorthand, either with a type hint.
+function isTokenReference(value: string): boolean {
+  let rest = value.replace(/^\w+(?:-\w+)*:/, '');
+  if (/^--[\w-]+$/.test(rest)) return true;
+  for (let previous = ''; previous !== rest; ) {
+    previous = rest;
+    rest = rest.replace(
+      /var\(--[\w-]+(?:,([^()]*))?\)/g,
+      (_, fallback?: string) => fallback ?? '',
+    );
+  }
+  return rest.replace(/[\s,_]/g, '') === '';
+}
+
+// A class with its variants (hover:, md:, [&_svg]:, data-[state=open]:) and important mark removed.
+function bareUtility(cls: string): string {
+  let depth = 0;
+  let last = 0;
+  for (let i = 0; i < cls.length; i++) {
+    const c = cls[i];
+    if (c === '[' || c === '(') depth++;
+    else if (c === ']' || c === ')') depth--;
+    else if (c === ':' && depth === 0) last = i + 1;
+  }
+  return cls.slice(last).replace(/^!|!$/g, '');
+}
+
+type Rule =
+  | 'numeric-step'
+  | 'not-a-token'
+  | 'stock-easing'
+  | 'arbitrary'
+  | 'raw-length'
+  | 'style-number'
+  | 'radius-scale';
+
+interface Offence {
+  rule: Rule;
+  found: string;
+}
+
+// The string literals in a source file, comments removed.
+const STRING_LITERAL =
+  /'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`/g;
+
+interface ClassCheck {
+  utility: string;
+  needsToken: boolean;
+  offence?: Offence;
+}
+
+// The rule a class breaks, if any; or that it must be checked against the token layer.
+function classify(cls: string): ClassCheck | undefined {
+  const utility = bareUtility(cls);
+  // An arbitrary property: [prop:value].
+  const property = /^\[([a-z-]+|--[\w-]+):(.+)\]$/.exec(utility);
+  if (property) {
+    const [, name = '', value = ''] = property;
+    const allowed =
+      isTokenReference(value) ||
+      !/\d/.test(value.replace(/(?<![\d.])0(?![\d.])/g, '')) ||
+      GEOMETRY_PROPERTIES.test(name);
+    return allowed
+      ? undefined
+      : {
+          utility,
+          needsToken: false,
+          offence: { rule: 'arbitrary', found: cls },
+        };
+  }
+  // A fraction (w-1/2, -translate-x-1/2) is a proportion, not a value.
+  if (/(?:^|-)\d+\/\d+$/.test(utility)) return undefined;
+  const shaped =
+    /^(-?)([a-z][a-z0-9]*(?:-[a-z][a-z0-9]*)*)(?:-(\[[^\]]+\]|\([^)]+\)|[a-z0-9][\w./%-]*))?(?:\/[\w.[\]]+)?$/.exec(
+      utility,
+    );
+  if (!shaped) return undefined;
+  // An arbitrary value on any utility.
+  const arbitrary =
+    /^(-?)([a-z][\w-]*?)-(\[(.+)\]|\((.+)\))(?:\/[\w.[\]]+)?$/.exec(utility);
+  if (arbitrary) {
+    const root = arbitrary[2] ?? '';
+    const value = arbitrary[4] ?? arbitrary[5] ?? '';
+    const allowed =
+      isTokenReference(value) ||
+      (VALUE_FREE_ARBITRARY.test(root) &&
+        (root === 'content' || !/\d/.test(value))) ||
+      (GRID_TEMPLATE.test(root) &&
+        !/\d/.test(
+          value.replace(/\d+(?:\.\d+)?fr\b|repeat\(\d+|minmax\(0,/g, ''),
+        ));
+    return allowed
+      ? undefined
+      : {
+          utility,
+          needsToken: false,
+          offence: { rule: 'arbitrary', found: cls },
+        };
+  }
+  const name = utility.replace(/^-/, '').replace(/\/[\w.[\]]+$/, '');
+  const root = VALUE_ROOTS.find(
+    (candidate) => name === candidate || name.startsWith(`${candidate}-`),
+  );
+  if (root === undefined) return undefined;
+  const value = name === root ? '' : name.slice(root.length + 1);
+  // A bare root is a class only for the edge and corner utilities (border, ring, outline, rounded);
+  // 'p', 'top' or 'text' alone, or a placement such as 'bottom-right', is a word, not a class.
+  if (value === '' && !BARE_UTILITIES.test(root)) return undefined;
+  if (PLACEMENT.test(name)) return undefined;
+  if (/^\d+(?:\.\d+)?$/.test(value) && value !== '0') {
+    return {
+      utility,
+      needsToken: false,
+      offence: { rule: 'numeric-step', found: cls },
+    };
+  }
+  if (root === 'ease' && /^(?:linear|in|out|in-out)$/.test(value)) {
+    return {
+      utility,
+      needsToken: false,
+      offence: { rule: 'stock-easing', found: cls },
+    };
+  }
+  return { utility, needsToken: true };
+}
+
+// Every token-rule offence in one file's source.
+function tokenOffences(text: string): Offence[] {
+  const source = code(text);
+  const checks: Array<{ cls: string; check: ClassCheck }> = [];
+  const offences: Offence[] = [];
+  for (const literal of source.match(STRING_LITERAL) ?? []) {
+    for (const token of literal.slice(1, -1).split(/\s+/)) {
+      if (token === '') continue;
+      const check = classify(token);
+      if (check?.offence) offences.push(check.offence);
+      else if (check?.needsToken) checks.push({ cls: token, check });
+      else if (
+        check === undefined &&
+        /\d(?:\.\d+)?(?:px|rem|em)\b/.test(token)
+      ) {
+        offences.push({ rule: 'raw-length', found: token });
+      }
+    }
+  }
+  const defined = existing([...new Set(checks.map((c) => c.check.utility))]);
+  for (const { cls, check } of checks) {
+    if (!defined.has(check.utility)) {
+      offences.push({ rule: 'not-a-token', found: cls });
+    }
+  }
+  // A bare number on a length property in a style object: React reads it as pixels.
+  for (const style of source.match(/style=\{\{[\s\S]*?\}\}/g) ?? []) {
+    for (const match of style.matchAll(
+      /\b(width|height|min[A-Z]\w*|max[A-Z]\w*|top|left|right|bottom|inset\w*|padding\w*|margin\w*|gap|rowGap|columnGap|fontSize|lineHeight|letterSpacing|borderRadius|border\w*Width|outline\w*|flexBasis)\s*:\s*(-?\d+(?:\.\d+)?)\b(?!\s*[%`'"])/g,
+    )) {
+      if (Number(match[2]) !== 0) {
+        offences.push({ rule: 'style-number', found: match[0] });
+      }
+    }
+  }
+  for (const match of source.matchAll(/\bradius=["'{]{1,2}(sm|md|lg|xl)\b/g)) {
+    offences.push({ rule: 'radius-scale', found: match[0] });
+  }
+  return offences;
+}
+
+const BASELINE_PATH = fileURLToPath(
+  new URL('./conversion-baseline.json', import.meta.url),
+);
+const baseline: Record<string, number> = JSON.parse(
+  readFileSync(BASELINE_PATH, 'utf8'),
+);
+const measured = Object.fromEntries(
+  tokenFiles.map((file) => [file.path, tokenOffences(file.text)]),
+);
+
+// NOVA_TOKEN_REPORT=<file> writes every file's remaining offences, rule and class, as JSON: the
+// work list for converting a family of components.
+const report = process.env['NOVA_TOKEN_REPORT'];
+if (report)
+  writeFileSync(
+    report,
+    `${JSON.stringify(measured, null, 1)}
+`,
+  );
+
+// NOVA_RATCHET_BASELINE=1 rewrites the baseline after a conversion, but only downwards: it lowers
+// counts and deletes converted files, and never adds a file or raises a count (those still fail).
+if (process.env['NOVA_RATCHET_BASELINE'] === '1') {
+  const lowered = Object.fromEntries(
+    Object.entries(baseline)
+      .map(
+        ([path, count]) =>
+          [path, Math.min(count, measured[path]?.length ?? 0)] as const,
+      )
+      .filter(([, count]) => count > 0),
+  );
+  writeFileSync(BASELINE_PATH, `${JSON.stringify(lowered, null, 2)}\n`);
+}
+
+describe('tokens only: every design value is a named token', () => {
+  it('finds the components, stories and primitives it polices', () => {
+    expect(tokenFiles.length).toBeGreaterThan(150);
+    expect(tokenFiles.map((file) => file.path)).toContain(
+      'components/button/button.tsx',
+    );
+  });
+
+  it('holds every file not in the conversion baseline to tokens only', () => {
+    const unlisted = Object.entries(measured)
+      .filter(([path, found]) => found.length > 0 && !(path in baseline))
+      .map(([path, found]) => ({
+        path,
+        offences: found.map((offence) => `${offence.rule}: ${offence.found}`),
+      }));
+    expect(unlisted).toEqual([]);
+  });
+
+  it('keeps each baseline count exact: a converted file lowers its count, a clean file leaves the baseline', () => {
+    const drift = Object.entries(baseline)
+      .filter(([path, count]) => (measured[path]?.length ?? 0) !== count)
+      .map(([path, count]) => {
+        const now = measured[path]?.length ?? 0;
+        const left = (measured[path] ?? [])
+          .map((offence) => `${offence.rule}: ${offence.found}`)
+          .join(', ');
+        return now === 0
+          ? `${path}: clean now, delete its entry`
+          : `${path}: baseline ${count}, now ${now}${now > count ? ' (new offences: convert them)' : ' (lower the count)'}: ${left}`;
+      });
+    expect(drift).toEqual([]);
+  });
+
+  it('lists only files that exist, in path order', () => {
+    const paths = Object.keys(baseline);
+    expect(paths).toEqual([...paths].sort((a, b) => a.localeCompare(b)));
+    for (const path of paths) {
+      expect(measured, path).toHaveProperty([path]);
+    }
+  });
+
+  // The bridge exists only while there is something to convert.
+  it('removes the conversion bridge from theme.css once the baseline is empty', () => {
+    if (Object.keys(baseline).length === 0) {
+      expect(themeCss).not.toMatch(BRIDGE);
+    } else {
+      expect(themeCss).toMatch(BRIDGE);
+    }
+  });
+
+  it('compiles no numeric step, scale radius, container width or stock type without the bridge', () => {
+    const stock = [
+      'p-4',
+      'gap-1.5',
+      'w-64',
+      'h-0.5',
+      'size-3',
+      'top-3',
+      'rounded-md',
+      'rounded-t-lg',
+      'rounded',
+      'max-w-md',
+      'text-xs',
+      'leading-6',
+      'tracking-wider',
+      'ease-out',
+    ];
+    expect([...existing(stock)]).toEqual([]);
+    const tokens = [
+      'p-s5',
+      'gap-s2',
+      'p-0',
+      'p-px',
+      '-mt-px',
+      'mx-auto',
+      'w-full',
+      'w-1/2',
+      'min-w-0',
+      'h-control-md',
+      'min-h-control-sm',
+      'px-control-md',
+      'py-control-sm',
+      'gap-control',
+      'px-field',
+      'pl-field-icon',
+      'left-field',
+      'p-card',
+      'py-card-bar',
+      'gap-card',
+      'p-overlay',
+      'px-chip',
+      'py-chip',
+      'gap-chip',
+      'px-tag',
+      'py-badge',
+      'py-row-compact',
+      'py-row-comfortable',
+      'min-h-touch',
+      'min-w-touch',
+      'size-touch-sm',
+      'size-icon-sm',
+      'size-icon-md',
+      'size-icon-lg',
+      'size-dot',
+      'size-mark',
+      'w-rail',
+      'w-sidebar',
+      'rounded-control',
+      'rounded-card',
+      'rounded-overlay',
+      'rounded-chip',
+      'rounded-pill',
+      'rounded-full',
+      'rounded-none',
+      'rounded-t-card',
+      'text-micro',
+      'text-label',
+      'text-control',
+      'text-kpi',
+      'leading-body',
+      'tracking-h2',
+      'tracking-eyebrow',
+      'border',
+      'border-emphasis',
+      'border-l-rail',
+      'ring-hairline',
+      'ring-emphasis',
+      'outline-focus',
+      'outline-offset-focus',
+      'underline-offset-tight',
+      'duration-base',
+      'ease-standard',
+      'transition-colors',
+    ];
+    expect(tokens.filter((name) => !existing(tokens).has(name))).toEqual([]);
+  });
+
+  // One planted violation per rule, and the forms each rule lets through.
+  const rules = (cls: string) => tokenOffences(`\`${cls}\``).map((o) => o.rule);
+
+  it.each([
+    'p-4',
+    'px-2.5',
+    'gap-1.5',
+    '-mt-1',
+    'md:gap-x-10',
+    'hover:p-6',
+    'space-y-3',
+    'w-64',
+    'h-0.5',
+    'size-3.5',
+    'min-h-11',
+    'max-w-80',
+    'inset-x-4',
+    'top-3',
+    '-translate-y-0.5',
+    'translate-x-5.25',
+    'basis-4',
+    'border-2',
+    'border-l-3',
+    'ring-1',
+    'outline-2',
+    'outline-offset-2',
+    'underline-offset-4',
+    'stroke-2',
+    'leading-6',
+    'duration-150',
+    'delay-75',
+    '[&_svg]:size-4',
+  ])('numeric-step refuses %s', (cls) => {
+    expect(rules(cls)).toEqual(['numeric-step']);
+  });
+
+  it.each([
+    'rounded-md',
+    'rounded-sm',
+    'rounded',
+    'rounded-2xl',
+    'rounded-t-lg',
+    'max-w-md',
+    'max-w-2xl',
+    'text-xs',
+    'text-base',
+    'tracking-wider',
+    'leading-loose',
+    'w-prose-ish',
+  ])('not-a-token refuses %s', (cls) => {
+    expect(rules(cls)).toEqual(['not-a-token']);
+  });
+
+  it.each(['ease-out', 'ease-in', 'ease-in-out', 'ease-linear'])(
+    'stock-easing refuses %s',
+    (cls) => {
+      expect(rules(cls)).toEqual(['stock-easing']);
+    },
+  );
+
+  it.each([
+    'text-[12.5px]',
+    'h-[5px]',
+    'w-[30px]',
+    'size-[7px]',
+    'inset-[3px]',
+    '-inset-[7px]',
+    'top-[3px]',
+    'translate-x-[2px]',
+    'rounded-[3px]',
+    'shadow-[0_1px_2px_black]',
+    'gap-[6px]',
+    'leading-[1.4]',
+    'tracking-[.04em]',
+    'max-h-[70vh]',
+    'w-[88%]',
+    'scale-[0.97]',
+    'z-[60]',
+    'border-[1.5px]',
+    'align-[-0.125em]',
+    'bg-[white]',
+    'w-[var(--nova-sidebar-rail-w,4.25rem)]',
+    'grid-cols-[16rem_minmax(0,1fr)]',
+    '[--nova-ai-angle:45deg]',
+  ])('arbitrary refuses %s', (cls) => {
+    expect(rules(cls)).toEqual(['arbitrary']);
+  });
+
+  it('raw-length refuses a px, rem or em literal outside a class, and style-number a bare length', () => {
+    expect(
+      tokenOffences("{ transform: 'translateY(-3px)' }").map((o) => o.rule),
+    ).toEqual(['raw-length']);
+    expect(
+      tokenOffences("const DESKTOP = '(min-width: 48rem)';").map((o) => o.rule),
+    ).toEqual(['raw-length']);
+    expect(
+      tokenOffences('<div style={{ width: 54, top: 0 }} />').map((o) => o.rule),
+    ).toEqual(['style-number']);
+    expect(
+      tokenOffences('<div style={{ width: `${percent}%`, height }} />'),
+    ).toEqual([]);
+    expect(tokenOffences("'translateX(${box.left}px)'")).toEqual([]);
+  });
+
+  it('radius-scale refuses a Surface radius named by the scale', () => {
+    expect(
+      tokenOffences('<Surface material="card" radius="md" />').map(
+        (o) => o.rule,
+      ),
+    ).toEqual(['radius-scale']);
+    expect(tokenOffences('<Surface material="card" radius="card" />')).toEqual(
+      [],
+    );
+  });
+
+  it.each([
+    'p-s5',
+    'hover:px-s6',
+    'p-0',
+    'p-px',
+    '-mt-px',
+    'mx-auto',
+    'mt-auto',
+    'w-full',
+    'h-screen',
+    'w-1/2',
+    '-translate-x-1/2',
+    'min-w-0',
+    'w-fit',
+    'size-icon-md',
+    '[&_svg]:size-icon-sm',
+    'h-control-md',
+    'px-control-md',
+    'rounded-control',
+    'md:rounded-card',
+    'rounded-full',
+    'text-label',
+    'text-ink-2',
+    'text-left',
+    'text-on-primary/80',
+    'border',
+    'border-border',
+    'border-b-0',
+    'ring-inset',
+    'ring-primary',
+    'outline-none',
+    'duration-base',
+    'motion-safe:ease-standard',
+    'transition-[color,background-color,box-shadow]',
+    "before:content-['✦'_/_'']",
+    'grid-cols-[auto_1fr]',
+    'grid-cols-[auto_repeat(2,max-content)_max-content]',
+    'w-[var(--nova-sidebar-rail-w)]',
+    'bg-(--nova-chrome-field)',
+    'text-[color:var(--nova-chrome-ink-2)]',
+    'focus-visible:outline-[var(--nova-focus-ring,var(--nova-color-primary))]',
+    'hover:[--nova-surface-lift:var(--nova-shadow-md)]',
+    '[--nova-surface-lift:none]',
+    '[stroke-dasharray:1]',
+    'flex-1',
+    'shrink-0',
+    'z-10',
+    'opacity-50',
+    'col-span-2',
+    'grid-cols-3',
+  ])('lets %s through', (cls) => {
+    expect(tokenOffences(`\`${cls}\``)).toEqual([]);
   });
 });

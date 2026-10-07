@@ -6,6 +6,8 @@ import { describe, expect, it } from 'vitest';
 import { createNovaTheme, type NovaTheme } from '../theme/create-theme';
 import { GLASS, MATERIAL_FILLS, MATERIAL_TOKENS } from '../tokens/material';
 import { primitives } from '../tokens/primitives';
+import { NOVA_DESIGN_TOKENS } from '../tokens/design';
+import { RADIUS_ROLES, TYPE_ROLES } from '../tokens/scale';
 import { NOVA_DEFAULTS } from '../tokens/semantic';
 
 const css = readFileSync(
@@ -123,7 +125,7 @@ describe('theme.css utilities', () => {
         'background-color': `var(--nova-${token}-fill)`,
         'backdrop-filter': `var(--nova-${token}-filter)`,
         '-webkit-backdrop-filter': `var(--nova-${token}-filter)`,
-        border: `1px solid var(--nova-${token}-border)`,
+        border: `var(--nova-border-hairline) solid var(--nova-${token}-border)`,
         'box-shadow': `var(--nova-${token}-lift, var(--nova-${token}-shadow))`,
       });
     },
@@ -136,7 +138,8 @@ describe('theme.css utilities', () => {
     // instead of fighting the utility's border shorthand, which a Tailwind border colour loses to.
     expect(card.declarations).toMatchObject({
       'background-color': 'var(--nova-color-surface)',
-      border: '1px solid var(--nova-card-edge, var(--nova-color-border))',
+      border:
+        'var(--nova-border-hairline) solid var(--nova-card-edge, var(--nova-color-border))',
       'box-shadow': 'var(--nova-surface-lift, var(--nova-shadow-sm))',
     });
     expect(JSON.stringify(card)).not.toMatch(
@@ -162,7 +165,9 @@ describe('theme.css utilities', () => {
     (name) => {
       expect(
         utility(name).nested["&[data-selected='true']"]?.declarations,
-      ).toEqual({ border: '2px solid var(--nova-color-primary)' });
+      ).toEqual({
+        border: 'var(--nova-border-emphasis) solid var(--nova-color-primary)',
+      });
     },
   );
 
@@ -174,7 +179,7 @@ describe('theme.css utilities', () => {
     expect(field.declarations).toMatchObject({
       'background-color': 'var(--nova-field-fill, var(--nova-color-surface))',
       border:
-        '1px solid var(--nova-field-edge, var(--nova-color-border-control))',
+        'var(--nova-border-hairline) solid var(--nova-field-edge, var(--nova-color-border-control))',
     });
     expect(field.declarations).not.toHaveProperty('backdrop-filter');
   });
@@ -257,7 +262,8 @@ describe('theme.css utilities', () => {
       expect(chrome().declarations).toMatchObject({
         'backdrop-filter': 'var(--nova-chrome-filter)',
         '-webkit-backdrop-filter': 'var(--nova-chrome-filter)',
-        'border-bottom': '1px solid var(--nova-color-chrome-line)',
+        'border-bottom':
+          'var(--nova-border-hairline) solid var(--nova-color-chrome-line)',
         'box-shadow': 'inset 0 -1px 0 0 rgba(255,255,255,.06)',
       });
     });
@@ -270,7 +276,8 @@ describe('theme.css utilities', () => {
       expect(sidebar().declarations).toMatchObject({
         'background-image': 'var(--nova-grain), var(--nova-gradient-sidebar)',
         'background-blend-mode': 'overlay, screen, normal',
-        'border-right': '1px solid var(--nova-color-chrome-line)',
+        'border-right':
+          'var(--nova-border-hairline) solid var(--nova-color-chrome-line)',
         'box-shadow': 'inset -1px 0 0 rgba(255,255,255,.05)',
         color: 'var(--nova-color-chrome-ink)',
       });
@@ -296,7 +303,8 @@ describe('theme.css utilities', () => {
         'background-image': 'var(--nova-hero-fill)',
         'backdrop-filter': 'var(--nova-hero-filter)',
         '-webkit-backdrop-filter': 'var(--nova-hero-filter)',
-        border: '1px solid var(--nova-color-chrome-line)',
+        border:
+          'var(--nova-border-hairline) solid var(--nova-color-chrome-line)',
         'box-shadow':
           'var(--nova-shadow-glass), inset 0 1px 0 0 rgba(255,255,255,.16)',
         overflow: 'hidden',
@@ -344,7 +352,7 @@ describe('theme.css utilities', () => {
 
     it('rests on the card hairline and --shadow-sm', () => {
       expect(utility('nova-data').declarations).toMatchObject({
-        border: '1px solid var(--nova-color-border)',
+        border: 'var(--nova-border-hairline) solid var(--nova-color-border)',
         'box-shadow': 'var(--nova-data-lift, var(--nova-shadow-sm))',
       });
     });
@@ -354,7 +362,7 @@ describe('theme.css utilities', () => {
         content: "''",
         position: 'absolute',
         inset: '0',
-        padding: '1px',
+        padding: 'var(--nova-border-hairline)',
         'border-radius': 'inherit',
         background: 'var(--nova-data-edge, var(--nova-gradient-edge))',
         '-webkit-mask':
@@ -373,10 +381,10 @@ describe('theme.css utilities', () => {
     it('washes near-white, edges in the AI line with no left border, and pads 16px plus the rail', () => {
       expect(block().declarations).toMatchObject({
         'background-color': 'var(--nova-color-ai-ghost)',
-        border: '1px solid var(--nova-color-ai-line)',
+        border: 'var(--nova-border-hairline) solid var(--nova-color-ai-line)',
         'border-left': 'none',
         padding: 'var(--nova-space-6)',
-        'padding-left': 'calc(var(--nova-space-6) + 3px)',
+        'padding-left': 'calc(var(--nova-space-6) + var(--nova-border-rail))',
         overflow: 'hidden',
       });
     });
@@ -387,7 +395,7 @@ describe('theme.css utilities', () => {
         'background-repeat': 'no-repeat',
         'background-origin': 'border-box',
         'background-position': 'left top',
-        'background-size': '3px 100%',
+        'background-size': 'var(--nova-border-rail) 100%',
       });
     });
 
@@ -437,7 +445,7 @@ describe('theme.css utilities', () => {
     expect(utility('nova-card-head').declarations).toEqual({
       'background-image':
         'linear-gradient(180deg, var(--nova-color-surface-2), var(--nova-color-surface))',
-      'border-radius': 'var(--nova-radius-md) var(--nova-radius-md) 0 0',
+      'border-radius': 'var(--nova-radius-card) var(--nova-radius-card) 0 0',
     });
   });
 
@@ -456,12 +464,12 @@ describe('theme.css utilities', () => {
   it('nova-ai-spark is the prototype spark badge, green once its block is approved', () => {
     const spark = utility('nova-ai-spark');
     expect(spark.declarations).toMatchObject({
-      width: '22px',
-      height: '22px',
+      width: 'var(--nova-mark)',
+      height: 'var(--nova-mark)',
       'border-radius': '7px',
       'background-image': 'var(--nova-ai-mark)',
       color: '#fff',
-      'font-size': '12px',
+      'font-size': 'var(--nova-text-label)',
       'text-shadow': '0 1px 2px rgba(20,10,0,.55), 0 0 3px rgba(20,10,0,.35)',
       'box-shadow':
         '0 1px 4px rgba(60,40,10,.28), inset 0 0 0 1px rgba(255,255,255,.28)',
@@ -482,7 +490,7 @@ describe('theme.css utilities', () => {
       'background-color': 'var(--nova-color-bg)',
       'background-image':
         'linear-gradient(var(--nova-tabbar-tint), var(--nova-tabbar-tint))',
-      border: '1px solid var(--nova-color-border)',
+      border: 'var(--nova-border-hairline) solid var(--nova-color-border)',
     });
     expect(rulesFor(BRAND_SCOPES)[0]?.declarations['--nova-tabbar-tint']).toBe(
       `color-mix(in srgb, var(--nova-color-chrome-2) ${percent(GLASS.tabbarTint)}, transparent)`,
@@ -515,7 +523,7 @@ describe('theme.css utilities', () => {
         'background-repeat': 'no-repeat',
         'background-origin': 'border-box',
         'background-position': 'left top',
-        'background-size': '3px 100%',
+        'background-size': 'var(--nova-border-rail) 100%',
       });
     });
 
@@ -552,7 +560,7 @@ describe('theme.css utilities', () => {
         content: "''",
         position: 'absolute',
         inset: '0',
-        padding: '1px',
+        padding: 'var(--nova-border-hairline)',
         'border-radius': 'inherit',
         background: 'var(--nova-gradient-highlight-edge)',
         '-webkit-mask':
@@ -571,7 +579,7 @@ describe('theme.css utilities', () => {
         content: "''",
         position: 'absolute',
         inset: '-3px',
-        padding: '2px',
+        padding: 'var(--nova-border-emphasis)',
         'border-radius': 'inherit',
         background: 'var(--nova-gradient-highlight-edge)',
         'pointer-events': 'none',
@@ -585,7 +593,7 @@ describe('theme.css utilities', () => {
       'background-repeat': 'no-repeat',
       'background-origin': 'border-box',
       'background-position': 'left top',
-      'background-size': '3px 100%',
+      'background-size': 'var(--nova-border-rail) 100%',
     });
   });
 });
@@ -848,15 +856,38 @@ describe('theme.css named gradients', () => {
 describe('theme.css Tailwind theme mapping', () => {
   const stock = () => block('@theme').declarations;
   const mapped = () => block('@theme inline').declarations;
+  // The design-token names: the @theme inline block that maps the spacing scale.
+  const designBlock = () => {
+    for (
+      let at = source.indexOf('@theme inline');
+      at !== -1;
+      at = source.indexOf('@theme inline', at + 1)
+    ) {
+      const open = source.indexOf('{', at);
+      const body = source.slice(open + 1, closingBrace(source, open));
+      if (body.includes('--spacing-s0')) return parse(body).declarations;
+    }
+    throw new Error('theme.css maps no spacing scale');
+  };
 
-  it('resets the stock shadow, radius and colour scales, so only Nova tokens generate utilities', () => {
+  it('resets every stock scale a design value could come from, so only Nova tokens generate utilities', () => {
     expect(stock()).toMatchObject({
       '--color-*': 'initial',
       '--radius-*': 'initial',
       '--shadow-*': 'initial',
+      '--spacing-*': 'initial',
+      '--container-*': 'initial',
+      '--text-*': 'initial',
+      '--leading-*': 'initial',
+      '--tracking-*': 'initial',
+      '--ease-*': 'initial',
     });
     expect(
-      Object.keys(stock()).filter((name) => /^--shadow-(?!\*)/.test(name)),
+      Object.keys(stock()).filter((name) =>
+        /^--(?:shadow|spacing|radius|container|text|leading|tracking)-(?!\*)/.test(
+          name,
+        ),
+      ),
     ).toEqual([]);
   });
 
@@ -872,19 +903,21 @@ describe('theme.css Tailwind theme mapping', () => {
     );
   });
 
-  it('maps the prototype radii sm / md / lg / xl / full onto the Nova tokens', () => {
-    const radii = Object.entries(mapped()).filter(([name]) =>
+  it('maps the radius roles, and the circle, onto Nova tokens (the scale names live only in the conversion bridge)', () => {
+    const radii = Object.entries(designBlock()).filter(([name]) =>
       name.startsWith('--radius-'),
     );
     expect(radii).toEqual(
-      ['sm', 'md', 'lg', 'xl', 'full'].map((step) => [
-        `--radius-${step}`,
-        `var(--nova-radius-${step})`,
+      [...Object.keys(RADIUS_ROLES), 'full'].map((role) => [
+        `--radius-${role}`,
+        `var(--nova-radius-${role})`,
       ]),
     );
+    expect(
+      Object.keys(mapped()).filter((name) => name.startsWith('--radius-')),
+    ).toEqual([]);
   });
 
-  // Sizes are written text-[Npx] from PROTOTYPE_TYPE_SIZES; there is no named ramp any more.
   // The dark ring that cuts a badge out of the top bar (.tb-ico .tb-dot: 2px solid #221448).
   it('maps the chrome ring colour, so a top-bar badge draws border-chrome-ring', () => {
     expect(mapped()['--color-chrome-ring']).toBe(
@@ -902,10 +935,22 @@ describe('theme.css Tailwind theme mapping', () => {
     });
   });
 
-  it('maps no named text sizes', () => {
+  // The type roles are the only named sizes: text-micro … text-kpi, each with its line height.
+  it('maps every type role, size and line height, and no other text size', () => {
+    const sizes = Object.entries(designBlock()).filter(([name]) =>
+      name.startsWith('--text-'),
+    );
+    expect(sizes).toEqual([
+      ...Object.keys(TYPE_ROLES).flatMap((role) => [
+        [`--text-${role}`, `var(--nova-text-${role})`],
+        [`--text-${role}--line-height`, `var(--nova-text-${role}-leading)`],
+      ]),
+      ['--text-underline-offset-tight', 'var(--nova-underline-offset-tight)'],
+      ['--text-underline-offset-loose', 'var(--nova-underline-offset-loose)'],
+    ]);
     expect(
-      Object.keys({ ...stock(), ...mapped() }).filter((name) =>
-        name.startsWith('--text-'),
+      Object.keys({ ...stock(), ...mapped() }).filter(
+        (name) => name.startsWith('--text-') && name !== '--text-*',
       ),
     ).toEqual([]);
   });
@@ -919,11 +964,23 @@ describe('theme.css Tailwind theme mapping', () => {
     });
   });
 
-  it('carries the prototype heading tracking as tracking-h1 | h2 | h3', () => {
-    expect(stock()).toMatchObject({
-      '--tracking-h1': '-0.015em',
-      '--tracking-h2': '-0.01em',
-      '--tracking-h3': '-0.005em',
+  it('carries the prototype heading tracking as tracking-h1 | h2 | h3, over Nova tokens', () => {
+    expect(designBlock()).toMatchObject({
+      '--tracking-h1': 'var(--nova-tracking-h1)',
+      '--tracking-h2': 'var(--nova-tracking-h2)',
+      '--tracking-h3': 'var(--nova-tracking-h3)',
+    });
+    expect(NOVA_DESIGN_TOKENS).toMatchObject({
+      '--nova-tracking-h1': '-0.015em',
+      '--nova-tracking-h2': '-0.01em',
+      '--nova-tracking-h3': '-0.005em',
+    });
+  });
+
+  it('gives a transition that names no duration or curve the motion tokens', () => {
+    expect(mapped()).toMatchObject({
+      '--default-transition-duration': 'var(--nova-duration-fast)',
+      '--default-transition-timing-function': 'var(--nova-ease-standard)',
     });
   });
 });
@@ -937,8 +994,8 @@ describe('theme.css base rules', () => {
   it('sets the prototype page type on the body: Google Sans Flex, 14px on a 1.55 line', () => {
     expect(block('@layer base').nested['body']?.declarations).toEqual({
       'font-family': 'var(--nova-font-body)',
-      'font-size': '14px',
-      'line-height': '1.55',
+      'font-size': 'var(--nova-text-body)',
+      'line-height': 'var(--nova-leading-body)',
       color: 'var(--nova-color-ink)',
       background: 'var(--nova-color-bg)',
       'font-optical-sizing': 'auto',

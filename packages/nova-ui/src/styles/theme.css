@@ -1,18 +1,22 @@
 /* Nova is the HOS prototype (os/public/assets/hos.css, "HOS Design System v3"): its tokens, shapes and
-   sizes, under Nova's semantic names. The stock Tailwind scales are removed so only the prototype's
-   exist: the palette (a component cannot reach for bg-red-500 instead of a semantic token), the
-   radii (only --r-sm … --r-full) and the shadows (only --shadow-sm | md | lg | glass). */
+   sizes, under Nova's semantic names. Every stock Tailwind scale a design value could come from is
+   removed, so a component can only name a Nova token: the palette (never bg-red-500), the radii,
+   the shadows, the numeric spacing and size steps (p-4, w-64), the container widths (max-w-md), the
+   type sizes, line heights and tracking, and the easings. What replaces them is the design-token
+   layer below ("Design tokens"): the spacing scale (p-s5), type roles (text-label), component
+   dimensions (h-control-md, p-card), radius roles (rounded-control) and motion roles
+   (duration-base, ease-standard). Change a token and every component that names it follows.
+   conventions.spec.ts enforces tokens only; token-reach.spec.tsx proves the reach. */
 @theme {
   --color-*: initial;
   --radius-*: initial;
   --shadow-*: initial;
-  /* Spacing is the 4px unit: p-3 is 12px, p-2.5 is 10px. Only the prototype's --space-* scale is
-     allowed (2, 4, 6, 8, 10, 12, 16, 20, 24, 32, 48 px), which conventions.spec.ts enforces. */
-  --spacing: 4px;
-  /* The prototype's heading tracking (h1, h2, h3). */
-  --tracking-h1: -0.015em;
-  --tracking-h2: -0.01em;
-  --tracking-h3: -0.005em;
+  --spacing-*: initial;
+  --container-*: initial;
+  --text-*: initial;
+  --leading-*: initial;
+  --tracking-*: initial;
+  --ease-*: initial;
   /* Motion is quiet and quick, as in the prototype (120-200ms). Components apply these under
      motion-safe, so prefers-reduced-motion turns them off. */
   --animate-dialog-in: nova-dialog-in 180ms ease-out;
@@ -329,11 +333,6 @@
   --color-chrome-accent: var(--nova-color-chrome-accent);
   --color-chrome-accent-soft: var(--nova-color-chrome-accent-soft);
   --color-chrome-ring: var(--nova-color-chrome-ring);
-  --radius-sm: var(--nova-radius-sm);
-  --radius-md: var(--nova-radius-md);
-  --radius-lg: var(--nova-radius-lg);
-  --radius-xl: var(--nova-radius-xl);
-  --radius-full: var(--nova-radius-full);
   /* The prototype's shadow scale is the only shadow scale: shadow-sm | md | lg | glass. */
   --shadow-sm: var(--nova-shadow-sm);
   --shadow-md: var(--nova-shadow-md);
@@ -344,11 +343,256 @@
   --font-mono: var(--nova-font-mono);
   --default-font-family: var(--nova-font-body);
   --default-mono-font-family: var(--nova-font-mono);
-  /* Motion curves as ease-spring | standard | emphasized (durations are the utilities below). */
+  /* Motion curves as ease-spring | standard | emphasized (durations are the utilities below). A
+     transition that names no duration or curve (transition-colors alone) takes the fast duration on
+     the standard curve, so even the defaults are motion tokens. */
   --ease-spring: var(--nova-ease-spring);
   --ease-standard: var(--nova-ease-standard);
   --ease-emphasized: var(--nova-ease-emphasized);
+  --default-transition-duration: var(--nova-duration-fast);
+  --default-transition-timing-function: var(--nova-ease-standard);
 }
+
+/* ===== Design tokens: the Tailwind names (begin) =====
+   Every design value a component uses, as a utility over a named token (the values are in the
+   "Design tokens" :root block below, and tokens/design.ts mirrors them). The utility names are the
+   API; the token values are the one place to change a look. */
+@theme inline {
+  /* The spacing scale, hos.css --space-0 … --space-10, as p-s0 … p-s10 (and m-, gap-, space-x-, w-,
+     h-, size-, inset-, translate-: every utility on Tailwind's spacing namespace). s0 is 2px, not
+     zero: 0 is p-0, and the 1px hairline is p-px. */
+  --spacing-0: 0px;
+  --spacing-px: 1px;
+  --spacing-s0: var(--nova-space-0);
+  --spacing-s1: var(--nova-space-1);
+  --spacing-s2: var(--nova-space-2);
+  --spacing-s3: var(--nova-space-3);
+  --spacing-s4: var(--nova-space-4);
+  --spacing-s5: var(--nova-space-5);
+  --spacing-s6: var(--nova-space-6);
+  --spacing-s7: var(--nova-space-7);
+  --spacing-s8: var(--nova-space-8);
+  --spacing-s9: var(--nova-space-9);
+  --spacing-s10: var(--nova-space-10);
+
+  /* Radius roles. The scale (--nova-radius-sm … xl) stays inside the token layer; a component names
+     what the corner belongs to. none is static. */
+  --radius-control: var(--nova-radius-control);
+  --radius-card: var(--nova-radius-card);
+  --radius-overlay: var(--nova-radius-overlay);
+  --radius-hero: var(--nova-radius-hero);
+  --radius-chip: var(--nova-radius-chip);
+  --radius-tag: var(--nova-radius-tag);
+  --radius-pill: var(--nova-radius-pill);
+  --radius-full: var(--nova-radius-full);
+
+  /* Type roles: a size and its line height, by where hos.css uses each size (tokens/scale.ts
+     TYPE_ROLES names the rule each comes from). */
+  --text-micro: var(--nova-text-micro);
+  --text-micro--line-height: var(--nova-text-micro-leading);
+  --text-badge: var(--nova-text-badge);
+  --text-badge--line-height: var(--nova-text-badge-leading);
+  --text-overline: var(--nova-text-overline);
+  --text-overline--line-height: var(--nova-text-overline-leading);
+  --text-meta: var(--nova-text-meta);
+  --text-meta--line-height: var(--nova-text-meta-leading);
+  --text-caption: var(--nova-text-caption);
+  --text-caption--line-height: var(--nova-text-caption-leading);
+  --text-label: var(--nova-text-label);
+  --text-label--line-height: var(--nova-text-label-leading);
+  --text-body-sm: var(--nova-text-body-sm);
+  --text-body-sm--line-height: var(--nova-text-body-sm-leading);
+  --text-control: var(--nova-text-control);
+  --text-control--line-height: var(--nova-text-control-leading);
+  --text-input: var(--nova-text-input);
+  --text-input--line-height: var(--nova-text-input-leading);
+  --text-body: var(--nova-text-body);
+  --text-body--line-height: var(--nova-text-body-leading);
+  --text-lead: var(--nova-text-lead);
+  --text-lead--line-height: var(--nova-text-lead-leading);
+  --text-subtitle: var(--nova-text-subtitle);
+  --text-subtitle--line-height: var(--nova-text-subtitle-leading);
+  --text-title: var(--nova-text-title);
+  --text-title--line-height: var(--nova-text-title-leading);
+  --text-headline: var(--nova-text-headline);
+  --text-headline--line-height: var(--nova-text-headline-leading);
+  --text-display: var(--nova-text-display);
+  --text-display--line-height: var(--nova-text-display-leading);
+  --text-kpi: var(--nova-text-kpi);
+  --text-kpi--line-height: var(--nova-text-kpi-leading);
+
+  /* Line heights and letter-spacing, by role. */
+  --leading-none: var(--nova-leading-none);
+  --leading-tight: var(--nova-leading-tight);
+  --leading-snug: var(--nova-leading-snug);
+  --leading-normal: var(--nova-leading-normal);
+  --leading-body: var(--nova-leading-body);
+  --leading-relaxed: var(--nova-leading-relaxed);
+  --tracking-h1: var(--nova-tracking-h1);
+  --tracking-h2: var(--nova-tracking-h2);
+  --tracking-h3: var(--nova-tracking-h3);
+  --tracking-normal: var(--nova-tracking-normal);
+  --tracking-initials: var(--nova-tracking-initials);
+  --tracking-label: var(--nova-tracking-label);
+  --tracking-caps: var(--nova-tracking-caps);
+  --tracking-eyebrow: var(--nova-tracking-eyebrow);
+  --tracking-group: var(--nova-tracking-group);
+
+  /* Controls (Button, TextField, Select, Textarea, SearchField, a Tabs trigger, FilterChip, a
+     ButtonGroup segment) share one height per size: h-control-sm | md, min-h-control-sm | md. Their
+     paddings are the px-control-* / py-control-* utilities below; a field's own inset is px-field. */
+  --height-control-sm: var(--nova-control-h-sm);
+  --height-control-md: var(--nova-control-h-md);
+  --gap-control: var(--nova-control-gap);
+  --padding-field: var(--nova-field-px);
+  --padding-field-icon: var(--nova-field-icon-inset);
+  --inset-field: var(--nova-field-px);
+
+  /* Cards, panels and chips. */
+  --padding-card: var(--nova-card-p);
+  --gap-card: var(--nova-card-gap);
+  --gap-chip: var(--nova-chip-gap);
+
+  /* Targets, icons, dots and marks. */
+  --height-touch: var(--nova-touch);
+  --width-touch: var(--nova-touch);
+  --min-width-touch: var(--nova-touch);
+  --size-touch: var(--nova-touch);
+  --size-touch-sm: var(--nova-touch-sm);
+  --size-icon-xs: var(--nova-icon-xs);
+  --size-icon-sm: var(--nova-icon-sm);
+  --size-icon-tile: var(--nova-icon-tile);
+  --size-icon-md: var(--nova-icon-md);
+  --size-icon-lg: var(--nova-icon-lg);
+  --size-dot-sm: var(--nova-dot-sm);
+  --size-dot: var(--nova-dot);
+  --size-mark: var(--nova-mark);
+  --size-tile: var(--nova-tile);
+  --size-spinner: var(--nova-spinner);
+
+  /* The app frame. */
+  --width-sidebar: var(--nova-sidebar-w);
+  --width-rail: var(--nova-sidebar-rail-w);
+
+  /* Edges: the 1px hairline is plain border; emphasis is a selected edge, rail an accent rail. */
+  --border-width-emphasis: var(--nova-border-emphasis);
+  --border-width-rail: var(--nova-border-rail);
+  --ring-width-hairline: var(--nova-border-hairline);
+  --ring-width-emphasis: var(--nova-border-emphasis);
+  --outline-width-focus: var(--nova-focus-width);
+  --outline-offset-focus: var(--nova-focus-offset);
+  --text-underline-offset-tight: var(--nova-underline-offset-tight);
+  --text-underline-offset-loose: var(--nova-underline-offset-loose);
+}
+
+/* The paddings that differ by axis, so each is its own utility over its own token. */
+@utility px-control-sm {
+  padding-inline: var(--nova-control-px-sm);
+}
+
+@utility py-control-sm {
+  padding-block: var(--nova-control-py-sm);
+}
+
+@utility px-control-md {
+  padding-inline: var(--nova-control-px-md);
+}
+
+@utility py-control-md {
+  padding-block: var(--nova-control-py-md);
+}
+
+@utility py-card-bar {
+  padding-block: var(--nova-card-bar-py);
+}
+
+@utility p-overlay {
+  padding: var(--nova-overlay-py) var(--nova-overlay-px);
+}
+
+@utility px-overlay {
+  padding-inline: var(--nova-overlay-px);
+}
+
+@utility py-overlay {
+  padding-block: var(--nova-overlay-py);
+}
+
+@utility py-overlay-bar {
+  padding-block: var(--nova-overlay-bar-py);
+}
+
+@utility px-chip {
+  padding-inline: var(--nova-chip-px);
+}
+
+@utility py-chip {
+  padding-block: var(--nova-chip-py);
+}
+
+@utility px-tag {
+  padding-inline: var(--nova-tag-px);
+}
+
+@utility py-tag {
+  padding-block: var(--nova-tag-py);
+}
+
+@utility px-badge {
+  padding-inline: var(--nova-badge-px);
+}
+
+@utility py-badge {
+  padding-block: var(--nova-badge-py);
+}
+
+@utility px-row {
+  padding-inline: var(--nova-row-px);
+}
+
+@utility py-row-comfortable {
+  padding-block: var(--nova-row-py-comfortable);
+}
+
+@utility py-row-compact {
+  padding-block: var(--nova-row-py-compact);
+}
+/* ===== Design tokens: the Tailwind names (end) ===== */
+
+/* ===== Conversion bridge (begin) =====
+   TEMPORARY. Tailwind's numeric spacing steps (p-4), the radius scale names (rounded-md), the
+   container widths (max-w-md) and the stock tracking and easings that components not yet converted
+   to tokens still use. conventions.spec.ts already refuses all of them in any file that is not in
+   primitives/conversion-baseline.json, and checks every class against the token layer with this
+   bridge removed. When the baseline is empty, delete this block (the guard then requires it). */
+@theme {
+  --spacing: 4px;
+  --container-3xs: 16rem;
+  --container-2xs: 18rem;
+  --container-xs: 20rem;
+  --container-sm: 24rem;
+  --container-md: 28rem;
+  --container-lg: 32rem;
+  --container-xl: 36rem;
+  --container-2xl: 42rem;
+  --container-3xl: 48rem;
+  --container-4xl: 56rem;
+  --container-5xl: 64rem;
+  --container-6xl: 72rem;
+  --container-7xl: 80rem;
+  --tracking-wider: 0.05em;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@theme inline {
+  --radius-sm: var(--nova-radius-sm);
+  --radius-md: var(--nova-radius-md);
+  --radius-lg: var(--nova-radius-lg);
+  --radius-xl: var(--nova-radius-xl);
+}
+/* ===== Conversion bridge (end) ===== */
 
 /* Motion durations as duration-fast | base | slow. Tailwind has no duration namespace in @theme, so
    each is a utility over its token. Components apply them under motion-safe. */
@@ -457,6 +701,7 @@
   --nova-shadow-lg: 0 4px 8px -2px hsl(var(--nova-shadow-hue) / .07), 0 12px 24px -6px hsl(var(--nova-shadow-hue) / .11), 0 28px 48px -14px hsl(var(--nova-shadow-hue) / .14);
   --nova-shadow-glass: 0 8px 24px -8px hsl(var(--nova-shadow-hue) / .45), 0 2px 10px hsl(var(--nova-shadow-hue) / .28);
   --nova-sidebar-w: 248px;
+  --nova-sidebar-rail-w: 68px;
   --nova-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --nova-ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --nova-ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
@@ -467,6 +712,123 @@
   --nova-font-body: "Google Sans Flex", system-ui, -apple-system, sans-serif;
   --nova-font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
 }
+
+/* ===== Design tokens (begin) =====
+   The design-token layer's values (tokens/design.ts NOVA_DESIGN_TOKENS; design.spec.ts compares the
+   two): the type roles, line heights, tracking, radius roles and component dimensions behind the
+   utilities in "Design tokens: the Tailwind names". A component token points at the scale wherever
+   the prototype's value sits on it, so editing --nova-space-* moves the controls, cards and chips
+   too. Declared on :root, so override a scale token on :root (or re-declare the component tokens
+   where you override it): a var() inside a custom property resolves where it is declared. */
+:root {
+  --nova-text-micro: 9.5px;
+  --nova-text-micro-leading: var(--nova-leading-body);
+  --nova-text-badge: 10px;
+  --nova-text-badge-leading: var(--nova-leading-body);
+  --nova-text-overline: 10.5px;
+  --nova-text-overline-leading: var(--nova-leading-body);
+  --nova-text-meta: 11px;
+  --nova-text-meta-leading: var(--nova-leading-body);
+  --nova-text-caption: 11.5px;
+  --nova-text-caption-leading: var(--nova-leading-body);
+  --nova-text-label: 12px;
+  --nova-text-label-leading: var(--nova-leading-body);
+  --nova-text-body-sm: 12.5px;
+  --nova-text-body-sm-leading: var(--nova-leading-body);
+  --nova-text-control: 13px;
+  --nova-text-control-leading: var(--nova-leading-body);
+  --nova-text-input: 13.5px;
+  --nova-text-input-leading: var(--nova-leading-body);
+  --nova-text-body: 14px;
+  --nova-text-body-leading: var(--nova-leading-body);
+  --nova-text-lead: 15px;
+  --nova-text-lead-leading: var(--nova-leading-body);
+  --nova-text-subtitle: 16px;
+  --nova-text-subtitle-leading: var(--nova-leading-body);
+  --nova-text-title: 17px;
+  --nova-text-title-leading: var(--nova-leading-body);
+  --nova-text-headline: 20px;
+  --nova-text-headline-leading: var(--nova-leading-body);
+  --nova-text-display: 23px;
+  --nova-text-display-leading: var(--nova-leading-body);
+  --nova-text-kpi: 26px;
+  --nova-text-kpi-leading: var(--nova-leading-body);
+  --nova-leading-none: 1;
+  --nova-leading-tight: 1.3;
+  --nova-leading-snug: 1.4;
+  --nova-leading-normal: 1.45;
+  --nova-leading-body: 1.55;
+  --nova-leading-relaxed: 1.62;
+  --nova-tracking-h1: -0.015em;
+  --nova-tracking-h2: -0.01em;
+  --nova-tracking-h3: -0.005em;
+  --nova-tracking-normal: 0em;
+  --nova-tracking-initials: 0.01em;
+  --nova-tracking-label: 0.04em;
+  --nova-tracking-caps: 0.06em;
+  --nova-tracking-eyebrow: 0.08em;
+  --nova-tracking-group: 0.09em;
+  --nova-radius-control: var(--nova-radius-sm);
+  --nova-radius-card: var(--nova-radius-md);
+  --nova-radius-overlay: var(--nova-radius-lg);
+  --nova-radius-hero: var(--nova-radius-xl);
+  --nova-radius-chip: var(--nova-radius-full);
+  --nova-radius-tag: var(--nova-radius-sm);
+  --nova-radius-pill: var(--nova-radius-full);
+  --nova-border-hairline: 1px;
+  --nova-border-emphasis: 2px;
+  --nova-border-rail: 3px;
+  --nova-focus-width: var(--nova-border-emphasis);
+  --nova-focus-offset: var(--nova-space-0);
+  --nova-control-py-sm: var(--nova-space-2);
+  --nova-control-px-sm: var(--nova-space-4);
+  --nova-control-py-md: var(--nova-space-3);
+  --nova-control-px-md: var(--nova-space-6);
+  --nova-control-gap: var(--nova-space-3);
+  --nova-control-h-sm: calc(
+    var(--nova-control-py-sm) * 2 + var(--nova-text-label) *
+      var(--nova-leading-body) + var(--nova-border-hairline) * 2
+  );
+  --nova-control-h-md: calc(
+    var(--nova-control-py-md) * 2 + var(--nova-text-control) *
+      var(--nova-leading-body) + var(--nova-border-hairline) * 2
+  );
+  --nova-field-px: var(--nova-space-4);
+  --nova-field-icon-inset: calc(
+    var(--nova-field-px) + var(--nova-icon-md) + var(--nova-space-2)
+  );
+  --nova-card-p: var(--nova-space-6);
+  --nova-card-bar-py: var(--nova-space-5);
+  --nova-card-gap: var(--nova-space-5);
+  --nova-overlay-px: var(--nova-space-7);
+  --nova-overlay-py: var(--nova-space-6);
+  --nova-overlay-bar-py: var(--nova-space-5);
+  --nova-chip-px: var(--nova-space-3);
+  --nova-chip-py: var(--nova-space-0);
+  --nova-chip-gap: var(--nova-space-2);
+  --nova-tag-px: var(--nova-space-3);
+  --nova-tag-py: var(--nova-space-0);
+  --nova-badge-px: var(--nova-space-2);
+  --nova-badge-py: var(--nova-border-hairline);
+  --nova-row-px: var(--nova-space-6);
+  --nova-row-py-comfortable: var(--nova-space-4);
+  --nova-row-py-compact: var(--nova-space-2);
+  --nova-touch: 44px;
+  --nova-touch-sm: var(--nova-space-8);
+  --nova-icon-xs: var(--nova-space-5);
+  --nova-icon-sm: 14px;
+  --nova-icon-tile: 15px;
+  --nova-icon-md: var(--nova-space-6);
+  --nova-icon-lg: var(--nova-space-7);
+  --nova-dot-sm: 5px;
+  --nova-dot: 7px;
+  --nova-mark: 22px;
+  --nova-tile: var(--nova-space-8);
+  --nova-spinner: 1.1em;
+  --nova-underline-offset-tight: var(--nova-space-0);
+  --nova-underline-offset-loose: var(--nova-space-1);
+}
+/* ===== Design tokens (end) ===== */
 
 /* The scheme: light (the prototype, and the default with no attribute), dark, or system, which
    follows prefers-color-scheme. A scheme is only a color-scheme: every colour that changes with it is
@@ -660,12 +1022,13 @@
 }
 
 /* The prototype's page type: body text 14px on a 1.55 line, in Google Sans Flex with optical sizing,
-   so a component that sets only a size (text-[13px]) gets the prototype's line height with it. */
+   the type role tokens. A role (text-control) sets its size and the same 1.55 line, so text reads
+   as the prototype's inherited line wherever a component sets it. */
 @layer base {
   body {
     font-family: var(--nova-font-body);
-    font-size: 14px;
-    line-height: 1.55;
+    font-size: var(--nova-text-body);
+    line-height: var(--nova-leading-body);
     color: var(--nova-color-ink);
     background: var(--nova-color-bg);
     font-optical-sizing: auto;
@@ -778,12 +1141,13 @@
 @utility nova-card {
   --nova-focus-ring: var(--nova-color-primary);
   background-color: var(--nova-color-surface);
-  border: 1px solid var(--nova-card-edge, var(--nova-color-border));
+  border: var(--nova-border-hairline) solid
+    var(--nova-card-edge, var(--nova-color-border));
   box-shadow: var(--nova-surface-lift, var(--nova-shadow-sm));
 
   /* A selected card or option: the edge upgrades to 2px primary and nothing else changes. */
   &[data-selected='true'] {
-    border: 2px solid var(--nova-color-primary);
+    border: var(--nova-border-emphasis) solid var(--nova-color-primary);
   }
 }
 
@@ -795,7 +1159,7 @@
     var(--nova-color-surface-2),
     var(--nova-color-surface)
   );
-  border-radius: var(--nova-radius-md) var(--nova-radius-md) 0 0;
+  border-radius: var(--nova-radius-card) var(--nova-radius-card) 0 0;
 }
 
 /* A glass panel: the prototype's .glass-panel on glass, the card on solid. */
@@ -804,11 +1168,11 @@
   background-color: var(--nova-surface-fill);
   -webkit-backdrop-filter: var(--nova-surface-filter);
   backdrop-filter: var(--nova-surface-filter);
-  border: 1px solid var(--nova-surface-border);
+  border: var(--nova-border-hairline) solid var(--nova-surface-border);
   box-shadow: var(--nova-surface-lift, var(--nova-surface-shadow));
 
   &[data-selected='true'] {
-    border: 2px solid var(--nova-color-primary);
+    border: var(--nova-border-emphasis) solid var(--nova-color-primary);
   }
 }
 
@@ -818,7 +1182,7 @@
   background-color: var(--nova-overlay-fill);
   -webkit-backdrop-filter: var(--nova-overlay-filter);
   backdrop-filter: var(--nova-overlay-filter);
-  border: 1px solid var(--nova-overlay-border);
+  border: var(--nova-border-hairline) solid var(--nova-overlay-border);
   box-shadow: var(--nova-overlay-lift, var(--nova-overlay-shadow));
 }
 
@@ -830,7 +1194,8 @@
 @utility nova-field {
   --nova-focus-ring: var(--nova-color-primary);
   background-color: var(--nova-field-fill, var(--nova-color-surface));
-  border: 1px solid var(--nova-field-edge, var(--nova-color-border-control));
+  border: var(--nova-border-hairline) solid
+    var(--nova-field-edge, var(--nova-color-border-control));
 
   &:hover:where(:not(:disabled)) {
     --nova-field-edge: var(--nova-color-ink-2);
@@ -865,7 +1230,7 @@
   background-blend-mode: overlay, normal;
   -webkit-backdrop-filter: var(--nova-chrome-filter);
   backdrop-filter: var(--nova-chrome-filter);
-  border-bottom: 1px solid var(--nova-color-chrome-line);
+  border-bottom: var(--nova-border-hairline) solid var(--nova-color-chrome-line);
   box-shadow: inset 0 -1px 0 0 rgba(255,255,255,.06);
   color: #fff;
 }
@@ -881,7 +1246,7 @@
   background-image: var(--nova-grain), var(--nova-gradient-sidebar);
   background-blend-mode: overlay, screen, normal;
   box-shadow: inset -1px 0 0 rgba(255,255,255,.05);
-  border-right: 1px solid var(--nova-color-chrome-line);
+  border-right: var(--nova-border-hairline) solid var(--nova-color-chrome-line);
   color: var(--nova-color-chrome-ink);
 }
 
@@ -899,7 +1264,7 @@
   background-image: var(--nova-hero-fill);
   -webkit-backdrop-filter: var(--nova-hero-filter);
   backdrop-filter: var(--nova-hero-filter);
-  border: 1px solid var(--nova-color-chrome-line);
+  border: var(--nova-border-hairline) solid var(--nova-color-chrome-line);
   color: #fff;
   box-shadow: var(--nova-shadow-glass), inset 0 1px 0 0 rgba(255,255,255,.16);
 
@@ -924,14 +1289,14 @@
   --nova-focus-ring: var(--nova-color-primary);
   position: relative;
   background-color: var(--nova-color-surface);
-  border: 1px solid var(--nova-color-border);
+  border: var(--nova-border-hairline) solid var(--nova-color-border);
   box-shadow: var(--nova-data-lift, var(--nova-shadow-sm));
 
   &::before {
     content: '';
     position: absolute;
     inset: 0;
-    padding: 1px;
+    padding: var(--nova-border-hairline);
     border-radius: inherit;
     background: var(--nova-data-edge, var(--nova-gradient-edge));
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -943,7 +1308,7 @@
 
   /* Selected: the edge upgrades to 2px primary, as on a selected card. */
   &[data-selected='true'] {
-    border: 2px solid var(--nova-color-primary);
+    border: var(--nova-border-emphasis) solid var(--nova-color-primary);
   }
 }
 
@@ -961,11 +1326,11 @@
   background-repeat: no-repeat;
   background-origin: border-box;
   background-position: left top;
-  background-size: 3px 100%;
-  border: 1px solid var(--nova-color-ai-line);
+  background-size: var(--nova-border-rail) 100%;
+  border: var(--nova-border-hairline) solid var(--nova-color-ai-line);
   border-left: none;
   padding: var(--nova-space-6);
-  padding-left: calc(var(--nova-space-6) + 3px);
+  padding-left: calc(var(--nova-space-6) + var(--nova-border-rail));
 
   &[data-approved='true'] {
     background-color: var(--nova-color-good-soft);
@@ -1004,12 +1369,12 @@
   display: inline-grid;
   place-items: center;
   flex-shrink: 0;
-  width: 22px;
-  height: 22px;
+  width: var(--nova-mark);
+  height: var(--nova-mark);
   border-radius: 7px;
   background-image: var(--nova-ai-mark);
   color: #fff;
-  font-size: 12px;
+  font-size: var(--nova-text-label);
   text-shadow: 0 1px 2px rgba(20,10,0,.55), 0 0 3px rgba(20,10,0,.35);
   box-shadow: 0 1px 4px rgba(60,40,10,.28), inset 0 0 0 1px rgba(255,255,255,.28);
 
@@ -1027,7 +1392,7 @@
 @utility nova-tabbar {
   background-color: var(--nova-color-bg);
   background-image: linear-gradient(var(--nova-tabbar-tint), var(--nova-tabbar-tint));
-  border: 1px solid var(--nova-color-border);
+  border: var(--nova-border-hairline) solid var(--nova-color-border);
 }
 
 /* The AI signature gradient (--ai-grad) as a fill: the spine, spark, orb and pill of the prototype. */
@@ -1051,7 +1416,7 @@
   background-repeat: no-repeat;
   background-origin: border-box;
   background-position: left top;
-  background-size: 3px 100%;
+  background-size: var(--nova-border-rail) 100%;
 }
 
 /* The highlight: a second accent beside the brand, used deliberately and never on an ordinary button
@@ -1072,7 +1437,7 @@
   background-repeat: no-repeat;
   background-origin: border-box;
   background-position: left top;
-  background-size: 3px 100%;
+  background-size: var(--nova-border-rail) 100%;
 }
 
 /* The soft wash under highlight text (a highlight chip, tag or announcement): the brand's tint into
@@ -1107,7 +1472,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    padding: 1px;
+    padding: var(--nova-border-hairline);
     border-radius: inherit;
     background: var(--nova-gradient-highlight-edge);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -1125,7 +1490,7 @@
     content: '';
     position: absolute;
     inset: -3px;
-    padding: 2px;
+    padding: var(--nova-border-emphasis);
     border-radius: inherit;
     background: var(--nova-gradient-highlight-edge);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);

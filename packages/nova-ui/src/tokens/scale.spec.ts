@@ -10,12 +10,15 @@ import {
   MOTION_DURATIONS_MS,
   MOTION_EASINGS,
   PROTOTYPE_TYPE_SIZES,
+  LEADING,
   RADIUS_PX,
+  RADIUS_ROLES,
   RADIUS_UTILITIES,
   SHADOW_UTILITIES,
+  SPACE_NAMES,
   SPACING_PX,
-  SPACING_STEPS,
-  SPACING_UNIT_PX,
+  TRACKING_EM,
+  TYPE_ROLES,
 } from './scale';
 import { NOVA_DEFAULTS } from './semantic';
 
@@ -38,42 +41,35 @@ describe('the spacing scale (hos.css --space-0 … --space-10)', () => {
     });
   });
 
-  it('is expressed in Tailwind steps of the 4px spacing unit, plus 0 and the 1px hairline', () => {
-    expect(SPACING_UNIT_PX).toBe(4);
-    expect(SPACING_STEPS).toEqual([
-      '0',
-      'px',
-      '0.5',
-      '1',
-      '1.5',
-      '2',
-      '2.5',
-      '3',
-      '4',
-      '5',
-      '6',
-      '8',
-      '12',
-    ]);
+  // Named after the prototype's own steps, so a name can never be read as one of Tailwind's 4px
+  // steps (p-4 does not exist; p-s4 is --space-4, 10px).
+  it('names the steps s0 … s10, each mapped to its --nova-space-N in theme.css', () => {
+    expect(SPACE_NAMES).toEqual(SPACING_PX.map((_, step) => `s${step}`));
+    SPACE_NAMES.forEach((name, step) => {
+      expect(declared(`--spacing-${name}`)).toBe(`var(--nova-space-${step})`);
+    });
+    expect(declared('--spacing-0')).toBe('0px');
+    expect(declared('--spacing-px')).toBe('1px');
   });
 
-  it('keeps Tailwind on the 4px unit the steps assume, so CSS and TypeScript never drift', () => {
-    expect(declared('--spacing')).toBe(`${SPACING_UNIT_PX}px`);
+  // The numeric multiplier survives only in the conversion bridge, for the components still listed
+  // in primitives/conversion-baseline.json.
+  it('keeps the 4px numeric multiplier only inside the conversion bridge', () => {
+    const begin = css.indexOf('===== Conversion bridge (begin) =====');
+    const end = css.indexOf('===== Conversion bridge (end) =====');
+    const multiplier = css.search(/--spacing:\s*4px;/);
+    if (multiplier !== -1) {
+      expect(multiplier).toBeGreaterThan(begin);
+      expect(multiplier).toBeLessThan(end);
+    }
+    expect(css).toMatch(/--spacing-\*:\s*initial;/);
   });
 });
 
-describe('the radius grammar (hos.css --r-*)', () => {
-  it('is sm 8, md 12, lg 18, xl 22, plus none and full (999px)', () => {
+describe('the radius scale and its roles (hos.css --r-*)', () => {
+  it('is sm 8, md 12, lg 18, xl 22, plus full (999px)', () => {
     expect(RADIUS_PX).toEqual({ sm: 8, md: 12, lg: 18, xl: 22 });
     expect(defaults['--nova-radius-full']).toBe('999px');
-    expect(RADIUS_UTILITIES).toEqual([
-      'rounded-none',
-      'rounded-sm',
-      'rounded-md',
-      'rounded-lg',
-      'rounded-xl',
-      'rounded-full',
-    ]);
   });
 
   it.each(Object.entries(RADIUS_PX))(
@@ -83,6 +79,34 @@ describe('the radius grammar (hos.css --r-*)', () => {
       expect(defaults[`--nova-radius-${name}`]).toBe(`${px}px`);
     },
   );
+
+  it('names a role for each corner, every role a step of the scale', () => {
+    expect(RADIUS_ROLES).toEqual({
+      control: 'sm',
+      card: 'md',
+      overlay: 'lg',
+      hero: 'xl',
+      chip: 'full',
+      tag: 'sm',
+      pill: 'full',
+    });
+    for (const [role, step] of Object.entries(RADIUS_ROLES)) {
+      expect(declared(`--nova-radius-${role}`)).toBe(
+        `var(--nova-radius-${step})`,
+      );
+    }
+    expect(RADIUS_UTILITIES).toEqual([
+      'rounded-none',
+      'rounded-control',
+      'rounded-card',
+      'rounded-overlay',
+      'rounded-hero',
+      'rounded-chip',
+      'rounded-tag',
+      'rounded-pill',
+      'rounded-full',
+    ]);
+  });
 });
 
 describe('the type sizes', () => {
@@ -114,6 +138,37 @@ describe('the type sizes', () => {
       ]);
     },
   );
+});
+
+// The type roles: every prototype size, named by where hos.css uses it.
+describe('the type roles', () => {
+  it('give every prototype size exactly one role', () => {
+    expect(
+      Object.values(TYPE_ROLES)
+        .map((role) => role.px)
+        .sort((x, y) => x - y),
+    ).toEqual([...PROTOTYPE_TYPE_SIZES]);
+  });
+
+  it('declare each role as --nova-text-<role> at its px, with the body line height', () => {
+    for (const [role, { px, source }] of Object.entries(TYPE_ROLES)) {
+      expect(declared(`--nova-text-${role}`), role).toBe(`${px}px`);
+      expect(declared(`--nova-text-${role}-leading`), role).toBe(
+        'var(--nova-leading-body)',
+      );
+      expect(source.length, role).toBeGreaterThan(0);
+    }
+  });
+
+  it('carry the prototype line heights and tracking as tokens', () => {
+    expect(LEADING.body).toBe(1.55);
+    for (const [name, value] of Object.entries(LEADING)) {
+      expect(declared(`--nova-leading-${name}`)).toBe(String(value));
+    }
+    for (const [name, em] of Object.entries(TRACKING_EM)) {
+      expect(declared(`--nova-tracking-${name}`)).toBe(`${em}em`);
+    }
+  });
 });
 
 describe('the shadow scale and the weights', () => {

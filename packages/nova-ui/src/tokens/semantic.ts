@@ -149,6 +149,8 @@ export const NOVA_DEFAULTS = {
   '--nova-shadow-glass':
     '0 8px 24px -8px hsl(var(--nova-shadow-hue) / .45), 0 2px 10px hsl(var(--nova-shadow-hue) / .28)',
   '--nova-sidebar-w': '248px',
+  // The collapsed sidebar: the icon rail (W2-S; the prototype has no rail).
+  '--nova-sidebar-rail-w': '68px',
   // motion (tokens/scale.ts MOTION_EASINGS and MOTION_DURATIONS_MS)
   '--nova-ease-spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
   '--nova-ease-standard': 'cubic-bezier(0.2, 0, 0, 1)',
