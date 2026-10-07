@@ -11,7 +11,20 @@ import { PhoneFrame, type PhoneFrameProps } from './phone-frame';
 import { WaThreadContext, type WaThreadAnnouncer } from './wa-message';
 
 export * from './phone-frame';
-export * from './wa-message';
+// Everything a message is, but not the thread's own context (WaThreadContext stays internal).
+export {
+  WA_DELIVERY_STATUSES,
+  WA_MESSAGE_LABELS,
+  WaBilingualMessage,
+  WaMessage,
+  WaTypingIndicator,
+  type WaBilingualMessageProps,
+  type WaDeliveryStatus,
+  type WaMessageLabels,
+  type WaMessageProps,
+  type WaThreadAnnouncer,
+  type WaTypingIndicatorProps,
+} from './wa-message';
 export * from './wa-quick-reply-buttons';
 
 // Which new messages the thread announces: the other side's (the default), every one, or none.

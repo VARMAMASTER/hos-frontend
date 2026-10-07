@@ -120,6 +120,7 @@ describe('@hos/nova-ui public API', () => {
     'Tabs',
     'TopBar',
     'Pagination',
+    'PaginationBar',
     'ReasonDialog',
     'StatusDot',
     'LiveDot',
@@ -266,6 +267,10 @@ describe('@hos/nova-ui public API', () => {
 
   it('keeps the Tabs context internal', () => {
     expect(nova).not.toHaveProperty('TabsContext');
+  });
+
+  it('keeps the WhatsApp thread context internal', () => {
+    expect(nova).not.toHaveProperty('WaThreadContext');
   });
   it.each([
     'FieldShell',
