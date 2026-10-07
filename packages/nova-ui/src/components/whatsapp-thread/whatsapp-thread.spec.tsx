@@ -47,8 +47,8 @@ describe('PhoneFrame', () => {
     );
     const frame = screen.getByRole('group', { name: 'Padma Sree' });
     for (const cls of [
-      'max-w-[320px]',
-      'rounded-xl',
+      'max-w-xs',
+      'rounded-hero',
       'overflow-hidden',
       'border-border-strong',
       'shadow-md',
@@ -58,7 +58,7 @@ describe('PhoneFrame', () => {
     const header = container.querySelector('[data-slot="phone-header"]');
     expect(header?.className).toContain('bg-wa-header');
     expect(header?.className).toContain('text-wa-header-ink');
-    expect(header?.className).toContain('text-[13px]');
+    expect(header?.className).toContain('text-control');
     expect(screen.getByText('+91 98480 1123•')).toBeTruthy();
     const body = container.querySelector('[data-slot="phone-body"]');
     expect(body?.className).toContain('nova-wa-wall');

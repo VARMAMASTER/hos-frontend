@@ -135,7 +135,7 @@ export const ChatComposer = forwardRef<HTMLTextAreaElement, ChatComposerProps>(
 
     return (
       <form
-        className={cx('flex items-end gap-2', className)}
+        className={cx('flex items-end gap-s3', className)}
         onSubmit={handleSubmit}
         {...rest}
       >

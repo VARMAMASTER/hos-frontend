@@ -425,7 +425,7 @@ export const CallReplayingDark: Story = {
 function DraftReplies() {
   const [sent, setSent] = useState<string[]>([]);
   return (
-    <div className="flex max-w-2xl flex-col gap-4">
+    <div className="flex max-w-2xl flex-col gap-s6">
       <AiDraftReply
         title="AI reschedule reply"
         channel="whatsapp"
@@ -445,7 +445,7 @@ function DraftReplies() {
       />
       <section
         aria-label="What onSend received"
-        className="text-[12px] text-ink-2"
+        className="text-label text-ink-2"
       >
         <p className="font-semibold text-ink">
           What onSend received (story only)
@@ -453,7 +453,7 @@ function DraftReplies() {
         {sent.length === 0 ? (
           <p>Nothing yet. Nothing is sent until someone approves.</p>
         ) : (
-          <ul className="list-disc pl-4">
+          <ul className="list-disc pl-s6">
             {sent.map((text, index) => (
               <li key={index}>{text}</li>
             ))}

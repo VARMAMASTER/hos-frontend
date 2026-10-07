@@ -13,6 +13,7 @@ import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
 import { Surface } from '../../primitives/surface';
 import { useControllableState } from '../../primitives/use-controllable-state';
+import { MOTION_EASINGS } from '../../tokens/scale';
 import { AiChatThread } from '../ai-chat-thread/ai-chat-thread';
 import { ChatComposer } from '../ai-chat-thread/chat-composer';
 import { useLoopMotion } from '../ai-chat-thread/use-ai-motion';
@@ -82,7 +83,7 @@ const BREATHE: Keyframe[] = [
 ];
 const BREATHE_TIMING: KeyframeAnimationOptions = {
   duration: 2800,
-  easing: 'ease-in-out',
+  easing: MOTION_EASINGS.standard,
 };
 const ORBIT: Keyframe[] = [
   { transform: 'rotate(0turn)' },
@@ -109,18 +110,18 @@ function Orb({ expanded }: { expanded: boolean }) {
       aria-hidden="true"
       data-orb=""
       className={cx(
-        'nova-ai-mark relative grid size-[54px] shrink-0 place-items-center rounded-full text-[20px] leading-none text-on-primary shadow-lg',
-        'max-md:size-12 max-md:text-[17px]',
-        'motion-safe:transition-transform motion-safe:duration-fast motion-safe:ease-spring motion-safe:group-hover:scale-110 motion-safe:group-active:scale-[0.97]',
+        'nova-ai-mark relative grid size-(--nova-copilot-orb) shrink-0 place-items-center rounded-full text-headline leading-none text-on-primary shadow-lg',
+        'max-md:size-s10 max-md:text-title',
+        'motion-safe:transition-transform motion-safe:duration-fast motion-safe:ease-spring motion-safe:group-hover:scale-110 motion-safe:group-active:scale-(--nova-copilot-press-scale)',
       )}
     >
       <span
         ref={halo}
-        className="pointer-events-none absolute -inset-[7px] -z-10 rounded-full bg-ai-bright/25 opacity-50"
+        className="pointer-events-none absolute -inset-(--nova-copilot-orb-halo) -z-10 rounded-full bg-ai-bright/25 opacity-50"
       />
       <span
         ref={ring}
-        className="pointer-events-none absolute -inset-[3px] rounded-full border-2 border-transparent border-r-ai-bright/40 border-t-ai-bright"
+        className="pointer-events-none absolute -inset-(--nova-copilot-orb-ring) rounded-full border-emphasis border-transparent border-r-ai-bright/40 border-t-ai-bright"
       />
       <span className="relative">✦</span>
     </span>
@@ -137,7 +138,7 @@ function CloseIcon() {
       strokeLinecap="round"
       aria-hidden="true"
       focusable="false"
-      className="size-3.5"
+      className="size-icon-sm"
     >
       <path d="M5.5 5.5l9 9M14.5 5.5l-9 9" />
     </svg>
@@ -269,19 +270,19 @@ export function AiCopilotDock({
       <button
         {...triggerProps}
         className={cx(
-          'inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-ai-bright/45 bg-ai py-2 pl-2 pr-2.5 text-[12.5px] font-semibold text-on-primary hover:bg-ai-hover',
+          'inline-flex shrink-0 items-center gap-s3 whitespace-nowrap rounded-full border border-ai-bright/45 bg-ai py-s3 pl-s3 pr-s4 text-body-sm font-semibold text-on-primary hover:bg-ai-hover',
           'motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-standard',
           focusRing,
           className,
         )}
       >
-        <span aria-hidden="true" className="text-[14px] leading-none">
+        <span aria-hidden="true" className="text-body leading-none">
           ✦
         </span>
         <span className={cx(retracted && 'sr-only')}>{label}</span>
         <kbd
           aria-hidden="true"
-          className="rounded-sm border border-on-primary/30 px-1.5 font-mono text-[10.5px] font-normal"
+          className="rounded-control border border-on-primary/30 px-s2 font-mono text-overline font-normal"
         >
           {shortcutLabel}
         </kbd>
@@ -292,20 +293,20 @@ export function AiCopilotDock({
       <div
         data-copilot-dock=""
         className={cx(
-          'fixed bottom-6 right-6 z-40 max-md:bottom-5 max-md:right-5',
+          'fixed bottom-s8 right-s8 z-40 max-md:bottom-s7 max-md:right-s7',
           className,
         )}
       >
         <button
           {...triggerProps}
           className={cx(
-            'group flex cursor-pointer items-center gap-2 rounded-full',
+            'group flex cursor-pointer items-center gap-s3 rounded-full',
             focusRing,
           )}
         >
           <span
             className={cx(
-              'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-ai-bright/40 bg-chrome-1 px-2.5 py-2 text-[12.5px] font-semibold text-chrome-ink shadow-md',
+              'inline-flex items-center gap-s2 whitespace-nowrap rounded-full border border-ai-bright/40 bg-chrome-1 px-s4 py-s3 text-body-sm font-semibold text-chrome-ink shadow-md',
               'motion-safe:animate-fade-in max-md:sr-only',
               retracted && 'sr-only',
             )}
@@ -313,7 +314,7 @@ export function AiCopilotDock({
             {label}
             <kbd
               aria-hidden="true"
-              className="rounded-sm border border-chrome-ink/20 px-1 font-mono text-[10px] font-semibold"
+              className="rounded-control border border-chrome-ink/20 px-s1 font-mono text-badge font-semibold"
             >
               {shortcutLabel}
             </kbd>
@@ -335,7 +336,7 @@ export function AiCopilotDock({
     <Surface
       ref={panel}
       material="overlay"
-      radius="lg"
+      radius="overlay"
       id={panelId}
       role="dialog"
       aria-labelledby={titleId}
@@ -346,36 +347,36 @@ export function AiCopilotDock({
       className={cx(
         // The prototype's .hos-copilot: 408px wide at most (24px clear of a narrow window), as tall
         // as its conversation up to 560px, and inside the viewport.
-        'fixed z-50 flex w-[min(408px,calc(100vw-24px))] flex-col overflow-hidden font-sans text-ink',
+        'fixed z-50 flex w-(--nova-copilot-panel-w) flex-col overflow-hidden font-sans text-ink',
         placement === 'bottom-right'
-          ? 'bottom-[88px] right-6 max-h-[min(560px,calc(100vh-160px))]'
-          : 'right-[var(--copilot-right)] top-[var(--copilot-top)] max-h-[min(560px,calc(100vh-110px))]',
+          ? 'bottom-(--nova-copilot-panel-bottom) right-s8 max-h-(--nova-copilot-panel-max-h)'
+          : 'right-[var(--copilot-right)] top-[var(--copilot-top)] max-h-(--nova-copilot-panel-max-h-top)',
         // A phone: a bottom sheet, 8px in from the edges.
-        'max-md:bottom-2 max-md:left-2 max-md:right-2 max-md:top-auto max-md:w-auto max-md:max-h-[85vh]',
+        'max-md:bottom-s3 max-md:left-s3 max-md:right-s3 max-md:top-auto max-md:w-auto max-md:max-h-(--nova-copilot-sheet-max-h)',
         'motion-safe:animate-dialog-in',
         panelClassName,
       )}
     >
       {/* The AI hairline along the top edge, so the panel is never mistaken for a generic chat. */}
-      <div aria-hidden="true" className="h-0.5 shrink-0 bg-ai" />
+      <div aria-hidden="true" className="h-s0 shrink-0 bg-ai" />
       {/* .hcp-h: the spark, the title, the small print, and the close button. */}
-      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border bg-ai-ghost px-4 py-3">
+      <div className="flex shrink-0 flex-wrap items-center gap-s3 border-b border-border bg-ai-ghost px-card py-card-bar">
         <span aria-hidden="true" className="nova-ai-spark">
           ✦
         </span>
         <Heading
           id={titleId}
-          className="font-display text-[14px] font-bold text-ink"
+          className="font-display text-body font-bold text-ink"
         >
           {title}
         </Heading>
-        <span className="ml-auto text-[12px] text-ink-2">{subtitle}</span>
+        <span className="ml-auto text-label text-ink-2">{subtitle}</span>
         <button
           type="button"
           aria-label={closeLabel}
           onClick={() => setOpen(false)}
           className={cx(
-            'inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-2 hover:bg-surface-2 hover:text-ink',
+            'inline-flex size-touch-sm shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-2 hover:bg-surface-2 hover:text-ink',
             focusRing,
           )}
         >
@@ -384,7 +385,7 @@ export function AiCopilotDock({
       </div>
       <AiChatThread
         className="min-h-0 flex-1"
-        logClassName="px-4 pb-2 pt-2.5"
+        logClassName="px-card pb-s3 pt-s4"
         busy={busy}
         onStop={onStop}
         suggestions={suggestions}
@@ -398,7 +399,7 @@ export function AiCopilotDock({
       </AiChatThread>
       <ChatComposer
         ref={composer}
-        className="shrink-0 border-t border-border px-4 pb-4 pt-2.5"
+        className="shrink-0 border-t border-border px-card pb-card pt-s4"
         onSend={onAsk}
         busy={busy}
         onStop={onStop}

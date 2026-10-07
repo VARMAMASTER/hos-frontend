@@ -158,8 +158,8 @@ const meta = {
     (Story) => (
       <Surface
         material="card"
-        radius="md"
-        className="flex h-[480px] max-w-[440px] flex-col"
+        radius="card"
+        className="flex h-(--nova-measure-lg) max-w-md flex-col"
       >
         <Story />
       </Surface>
@@ -186,7 +186,7 @@ export const PatientHistoryQA: Story = {
       <>
         <AiChatThread
           className="min-h-0 flex-1"
-          logClassName="px-4 pt-3 pb-2"
+          logClassName="px-s6 pt-s5 pb-s3"
           busy={demo.busy}
           onStop={demo.stop}
           suggestions={SUGGESTIONS}
@@ -199,7 +199,7 @@ export const PatientHistoryQA: Story = {
         </AiChatThread>
         <ChatComposer
           ref={composer}
-          className="border-t border-border px-4 pb-4 pt-2.5"
+          className="border-t border-border px-s6 pb-s6 pt-s4"
           onSend={demo.ask}
           busy={demo.busy}
           onStop={demo.stop}
@@ -211,7 +211,7 @@ export const PatientHistoryQA: Story = {
 
 export const Empty: Story = {
   args: {
-    logClassName: 'p-4',
+    logClassName: 'p-s6',
     suggestions: SUGGESTIONS,
     onSuggestion: () => undefined,
   },
@@ -219,7 +219,7 @@ export const Empty: Story = {
 
 export const Thinking: Story = {
   args: {
-    logClassName: 'p-4',
+    logClassName: 'p-s6',
     busy: true,
     children: [
       <ChatQuestion key="q">When was her last HbA1c?</ChatQuestion>,
@@ -230,7 +230,7 @@ export const Thinking: Story = {
 
 export const Streaming: Story = {
   args: {
-    logClassName: 'p-4',
+    logClassName: 'p-s6',
     busy: true,
     children: [
       <ChatQuestion key="q">When was her last HbA1c?</ChatQuestion>,
@@ -245,7 +245,7 @@ export const Streaming: Story = {
 
 export const DoneWithFollowups: Story = {
   args: {
-    logClassName: 'p-4',
+    logClassName: 'p-s6',
     children: [
       <ChatQuestion key="q">When was her last HbA1c?</ChatQuestion>,
       <ChatAnswer
@@ -262,7 +262,7 @@ export const DoneWithFollowups: Story = {
 // The prototype has no failure state; Nova says so in words and offers a real Retry button.
 export const ErrorAndRetry: Story = {
   args: {
-    logClassName: 'p-4',
+    logClassName: 'p-s6',
     children: [
       <ChatQuestion key="q">Any imaging on file?</ChatQuestion>,
       <ChatAnswer key="a" status="error" onRetry={() => undefined} />,
@@ -272,7 +272,7 @@ export const ErrorAndRetry: Story = {
 
 export const Stopped: Story = {
   args: {
-    logClassName: 'p-4',
+    logClassName: 'p-s6',
     children: [
       <ChatQuestion key="q">
         Is the Metformin dose safe for her kidneys?
@@ -289,7 +289,7 @@ export const Stopped: Story = {
 // A Telugu answer with its English gloss underneath, each in its own language.
 export const TeluguWithGloss: Story = {
   args: {
-    logClassName: 'p-4',
+    logClassName: 'p-s6',
     children: [
       <ChatQuestion key="q" lang="te">
         ఆమె షుగర్ ఎలా ఉంది?
@@ -309,9 +309,9 @@ export const Parts: StoryObj = {
   render: function Render() {
     const [run, setRun] = useState(0);
     return (
-      <div className="flex max-w-[440px] flex-col gap-4">
+      <div className="flex max-w-md flex-col gap-s6">
         <AiThinking />
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-s3">
           <AiStreamText
             key={run}
             stream="Her **eGFR is 44** (CKD stage 3a). The Metformin label caps the dose at **1000mg a day** below an eGFR of 45."

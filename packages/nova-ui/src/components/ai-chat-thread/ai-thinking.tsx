@@ -9,11 +9,12 @@ export interface AiThinkingProps
   label?: string;
 }
 
-// The prototype's .ai-thinking dot: 5px, AI-coloured, 2px from its neighbour, bobbing 3px with the
+// The prototype's .ai-thinking dot: 5px (size-dot-sm), AI-coloured, 2px from its neighbour (ml-s0),
+// bobbing 3px (--nova-typing-hop, which the Web Animations API resolves in a keyframe) with the
 // opacity rising from 0.25, 1.2s round, each 0.18s behind the last.
 const BOB: Keyframe[] = [
   { opacity: 0.25, transform: 'translateY(0)' },
-  { opacity: 1, transform: 'translateY(-3px)' },
+  { opacity: 1, transform: 'translateY(calc(var(--nova-typing-hop) * -1))' },
   { opacity: 0.25, transform: 'translateY(0)' },
 ];
 const DOT_TIMING: readonly KeyframeAnimationOptions[] = [0, 180, 360].map(
@@ -27,7 +28,7 @@ function Dot({ timing }: { timing: KeyframeAnimationOptions }) {
     <i
       ref={ref}
       data-dot=""
-      className="ml-0.5 inline-block size-[5px] rounded-full bg-ai"
+      className="ml-s0 inline-block size-dot-sm rounded-full bg-ai"
     />
   );
 }
@@ -45,7 +46,7 @@ export function AiThinking({
     <div
       data-ai-thinking=""
       className={cx(
-        'inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-ai-deep',
+        'inline-flex items-center gap-s2 text-body-sm font-semibold text-ai-deep',
         className,
       )}
       {...rest}

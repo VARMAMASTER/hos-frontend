@@ -48,7 +48,7 @@ export function PhoneFrame({
       aria-labelledby={nameId}
       data-phone-frame=""
       className={cx(
-        'w-full max-w-[320px] overflow-hidden rounded-xl border border-border-strong bg-wa-wall shadow-md [--nova-focus-ring:var(--nova-wa-accent)]',
+        'w-full max-w-xs overflow-hidden rounded-hero border border-border-strong bg-wa-wall shadow-md [--nova-focus-ring:var(--nova-wa-accent)]',
         className,
       )}
       {...rest}
@@ -56,7 +56,7 @@ export function PhoneFrame({
       <div
         data-slot="phone-header"
         // .phone-h: 13px semibold, 10px by 16px, 8px between its parts.
-        className="flex items-center gap-2 bg-wa-header px-4 py-2.5 text-[13px] font-semibold text-wa-header-ink"
+        className="flex items-center gap-s3 bg-wa-header px-s6 py-s4 text-control font-semibold text-wa-header-ink"
       >
         {avatar ?? <Avatar name={name} size="sm" tone="chrome" />}
         <div className="min-w-0 flex-1">
@@ -64,7 +64,7 @@ export function PhoneFrame({
             {name}
           </span>
           {subtitle !== undefined && subtitle !== null ? (
-            <span className="block break-words text-[11px] font-normal">
+            <span className="block break-words text-meta font-normal">
               {subtitle}
             </span>
           ) : null}
@@ -73,7 +73,7 @@ export function PhoneFrame({
           <span
             data-slot="phone-status"
             // .tag-offline: 10.5px mono on the chrome's darkest stop.
-            className="ml-auto shrink-0 rounded-sm bg-chrome-1 px-2 py-0.5 font-mono text-[10.5px] text-chrome-ink"
+            className="ml-auto shrink-0 rounded-tag bg-chrome-1 px-tag py-tag font-mono text-overline text-chrome-ink"
           >
             {status}
           </span>
@@ -85,14 +85,14 @@ export function PhoneFrame({
         {...bodyProps}
         className={cx(
           // .phone-b: 12px of padding, 8px between messages, at least 200px tall.
-          'nova-wa-wall flex min-h-[200px] flex-col gap-2 p-3',
+          'nova-wa-wall flex min-h-(--nova-phone-wall-min-h) flex-col gap-s3 p-s5',
           bodyProps?.className,
         )}
       >
         {badge !== undefined && badge !== null ? (
           <p
             data-slot="phone-badge"
-            className="self-center rounded-md bg-wa-in px-2.5 py-1 text-center text-[11px] text-wa-ink-2 shadow-sm"
+            className="self-center rounded-card bg-wa-in px-s4 py-s1 text-center text-meta text-wa-ink-2 shadow-sm"
           >
             {badge}
           </p>

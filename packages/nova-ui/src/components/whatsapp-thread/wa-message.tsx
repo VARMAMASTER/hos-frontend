@@ -103,14 +103,14 @@ const svg = {
 } as const;
 
 const clock = (
-  <svg {...svg} className="size-2.5">
+  <svg {...svg} className="size-s4">
     <circle cx="10" cy="10" r="7.25" />
     <path d="M10 6v4.25l2.75 1.75" />
   </svg>
 );
 
 const alert = (
-  <svg {...svg} className="size-3 shrink-0">
+  <svg {...svg} className="size-icon-xs shrink-0">
     <circle cx="10" cy="10" r="7.25" />
     <path d="M10 6.5v4M10 13.5v.01" />
   </svg>
@@ -158,7 +158,7 @@ function Delivery({
       data-slot="delivery"
       data-status={status}
       className={cx(
-        'inline-flex items-center gap-0.5',
+        'inline-flex items-center gap-s0',
         status === 'read' && 'font-semibold text-wa-accent',
         status === 'failed' && 'text-crit-deep',
       )}
@@ -222,7 +222,7 @@ export function WaMessage({
   }, [status]);
 
   return (
-    <div data-wa-message="" className="flex flex-col gap-1">
+    <div data-wa-message="" className="flex flex-col gap-s1">
       <ChatBubble
         ref={bubbleRef}
         palette="whatsapp"
@@ -242,7 +242,7 @@ export function WaMessage({
         <p
           data-slot="failed"
           className={cx(
-            'flex items-center gap-1.5 text-[11.5px] font-semibold text-crit-deep',
+            'flex items-center gap-s2 text-caption font-semibold text-crit-deep',
             direction === 'out' ? 'self-end' : 'self-start',
           )}
         >

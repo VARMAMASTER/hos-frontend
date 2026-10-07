@@ -84,7 +84,7 @@ describe('CallTranscriptConsole: the frame', () => {
     for (const cls of [
       'border',
       'border-border-strong',
-      'rounded-lg',
+      'rounded-overlay',
       'overflow-hidden',
       'bg-surface-2',
     ]) {
@@ -97,11 +97,11 @@ describe('CallTranscriptConsole: the frame', () => {
     const header = container.querySelector('[data-slot="call-header"]');
     expect(header?.getAttribute('data-surface')).toBe('chrome');
     const who = screen.getByText(TITLE);
-    expect(who.className).toContain('text-[13.5px]');
+    expect(who.className).toContain('text-input');
     expect(who.className).toContain('font-bold');
     expect(
       screen.getByText('Follow-up recall · +91 98493 21574 · Telugu').className,
-    ).toContain('text-[11px]');
+    ).toContain('text-meta');
     const chips = container.querySelectorAll(
       '[data-slot="languages"] [data-tone]',
     );
@@ -113,7 +113,7 @@ describe('CallTranscriptConsole: the frame', () => {
     const timer = screen.getByRole('timer');
     expect(spoken(timer)).toBe('Call time 01:32');
     expect(timer.className).toContain('font-mono');
-    expect(timer.className).toContain('text-[12.5px]');
+    expect(timer.className).toContain('text-body-sm');
   });
 
   it('formats the call time as mm:ss', () => {
@@ -126,7 +126,11 @@ describe('CallTranscriptConsole: the frame', () => {
     render(<Console />);
     const log = screen.getByRole('log', { name: `Call transcript ${TITLE}` });
     expect(log.tabIndex).toBe(0);
-    for (const cls of ['min-h-[240px]', 'max-h-[460px]', 'overflow-y-auto']) {
+    for (const cls of [
+      'min-h-(--nova-transcript-min-h)',
+      'max-h-(--nova-transcript-max-h)',
+      'overflow-y-auto',
+    ]) {
       expect(log.className.split(' ')).toContain(cls);
     }
   });

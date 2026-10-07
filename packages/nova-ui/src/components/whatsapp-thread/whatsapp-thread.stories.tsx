@@ -142,7 +142,7 @@ export const LabReport: Story = {
 export const EmptyPhone: Story = {
   render: (args) => (
     <PhoneFrame name={args.name} subtitle={args.subtitle}>
-      <p className="py-4 text-center text-[12px] text-wa-ink-2">
+      <p className="py-s6 text-center text-label text-wa-ink-2">
         Not sent yet — approve the summary to send it.
       </p>
     </PhoneFrame>

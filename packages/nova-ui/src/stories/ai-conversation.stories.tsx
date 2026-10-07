@@ -33,15 +33,15 @@ function BothSchemes({
   const theme =
     EXAMPLE_THEMES[themeKey as ThemeKey] ?? EXAMPLE_THEMES.hosViolet;
   return (
-    <div className="grid gap-4 xl:grid-cols-2">
+    <div className="grid gap-s6 xl:grid-cols-2">
       {(['light', 'dark'] as const).map((scheme) => (
         <NovaThemeProvider
           key={scheme}
           theme={theme}
           scheme={scheme}
-          className="nova-canvas flex flex-col gap-4 rounded-lg p-4 font-sans text-ink"
+          className="nova-canvas flex flex-col gap-s6 rounded-overlay p-s6 font-sans text-ink"
         >
-          <p className="text-[12px] font-semibold text-ink-2">
+          <p className="text-label font-semibold text-ink-2">
             {scheme === 'light' ? 'Light' : 'Dark'}
           </p>
           {children(scheme)}
@@ -53,8 +53,8 @@ function BothSchemes({
 
 function State({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <Surface material="card" radius="md" className="flex flex-col">
-      <p className="border-b border-border px-4 py-2 text-[12px] font-semibold text-ink-2">
+    <Surface material="card" radius="card" className="flex flex-col">
+      <p className="border-b border-border px-s6 py-s3 text-label font-semibold text-ink-2">
         {title}
       </p>
       {children}
@@ -74,23 +74,23 @@ export const PatientHistory: StoryObj = {
         <>
           <State title="Empty">
             <AiChatThread
-              logClassName="px-4 py-3"
+              logClassName="px-s6 py-s5"
               suggestions={[QUESTION, 'Any allergies?', 'Kidney function?']}
               onSuggestion={() => undefined}
             />
             <ChatComposer
-              className="border-t border-border px-4 pb-4 pt-2.5"
+              className="border-t border-border px-s6 pb-s6 pt-s4"
               onSend={() => undefined}
             />
           </State>
           <State title="Thinking">
-            <AiChatThread logClassName="px-4 py-3" busy>
+            <AiChatThread logClassName="px-s6 py-s5" busy>
               <ChatQuestion>{QUESTION}</ChatQuestion>
               <AiThinking label="Reading her record" />
             </AiChatThread>
           </State>
           <State title="Streaming (Stop in the composer, or Escape)">
-            <AiChatThread logClassName="px-4 py-3" busy>
+            <AiChatThread logClassName="px-s6 py-s5" busy>
               <ChatQuestion>{QUESTION}</ChatQuestion>
               <ChatAnswer
                 status="streaming"
@@ -98,14 +98,14 @@ export const PatientHistory: StoryObj = {
               />
             </AiChatThread>
             <ChatComposer
-              className="border-t border-border px-4 pb-4 pt-2.5"
+              className="border-t border-border px-s6 pb-s6 pt-s4"
               onSend={() => undefined}
               busy
               onStop={() => undefined}
             />
           </State>
           <State title="Done, with follow-ups">
-            <AiChatThread logClassName="px-4 py-3">
+            <AiChatThread logClassName="px-s6 py-s5">
               <ChatQuestion>{QUESTION}</ChatQuestion>
               <ChatAnswer
                 text={ANSWER}
@@ -119,13 +119,13 @@ export const PatientHistory: StoryObj = {
             </AiChatThread>
           </State>
           <State title="Error, with Retry">
-            <AiChatThread logClassName="px-4 py-3">
+            <AiChatThread logClassName="px-s6 py-s5">
               <ChatQuestion>Any imaging on file?</ChatQuestion>
               <ChatAnswer status="error" onRetry={() => undefined} />
             </AiChatThread>
           </State>
           <State title="Telugu, with an English gloss">
-            <AiChatThread logClassName="px-4 py-3">
+            <AiChatThread logClassName="px-s6 py-s5">
               <ChatQuestion lang="te">ఆమె షుగర్ ఎలా ఉంది?</ChatQuestion>
               <ChatAnswer
                 lang="te"
@@ -156,19 +156,19 @@ function MockPage({
     <NovaThemeProvider
       theme={EXAMPLE_THEMES[themeKey as ThemeKey] ?? EXAMPLE_THEMES.hosViolet}
       scheme={scheme}
-      className="nova-canvas relative h-[560px] overflow-hidden rounded-lg border border-border font-sans text-ink [transform:translateZ(0)]"
+      className="nova-canvas relative h-(--nova-copilot-panel-h) overflow-hidden rounded-overlay border border-border font-sans text-ink [transform:translateZ(0)]"
     >
       <TopBar>
-        <span className="font-display text-[15px] font-semibold">
+        <span className="font-display text-lead font-semibold">
           Doctor’s desk
         </span>
       </TopBar>
-      <div className="grid gap-4 p-4 sm:grid-cols-2">
+      <div className="grid gap-s6 p-s6 sm:grid-cols-2">
         <KpiTile label="OPD today" value={86} tone="good" trend="up" />
         <KpiTile label="Beds free" value={12} tone="warn" trend="down" />
         <Card className="sm:col-span-2">
           <CardHeader title="Today’s list" headingLevel={2} />
-          <CardBody className="text-[13.5px] text-ink-2">
+          <CardBody className="text-input text-ink-2">
             14 patients waiting, 3 reviews due before noon.
           </CardBody>
         </Card>
@@ -230,8 +230,8 @@ export const ProgressSteps: StoryObj = {
       {() => (
         <Surface
           material="card"
-          radius="md"
-          className="grid gap-6 p-4 sm:grid-cols-3"
+          radius="card"
+          className="grid gap-s8 p-s6 sm:grid-cols-3"
         >
           <AiProgressSteps steps={STEPS} currentIndex={0} />
           <AiProgressSteps steps={STEPS} currentIndex={2} />

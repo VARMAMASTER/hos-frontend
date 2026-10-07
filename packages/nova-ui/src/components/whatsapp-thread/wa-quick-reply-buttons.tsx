@@ -47,7 +47,7 @@ export function WaQuickReplyButtons({
       aria-label={label}
       data-locked={locked ? 'true' : undefined}
       // .wa-btns: 4px apart, 6px under the message.
-      className={cx('mt-1.5 flex flex-col gap-1', className)}
+      className={cx('mt-s2 flex flex-col gap-s1', className)}
       {...rest}
     >
       {options.map((option) => {
@@ -64,7 +64,7 @@ export function WaQuickReplyButtons({
             }}
             className={cx(
               // .wa-btn: 12px semibold, 6px of padding, a 7px radius (sm), centred.
-              'flex w-full items-center justify-center gap-1 rounded-sm bg-wa-in p-1.5 text-center text-[12px] font-semibold',
+              'flex w-full items-center justify-center gap-s1 rounded-control bg-wa-in p-s2 text-center text-label font-semibold',
               'motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-standard',
               focusRing,
               !locked && 'cursor-pointer text-wa-accent hover:bg-wa-hover',

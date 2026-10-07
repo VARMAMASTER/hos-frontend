@@ -92,6 +92,32 @@ describe('AiCopilotDock trigger', () => {
     allowMotion();
     render(<AiCopilotDock onAsk={() => undefined} />);
     expect(animate).toHaveBeenCalledTimes(2);
+    // The breathing takes the standard motion curve, never a stock easing.
+    const timings = animate.mock.calls.map(
+      (call) => (call as unknown[])[1] as KeyframeAnimationOptions,
+    );
+    expect(timings.map((timing) => timing.easing)).toContain(
+      'cubic-bezier(0.2, 0, 0, 1)',
+    );
+    expect(timings.map((timing) => timing.easing)).not.toContain('ease-in-out');
+  });
+
+  it('sizes the orb, its halo and ring and its press from the copilot tokens', () => {
+    const { container } = render(<AiCopilotDock onAsk={() => undefined} />);
+    const orb = container.querySelector('[data-orb]') as HTMLElement;
+    const classes = orb.className.split(' ');
+    expect(classes).toContain('size-(--nova-copilot-orb)');
+    expect(classes).toContain('max-md:size-s10');
+    expect(classes).toContain(
+      'motion-safe:group-active:scale-(--nova-copilot-press-scale)',
+    );
+    const parts = Array.from(orb.children).map((child) => child.className);
+    expect(
+      parts.some((cls) => cls.includes('-inset-(--nova-copilot-orb-halo)')),
+    ).toBe(true);
+    expect(
+      parts.some((cls) => cls.includes('-inset-(--nova-copilot-orb-ring)')),
+    ).toBe(true);
   });
 });
 
@@ -105,6 +131,23 @@ describe('AiCopilotDock panel', () => {
     expect(document.activeElement).toBe(composer());
     // Marked as AI in words and by the spark.
     expect(panel().textContent).toContain('✦');
+  });
+
+  it('takes its size, place and corner from tokens', () => {
+    render(<AiCopilotDock onAsk={() => undefined} defaultOpen />);
+    const classes = panel().className.split(' ');
+    for (const cls of [
+      'rounded-overlay',
+      'w-(--nova-copilot-panel-w)',
+      'bottom-(--nova-copilot-panel-bottom)',
+      'max-h-(--nova-copilot-panel-max-h)',
+      'max-md:max-h-(--nova-copilot-sheet-max-h)',
+    ]) {
+      expect(classes).toContain(cls);
+    }
+    expect(
+      screen.getByRole('button', { name: 'Close' }).className.split(' '),
+    ).toContain('size-touch-sm');
   });
 
   it('closes on Escape and returns focus to the trigger', () => {

@@ -57,7 +57,7 @@ function ErrorIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
-      className="size-3.5 shrink-0"
+      className="size-icon-sm shrink-0"
     >
       <circle cx="10" cy="10" r="7.25" />
       <path d="M10 6v4.5M10 13.5h.01" />
@@ -138,42 +138,45 @@ export function ChatAnswer({
     <div
       data-chat-turn="answer"
       data-status={status}
-      className={cx('my-1.5 flex items-start gap-2', className)}
+      className={cx('my-s2 flex items-start gap-s3', className)}
       {...rest}
     >
-      <span aria-hidden="true" className="nova-ai-spark mt-0.5">
+      <span aria-hidden="true" className="nova-ai-spark mt-s0">
         ✦
       </span>
-      <div className="flex min-w-0 max-w-[88%] flex-col items-start gap-1.5">
+      <div className="flex min-w-0 max-w-(--nova-ai-bubble-max-w) flex-col items-start gap-s2">
         <span
           aria-hidden="true"
-          className="text-[11.5px] font-semibold text-ai-deep"
+          className="text-caption font-semibold text-ai-deep"
         >
           {label}
         </span>
         <VisuallyHidden>{`${speakerLabel}:`}</VisuallyHidden>
         {content !== null ? (
-          <div className="min-w-0 max-w-full break-words rounded-md border border-ai-line bg-ai-ghost px-3 py-2 text-[13px] text-ink">
+          <div className="min-w-0 max-w-full break-words rounded-card border border-ai-line bg-ai-ghost px-s5 py-s3 text-control text-ink">
             {content}
             {gloss ? (
-              <p lang={glossLang} className="mt-1.5 text-[12px] text-ink-2">
+              <p lang={glossLang} className="mt-s2 text-label text-ink-2">
                 {gloss}
               </p>
             ) : null}
             {source ? (
-              <div className="mt-1.5 text-[11.5px] text-ai-deep">{source}</div>
+              <div className="mt-s2 text-caption text-ai-deep">{source}</div>
             ) : null}
           </div>
         ) : null}
         {status === 'stopped' ? (
-          <p className="inline-flex items-center gap-1.5 text-[12px] text-ink-2">
-            <span aria-hidden="true" className="inline-block size-2 bg-ink-2" />
+          <p className="inline-flex items-center gap-s2 text-label text-ink-2">
+            <span
+              aria-hidden="true"
+              className="inline-block size-s3 bg-ink-2"
+            />
             {stoppedLabel}
           </p>
         ) : null}
         {status === 'error' ? (
-          <div className="flex flex-wrap items-center gap-2 text-[12.5px] font-semibold text-crit-deep">
-            <span className="inline-flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-s3 text-body-sm font-semibold text-crit-deep">
+            <span className="inline-flex items-center gap-s2">
               <ErrorIcon />
               {errorMessage}
             </span>
@@ -185,7 +188,7 @@ export function ChatAnswer({
           </div>
         ) : null}
         {actions && status !== 'streaming' ? (
-          <div className="flex flex-wrap items-center gap-2">{actions}</div>
+          <div className="flex flex-wrap items-center gap-s3">{actions}</div>
         ) : null}
         {settled && followups && onFollowup ? (
           <FollowupChips
@@ -193,7 +196,7 @@ export function ChatAnswer({
             onSelect={onFollowup}
             disabled={followupsDisabled}
             label={followupsLabel}
-            className="mt-0.5"
+            className="mt-s0"
           />
         ) : null}
       </div>

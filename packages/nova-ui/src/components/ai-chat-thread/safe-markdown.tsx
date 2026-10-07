@@ -123,7 +123,7 @@ function inline(s: string, key: string, partial: boolean): ReactNode[] {
               rel="noreferrer noopener"
               referrerPolicy="no-referrer"
               className={cx(
-                'rounded-sm font-semibold text-ai-deep underline underline-offset-2',
+                'rounded-control font-semibold text-ai-deep underline underline-offset-tight',
                 focusRing,
               )}
             >
@@ -191,7 +191,7 @@ export function SafeMarkdown({
   const last = parsed.length - 1;
   const tailAt = (index: number) => (index === last ? tail : null);
   return (
-    <div lang={lang} className={cx('flex flex-col gap-1.5', className)}>
+    <div lang={lang} className={cx('flex flex-col gap-s2', className)}>
       {parsed.map((block, b) => {
         const key = String(b);
         if (block.kind === 'p') {
@@ -214,14 +214,14 @@ export function SafeMarkdown({
           </li>
         ));
         return block.kind === 'ul' ? (
-          <ul key={key} className="flex list-disc flex-col gap-0.5 pl-5">
+          <ul key={key} className="flex list-disc flex-col gap-s0 pl-s7">
             {items}
           </ul>
         ) : (
           <ol
             key={key}
             start={block.start}
-            className="flex list-decimal flex-col gap-0.5 pl-5"
+            className="flex list-decimal flex-col gap-s0 pl-s7"
           >
             {items}
           </ol>

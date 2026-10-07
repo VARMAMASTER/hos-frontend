@@ -25,7 +25,7 @@ export function ChatQuestion({
     <div
       data-chat-turn="question"
       className={cx(
-        'my-1.5 ml-auto w-fit max-w-[88%] rounded-md bg-primary-soft px-3 py-2 text-[13px] font-medium text-primary-strong',
+        'my-s2 ml-auto w-fit max-w-(--nova-ai-bubble-max-w) rounded-card bg-primary-soft px-s5 py-s3 text-control font-medium text-primary-strong',
         className,
       )}
       {...rest}

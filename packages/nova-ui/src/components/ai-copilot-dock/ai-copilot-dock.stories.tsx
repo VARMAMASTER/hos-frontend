@@ -71,20 +71,20 @@ function MockPage({
       }
       material={isNovaMaterial(material) ? material : undefined}
       scheme={isNovaScheme(scheme) ? scheme : undefined}
-      className="nova-canvas relative h-[640px] overflow-hidden rounded-lg border border-border font-sans text-ink [transform:translateZ(0)]"
+      className="nova-canvas relative h-(--nova-measure-2xl) overflow-hidden rounded-overlay border border-border font-sans text-ink [transform:translateZ(0)]"
     >
       <TopBar actions={top}>
-        <span className="font-display text-[15px] font-semibold">
+        <span className="font-display text-lead font-semibold">
           Doctor’s desk
         </span>
       </TopBar>
-      <div className="grid gap-4 p-6 md:grid-cols-3">
+      <div className="grid gap-s6 p-s8 md:grid-cols-3">
         <KpiTile label="OPD today" value={86} tone="good" trend="up" />
         <KpiTile label="Beds free" value={12} tone="warn" trend="down" />
         <KpiTile label="Pending labs" value={9} trend="flat" />
         <Card className="md:col-span-3">
           <CardHeader title="Today’s list" headingLevel={2} />
-          <CardBody className="text-[13.5px] text-ink-2">
+          <CardBody className="text-input text-ink-2">
             14 patients waiting, 3 reviews due before noon.
           </CardBody>
         </Card>

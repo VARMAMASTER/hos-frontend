@@ -7,7 +7,7 @@ const meta = {
   component: ChatBubble,
   decorators: [
     (Story) => (
-      <div className="flex max-w-md flex-col gap-2 rounded-lg bg-surface-2 p-3">
+      <div className="flex max-w-md flex-col gap-s3 rounded-overlay bg-surface-2 p-s5">
         <Story />
       </div>
     ),
@@ -73,7 +73,7 @@ export const Typing: Story = {
 export const WhatsApp: Story = {
   decorators: [
     (Story) => (
-      <div className="nova-wa-wall flex max-w-[320px] flex-col gap-2 p-3">
+      <div className="nova-wa-wall flex max-w-xs flex-col gap-s3 p-s5">
         <Story />
       </div>
     ),

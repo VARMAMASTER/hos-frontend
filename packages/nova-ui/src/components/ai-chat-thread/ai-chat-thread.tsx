@@ -48,7 +48,7 @@ function DownArrow() {
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
-      className="size-3.5"
+      className="size-icon-sm"
     >
       <path d="M10 4v12M5 11l5 5 5-5" />
     </svg>
@@ -142,15 +142,15 @@ export function AiChatThread({
         tabIndex={0}
         onScroll={handleScroll}
         className={cx(
-          'flex min-h-0 flex-1 flex-col overflow-y-auto rounded-sm',
+          'flex min-h-0 flex-1 flex-col overflow-y-auto rounded-control',
           focusRing,
           logClassName,
         )}
       >
         {empty ? (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-s3">
             {/* The prototype's .hcp-hint: 12.5px in the secondary ink. */}
-            <p className="py-1.5 text-[12.5px] text-ink-2">{emptyHint}</p>
+            <p className="py-s2 text-body-sm text-ink-2">{emptyHint}</p>
             {suggestions && onSuggestion ? (
               <FollowupChips
                 questions={suggestions}
@@ -165,7 +165,7 @@ export function AiChatThread({
         )}
       </div>
       {atBottom ? null : (
-        <div className="pointer-events-none absolute inset-x-0 bottom-2 flex justify-center">
+        <div className="pointer-events-none absolute inset-x-0 bottom-s3 flex justify-center">
           <Button
             size="sm"
             variant="ghost"

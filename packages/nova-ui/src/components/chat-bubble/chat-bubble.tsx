@@ -91,7 +91,7 @@ const DOT_CYCLE_MS = MOTION_DURATIONS_MS.slow * 5;
 const DOT_STAGGER_MS = MOTION_DURATIONS_MS.slow * 0.75;
 const DOT_KEYFRAMES: Keyframe[] = [
   { opacity: 0.25, transform: 'translateY(0)' },
-  { opacity: 1, transform: 'translateY(-3px)' },
+  { opacity: 1, transform: 'translateY(calc(var(--nova-typing-hop) * -1))' },
   { opacity: 0.25, transform: 'translateY(0)' },
 ];
 
@@ -121,12 +121,12 @@ function TypingDots({ palette }: { palette: ChatBubblePalette }) {
       ref={ref}
       data-slot="dots"
       aria-hidden="true"
-      className="inline-flex items-center gap-1 py-1"
+      className="inline-flex items-center gap-s1 py-s1"
     >
       {[0, 1, 2].map((dot) => (
         <span
           key={dot}
-          className={cx('size-1.5 rounded-full', dotFill[palette])}
+          className={cx('size-s2 rounded-full', dotFill[palette])}
         />
       ))}
     </span>
@@ -174,7 +174,7 @@ export const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
           data-critical={critical ? 'true' : undefined}
           className={cx(
             // .call-sys: a centred 11.5px pill, 6px by 12px, a dashed strong edge on the panel.
-            'max-w-[96%] self-center rounded-full border border-dashed px-3 py-1.5 text-center text-[11.5px]',
+            'max-w-(--nova-chat-note-max-w) self-center rounded-full border border-dashed px-s5 py-s2 text-center text-caption',
             critical
               ? 'border-crit bg-crit-soft font-semibold text-crit-deep'
               : palette === 'whatsapp'
@@ -188,7 +188,7 @@ export const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
             <>
               <svg
                 {...svg}
-                className="mr-1 inline-block size-3 align-[-0.125em]"
+                className="mr-s1 inline-block size-icon-xs align-(--nova-glyph-baseline)"
               >
                 <path d="M10 3 18 17H2z" />
                 <path d="M10 8.5v3.5M10 14.5v.01" />
@@ -216,8 +216,10 @@ export const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
         className={cx(
           // .wa-msg: 12.5px, 8px by 10px, a 10px radius (md on Nova's grammar), the small shadow;
           // 86% of the thread wide, 92% in the call transcript.
-          'relative rounded-md px-2.5 py-2 text-[12.5px] shadow-sm',
-          palette === 'whatsapp' ? 'max-w-[86%]' : 'max-w-[92%]',
+          'relative rounded-card px-s4 py-s3 text-body-sm shadow-sm',
+          palette === 'whatsapp'
+            ? 'max-w-(--nova-chat-bubble-max-w-wa)'
+            : 'max-w-(--nova-chat-bubble-max-w)',
           direction === 'out' ? 'self-end' : 'self-start',
           fills[palette][direction],
           className,
@@ -240,7 +242,7 @@ export const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
                 aria-hidden={senderLabel ? true : undefined}
                 className={cx(
                   // .spk: 10.5px bold capitals, a little tracked, 2px above the content.
-                  'mb-0.5 block text-[10.5px] font-bold uppercase tracking-[0.04em]',
+                  'mb-s0 block text-overline font-bold uppercase tracking-label',
                   quiet[palette].speaker,
                 )}
               >
@@ -261,10 +263,7 @@ export const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
                 data-slot="gloss"
                 lang={glossLang}
                 // .gloss (call) and .te-eng (lab): a block of 11.5px secondary ink under the content.
-                className={cx(
-                  'mt-0.5 block text-[11.5px]',
-                  quiet[palette].gloss,
-                )}
+                className={cx('mt-s0 block text-caption', quiet[palette].gloss)}
               >
                 {gloss}
               </span>
@@ -275,7 +274,7 @@ export const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
                 data-slot="meta"
                 // .wa-time: 9.5px, right-aligned, 2px under the message.
                 className={cx(
-                  'mt-0.5 flex items-center justify-end gap-1 text-[9.5px]',
+                  'mt-s0 flex items-center justify-end gap-s1 text-micro',
                   quiet[palette].speaker,
                 )}
               >

@@ -282,34 +282,34 @@ export function CallTranscriptConsole({
       data-state={state}
       className={cx(
         // .call-frame: the strong line, the large radius, panel-2 behind the transcript.
-        'flex flex-col overflow-hidden rounded-lg border border-border-strong bg-surface-2',
+        'flex flex-col overflow-hidden rounded-overlay border border-border-strong bg-surface-2',
         className,
       )}
       {...rest}
     >
       <Surface
         material="chrome"
-        radius="sm"
+        radius="control"
         data-slot="call-header"
         // .call-h: the chrome gradient, 12px by 16px, 10px between its parts. It fills the frame's
         // top edge square; the frame's own corners clip it.
-        className="flex flex-wrap items-center gap-2.5 px-4 py-3 data-[slot=call-header]:rounded-none"
+        className="flex flex-wrap items-center gap-s4 px-card py-card-bar data-[slot=call-header]:rounded-none"
       >
         <div className="min-w-0">
           <Heading
             id={titleId}
-            className="font-display text-[13.5px] font-bold break-words"
+            className="font-display text-input font-bold break-words"
           >
             {title}
           </Heading>
           {subtitle !== undefined && subtitle !== null ? (
-            <p className="text-[11px] break-words text-[color:var(--nova-chrome-ink-2)]">
+            <p className="text-meta break-words text-[color:var(--nova-chrome-ink-2)]">
               {subtitle}
             </p>
           ) : null}
         </div>
         {languages && languages.length > 0 ? (
-          <div data-slot="languages" className="flex flex-wrap gap-1.5">
+          <div data-slot="languages" className="flex flex-wrap gap-s2">
             {languages.map((item) => (
               <Chip key={item.code} selected={item.code === language}>
                 <span lang={item.code}>{item.label}</span>
@@ -317,12 +317,12 @@ export function CallTranscriptConsole({
             ))}
           </div>
         ) : null}
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-s3">
           <span data-slot="call-state">{indicator}</span>
           <span
             role="timer"
             // .ch-timer: 12.5px mono in a pill, lifted off the chrome.
-            className="rounded-full bg-[var(--nova-chrome-field)] px-2.5 py-1 font-mono text-[12.5px]"
+            className="rounded-full bg-[var(--nova-chrome-field)] px-s4 py-s1 font-mono text-body-sm"
           >
             <VisuallyHidden>{words.timer} </VisuallyHidden>
             {formatCallTime(elapsed)}
@@ -345,7 +345,7 @@ export function CallTranscriptConsole({
         }}
         // .call-b: 12px of padding, 8px between turns, 240px to 460px tall.
         className={cx(
-          'flex min-h-[240px] max-h-[460px] flex-col gap-2 overflow-y-auto p-3',
+          'flex min-h-(--nova-transcript-min-h) max-h-(--nova-transcript-max-h) flex-col gap-s3 overflow-y-auto p-s5',
           focusRing,
         )}
       >
@@ -362,7 +362,7 @@ export function CallTranscriptConsole({
         <div
           ref={controlsRef}
           data-slot="call-controls"
-          className="flex justify-center gap-2 px-3 pb-3"
+          className="flex justify-center gap-s3 px-s5 pb-s5"
         >
           {controls}
         </div>
@@ -373,7 +373,7 @@ export function CallTranscriptConsole({
       {footer !== undefined && footer !== null ? (
         <div
           data-slot="call-footer"
-          className="border-t border-border bg-surface px-4 py-3"
+          className="border-t border-border bg-surface px-card py-card-bar"
         >
           {footer}
         </div>
@@ -474,13 +474,13 @@ export function CallWriteBack({
 }: CallWriteBackProps) {
   const Heading = `h${headingLevel}` as const;
   return (
-    <section className={cx('flex flex-col gap-1', className)} {...rest}>
-      <Heading className="font-display text-[13.5px] font-bold text-ink">
+    <section className={cx('flex flex-col gap-s1', className)} {...rest}>
+      <Heading className="font-display text-input font-bold text-ink">
         {title}
       </Heading>
       {records.length === 0 ? (
         empty !== undefined && empty !== null ? (
-          <p className="text-[12px] text-ink-2">{empty}</p>
+          <p className="text-label text-ink-2">{empty}</p>
         ) : null
       ) : (
         <ul className="flex flex-col">
@@ -488,7 +488,7 @@ export function CallWriteBack({
             <li
               key={record.id}
               // .wrote-item: 10px apart, a hairline between, 12.5px.
-              className="flex gap-2.5 border-b border-border py-2.5 text-[12.5px] last:border-b-0"
+              className="flex gap-s4 border-b border-border py-s4 text-body-sm last:border-b-0"
             >
               <span aria-hidden="true" className="shrink-0 font-bold text-good">
                 ✓
@@ -496,7 +496,7 @@ export function CallWriteBack({
               <span className="min-w-0">
                 <b className="font-bold text-ink">{record.title}</b>
                 {record.detail !== undefined && record.detail !== null ? (
-                  <span className="block text-[12px] text-ink-2">
+                  <span className="block text-label text-ink-2">
                     {record.detail}
                   </span>
                 ) : null}

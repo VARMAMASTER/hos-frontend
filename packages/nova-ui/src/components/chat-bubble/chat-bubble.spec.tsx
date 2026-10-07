@@ -78,9 +78,21 @@ describe('ChatBubble: direction and palette', () => {
   it('is the prototype .wa-msg: 12.5px, 8px by 10px, a small shadow', () => {
     const { container } = render(<ChatBubble>Namaste</ChatBubble>);
     const classes = bubble(container).className.split(' ');
-    for (const cls of ['text-[12.5px]', 'py-2', 'px-2.5', 'shadow-sm']) {
+    for (const cls of ['text-body-sm', 'py-s3', 'px-s4', 'shadow-sm']) {
       expect(classes).toContain(cls);
     }
+  });
+
+  it('takes its corner and width from tokens: the card corner, 92% of the thread (86% on WhatsApp)', () => {
+    const { container } = render(<ChatBubble>Namaste</ChatBubble>);
+    const classes = bubble(container).className.split(' ');
+    expect(classes).toContain('rounded-card');
+    expect(classes).toContain('max-w-(--nova-chat-bubble-max-w)');
+    cleanup();
+    const wa = render(<ChatBubble palette="whatsapp">Namaste</ChatBubble>);
+    expect(bubble(wa.container).className.split(' ')).toContain(
+      'max-w-(--nova-chat-bubble-max-w-wa)',
+    );
   });
 });
 
@@ -172,7 +184,7 @@ describe('ChatBubble: speaker, gloss, time and delivery', () => {
     expect(time?.getAttribute('datetime')).toBe('2026-07-18T09:24');
     const meta = container.querySelector('[data-slot="meta"]');
     expect(meta?.lastElementChild?.getAttribute('data-testid')).toBe('ticks');
-    expect(meta?.className).toContain('text-[9.5px]');
+    expect(meta?.className).toContain('text-micro');
   });
 
   it('puts the actions (quick replies) after the content', () => {
@@ -220,7 +232,7 @@ describe('ChatBubble: system events', () => {
       'border-dashed',
       'border-border-strong',
       'text-ink-2',
-      'text-[11.5px]',
+      'text-caption',
     ]) {
       expect(el.className.split(' ')).toContain(cls);
     }

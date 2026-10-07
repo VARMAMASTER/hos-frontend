@@ -72,6 +72,11 @@ describe('AiThinking', () => {
     expect(delays.every((options) => options.iterations === Infinity)).toBe(
       true,
     );
+    // The hop is the --nova-typing-hop token, not a pixel literal.
+    const keyframes = (animate.mock.calls[0] as unknown[])[0] as Keyframe[];
+    expect(keyframes[1]?.transform).toBe(
+      'translateY(calc(var(--nova-typing-hop) * -1))',
+    );
   });
 });
 
@@ -86,6 +91,16 @@ describe('ChatQuestion', () => {
     expect(bubble.className).toContain('ml-auto');
     expect(bubble.className).toContain('bg-primary-soft');
     expect(bubble.className).toContain('text-primary-strong');
+    // Tokens: the card corner, and 88% of the thread at most (as the answer).
+    for (const cls of [
+      'rounded-card',
+      'max-w-(--nova-ai-bubble-max-w)',
+      'px-s5',
+      'py-s3',
+      'text-control',
+    ]) {
+      expect(bubble.className.split(' ')).toContain(cls);
+    }
   });
 
   it('takes a translated speaker label and the language of the question', () => {
@@ -109,6 +124,14 @@ describe('ChatAnswer', () => {
     expect(screen.getByText('HOS AI answered:').className).toContain('sr-only');
     expect(container.querySelector('strong')?.textContent).toBe('8.4%');
     expect(container.querySelector('.bg-ai-ghost')).not.toBeNull();
+    // The answer's bubble shares the question's tokens.
+    const answer = container.querySelector('.bg-ai-ghost') as HTMLElement;
+    for (const cls of ['rounded-card', 'px-s5', 'py-s3', 'text-control']) {
+      expect(answer.className.split(' ')).toContain(cls);
+    }
+    expect(
+      container.querySelector('[class~="max-w-(--nova-ai-bubble-max-w)"]'),
+    ).not.toBeNull();
   });
 
   it('renders rich children in place of text', () => {
@@ -247,7 +270,16 @@ describe('FollowupChips', () => {
       expect(button.className).toContain('bg-ai-soft');
       expect(button.className).toContain('text-ai-deep');
       // A 24px target at least (WCAG 2.5.8).
-      expect(button.className).toContain('min-h-6');
+      expect(button.className).toContain('min-h-(--nova-touch-sm)');
+      // The chip tokens, as Chip has them.
+      for (const cls of [
+        'rounded-chip',
+        'px-chip',
+        'py-chip',
+        'text-caption',
+      ]) {
+        expect(button.className.split(' ')).toContain(cls);
+      }
     }
     fireEvent.click(screen.getByRole('button', { name: 'Today’s revenue?' }));
     expect(onSelect).toHaveBeenCalledWith('Today’s revenue?');

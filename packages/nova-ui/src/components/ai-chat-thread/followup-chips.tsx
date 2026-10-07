@@ -34,7 +34,7 @@ export function FollowupChips({
       role="group"
       aria-label={label}
       lang={lang}
-      className={cx('flex flex-wrap gap-1.5', className)}
+      className={cx('flex flex-wrap gap-s2', className)}
       {...rest}
     >
       {questions.map((question) => (
@@ -44,7 +44,7 @@ export function FollowupChips({
           disabled={disabled}
           onClick={() => onSelect(question)}
           className={cx(
-            'inline-flex min-h-6 cursor-pointer items-center rounded-full border border-transparent bg-ai-soft px-2 py-0.5 text-left text-[11.5px] font-semibold text-ai-deep',
+            'inline-flex min-h-(--nova-touch-sm) cursor-pointer items-center rounded-chip border border-transparent bg-ai-soft px-chip py-chip text-left text-caption font-semibold text-ai-deep',
             'hover:border-ai motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-standard',
             focusRing,
             'disabled:cursor-default disabled:opacity-50',
