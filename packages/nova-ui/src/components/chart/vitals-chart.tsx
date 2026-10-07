@@ -400,7 +400,7 @@ export function VitalsChart({
         />
       }
     >
-      <div className="grid gap-3">
+      <div className="grid gap-s5">
         {layout.map((panel, panelIndex) => {
           const last = panelIndex === layout.length - 1;
           const first = panelIndex === 0;
@@ -425,13 +425,13 @@ export function VitalsChart({
             ' · ',
           );
           return (
-            <section key={panel.key} className="grid gap-1">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-[12.5px] font-semibold text-ink">
+            <section key={panel.key} className="grid gap-s1">
+              <div className="flex items-baseline justify-between gap-s3">
+                <span className="text-body-sm font-semibold text-ink">
                   {panel.label}
                 </span>
                 {caption ? (
-                  <span className="text-[12px] text-ink-2">{caption}</span>
+                  <span className="text-label text-ink-2">{caption}</span>
                 ) : null}
               </div>
               <ChartPlot

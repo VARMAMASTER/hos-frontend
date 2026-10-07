@@ -55,7 +55,7 @@ function useChartConfig(): ChartConfig {
 }
 
 function DataSurface(props: HTMLAttributes<HTMLDivElement>) {
-  return <Surface material="data" {...props} />;
+  return <Surface material="data" radius="overlay" {...props} />;
 }
 
 export interface ChartContainerProps
@@ -137,7 +137,7 @@ export function ChartFigure({
         role="figure"
         aria-label={ariaLabel}
         aria-describedby={description ? descriptionId : undefined}
-        className={cx(!bare && 'p-4', 'text-[12px]', className)}
+        className={cx(!bare && 'p-card', 'text-label', className)}
         style={{ ...vars, ...style } as CSSProperties}
       >
         {description ? (
@@ -274,14 +274,17 @@ export function ChartTooltipContent({
   return (
     <Surface
       material="overlay"
-      radius="md"
+      radius="card"
       role="tooltip"
-      className={cx('grid min-w-32 gap-1 px-2.5 py-2 text-[12px]', className)}
+      className={cx(
+        'grid min-w-chart-tooltip gap-s1 px-s4 py-s3 text-label',
+        className,
+      )}
     >
       {showHeading ? (
         <div className="font-semibold text-ink">{heading}</div>
       ) : null}
-      <ul className="grid gap-1">
+      <ul className="grid gap-s1">
         {payload.map((item, index) => {
           const key = configKey(item, nameKey);
           const entry = config[key];
@@ -292,7 +295,7 @@ export function ChartTooltipContent({
           return (
             <li
               key={`${item.dataKey ?? key}-${index}`}
-              className="flex items-center gap-2"
+              className="flex items-center gap-s3"
             >
               {Icon ? (
                 <Icon />
@@ -303,13 +306,13 @@ export function ChartTooltipContent({
                   className={cx(
                     'shrink-0',
                     indicator === 'line'
-                      ? 'h-0.5 w-3 rounded-full'
-                      : 'size-2 rounded-full',
+                      ? 'h-s0 w-s5 rounded-full'
+                      : 'size-s3 rounded-full',
                   )}
                   style={{ backgroundColor: colour }}
                 />
               )}
-              <span className="flex flex-1 items-baseline justify-between gap-4">
+              <span className="flex flex-1 items-baseline justify-between gap-s6">
                 <span className="text-ink-2">{name}</span>
                 {value === undefined || value === null ? null : (
                   <span className="font-mono font-semibold text-ink">
@@ -364,19 +367,19 @@ function LegendMark({ mark, color }: Pick<ChartLegendItem, 'mark' | 'color'>) {
         aria-hidden="true"
         data-legend-mark={mark}
         viewBox="0 0 10 10"
-        className="size-2.5 shrink-0"
+        className="size-s4 shrink-0"
       >
         <polygon points={points} fill={color} />
       </svg>
     );
   }
   const shapes: Record<string, string> = {
-    line: 'h-0.5 w-3.5 rounded-full',
-    rect: 'size-2.5 rounded-none',
-    band: 'h-2.5 w-3.5 rounded-none',
-    dashed: 'h-0 w-3.5 border-t-2 border-dashed',
-    tick: 'h-3 w-0.5 rounded-full',
-    outline: 'size-2.5 rounded-none border',
+    line: 'h-s0 w-legend-mark rounded-full',
+    rect: 'size-s4 rounded-none',
+    band: 'h-s4 w-legend-mark rounded-none',
+    dashed: 'h-0 w-legend-mark border-t-emphasis border-dashed',
+    tick: 'h-s5 w-s0 rounded-full',
+    outline: 'size-s4 rounded-none border',
   };
   const style: CSSProperties =
     mark === 'dashed' || mark === 'outline'
@@ -402,7 +405,7 @@ export interface ChartLegendListProps {
 }
 
 // The legend list itself, for a chart drawn without Recharts' Legend (small multiples, a heatmap, a
-// gauge). The prototype's .chart-legend: 12px secondary ink, 16px between entries.
+// gauge). The prototype's .chart-legend: 12px secondary ink (text-label), 16px between entries.
 export function ChartLegendList({
   items,
   className,
@@ -414,14 +417,14 @@ export function ChartLegendList({
   return (
     <ul
       className={cx(
-        'flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-3 text-[12px]',
+        'flex flex-wrap items-center justify-center gap-x-s6 gap-y-s1 pt-s5 text-label',
         className,
       )}
     >
       {items.map(({ key, label, mark, color, icon: Icon }, index) => (
         <li
           key={`${key}-${index}`}
-          className="flex items-center gap-1.5 text-ink-2"
+          className="flex items-center gap-s2 text-ink-2"
         >
           {Icon ? (
             <Icon />

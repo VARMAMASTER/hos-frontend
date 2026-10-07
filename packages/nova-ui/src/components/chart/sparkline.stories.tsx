@@ -27,7 +27,7 @@ const args = {
   seriesKeys: ['collections'],
 } satisfies Story['args'];
 
-export const Inline: Story = { args: { ...args, className: 'w-40' } };
+export const Inline: Story = { args: { ...args, className: 'w-kpi-visual' } };
 
 // In the KpiTile's visual slot. The tile is already an opaque data surface; the sparkline brings
 // none of its own.
