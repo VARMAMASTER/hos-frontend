@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { disabledField } from '../../primitives/states';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export interface SearchFieldProps
@@ -29,7 +30,7 @@ export interface SearchFieldProps
 const field =
   'w-full h-control-md rounded-control border border-chrome-ink/15 bg-(--nova-chrome-field) text-control text-on-primary [color-scheme:dark] ' +
   'placeholder:text-[color:var(--nova-chrome-ink-2)] focus-visible:border-chrome-accent/60 ' +
-  'disabled:pointer-events-none disabled:opacity-50';
+  disabledField;
 
 const adornment =
   'pointer-events-none absolute inset-y-0 flex items-center text-[color:var(--nova-chrome-ink-2)]';

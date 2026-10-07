@@ -1,6 +1,7 @@
 import { forwardRef, type ReactNode, type SelectHTMLAttributes } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { disabledField } from '../../primitives/states';
 import { FieldShell } from '../text-field/field-shell';
 
 export interface SelectOption {
@@ -31,7 +32,7 @@ const base = cx(
   // h-control-md like TextField and Button.
   'nova-field peer block h-control-md w-full appearance-none rounded-control pl-field pr-field-icon text-input text-ink transition-colors',
   focusRing,
-  'disabled:cursor-not-allowed disabled:opacity-50',
+  disabledField,
 );
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(

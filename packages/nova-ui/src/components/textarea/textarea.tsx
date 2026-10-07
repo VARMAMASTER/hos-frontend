@@ -1,6 +1,7 @@
 import { forwardRef, type ReactNode, type TextareaHTMLAttributes } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { disabledField } from '../../primitives/states';
 import { FieldShell } from '../text-field/field-shell';
 
 export interface TextareaProps
@@ -20,7 +21,7 @@ const base = cx(
   // padding, at least --nova-textarea-min-h tall.
   'nova-field block min-h-textarea w-full resize-y rounded-control px-field py-control-md text-input text-ink placeholder:text-ink-3 transition-colors',
   focusRing,
-  'disabled:cursor-not-allowed disabled:opacity-50',
+  disabledField,
 );
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(

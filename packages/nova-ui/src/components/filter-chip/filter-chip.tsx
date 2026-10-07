@@ -1,6 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes, type MouseEvent } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { disabledControl } from '../../primitives/states';
 import { useControllableState } from '../../primitives/use-controllable-state';
 
 export interface FilterChipProps
@@ -55,15 +56,16 @@ export const FilterChip = forwardRef<HTMLButtonElement, FilterChipProps>(
         type="button"
         aria-pressed={isOn}
         className={cx(
-          // .fchip: 1px edge, the label role (12px) / 600, padding 6px 10px (--space-2 --space-4); the
-          // tick takes a 6px gap (--space-2), which its slot cancels while it is collapsed.
-          'inline-flex cursor-pointer items-center gap-s2 border px-s4 py-s2 text-label font-semibold',
+          // .fchip: 1px edge, the label role (12px) / 600, padding 6px 10px: a small control, so the
+          // sm control tokens (min-h-control-sm, px-/py-control-sm), as a small Button. The tick takes
+          // a 6px gap (--space-2), which its slot cancels while it is collapsed.
+          'inline-flex min-h-control-sm cursor-pointer items-center gap-s2 border px-control-sm py-control-sm text-label font-semibold',
           'motion-safe:transition-[color,background-color,border-color,border-radius,transform] motion-safe:duration-base motion-safe:ease-standard motion-safe:active:scale-95',
           isOn
             ? 'rounded-filter-on border-primary bg-primary text-on-primary'
             : 'rounded-control border-border-strong bg-surface text-ink-2 hover:border-primary hover:text-primary-strong',
           focusRing,
-          'disabled:pointer-events-none disabled:opacity-50',
+          disabledControl,
           className,
         )}
         {...rest}

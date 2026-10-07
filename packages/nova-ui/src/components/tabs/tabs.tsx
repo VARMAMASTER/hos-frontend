@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { disabledControl } from '../../primitives/states';
 import { nextRovingIndex, ROW_KEYS } from '../../primitives/roving-index';
 import { useControllableState } from '../../primitives/use-controllable-state';
 
@@ -159,7 +160,7 @@ export interface TabProps
 // The prototype's .tab: 13px semibold, 8px by 16px, 6px between its parts (its 10px radius is off the
 // --r-* scale, so sm).
 const tab =
-  'relative inline-flex cursor-pointer items-center gap-s2 whitespace-nowrap rounded-control px-control-md py-control-md text-control font-semibold transition-[color,background-color,box-shadow] duration-fast ease-standard motion-reduce:transition-none disabled:pointer-events-none disabled:opacity-50';
+  'relative inline-flex cursor-pointer items-center gap-s2 whitespace-nowrap rounded-control px-control-md py-control-md text-control font-semibold transition-[color,background-color,box-shadow] duration-fast ease-standard motion-reduce:transition-none';
 
 export function Tab({
   value,
@@ -224,6 +225,7 @@ export function Tab({
       className={cx(
         tab,
         focusRing,
+        disabledControl,
         // Selected (.tab.active): a raised panel chip, its hairline drawn inside and shadow-sm under
         // it: a shape as well as a tint. The label is the primary ink (the prototype's chrome-1 is
         // the same near-black in the light scheme, but stays dark on a dark panel).

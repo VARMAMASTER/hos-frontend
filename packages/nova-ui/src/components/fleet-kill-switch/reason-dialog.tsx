@@ -39,6 +39,8 @@ export interface ReasonDialogProps {
   minLength?: number;
   placeholder?: string;
   labels?: Partial<ReasonDialogLabels>;
+  // Styles the dialog's panel, as Dialog's className does.
+  className?: string;
   // The language the reason is written in, if known.
   lang?: string;
 }
@@ -60,6 +62,7 @@ export function ReasonDialog({
   placeholder,
   labels,
   lang,
+  className,
 }: ReasonDialogProps) {
   const words = { ...REASON_DIALOG_LABELS, ...labels };
   const [reason, setReason] = useState('');
@@ -81,6 +84,7 @@ export function ReasonDialog({
     <Dialog
       open={open}
       onClose={onCancel}
+      className={className}
       title={title}
       description={description}
       role={danger ? 'alertdialog' : 'dialog'}

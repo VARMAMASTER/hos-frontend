@@ -1,6 +1,7 @@
 import type { HTMLAttributes } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { disabledControl } from '../../primitives/states';
 
 export interface FollowupChipsProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'onSelect' | 'children'> {
@@ -47,7 +48,7 @@ export function FollowupChips({
             'inline-flex min-h-(--nova-touch-sm) cursor-pointer items-center rounded-chip border border-transparent bg-ai-soft px-chip py-chip text-left text-caption font-semibold text-ai-deep',
             'hover:border-ai motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-standard',
             focusRing,
-            'disabled:cursor-default disabled:opacity-50',
+            disabledControl,
           )}
         >
           {question}

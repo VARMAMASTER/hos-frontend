@@ -14,6 +14,7 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { disabledControl } from '../../primitives/states';
 import { nextRovingIndex, RADIO_KEYS } from '../../primitives/roving-index';
 import type { Size } from '../../primitives/types';
 import {
@@ -244,13 +245,20 @@ type ItemBaseProps = Omit<
 export type ButtonGroupItemProps = ItemBaseProps &
   ({ children: ReactNode } | { children?: undefined; 'aria-label': string });
 
-// Padding and type match Button (the control tokens: sm 6px by 10px at 12px, md 8px by 16px at 13px).
+// Height, padding and type match Button (the control tokens: sm 6px by 10px at 12px, md 8px by 16px
+// at 13px, so min-h-control-sm | md is the height they come to anyway).
 // Icon-only items are square: padding all round, and the glyph 16px (size-icon-md). The prototype's 18px radius step makes a 30 to 36px
 // tall segment a full pill, which is why the selected corners morph to rounded-overlay and not rounded-full:
 // animating a radius to 999px finishes in its first percent and shows no morph.
 const sizes: Record<ButtonGroupSize, { text: string; iconOnly: string }> = {
-  sm: { text: 'px-control-sm py-control-sm text-label', iconOnly: 'p-s2' },
-  md: { text: 'px-control-md py-control-md text-control', iconOnly: 'p-s3' },
+  sm: {
+    text: 'min-h-control-sm px-control-sm py-control-sm text-label',
+    iconOnly: 'p-s2',
+  },
+  md: {
+    text: 'min-h-control-md px-control-md py-control-md text-control',
+    iconOnly: 'p-s3',
+  },
 };
 
 export function ButtonGroupItem({
@@ -338,7 +346,7 @@ export function ButtonGroupItem({
         'motion-safe:transition-[color,background-color,border-color,border-radius,transform] motion-safe:duration-base motion-safe:ease-standard motion-safe:active:scale-95',
         fill,
         focusRing,
-        'disabled:pointer-events-none disabled:opacity-50',
+        disabledControl,
         className,
       )}
     >

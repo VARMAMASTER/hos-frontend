@@ -1,6 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { ariaDisabled, disabledControl } from '../../primitives/states';
 import type { Size } from '../../primitives/types';
 
 // `secondary` is the old name of `outline`, kept so no caller breaks.
@@ -38,8 +39,8 @@ const base = cx(
   'transition-[color,background-color,border-color,box-shadow,transform] duration-fast ease-standard motion-reduce:transition-none',
   'hover:shadow-md motion-safe:active:translate-y-px active:shadow-sm aria-disabled:active:translate-y-0 aria-busy:active:translate-y-0',
   focusRing,
-  'disabled:pointer-events-none disabled:opacity-50',
-  'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
+  disabledControl,
+  ariaDisabled,
 );
 
 // primary is .btn-primary, ai .btn-ai, ghost .btn-ghost and danger .btn-danger-ghost. outline is the

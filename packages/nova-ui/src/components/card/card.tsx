@@ -61,6 +61,8 @@ export interface CardHeaderProps {
   description?: ReactNode;
   actions?: ReactNode;
   headingLevel?: 2 | 3 | 4;
+  // Merged last onto the header row.
+  className?: string;
 }
 
 // The prototype's .card-h: one row (px-card by py-card-bar, 16px by 12px, gap-card between its
@@ -78,10 +80,16 @@ export function CardHeader({
   description,
   actions,
   headingLevel = 2,
+  className,
 }: CardHeaderProps) {
   const Heading = `h${headingLevel}` as const;
   return (
-    <div className="nova-card-head flex items-center justify-between gap-card border-b border-border px-card py-card-bar">
+    <div
+      className={cx(
+        'nova-card-head flex items-center justify-between gap-card border-b border-border px-card py-card-bar',
+        className,
+      )}
+    >
       <Heading
         className={cx('min-w-0 font-display text-ink', headings[headingLevel])}
       >

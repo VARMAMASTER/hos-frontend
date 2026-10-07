@@ -24,6 +24,8 @@ export interface AlertDialogProps {
   // In the order they are drawn: left to right for two, top to bottom for one or three or more.
   // Put the cancel action first for two, last for three or more, as on the platform.
   actions: AlertAction[];
+  // Styles the alert's panel, as Dialog's className does.
+  className?: string;
 }
 
 // The action focus starts on: the least destructive one. Cancel beats default, and a destructive
@@ -61,6 +63,7 @@ export function AlertDialog({
   title,
   message,
   actions,
+  className,
 }: AlertDialogProps) {
   return (
     <Dialog
@@ -69,6 +72,7 @@ export function AlertDialog({
       role="alertdialog"
       hideClose
       size="sm"
+      className={className}
       title={title}
       description={message}
     >

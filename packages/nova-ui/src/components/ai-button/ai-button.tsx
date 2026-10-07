@@ -6,6 +6,7 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { ariaDisabled, disabledControl } from '../../primitives/states';
 import type { Size } from '../../primitives/types';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 
@@ -40,12 +41,12 @@ export interface AiButtonProps
 const base = cx(
   'group/ai relative inline-flex items-center justify-center gap-control rounded-control border border-transparent font-semibold text-on-primary',
   focusRing,
-  'disabled:pointer-events-none disabled:opacity-50',
-  'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
+  disabledControl,
+  ariaDisabled,
 );
 
 const sizes: Record<AiButtonSize, string> = {
-  sm: 'px-control-sm py-control-sm text-label',
+  sm: 'min-h-control-sm px-control-sm py-control-sm text-label',
   md: 'min-h-touch px-control-md py-control-md text-control',
 };
 

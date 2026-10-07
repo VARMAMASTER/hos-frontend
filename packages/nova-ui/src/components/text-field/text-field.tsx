@@ -1,6 +1,7 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { disabledField } from '../../primitives/states';
 import { FieldShell } from './field-shell';
 
 export interface TextFieldProps
@@ -21,7 +22,7 @@ export interface TextFieldProps
 const base = cx(
   'nova-field peer block w-full rounded-control h-control-md text-input text-ink placeholder:text-ink-3 transition-colors',
   focusRing,
-  'disabled:cursor-not-allowed disabled:opacity-50',
+  disabledField,
 );
 
 // The edge (3:1 at rest, ink-2 on hover, crit when aria-invalid) is nova-field's own: see theme.css.
