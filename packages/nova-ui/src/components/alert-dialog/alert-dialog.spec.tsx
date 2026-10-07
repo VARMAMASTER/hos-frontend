@@ -286,7 +286,7 @@ describe('AlertDialog layout', () => {
 describe('AlertDialog look', () => {
   it('is 280px wide at most', () => {
     setup();
-    expect(alert().classList).toContain('max-w-[280px]');
+    expect(alert().classList).toContain('max-w-dialog-sm');
     expect(alert().classList).not.toContain('max-w-lg');
   });
 
