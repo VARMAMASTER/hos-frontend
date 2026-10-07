@@ -21,7 +21,7 @@ export interface IconTileProps
 // The prototype's .ic: a 24px tile (its 7px radius is off the --r-* scale, so sm), a 10px bold
 // monogram in the display face, a 15px glyph.
 const base =
-  'inline-grid shrink-0 place-items-center rounded-sm border font-display font-bold tracking-[.01em]';
+  'inline-grid shrink-0 place-items-center rounded-control border font-display font-bold tracking-initials';
 
 // chrome is .ic on the dark chrome: a faint white lift and rim. Its glyph is the full chrome ink: the
 // prototype's --chrome-ink-2 falls below 4.5:1 over the lift on the sidebar's lightest point. ai is
@@ -32,8 +32,8 @@ const tones: Record<IconTileTone, string> = {
 };
 
 const sizes: Record<IconTileSize, string> = {
-  sm: 'size-6 text-[10px] [&_svg]:size-[15px]',
-  md: 'size-8 text-[12px] [&_svg]:size-5',
+  sm: 'size-tile text-badge [&_svg]:size-icon-tile',
+  md: 'size-s9 text-label [&_svg]:size-icon-lg',
 };
 
 export function IconTile({

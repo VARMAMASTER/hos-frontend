@@ -11,7 +11,7 @@ function MenuDemo() {
   const [open, setOpen] = useState(false);
   const [chosen, setChosen] = useState('Nothing chosen yet');
   return (
-    <div className="flex min-h-56 items-start gap-4">
+    <div className="flex min-h-menu-room items-start gap-s6">
       <Menu
         trigger={<Button variant="outline">Actions</Button>}
         open={open}
@@ -31,7 +31,7 @@ function MenuDemo() {
           Discharge…
         </MenuItem>
       </Menu>
-      <p className="py-2 text-[13px] text-ink-2" aria-live="polite">
+      <p className="py-s3 text-control text-ink-2" aria-live="polite">
         {chosen}
       </p>
     </div>

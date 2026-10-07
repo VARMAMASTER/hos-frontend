@@ -72,7 +72,7 @@ describe('IconTile', () => {
     expect([tile.dataset['tone'], tile.dataset['size']]).toEqual(['ai', 'md']);
     expect(tile.classList.contains('bg-ai-soft')).toBe(true);
     expect(tile.classList.contains('text-ai-deep')).toBe(true);
-    expect(tile.classList.contains('size-8')).toBe(true);
+    expect(tile.classList.contains('size-s9')).toBe(true);
   });
 
   // The prototype's .ic glyph is --chrome-ink-2, which falls below 4.5:1 over the tile's own white
@@ -84,8 +84,8 @@ describe('IconTile', () => {
         'bg-chrome-ink/5',
         'border-chrome-ink/15',
         'text-chrome-ink',
-        'size-6',
-        'text-[10px]',
+        'size-tile',
+        'text-badge',
         'font-bold',
       ]),
     );

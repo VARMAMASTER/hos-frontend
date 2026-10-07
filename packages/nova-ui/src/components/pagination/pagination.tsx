@@ -51,7 +51,7 @@ export function Pagination({
 
   return (
     <nav aria-label="Pagination" {...rest}>
-      <ol className="flex flex-wrap items-center gap-1">
+      <ol className="flex flex-wrap items-center gap-s1">
         <li>
           <Button
             variant="outline"
@@ -67,7 +67,7 @@ export function Pagination({
             <li
               key={`gap-after-${item.after}`}
               aria-hidden="true"
-              className="px-1 text-ink-3"
+              className="px-s1 text-ink-3"
             >
               …
             </li>
@@ -158,7 +158,7 @@ export function PaginationBar({
   return (
     <div
       className={cx(
-        'flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5 text-[12.5px] text-ink-2',
+        'flex flex-wrap items-center justify-between gap-x-s6 gap-y-s3 px-row py-row-comfortable text-body-sm text-ink-2',
         className,
       )}
       {...rest}
@@ -166,14 +166,14 @@ export function PaginationBar({
       <p aria-live="polite" className="tabular-nums slashed-zero">
         {formatPaginationRange(page, pageSize, total)}
       </p>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+      <div className="flex flex-wrap items-center gap-x-s6 gap-y-s3">
         {onPageSizeChange ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-s3">
             <span aria-hidden="true">Rows per page</span>
             {/* The Select's label sits above its control; here the visible words are beside it, so
                 the label is visually hidden and the field's top margin is taken back. */}
             <Select
-              className="-mt-1"
+              className="-mt-s1"
               label={<VisuallyHidden>Rows per page</VisuallyHidden>}
               value={String(pageSize)}
               options={sizes.map((size) => ({
