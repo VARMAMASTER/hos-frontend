@@ -4,11 +4,13 @@ Nova is the HOS prototype (`os/public/assets/hos.css`) as a React library. The d
 
 ## 1. The folder
 
-One folder per component under `src/components/`, named in kebab case:
+One folder per component under `src/components/`, named in kebab case (`src/structure.spec.ts` checks the shape):
 
 - `x.tsx`: the component (more files in the folder for its parts, such as `field-shell.tsx`);
 - `x.spec.tsx`: its tests (Vitest and Testing Library; no `jest-dom`; every file that calls `render` also calls `afterEach(() => cleanup())`);
 - `x.stories.tsx`: its Storybook stories, every state the component has.
+
+A file stays under 500 lines (a spec under 900); split a larger one by moving its model or a part into its own file, or list it in `structure.spec.ts` with the reason. A helper two components need (a hook, a drawn box, a class treatment) moves into `src/primitives/`, never a second copy.
 
 ## 2. Tokens only
 
@@ -32,14 +34,14 @@ A token reference in an arbitrary value is allowed (`w-[var(--nova-sidebar-rail-
 
 ## 3. The API
 
-- `size`: `'sm' | 'md'`, md by default, on the control tokens (`h-control-sm|md`, `px-/py-control-sm|md`).
-- `tone`: the status tones `'neutral' | 'good' | 'warn' | 'crit' | 'info'` (plus `'ai'` where the component carries AI output), each with its `-soft` / `-deep` pair and always a word or a glyph, never colour alone (`TONE_WORDS` in `chip.tsx`).
-- `variant`: the visual variants (`'primary' | 'outline' | 'ghost' | …`), never a status.
-- `disabled`: native where the element has it; `aria-disabled` where focus must stay (a disabled button that keeps focus).
+- `size`: `Size` from `primitives/types.ts` (`'sm' | 'md'`), md by default, on the control tokens (`h-control-sm|md` or `min-h-control-sm|md`, `px-/py-control-sm|md`), so every control of a size is one height. A size beyond them (`Avatar`'s xs and lg) is added beside `Size`, with a comment.
+- `tone`: `Tone` from `primitives/types.ts` (`'good' | 'warn' | 'crit' | 'info' | 'neutral' | 'ai' | 'highlight' | 'brand'`), narrowed with `Extract<Tone, …>` to the ones the component draws; each status has its `-soft` / `-deep` pair and is always a word or a glyph too, never colour alone (`TONE_WORDS` in `chip.tsx`). Never a local copy of the union, never a synonym (`'success'`, `'error'`, `'primary'`, `'default'`).
+- `variant`: the visual variants (`'primary' | 'outline' | 'ghost' | …`), never a status (a status is a `tone`).
+- `disabled`: native where the element has it; `aria-disabled` where focus must stay (a disabled button that keeps focus). The look is `primitives/states.ts`: `disabledControl` (a button, segment, chip or tab), `disabledField` (a field) or `ariaDisabled`.
 - `className`: merged last through `cx`, on the outermost element (on a field, the wrapper; say so in a comment when it differs).
-- Controlled and uncontrolled: `value` / `defaultValue` / `onChange` (or `open` / `defaultOpen` / `onOpenChange`, `checked` …) through `useControllableState`, never a second implementation.
+- Controlled and uncontrolled: `<state>` / `default<State>` / `on<State>Change` (`value` / `defaultValue` / `onValueChange`, `open` / `defaultOpen` / `onOpenChange`, `checked`, `pressed` …), or `onChange` for the value where the element's own change event is not in the way, through `useControllableState`, never a second implementation. A loading control sets `aria-busy`.
 - `forwardRef` to the main interactive element; the rest of the props spread onto it.
-- Compose the primitives: `cx`, `focusRing` (every interactive element), `Surface`, `VisuallyHidden`, `useControllableState`, `motionAllowed` / `playMotion`.
+- Compose the primitives: `cx`, `focusRing` (every interactive element), `states` (the disabled looks), `Surface` (a radius role, or `radius="none"` for a square frame), `menuItem` (a menu row), `VisuallyHidden`, `useControllableState`, `useChoiceValue`, `nextRovingIndex` (arrow-key focus in a row), `focus-trap`, `motionAllowed` / `playMotion` / `useLoopMotion`, `CheckboxBox`, `RadioDot`, `SkeletonBar`.
 
 ## 4. Accessibility tests
 
@@ -66,5 +68,5 @@ In `x.spec.tsx`:
 
 ## 7. Before you report
 
-- `NX_DAEMON=false pnpm nx run-many -t test lint typecheck build --projects=nova-ui --parallel=1` is green, and `pnpm exec prettier --check` on every file you touched.
+- `NX_DAEMON=false pnpm nx run-many -t test lint typecheck build --projects=nova-ui --parallel=1` is green, and `pnpm exec prettier --check` on every file you touched. That includes `src/consistency.spec.tsx` (the same height, padding and corner as the components that do the same job, the focus ring, the disabled look, the shared types and prop names) and `src/structure.spec.ts` (the folder, the barrel, the file size): if your component differs on purpose, add it to the spec's allowlist with the reason.
 - Build Storybook to a scratch folder (never the default output) and look at the component in light and dark; compare with the prototype page that uses it.

@@ -94,17 +94,17 @@ Letter-spacing is its own token, because the same size is set with and without i
 
 A component names what the corner belongs to, never a step of the scale (which lives only in the token layer).
 
-| Utility           | Token                   | Value          | For                                            |
-| ----------------- | ----------------------- | -------------- | ---------------------------------------------- |
-| `rounded-control` | `--nova-radius-control` | `--r-sm`, 8px  | buttons that are not pills, fields, menu items |
-| `rounded-card`    | `--nova-radius-card`    | `--r-md`, 12px | cards, tiles, the tab rail                     |
-| `rounded-overlay` | `--nova-radius-overlay` | `--r-lg`, 18px | menus, popovers, dialogs, the copilot panel    |
-| `rounded-hero`    | `--nova-radius-hero`    | `--r-xl`, 22px | the hero band and large glass panels           |
-| `rounded-chip`    | `--nova-radius-chip`    | `--r-full`     | a chip                                         |
-| `rounded-tag`     | `--nova-radius-tag`     | `--r-sm`       | a tag                                          |
-| `rounded-pill`    | `--nova-radius-pill`    | `--r-full`     | anything drawn as a pill on purpose            |
-| `rounded-full`    | `--nova-radius-full`    | 999px          | a true circle (a dot, an avatar)               |
-| `rounded-none`    |                         | 0              | a square corner                                |
+| Utility           | Token                   | Value          | For                                              |
+| ----------------- | ----------------------- | -------------- | ------------------------------------------------ |
+| `rounded-control` | `--nova-radius-control` | `--r-sm`, 8px  | buttons that are not pills, fields, menu items   |
+| `rounded-card`    | `--nova-radius-card`    | `--r-md`, 12px | cards, tiles, chart panels, the tab rail, toasts |
+| `rounded-overlay` | `--nova-radius-overlay` | `--r-lg`, 18px | menus, popovers, dialogs, the copilot panel      |
+| `rounded-hero`    | `--nova-radius-hero`    | `--r-xl`, 22px | the hero band and large glass panels             |
+| `rounded-chip`    | `--nova-radius-chip`    | `--r-full`     | a chip                                           |
+| `rounded-tag`     | `--nova-radius-tag`     | `--r-sm`       | a tag                                            |
+| `rounded-pill`    | `--nova-radius-pill`    | `--r-full`     | anything drawn as a pill on purpose              |
+| `rounded-full`    | `--nova-radius-full`    | 999px          | a true circle (a dot, an avatar)                 |
+| `rounded-none`    |                         | 0              | a square corner                                  |
 
 Per-side and per-corner forms take the same names (`rounded-t-card`). `Surface` takes the roles too, and `none` for a square frame (the sidebar, the top bar): `radius="none" | "control" | "card" | "overlay" | "hero" | "chip" | "tag" | "pill"`, `overlay` by default.
 
@@ -112,29 +112,36 @@ Per-side and per-corner forms take the same names (`rounded-t-card`). `Surface` 
 
 Components that should match share one token.
 
-| Utilities                                                        | Token                                                       | Value                                           |
-| ---------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------- |
-| `h-control-md`, `min-h-control-md`                               | `--nova-control-h-md`                                       | padding + `text-control` line + border, 38.15px |
-| `h-control-sm`, `min-h-control-sm`                               | `--nova-control-h-sm`                                       | padding + `text-label` line + border, 32.6px    |
-| `px-control-md`, `py-control-md`                                 | `--nova-control-px-md`, `--nova-control-py-md`              | `s6` by `s3` (16 by 8, `.btn`)                  |
-| `px-control-sm`, `py-control-sm`                                 | `--nova-control-px-sm`, `--nova-control-py-sm`              | `s4` by `s2` (10 by 6, `.btn-sm`)               |
-| `gap-control`                                                    | `--nova-control-gap`                                        | `s3`                                            |
-| `px-field` (`pl-`, `pr-`), `left-field`, `right-field`           | `--nova-field-px`                                           | `s4` (`.f-input`)                               |
-| `pl-field-icon`, `pr-field-icon`                                 | `--nova-field-icon-inset`                                   | field inset + `icon-md` + `s2`                  |
-| `p-card` (`px-`, `py-`, `pt-` …), `gap-card`                     | `--nova-card-p`, `--nova-card-gap`                          | `s6`, `s5` (`.card-b`, `.card-h`)               |
-| `py-card-bar`                                                    | `--nova-card-bar-py`                                        | `s5` (a card's header and footer rows)          |
-| `p-overlay`, `px-overlay`, `py-overlay`, `py-overlay-bar`        | `--nova-overlay-px`, `-py`, `-bar-py`                       | `s7`, `s6`, `s5` (a dialog)                     |
-| `px-chip`, `py-chip`, `gap-chip`                                 | `--nova-chip-px`, `-py`, `-gap`                             | `s3`, `s0`, `s2` (`.chip`)                      |
-| `px-tag`, `py-tag`                                               | `--nova-tag-px`, `-py`                                      | `s3`, `s0`                                      |
-| `px-badge`, `py-badge`                                           | `--nova-badge-px`, `-py`                                    | `s2`, the hairline (a count pill)               |
-| `px-row`, `py-row-comfortable`, `py-row-compact`                 | `--nova-row-px`, `-py-comfortable`, `-py-compact`           | `s6`, `s4`, `s2` (table, list, menu rows)       |
-| `min-h-touch`, `min-w-touch`, `h-touch`, `w-touch`, `size-touch` | `--nova-touch`                                              | 44px                                            |
-| `size-touch-sm`                                                  | `--nova-touch-sm`                                           | `s8`, 24px (WCAG 2.5.8)                         |
-| `size-icon-xs`, `-sm`, `-tile`, `-md`, `-lg`                     | `--nova-icon-*`                                             | 12, 14, 15 (`.ic svg`), 16, 20px                |
-| `size-dot-sm`, `size-dot`, `size-mark`, `size-tile`              | `--nova-dot-sm`, `--nova-dot`, `--nova-mark`, `--nova-tile` | 5, 7 (`.dot`), 22 (`.ai-spark`), 24px (`.ic`)   |
-| `size-spinner`                                                   | `--nova-spinner`                                            | 1.1em                                           |
-| `w-sidebar`, `w-rail`                                            | `--nova-sidebar-w`, `--nova-sidebar-rail-w`                 | 248px, 68px                                     |
-| `max-w-xs` … `max-w-6xl`                                         | `--nova-measure-*`                                          | 20 … 72rem: how wide a block may grow           |
+| Utilities                                                        | Token                                                       | Value                                            |
+| ---------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ |
+| `h-control-md`, `min-h-control-md`                               | `--nova-control-h-md`                                       | padding + `text-control` line + border, 38.15px  |
+| `h-control-sm`, `min-h-control-sm`                               | `--nova-control-h-sm`                                       | padding + `text-label` line + border, 32.6px     |
+| `px-control-md`, `py-control-md`                                 | `--nova-control-px-md`, `--nova-control-py-md`              | `s6` by `s3` (16 by 8, `.btn`)                   |
+| `px-control-sm`, `py-control-sm`                                 | `--nova-control-px-sm`, `--nova-control-py-sm`              | `s4` by `s2` (10 by 6, `.btn-sm`)                |
+| `gap-control`                                                    | `--nova-control-gap`                                        | `s3`                                             |
+| `px-field` (`pl-`, `pr-`), `left-field`, `right-field`           | `--nova-field-px`                                           | `s4` (`.f-input`)                                |
+| `pl-field-icon`, `pr-field-icon`                                 | `--nova-field-icon-inset`                                   | field inset + `icon-md` + `s2`                   |
+| `p-card` (`px-`, `py-`, `pt-` …), `gap-card`                     | `--nova-card-p`, `--nova-card-gap`                          | `s6`, `s5` (`.card-b`, `.card-h`)                |
+| `py-card-bar`                                                    | `--nova-card-bar-py`                                        | `s5` (a card's header and footer rows)           |
+| `p-overlay`, `px-overlay`, `py-overlay`, `py-overlay-bar`        | `--nova-overlay-px`, `-py`, `-bar-py`                       | `s7`, `s6`, `s5` (a dialog)                      |
+| `px-chip`, `py-chip`, `gap-chip`                                 | `--nova-chip-px`, `-py`, `-gap`                             | `s3`, `s0`, `s2` (`.chip`)                       |
+| `px-tag`, `py-tag`                                               | `--nova-tag-px`, `-py`                                      | `s3`, `s0`                                       |
+| `px-badge`, `py-badge`                                           | `--nova-badge-px`, `-py`                                    | `s2`, the hairline (a count pill)                |
+| `px-row`, `py-row-comfortable`, `py-row-compact`                 | `--nova-row-px`, `-py-comfortable`, `-py-compact`           | `s6`, `s4`, `s2` (table, list, menu rows)        |
+| `min-h-touch`, `min-w-touch`, `h-touch`, `w-touch`, `size-touch` | `--nova-touch`                                              | 44px                                             |
+| `size-touch-sm`                                                  | `--nova-touch-sm`                                           | `s8`, 24px (WCAG 2.5.8)                          |
+| `size-icon-xs`, `-sm`, `-tile`, `-md`, `-lg`                     | `--nova-icon-*`                                             | 12, 14, 15 (`.ic svg`), 16, 20px                 |
+| `size-dot-sm`, `size-dot`, `size-mark`, `size-tile`              | `--nova-dot-sm`, `--nova-dot`, `--nova-mark`, `--nova-tile` | 5, 7 (`.dot`), 22 (`.ai-spark`), 24px (`.ic`)    |
+| `size-spinner`                                                   | `--nova-spinner`                                            | 1.1em                                            |
+| `w-sidebar`, `w-rail`                                            | `--nova-sidebar-w`, `--nova-sidebar-rail-w`                 | 248px, 68px                                      |
+| `max-w-xs` … `max-w-6xl`                                         | `--nova-measure-*`                                          | 20 … 72rem: how wide a block may grow            |
+| `size-check`                                                     | `--nova-check`                                              | `s7`, 20px: Checkbox, Radio, DataTable's row box |
+| `size-close`                                                     | `--nova-close-size`                                         | 30px (`.hos-x`): Dialog and Toast close          |
+| `size-topbar-ico`                                                | `--nova-topbar-ico`                                         | 34px (`.tb-ico`): NotificationBell, TopBar menu  |
+| `p-menu-item`, `gap-menu-item`                                   | `--nova-menu-item-p`, `--nova-menu-item-gap`                | `s3`, `s3` (`.ws-item`, `primitives/menu-item`)  |
+| `min-w-column`                                                   | `--nova-column-min-w`                                       | 12rem: a column or filter's least width          |
+
+A value two or more component families share is one of these shared tokens; a value only one component needs is in its family's "Component tokens" section of `theme.css`. `md:` is Nova's own `--breakpoint-md` (48rem), which `tokens/design.ts` `BREAKPOINT_REM` mirrors for a script media query.
 
 Edges: `border` is the 1px hairline; `border-emphasis` (2px, a selected edge) and `border-rail` (3px, an accent rail) take side forms (`border-l-rail`); `ring-hairline` and `ring-emphasis`; the focus ring is `outline-focus outline-offset-focus` (inside `focusRing`); links take `underline-offset-tight` or `-loose`.
 

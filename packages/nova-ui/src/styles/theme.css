@@ -838,10 +838,11 @@
 }
 /* ===== Design tokens (end) ===== */
 
-/* Component tokens, one marked section per conversion family, so the agents converting the
-   families in parallel each add their component's own values (a dock's orb, a phone frame's width)
-   in their own section: a :root block of --nova-* values, each pointing at the scale where the value
-   is on it, and an @theme inline block naming the utilities. Never a literal in a component. */
+/* Component tokens: the values only one component needs (a dock's orb, a phone frame's width), in
+   one marked section per component family: a :root block of --nova-* values, each pointing at the
+   scale where the value is on it, and an @theme inline block naming the utilities. A value two or
+   more families share is a shared token in "Design tokens" above, never a copy per family. Never a
+   literal in a component. */
 /* ===== Component tokens: family a, core controls, forms and overlays (begin) ===== */
 /* The values only these components need, each on the scale where the prototype's value is on it.
    Avatar: 20, 32, 40 and 48 across, and the verified seal's glyph beside each. Checkbox and Radio
@@ -898,7 +899,7 @@
   --max-width-dialog-sm: var(--nova-dialog-w-sm);
   --size-empty-icon: var(--nova-empty-icon);
 }
-/* ===== Component tokens: family a (end) =====
+/* ===== Component tokens: family a (end) ===== */
 
 /* ===== Component tokens: family b, shell, navigation, data, tables and charts (begin) ===== */
 :root {

@@ -64,7 +64,7 @@ export function MoreIcon() {
 // The sort indicator is an arrow, and each state has its own shape: up for ascending, down for
 // descending, a faint pair of chevrons for sortable-but-idle. An active arrow is in the deep highlight
 // ink (4.5:1 on the header), the sorted column's marker.
-export function SortIcon({ direction }: { direction: SortDirection | null }) {
+function SortIcon({ direction }: { direction: SortDirection | null }) {
   if (direction === 'asc') {
     return (
       <Icon

@@ -8,8 +8,9 @@ export interface AiBadgeProps
   label?: string;
 }
 
-// The ai tone of Chip, so the badge can never drift from the rest of the ai colour. AI is cyan,
-// not a status colour: it stays distinct from good, warn, crit and info in every hospital theme.
+// The ai tone of Chip, so the badge can never drift from the rest of the AI colour. AI is its own
+// colour family, not a status colour: the prototype's cyan in HOS Violet, and a hue each hospital
+// theme derives (theme/derive.ts), proven distinct from good, warn, crit, info and the brand.
 export function AiBadge({ label = 'AI draft', ...rest }: AiBadgeProps) {
   return (
     <Chip tone="ai" data-badge="" {...rest}>

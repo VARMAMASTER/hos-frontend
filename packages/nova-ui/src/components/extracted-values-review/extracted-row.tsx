@@ -107,7 +107,7 @@ export const icons = {
   ),
 } as const;
 
-export interface ExtractedRowProps {
+interface ExtractedRowProps {
   rowId: string;
   value: ExtractedValue;
   text: string;
