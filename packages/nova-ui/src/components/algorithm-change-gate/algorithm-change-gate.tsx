@@ -218,13 +218,13 @@ export function AlgorithmChangeGate({
     <section
       aria-labelledby={headingId}
       data-gate={open ? 'open' : 'locked'}
-      className={cx('flex flex-col gap-3', className)}
+      className={cx('flex flex-col gap-s5', className)}
       {...rest}
     >
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-s3">
         <Heading
           id={headingId}
-          className="font-display text-[13.5px] font-bold text-ink"
+          className="font-display text-input font-bold text-ink"
         >
           {title}
         </Heading>
@@ -238,7 +238,7 @@ export function AlgorithmChangeGate({
         </Chip>
       </div>
       {description ? (
-        <p className="text-[12px] text-ink-2">{description}</p>
+        <p className="text-label text-ink-2">{description}</p>
       ) : null}
       {running > 0 && progressSteps && progressSteps.length > 0 ? (
         <AiProgressSteps
@@ -253,7 +253,7 @@ export function AlgorithmChangeGate({
             key={check.id}
             data-status={check.status}
             // The prototype's .gate-row: 12.5px, 8px above and below, 10px apart, a hairline under.
-            className="flex flex-wrap items-start gap-2.5 border-b border-border py-2 text-[12.5px] text-ink last:border-b-0"
+            className="flex flex-wrap items-start gap-s4 border-b border-border py-s3 text-body-sm text-ink last:border-b-0"
           >
             <Chip
               tone={checkTones[check.status]}
@@ -271,12 +271,12 @@ export function AlgorithmChangeGate({
             <div className="min-w-0 flex-1">
               <p>{check.name}</p>
               {check.status === 'fail' && check.failure ? (
-                <p className="mt-0.5 text-[12px] text-crit-deep">
+                <p className="mt-s0 text-label text-crit-deep">
                   {check.failure}
                 </p>
               ) : null}
             </div>
-            <span className="font-mono text-[11.5px] whitespace-nowrap text-ink-2">
+            <span className="font-mono text-caption whitespace-nowrap text-ink-2">
               {check.result
                 ? `${check.result} (${check.threshold})`
                 : `(${check.threshold})`}
@@ -285,7 +285,7 @@ export function AlgorithmChangeGate({
         ))}
       </ul>
       {promotion ? (
-        <div data-record="" className="text-[12px] text-ink-2">
+        <div data-record="" className="text-label text-ink-2">
           <p className="font-semibold text-ink">
             {words.formatRecord(promotion)}
           </p>
@@ -295,7 +295,7 @@ export function AlgorithmChangeGate({
           </p>
         </div>
       ) : (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-s3">
           {onRun ? (
             <Button
               variant="outline"
@@ -316,7 +316,7 @@ export function AlgorithmChangeGate({
             {promoteLabel}
           </Button>
           {open ? null : (
-            <p id={lockedId} className="text-[12px] text-ink-2">
+            <p id={lockedId} className="text-label text-ink-2">
               {words.locked({
                 failed: count('fail'),
                 notRun: count('not-run'),

@@ -237,7 +237,7 @@ const warnIcon = (
     strokeLinejoin="round"
     aria-hidden="true"
     focusable="false"
-    className="mt-px size-3 shrink-0"
+    className="mt-px size-icon-xs shrink-0"
   >
     <path d="M10 2.75 18 16.5H2z" />
     <path d="M10 8v3.5M10 14v.01" />
@@ -249,15 +249,15 @@ const warnIcon = (
 // AI wash until the nurse changes it.
 const padField = cx(
   'min-w-0 flex-1',
-  '[&_input]:min-h-12 [&_input]:text-center [&_input]:font-mono [&_input]:text-[16px] [&_input]:font-semibold',
-  '[&_label]:text-[11px] [&_label]:font-bold [&_label]:uppercase [&_label]:tracking-[0.04em] [&_label]:text-ink-3',
+  '[&_input]:min-h-s10 [&_input]:text-center [&_input]:font-mono [&_input]:text-subtitle [&_input]:font-semibold',
+  '[&_label]:text-meta [&_label]:font-bold [&_label]:uppercase [&_label]:tracking-label [&_label]:text-ink-3',
 );
 const aiFilled =
   '[--nova-field-edge:var(--nova-color-ai)] [--nova-field-fill:var(--nova-color-ai-ghost)]';
 
 // The pane headings: the prototype's 12px bold uppercase in the AI ink.
 const paneHeading =
-  'mb-1 font-display text-[12px] font-bold uppercase tracking-[0.04em] text-ai-deep';
+  'mb-s1 font-display text-label font-bold uppercase tracking-label text-ai-deep';
 
 // The prototype's voice entry (14-nursing.html, "Voice entry — GM-03"): an AI draft that shows what
 // the nurse said, then what HOS will chart, pre-filled and editable, with Approve & chart and Say it
@@ -365,13 +365,13 @@ export function VoiceEntryCapture({
       }
       {...rest}
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-s6">
         <div>
           <Heading className={paneHeading}>{words.said}</Heading>
           <p
             data-slot="transcript"
             lang={transcriptLang}
-            className="text-[13px] italic leading-[1.6] text-ink"
+            className="text-control italic leading-relaxed text-ink"
           >
             {transcript}
             {status === 'listening' ? <StreamCaret /> : null}
@@ -391,7 +391,7 @@ export function VoiceEntryCapture({
           <div className="motion-safe:animate-fade-in">
             <Heading className={paneHeading}>{words.willChart}</Heading>
             {/* .vpad: as many 132px columns as fit, 10px apart. */}
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(132px,1fr))] gap-2.5">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(var(--nova-ai-stat-min-w),1fr))] gap-s4">
               {fields.map((field) => {
                 const value = values[field.key] ?? '';
                 const entry = parsed?.[field.key];
@@ -416,9 +416,9 @@ export function VoiceEntryCapture({
                     data-field={field.key}
                     data-filled={fromAi ? 'ai' : undefined}
                     data-out-of-range={range ?? undefined}
-                    className="flex flex-col gap-1"
+                    className="flex flex-col gap-s1"
                   >
-                    <div className="flex items-end gap-1.5">
+                    <div className="flex items-end gap-s2">
                       <TextField
                         className={cx(padField, fromAi && aiFilled)}
                         label={
@@ -452,7 +452,7 @@ export function VoiceEntryCapture({
                         <span
                           data-slot="unit"
                           aria-hidden="true"
-                          className="flex h-12 items-center font-mono text-[12px] text-ink-2"
+                          className="flex h-s10 items-center font-mono text-label text-ink-2"
                         >
                           {field.unit}
                         </span>
@@ -461,7 +461,7 @@ export function VoiceEntryCapture({
                     {last !== undefined ? (
                       <p
                         id={lastId}
-                        className="text-center font-mono text-[10.5px] text-ink-3"
+                        className="text-center font-mono text-overline text-ink-3"
                       >
                         {words.last(last)}
                       </p>
@@ -470,7 +470,7 @@ export function VoiceEntryCapture({
                       <p
                         id={rangeId}
                         data-slot="range"
-                        className="flex items-start gap-1 text-[11.5px] font-semibold text-warn-deep"
+                        className="flex items-start gap-s1 text-caption font-semibold text-warn-deep"
                       >
                         {warnIcon}
                         {range === 'above'

@@ -210,5 +210,23 @@ describe('WorkerGrid', () => {
     );
     const list = screen.getByRole('list', { name: 'AI workers' });
     expect(within(list).getAllByRole('listitem')).toHaveLength(2);
+    // As many columns as fit, each at least the card's token width.
+    expect(list.className.split(' ')).toContain(
+      'grid-cols-[repeat(auto-fill,minmax(var(--nova-worker-card-min-w),1fr))]',
+    );
+  });
+
+  it('draws each card on the card tokens: the card corner and padding, the rail top edge', () => {
+    render(<WorkerCard name="WhatsApp Assistant" />);
+    const classes = card().className.split(' ');
+    for (const cls of [
+      'rounded-card',
+      'border-t-rail',
+      'px-card',
+      'pt-card',
+      'gap-s4',
+    ]) {
+      expect(classes).toContain(cls);
+    }
   });
 });

@@ -144,7 +144,7 @@ function LiveScribe() {
   }));
 
   return (
-    <div className="flex max-w-3xl flex-col gap-4">
+    <div className="flex max-w-3xl flex-col gap-s6">
       <Card>
         <CardHeader
           title="Live consultation — Lakshmi Devi"
@@ -200,7 +200,7 @@ export const LiveScribeFlowDark: Story = {
 
 function RecorderStatuses() {
   return (
-    <div className="grid max-w-5xl gap-4 md:grid-cols-2">
+    <div className="grid max-w-5xl gap-s6 md:grid-cols-2">
       {SCRIBE_RECORDER_STATUSES.map((status) => (
         <Card key={status}>
           <CardHeader title={status} />
@@ -227,7 +227,7 @@ function RecorderStatuses() {
                 state: index < 2 ? 'done' : index === 2 ? 'active' : 'pending',
               }))}
               draft={
-                <p className="text-[13px] text-ink-2">
+                <p className="text-control text-ink-2">
                   The SOAP draft is ready below.
                 </p>
               }
@@ -250,7 +250,7 @@ export const RecorderAllStatusesDark: Story = {
 
 function SoapDrafts() {
   return (
-    <div className="grid max-w-6xl gap-4 xl:grid-cols-2">
+    <div className="grid max-w-6xl gap-s6 xl:grid-cols-2">
       <SoapDraftBlock
         title="AI SOAP draft — streaming"
         approverName="Dr. K. Ramesh"
@@ -327,7 +327,7 @@ function NurseVoiceEntries() {
     { status: 'approved', transcript: SAID },
   ];
   return (
-    <div className="flex max-w-3xl flex-col gap-4">
+    <div className="flex max-w-3xl flex-col gap-s6">
       {states.map(({ status, transcript }) => (
         <VoiceEntryCapture
           key={status}

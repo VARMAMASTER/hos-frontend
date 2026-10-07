@@ -12,7 +12,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="max-w-60">
+      <div className="max-w-(--nova-worker-card-min-w)">
         <Story />
       </div>
     ),

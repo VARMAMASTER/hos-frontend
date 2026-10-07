@@ -124,7 +124,7 @@ const warnIcon = (
     strokeLinejoin="round"
     aria-hidden="true"
     focusable="false"
-    className="mt-0.5 size-3.5 shrink-0"
+    className="mt-s0 size-icon-sm shrink-0"
   >
     <path d="M10 2.75 18 16.5H2z" />
     <path d="M10 8v3.5M10 14v.01" />
@@ -140,7 +140,7 @@ const micIcon = (
     strokeLinecap="round"
     aria-hidden="true"
     focusable="false"
-    className="size-3.5"
+    className="size-icon-sm"
   >
     <rect x="7" y="2.5" width="6" height="10" rx="3" />
     <path d="M4.5 9.5a5.5 5.5 0 0 0 11 0M10 15v2.5" />
@@ -233,7 +233,7 @@ export function SoapDraftBlock({
       {...rest}
     >
       {/* .soap-grid: two columns, 12px apart, one under 760px. */}
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid gap-s5 md:grid-cols-2">
         {shown.map((key, index) => {
           const content = sections[key];
           const text = content?.text ?? '';
@@ -256,15 +256,15 @@ export function SoapDraftBlock({
               data-section={key}
               data-flagged={flagged ? 'true' : undefined}
               className={cx(
-                'flex flex-col rounded-sm border bg-surface/55 px-3 py-2.5',
+                'flex flex-col rounded-control border bg-surface/55 px-s5 py-s4',
                 flagged ? 'border-warn' : 'border-ai-line',
                 generating && 'motion-safe:animate-fade-in',
               )}
             >
-              <div className="mb-1.5 flex flex-wrap items-center gap-2">
+              <div className="mb-s2 flex flex-wrap items-center gap-s3">
                 <Heading
                   id={headingId}
-                  className="font-display text-[12px] font-bold uppercase tracking-wider text-ai-deep"
+                  className="font-display text-label font-bold uppercase tracking-label text-ai-deep"
                 >
                   {words.headings[key]}
                 </Heading>
@@ -273,7 +273,7 @@ export function SoapDraftBlock({
                 </Chip>
               </div>
               {flagged ? (
-                <p className="mb-1 flex items-start gap-1.5 text-[12.5px] font-semibold text-warn-deep">
+                <p className="mb-s1 flex items-start gap-s2 text-body-sm font-semibold text-warn-deep">
                   {warnIcon}
                   {words.planEmpty}
                 </p>
@@ -290,12 +290,12 @@ export function SoapDraftBlock({
                   onChange={(event) => edit(key, event.target.value)}
                 />
               ) : text ? (
-                <p lang={content?.lang} className="mb-1 text-[13px] text-ink">
+                <p lang={content?.lang} className="mb-s1 text-control text-ink">
                   {text}
                   {newest ? <StreamCaret /> : null}
                 </p>
               ) : newest ? (
-                <p className="mb-1 text-[13px] text-ink">
+                <p className="mb-s1 text-control text-ink">
                   <StreamCaret />
                 </p>
               ) : null}
@@ -303,7 +303,7 @@ export function SoapDraftBlock({
                 <p
                   id={glossId}
                   lang={content.glossLang ?? 'en'}
-                  className={cx('text-[12.5px] text-ink-2', editable && 'mt-1')}
+                  className={cx('text-body-sm text-ink-2', editable && 'mt-s1')}
                 >
                   {content.gloss}
                 </p>

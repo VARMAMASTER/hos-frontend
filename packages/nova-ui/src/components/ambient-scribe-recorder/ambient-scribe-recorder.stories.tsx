@@ -69,7 +69,7 @@ export const Done: Story = {
   args: {
     status: 'done',
     draft: (
-      <p className="text-[13px] text-ink-2">
+      <p className="text-control text-ink-2">
         The SOAP draft is ready below for your review.
       </p>
     ),

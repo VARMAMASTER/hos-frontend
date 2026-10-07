@@ -117,17 +117,17 @@ export function LearnedPreferenceRow({
         // The prototype's .learn-row: the line edge, panel-2, 10px by 12px. Off, it drops to the
         // panel and the quiet inks instead of the prototype's 55% opacity, which would take its text
         // below 4.5:1.
-        'rounded-md border border-border px-3 py-2.5',
+        'rounded-card border border-border px-s5 py-s4',
         on ? 'bg-surface-2' : 'border-dashed bg-surface',
         className,
       )}
       {...rest}
     >
-      <div className="flex items-start justify-between gap-2.5">
+      <div className="flex items-start justify-between gap-s4">
         <p
           lang={contentLang}
           className={cx(
-            'flex min-w-0 items-start gap-2 text-[13px] font-semibold',
+            'flex min-w-0 items-start gap-s3 text-control font-semibold',
             on ? 'text-ink' : 'text-ink-2',
           )}
         >
@@ -142,7 +142,7 @@ export function LearnedPreferenceRow({
           aria-hidden="true"
           data-state=""
           className={cx(
-            'shrink-0 text-[11.5px] font-bold',
+            'shrink-0 text-caption font-bold',
             on ? 'text-ai-deep' : 'text-ink-3',
           )}
         >
@@ -151,14 +151,14 @@ export function LearnedPreferenceRow({
       </div>
       <p
         lang={contentLang}
-        className="mt-1 text-[12px] leading-relaxed text-ink-2"
+        className="mt-s1 text-label leading-relaxed text-ink-2"
       >
         {!on && whenOff ? whenOff : why}
       </p>
       <p
         lang={contentLang}
         className={cx(
-          'mt-1.5 text-[12.5px] leading-relaxed',
+          'mt-s2 text-body-sm leading-relaxed',
           on ? 'text-ink' : 'text-ink-3',
         )}
       >
@@ -171,7 +171,7 @@ export function LearnedPreferenceRow({
           </>
         )}
       </p>
-      <div className="mt-2 flex flex-wrap items-center gap-2">
+      <div className="mt-s3 flex flex-wrap items-center gap-s3">
         <Switch
           checked={on}
           onCheckedChange={setOn}
@@ -194,7 +194,7 @@ export function LearnedPreferenceRow({
         ) : null}
       </div>
       {inline && editing ? (
-        <div className="mt-2 flex flex-col gap-2">
+        <div className="mt-s3 flex flex-col gap-s3">
           <Textarea
             ref={boxRef}
             label={words.correctionLabel}
@@ -203,7 +203,7 @@ export function LearnedPreferenceRow({
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
           />
-          <div className="flex flex-wrap justify-end gap-2">
+          <div className="flex flex-wrap justify-end gap-s3">
             <Button variant="ghost" size="sm" onClick={close}>
               {words.cancel}
             </Button>

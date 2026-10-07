@@ -202,24 +202,24 @@ const svg = {
 
 const icons = {
   mic: (
-    <svg {...svg} className="size-4 shrink-0">
+    <svg {...svg} className="size-icon-md shrink-0">
       <rect x="7" y="2.5" width="6" height="10" rx="3" />
       <path d="M4.5 9.5a5.5 5.5 0 0 0 11 0M10 15v2.5" />
     </svg>
   ),
   micOff: (
-    <svg {...svg} className="size-4 shrink-0">
+    <svg {...svg} className="size-icon-md shrink-0">
       <path d="M7 7V5.5a3 3 0 0 1 6 0v4M4.5 9.5a5.5 5.5 0 0 0 9.2 4.1M10 15v2.5M3 3l14 14" />
     </svg>
   ),
   waiting: (
-    <svg {...svg} className="size-4 shrink-0 motion-safe:animate-spin">
+    <svg {...svg} className="size-icon-md shrink-0 motion-safe:animate-spin">
       <circle cx="10" cy="10" r="7" opacity="0.35" />
       <path d="M17 10a7 7 0 0 0-7-7" />
     </svg>
   ),
   pause: (
-    <svg {...svg} className="size-3 shrink-0">
+    <svg {...svg} className="size-icon-xs shrink-0">
       <path d="M7 4.5v11M13 4.5v11" />
     </svg>
   ),
@@ -228,33 +228,33 @@ const icons = {
       viewBox="0 0 20 20"
       aria-hidden="true"
       focusable="false"
-      className="size-3 shrink-0"
+      className="size-icon-xs shrink-0"
     >
       <rect x="4" y="4" width="12" height="12" rx="1.5" fill="currentColor" />
     </svg>
   ),
   lock: (
-    <svg {...svg} className="size-3.5 shrink-0">
+    <svg {...svg} className="size-icon-sm shrink-0">
       <rect x="4.5" y="9" width="11" height="8" rx="1.5" />
       <path d="M7 9V6.5a3 3 0 0 1 6 0V9" />
     </svg>
   ),
   stepDone: (
-    <svg {...svg} className="size-3.5 shrink-0 text-good">
+    <svg {...svg} className="size-icon-sm shrink-0 text-good">
       <path d="M4.5 10.5l3.5 3.5 7.5-8" />
     </svg>
   ),
   stepActive: (
     <svg
       {...svg}
-      className="size-3.5 shrink-0 text-ai motion-safe:animate-spin"
+      className="size-icon-sm shrink-0 text-ai motion-safe:animate-spin"
     >
       <circle cx="10" cy="10" r="7" opacity="0.35" />
       <path d="M17 10a7 7 0 0 0-7-7" />
     </svg>
   ),
   stepPending: (
-    <svg {...svg} className="size-3.5 shrink-0 text-ink-3">
+    <svg {...svg} className="size-icon-sm shrink-0 text-ink-3">
       <circle cx="10" cy="10" r="6" />
     </svg>
   ),
@@ -408,7 +408,11 @@ export function AmbientScribeRecorder({
       aria-label={words.name}
       tabIndex={-1}
       data-status={status}
-      className={cx('flex flex-col gap-2 rounded-sm', focusRing, className)}
+      className={cx(
+        'flex flex-col gap-s3 rounded-control',
+        focusRing,
+        className,
+      )}
       onFocus={(event) => {
         focusInside.current = true;
         onFocus?.(event);
@@ -425,17 +429,17 @@ export function AmbientScribeRecorder({
       {...rest}
     >
       {/* .rec-row: 12px apart, wrapping. */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-s5">
         <AiBadge label={words.name} />
         {/* The recording indicator, always on screen: the dark pill once there is a recording, a
             plain line before it. Its words are the one status region. */}
         <span
           data-slot="indicator"
           className={cx(
-            'inline-flex items-center text-[13px] font-semibold',
+            'inline-flex items-center text-control font-semibold',
             recorded
-              ? 'gap-2.5 rounded-full bg-chrome-1 px-4 py-2 text-chrome-ink'
-              : 'gap-1.5',
+              ? 'gap-s4 rounded-full bg-chrome-1 px-s6 py-s3 text-chrome-ink'
+              : 'gap-s2',
             status === 'denied' ? 'text-crit-deep' : !recorded && 'text-ink-2',
           )}
         >
@@ -444,14 +448,14 @@ export function AmbientScribeRecorder({
             <span
               data-slot="waveform"
               aria-hidden="true"
-              className="inline-flex h-4 items-end gap-0.5"
+              className="inline-flex h-s6 items-end gap-s0"
             >
               {shown.map((level, index) => (
                 <span
                   key={index}
                   data-slot="bar"
                   data-level={String(level)}
-                  className="h-full w-[3px] origin-bottom rounded-full bg-chrome-accent motion-safe:transition-transform motion-safe:duration-fast motion-safe:ease-standard"
+                  className="h-full w-(--nova-scribe-bar-w) origin-bottom rounded-full bg-chrome-accent motion-safe:transition-transform motion-safe:duration-fast motion-safe:ease-standard"
                   style={{ transform: `scaleY(${Math.max(MIN_SCALE, level)})` }}
                 />
               ))}
@@ -484,7 +488,7 @@ export function AmbientScribeRecorder({
                   aria-label={`${words.language}: ${currentLanguage}`}
                 >
                   {currentLanguage}
-                  <svg {...svg} className="size-3">
+                  <svg {...svg} className="size-icon-xs">
                     <path d="M5.5 8l4.5 4.5L14.5 8" />
                   </svg>
                 </Button>
@@ -571,7 +575,7 @@ export function AmbientScribeRecorder({
         <p
           data-slot="interim"
           lang={interimLang}
-          className="min-h-4 text-[12px] italic text-ink-2"
+          className="min-h-s6 text-label italic text-ink-2"
         >
           {interim}
           {status === 'recording' ? <StreamCaret /> : null}
@@ -588,17 +592,17 @@ export function AmbientScribeRecorder({
       </VisuallyHidden>
 
       {status === 'idle' && consent ? (
-        <div className="text-[12.5px] text-ink-2">{consent}</div>
+        <div className="text-body-sm text-ink-2">{consent}</div>
       ) : null}
 
       {status === 'denied' ? (
-        <div className="flex flex-col gap-1">
-          <p className="flex items-start gap-1.5 text-[12.5px] font-semibold text-crit-deep">
+        <div className="flex flex-col gap-s1">
+          <p className="flex items-start gap-s2 text-body-sm font-semibold text-crit-deep">
             {icons.micOff}
             {words.denied}
           </p>
           {deniedHelp ? (
-            <div className="text-[12.5px] text-ink-2">{deniedHelp}</div>
+            <div className="text-body-sm text-ink-2">{deniedHelp}</div>
           ) : null}
         </div>
       ) : null}
@@ -612,7 +616,7 @@ export function AmbientScribeRecorder({
                   key={index}
                   data-state={step.state}
                   className={cx(
-                    'flex items-center gap-2 py-1 text-[12.5px]',
+                    'flex items-center gap-s3 py-s1 text-body-sm',
                     step.state === 'done' ? 'text-ink' : 'text-ink-2',
                   )}
                 >
@@ -629,7 +633,7 @@ export function AmbientScribeRecorder({
 
       {status === 'done' && draft ? <div>{draft}</div> : null}
 
-      <p className="flex items-center gap-1.5 text-[11.5px] text-ink-2">
+      <p className="flex items-center gap-s2 text-caption text-ink-2">
         {icons.lock}
         {words.privacy}
       </p>

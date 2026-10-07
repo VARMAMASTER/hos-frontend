@@ -771,7 +771,7 @@ export function ExtractedValuesReview({
   let body: ReactNode;
   if (state === 'reading') {
     body = (
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-s5">
         <AiProgressSteps
           steps={readingSteps ?? words.readingSteps}
           currentIndex={readingStep ?? 0}
@@ -782,10 +782,10 @@ export function ExtractedValuesReview({
         <div
           data-slot="skeleton"
           aria-hidden="true"
-          className="flex flex-col gap-3 rounded-md border border-border bg-surface p-4"
+          className="flex flex-col gap-s5 rounded-card border border-border bg-surface p-card"
         >
           {[0, 1, 2, 3].map((line) => (
-            <div key={line} className="grid grid-cols-6 items-center gap-4">
+            <div key={line} className="grid grid-cols-6 items-center gap-s6">
               {[0, 1, 2, 3, 4, 5].map((cell) => (
                 <SkeletonBar key={cell} index={line + cell} />
               ))}
@@ -796,16 +796,16 @@ export function ExtractedValuesReview({
     );
   } else if (state === 'error') {
     body = (
-      <p className="text-[13px] text-ink-2">
+      <p className="text-control text-ink-2">
         {errorMessage ?? words.errorFallback}
       </p>
     );
   } else if (state === 'rejected') {
-    body = <p className="text-[13px] text-ink-2">{words.discarded}</p>;
+    body = <p className="text-control text-ink-2">{words.discarded}</p>;
   } else {
     body = (
-      <div className="flex flex-col gap-3">
-        <p className="text-[12px] text-ink-2">
+      <div className="flex flex-col gap-s5">
+        <p className="text-label text-ink-2">
           {approved ? words.introApproved : words.intro}
         </p>
         {patientMismatch ? (
@@ -827,7 +827,7 @@ export function ExtractedValuesReview({
         <Table caption={words.caption} density="compact">
           <TableHead>
             <tr>
-              <TableHeaderCell stickyStart className="left-0 w-12">
+              <TableHeaderCell stickyStart className="left-0 w-s10">
                 {words.columns.include}
               </TableHeaderCell>
               <TableHeaderCell>{words.columns.test}</TableHeaderCell>
@@ -865,13 +865,13 @@ export function ExtractedValuesReview({
     footer = (
       <>
         {withdrawn ? (
-          <p className="text-[12.5px] text-ink-2">{words.withdrawn}</p>
+          <p className="text-body-sm text-ink-2">{words.withdrawn}</p>
         ) : null}
         {holdReason && !rejecting ? (
-          <p className="text-[12.5px] text-ink-2">{holdReason}</p>
+          <p className="text-body-sm text-ink-2">{holdReason}</p>
         ) : null}
         {rejecting ? (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-s3">
             <TextField
               ref={reasonRef}
               data-action="reason"
@@ -886,7 +886,7 @@ export function ExtractedValuesReview({
               onKeyDown={onReasonKeyDown}
               className="max-w-md"
             />
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-s3">
               <Button
                 id={`${ids}-confirm-reject`}
                 variant="danger"
@@ -944,8 +944,8 @@ export function ExtractedValuesReview({
     );
   } else if (state === 'rejected') {
     footer = (
-      <div className="flex flex-wrap items-center gap-2">
-        <p className="text-[12.5px] text-crit-deep">
+      <div className="flex flex-wrap items-center gap-s3">
+        <p className="text-body-sm text-crit-deep">
           {words.rejectedNote(rejectionWho, rejectionText)}
         </p>
         <Button
@@ -963,7 +963,7 @@ export function ExtractedValuesReview({
     );
   } else if (state === 'error' && (onRetry || onEnterManually)) {
     footer = (
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-s3">
         {onRetry ? (
           <Button
             id={`${ids}-retry`}
@@ -1018,16 +1018,16 @@ export function ExtractedValuesReview({
         </>
       }
       footer={
-        <div ref={footerRef} className="flex flex-col gap-2">
+        <div ref={footerRef} className="flex flex-col gap-s3">
           {footer}
         </div>
       }
       {...rest}
     >
       {meta.length > 0 ? (
-        <dl className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-[12px]">
+        <dl className="mb-s5 flex flex-wrap gap-x-s6 gap-y-s1 text-label">
           {meta.map(([term, detail]) => (
-            <div key={term} className="flex gap-1.5">
+            <div key={term} className="flex gap-s2">
               <dt className="text-ink-2">{term}</dt>
               <dd className="font-semibold text-ink" lang={contentLang}>
                 {detail}
@@ -1059,13 +1059,13 @@ interface ExtractedRowProps {
 }
 
 const sourceButton = cx(
-  'inline-flex min-h-6 cursor-pointer items-center rounded-sm text-[11.5px] font-semibold text-ai-deep underline underline-offset-2',
+  'inline-flex min-h-(--nova-touch-sm) cursor-pointer items-center rounded-control text-caption font-semibold text-ai-deep underline underline-offset-tight',
   focusRing,
 );
 
 // The prototype's .ext-val: a small mono input, 12px at 600, padded 4px by 8px.
 const valueInput = cx(
-  'nova-field w-20 rounded-sm px-2 py-1 font-mono text-[12px] font-semibold text-ink tabular-nums',
+  'nova-field w-(--nova-extracted-value-w) rounded-control px-s3 py-s1 font-mono text-label font-semibold text-ink tabular-nums',
   focusRing,
 );
 
@@ -1101,11 +1101,11 @@ function ExtractedRow({
       data-confidence={value.confidence}
       className="align-top"
     >
-      <TableCell stickyStart className="left-0 w-12">
+      <TableCell stickyStart className="left-0 w-s10">
         {locked ? (
           <span
             className={cx(
-              'inline-flex items-center gap-1 whitespace-nowrap text-[12px] font-semibold [&_svg]:size-3',
+              'inline-flex items-center gap-s1 whitespace-nowrap text-label font-semibold [&_svg]:size-icon-xs',
               ticked ? 'text-good-deep' : 'text-ink-2',
             )}
           >
@@ -1114,7 +1114,7 @@ function ExtractedRow({
           </span>
         ) : (
           // The whole cell is the tick's target, 44px square, so a gloved or hurried press lands.
-          <label className="-mx-2 -my-1.5 flex min-h-11 min-w-11 cursor-pointer items-center justify-center">
+          <label className="-mx-s3 -my-s2 flex min-h-touch min-w-touch cursor-pointer items-center justify-center">
             <CheckboxBox
               checked={ticked}
               aria-label={words.include(value.test)}
@@ -1128,7 +1128,7 @@ function ExtractedRow({
           {value.test}
         </span>
         {value.filed ? (
-          <span className="mt-1 flex">
+          <span className="mt-s1 flex">
             <Chip tone="neutral">{words.filed(value.filedSource)}</Chip>
           </span>
         ) : null}
@@ -1136,10 +1136,10 @@ function ExtractedRow({
       <TableCell>
         {/* The unit wraps under the value when the table is squeezed, so the table's narrowest
             width is the input's, not the input's and a long unit's. */}
-        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+        <div className="flex flex-wrap items-center gap-x-s2 gap-y-s1">
           {locked ? (
             <span
-              className="font-mono text-[12px] font-semibold tabular-nums"
+              className="font-mono text-label font-semibold tabular-nums"
               lang={lang}
             >
               {text}
@@ -1159,19 +1159,19 @@ function ExtractedRow({
             />
           )}
           {value.unit ? (
-            <span id={unitId} className="font-mono text-[12px] text-ink-2">
+            <span id={unitId} className="font-mono text-label text-ink-2">
               {value.unit}
             </span>
           ) : null}
         </div>
         {edited ? (
-          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+          <div className="mt-s1 flex flex-wrap items-center gap-s2">
             <Chip tone="info" icon={icons.edited}>
               {words.edited}
             </Chip>
             <span
               id={readId}
-              className="font-mono text-[11px] text-ink-2"
+              className="font-mono text-meta text-ink-2"
               lang={lang}
             >
               {words.aiRead(value.value)}
@@ -1181,13 +1181,13 @@ function ExtractedRow({
         {missing ? (
           <p
             id={errorId}
-            className="mt-1 text-[11.5px] font-semibold text-crit-deep"
+            className="mt-s1 text-caption font-semibold text-crit-deep"
           >
             {words.valueRequired}
           </p>
         ) : null}
       </TableCell>
-      <TableCell mono className="whitespace-nowrap text-[12px]">
+      <TableCell mono className="whitespace-nowrap text-label">
         {rangeText(value.range)}
       </TableCell>
       <TableCell>
@@ -1196,10 +1196,10 @@ function ExtractedRow({
             {words.status[status]}
           </Chip>
         ) : (
-          <span className="text-[12px] text-ink-2">{words.notCompared}</span>
+          <span className="text-label text-ink-2">{words.notCompared}</span>
         )}
       </TableCell>
-      <TableCell className="min-w-48">
+      <TableCell className="min-w-(--nova-ai-column-min-w)">
         <AiSourceLine
           label={words.sourceLabel}
           confidence={value.confidence}

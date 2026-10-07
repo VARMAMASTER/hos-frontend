@@ -141,24 +141,24 @@ export function WorkerCard({
       className={cx(
         // .worker-mini: the panel, the line edge with the 3px AI top edge, radius md, shadow-sm,
         // 16px by 16px (12px below), 10px between its parts.
-        'flex h-full flex-col gap-2.5 rounded-md border border-t-3 border-border border-t-ai bg-surface px-4 pt-4 pb-3 shadow-sm',
+        'flex h-full flex-col gap-s4 rounded-card border border-t-rail border-border border-t-ai bg-surface px-card pt-card pb-s5 shadow-sm',
         className,
       )}
       {...rest}
     >
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-s3">
         <span aria-hidden="true" data-spark="" className="nova-ai-spark">
           ✦
         </span>
         <div className="min-w-0">
           <Heading
             id={headingId}
-            className="font-display text-[13.5px] leading-tight font-bold text-ink"
+            className="font-display text-input leading-tight font-bold text-ink"
           >
             <VisuallyHidden>{`${words.aiWorker}:`}</VisuallyHidden> {name}
           </Heading>
           {role ? (
-            <p lang={contentLang} className="mt-px text-[11px] text-ink-2">
+            <p lang={contentLang} className="mt-px text-meta text-ink-2">
               {role}
             </p>
           ) : null}
@@ -168,17 +168,17 @@ export function WorkerCard({
       {stat ? (
         <p
           lang={contentLang}
-          className="rounded-sm border border-border bg-surface-2 px-2.5 py-2 text-[12.5px] text-ink tabular-nums"
+          className="rounded-control border border-border bg-surface-2 px-s4 py-s3 text-body-sm text-ink tabular-nums"
         >
           {stat}
         </p>
       ) : null}
       {hint ? (
-        <p lang={contentLang} className="text-[11px] text-ink-3">
+        <p lang={contentLang} className="text-meta text-ink-3">
           {hint}
         </p>
       ) : null}
-      <div role="status" className="text-[11px]">
+      <div role="status" className="text-meta">
         <VisuallyHidden>{`${name}: `}</VisuallyHidden>
         <StatusDot
           tone={statusTones[shown]}
@@ -186,7 +186,7 @@ export function WorkerCard({
           label={
             <span
               className={cx(
-                'text-[11px]',
+                'text-meta',
                 shown === 'working' && 'font-bold text-ai-deep',
                 shown === 'error' && 'font-semibold text-crit-deep',
                 (shown === 'idle' || shown === 'paused') && 'text-ink-3',
@@ -198,9 +198,9 @@ export function WorkerCard({
         />
       </div>
       {shown === 'error' && errorMessage ? (
-        <p className="text-[11px] text-crit-deep">{errorMessage}</p>
+        <p className="text-meta text-crit-deep">{errorMessage}</p>
       ) : null}
-      <div className="mt-auto flex flex-wrap items-center justify-between gap-2">
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-s3">
         <Switch
           checked={on}
           disabled={locked}
@@ -210,7 +210,7 @@ export function WorkerCard({
               <VisuallyHidden>{name}</VisuallyHidden>{' '}
               <span
                 className={cx(
-                  'text-[11px] font-semibold',
+                  'text-meta font-semibold',
                   on ? 'text-ai-deep' : 'text-ink-2',
                 )}
               >
@@ -258,7 +258,7 @@ export function WorkerGrid({ children, className, ...rest }: WorkerGridProps) {
     <ul
       role="list"
       className={cx(
-        'grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-3',
+        'grid grid-cols-[repeat(auto-fill,minmax(var(--nova-worker-card-min-w),1fr))] gap-s5',
         className,
       )}
       {...rest}

@@ -252,26 +252,26 @@ export function FleetKillSwitch({
       aria-labelledby={headingId}
       data-state={shown}
       className={cx(
-        'flex flex-wrap items-start gap-x-4 gap-y-2 border-b border-border py-3 text-[12.5px] last:border-b-0',
+        'flex flex-wrap items-start gap-x-s6 gap-y-s3 border-b border-border py-s5 text-body-sm last:border-b-0',
         className,
       )}
       {...rest}
     >
-      <div className="min-w-48 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="min-w-(--nova-ai-column-min-w) flex-1">
+        <div className="flex flex-wrap items-center gap-s3">
           <Heading
             id={headingId}
-            className="font-display text-[13.5px] font-bold text-ink"
+            className="font-display text-input font-bold text-ink"
           >
             {worker}
           </Heading>
           {tier ? <AiClassChip tier={tier} detail={tierDetail} /> : null}
         </div>
         {description ? (
-          <p className="mt-px text-[11.5px] text-ink-2">{description}</p>
+          <p className="mt-px text-caption text-ink-2">{description}</p>
         ) : null}
         {record && !locked ? (
-          <div data-record="" className="mt-1.5 text-[12px] text-ink-2">
+          <div data-record="" className="mt-s2 text-label text-ink-2">
             <p className="font-semibold text-ink">
               {words.formatRecord(record, scopeWords)}
             </p>
@@ -285,13 +285,13 @@ export function FleetKillSwitch({
           <p
             id={reasonId}
             hidden={!whyOpen}
-            className="mt-1.5 text-[12px] text-crit-deep"
+            className="mt-s2 text-label text-crit-deep"
           >
             {lockedReason}
           </p>
         ) : null}
       </div>
-      <div className="flex flex-wrap items-center justify-end gap-2">
+      <div className="flex flex-wrap items-center justify-end gap-s3">
         <Chip tone={stateTones[shown]} icon={<StateIcon state={shown} />}>
           {shown === 'locked'
             ? words.locked

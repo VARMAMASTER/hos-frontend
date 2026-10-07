@@ -97,6 +97,16 @@ describe('SoapDraftBlock: anatomy', () => {
     ]);
   });
 
+  it('sets each section label in the label tokens, as VoiceEntryCapture does, on a control-cornered panel', () => {
+    render(<Soap />);
+    const heading = within(block()).getAllByRole('heading', { level: 4 })[0];
+    for (const cls of ['text-label', 'uppercase', 'tracking-label']) {
+      expect(heading?.className.split(' ')).toContain(cls);
+    }
+    const section = block().querySelector('[data-section]');
+    expect(section?.className.split(' ')).toContain('rounded-control');
+  });
+
   it('gives each section an editable body in its own language, named by its heading', () => {
     render(<Soap />);
     const body = screen.getByRole('textbox', {

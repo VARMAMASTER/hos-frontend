@@ -88,21 +88,21 @@ const ACTIONS: AiAction[] = [
 
 function Overview() {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-s7">
       <HeroBand
         title="Your AI staff saved 212 hours this month"
         description="1 – 18 Jul 2026 · 5 AI workers · every output approved by a person"
       >
-        <dl className="grid grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-4">
+        <dl className="grid grid-cols-[repeat(auto-fit,minmax(var(--nova-ai-stat-min-w),1fr))] gap-s6">
           {HERO_STATS.map((stat) => (
             <div key={stat.label}>
-              <dt className="text-[11px] text-(color:--nova-hero-ink-2)">
+              <dt className="text-meta text-(color:--nova-hero-ink-2)">
                 {stat.label}
               </dt>
-              <dd className="font-display text-[20px] font-bold tabular-nums">
+              <dd className="font-display text-headline font-bold tabular-nums">
                 {stat.value}
               </dd>
-              <dd className="text-[10.5px] text-(color:--nova-hero-ink-2) tabular-nums">
+              <dd className="text-overline text-(color:--nova-hero-ink-2) tabular-nums">
                 {stat.delta}
               </dd>
             </div>
@@ -151,9 +151,9 @@ function Overview() {
         />
       </WorkerGrid>
       {/* The feed is its own opaque panel, so it sits under a heading rather than in a card. */}
-      <section className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-display text-[17px] font-semibold tracking-h2 text-ink">
+      <section className="flex flex-col gap-s5">
+        <div className="flex flex-wrap items-center justify-between gap-s5">
+          <h2 className="font-display text-title font-semibold tracking-h2 text-ink">
             Everything your AI did today
           </h2>
           <LiveDot label="Live · updates every minute" />
@@ -183,7 +183,7 @@ const trend = (values: number[]) =>
 
 function Scorecards() {
   return (
-    <div className="flex max-w-4xl flex-col gap-8">
+    <div className="flex max-w-4xl flex-col gap-s9">
       <AiQualityScorecard
         name="AI Scribe"
         description="Consultation notes"
@@ -301,7 +301,7 @@ const CHECKS: ChangeGateCheck[] = [
 
 function FleetControl() {
   return (
-    <div className="flex max-w-4xl flex-col gap-5">
+    <div className="flex max-w-4xl flex-col gap-s7">
       <Card>
         <CardHeader
           title="AI workers across the fleet"
@@ -382,7 +382,7 @@ function MyAiTeam() {
         title="What it has learned about you"
         description="AI Scribe · Dr. K. Ramesh · every learned habit can be read, corrected or switched off"
       />
-      <CardBody className="flex flex-col gap-2">
+      <CardBody className="flex flex-col gap-s3">
         <LearnedPreferenceRow
           learned="You always add a renal-function note for older patients on Metformin"
           why="Learned from 6 corrections you made in 30 days."

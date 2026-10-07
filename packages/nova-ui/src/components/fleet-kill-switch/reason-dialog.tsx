@@ -104,10 +104,10 @@ export function ReasonDialog({
         // The prototype's .rc-impact: panel-2, the line edge, 12.5px at a loose 1.7.
         <ul
           data-impact=""
-          className="mb-4 flex flex-col gap-1 rounded-sm border border-border bg-surface-2 p-2.5 text-[12.5px] leading-relaxed text-ink"
+          className="mb-s6 flex flex-col gap-s1 rounded-control border border-border bg-surface-2 p-s4 text-body-sm leading-relaxed text-ink"
         >
           {lines.map((line, index) => (
-            <li key={index} className="flex gap-2">
+            <li key={index} className="flex gap-s3">
               <span aria-hidden="true">·</span>
               <span>{line}</span>
             </li>
@@ -123,12 +123,12 @@ export function ReasonDialog({
         onChange={(event) => setReason(event.target.value)}
         aria-describedby={countId}
       />
-      <p id={countId} className="mt-1 text-[12px] text-ink-2">
+      <p id={countId} className="mt-s1 text-label text-ink-2">
         {ready
           ? words.ready(trimmed.length)
           : words.remaining(minLength, minLength - trimmed.length)}
       </p>
-      <p className="mt-1 text-[12px] text-ink-2">{words.auditNote}</p>
+      <p className="mt-s1 text-label text-ink-2">{words.auditNote}</p>
     </Dialog>
   );
 }

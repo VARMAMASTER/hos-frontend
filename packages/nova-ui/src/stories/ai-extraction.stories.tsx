@@ -72,7 +72,7 @@ function ReadingFlow() {
 
   return (
     <Frame>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-s5">
         <div>
           <Button
             variant="ghost"
