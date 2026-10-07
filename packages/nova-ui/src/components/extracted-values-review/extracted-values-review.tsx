@@ -24,9 +24,9 @@ import { ApprovalBar } from '../approval-bar/approval-bar';
 import { Banner } from '../banner/banner';
 import { Button } from '../button/button';
 import { Checkbox } from '../checkbox/checkbox';
-import { CheckboxBox } from '../checkbox/checkbox-box';
+import { CheckboxBox } from '../../primitives/checkbox-box';
 import { Chip, type ChipTone } from '../chip/chip';
-import { SkeletonBar } from '../data-table/data-table-parts';
+import { SkeletonBar } from '../../primitives/skeleton-bar';
 import {
   Table,
   TableBody,

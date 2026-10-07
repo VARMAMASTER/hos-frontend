@@ -9,12 +9,12 @@ import {
 import { cx } from '../../primitives/cx';
 import { BREAKPOINT_REM } from '../../tokens/design';
 import { useControllableState } from '../../primitives/use-controllable-state';
-import { getTabbables, trapTab } from '../dialog/focus';
+import { getTabbables, trapTab } from '../../primitives/focus-trap';
 import {
   SidebarContext,
   type SidebarContextValue,
 } from '../sidebar/sidebar-context';
-import { useMediaQuery } from '../sidebar/use-media-query';
+import { useMediaQuery } from '../../primitives/use-media-query';
 import {
   useSidebarShortcut,
   useSidebarState,

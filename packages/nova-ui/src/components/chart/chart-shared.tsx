@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactElement, ReactNode } from 'react';
+import { motionAllowed } from '../../primitives/motion';
 import {
   ChartContainer,
   ChartLegend,
@@ -63,12 +64,8 @@ export const MAX_BAR_THICKNESS = 24;
 // Recharts animates marks in; someone who asked their system for less motion gets none. Where the
 // preference cannot be read (server rendering, jsdom) there is no animation either, so the first
 // frame is the finished chart.
-export function animationActive(): boolean {
-  if (typeof window === 'undefined' || !window.matchMedia) {
-    return false;
-  }
-  return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
+// The same answer primitives/motion.ts gives every other component.
+export const animationActive = motionAllowed;
 
 export function showLegend(
   seriesKeys: ReadonlyArray<string>,

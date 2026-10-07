@@ -29,9 +29,9 @@ import {
   MoreIcon,
   SearchIcon,
   SelectBox,
-  SkeletonBar,
   SortButton,
 } from './data-table-parts';
+import { SkeletonBar } from '../../primitives/skeleton-bar';
 import { filterRows, nextSort, sortRows, visibleColumns } from './table-model';
 import type {
   BulkActionContext,

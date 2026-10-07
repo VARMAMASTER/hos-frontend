@@ -1,6 +1,6 @@
 import { forwardRef, type InputHTMLAttributes } from 'react';
-import { cx } from '../../primitives/cx';
-import { focusRing } from '../../primitives/focus-ring';
+import { cx } from './cx';
+import { focusRing } from './focus-ring';
 
 export interface RadioDotProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {

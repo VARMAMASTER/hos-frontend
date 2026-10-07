@@ -9,6 +9,7 @@ import {
 } from '@testing-library/react';
 import { cx } from './cx';
 import { focusRing } from './focus-ring';
+import { nextRovingIndex, RADIO_KEYS, ROW_KEYS } from './roving-index';
 import { Surface, SURFACE_MATERIALS, SURFACE_RADII } from './surface';
 import { useControllableState } from './use-controllable-state';
 import { VisuallyHidden } from './visually-hidden';
@@ -181,5 +182,22 @@ describe('useControllableState', () => {
     render(<Harness />);
     act(() => screen.getByRole('button').click());
     expect(screen.getByRole('button').textContent).toBe('b');
+  });
+});
+
+describe('nextRovingIndex', () => {
+  it('steps and wraps with the arrows, and jumps to the ends with Home and End', () => {
+    expect(nextRovingIndex('ArrowRight', 0, 2)).toBe(1);
+    expect(nextRovingIndex('ArrowRight', 2, 2)).toBe(0);
+    expect(nextRovingIndex('ArrowDown', 1, 2)).toBe(2);
+    expect(nextRovingIndex('ArrowLeft', 0, 2)).toBe(2);
+    expect(nextRovingIndex('ArrowUp', 2, 2)).toBe(1);
+    expect(nextRovingIndex('Home', 2, 2)).toBe(0);
+    expect(nextRovingIndex('End', 0, 2)).toBe(2);
+  });
+
+  it('names the row keys and the radio keys (a radio group also reads Up and Down)', () => {
+    expect([...ROW_KEYS]).toEqual(['ArrowLeft', 'ArrowRight', 'Home', 'End']);
+    expect([...RADIO_KEYS]).toEqual([...ROW_KEYS, 'ArrowUp', 'ArrowDown']);
   });
 });

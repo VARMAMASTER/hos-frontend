@@ -1,7 +1,7 @@
 import { useRef, type HTMLAttributes } from 'react';
 import { cx } from '../../primitives/cx';
 import { MOTION_EASINGS } from '../../tokens/scale';
-import { useLoopMotion } from './use-ai-motion';
+import { useLoopMotion } from '../../primitives/use-motion';
 
 export interface AiThinkingProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {

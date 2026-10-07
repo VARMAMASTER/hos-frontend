@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { nextRovingIndex, ROW_KEYS } from '../../primitives/roving-index';
 import { useControllableState } from '../../primitives/use-controllable-state';
 
 interface TabsContextValue {
@@ -160,21 +161,6 @@ export interface TabProps
 const tab =
   'relative inline-flex cursor-pointer items-center gap-s2 whitespace-nowrap rounded-control px-control-md py-control-md text-control font-semibold transition-[color,background-color,box-shadow] duration-fast ease-standard motion-reduce:transition-none disabled:pointer-events-none disabled:opacity-50';
 
-const NAVIGATION_KEYS = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
-
-function nextIndex(key: string, current: number, last: number): number {
-  switch (key) {
-    case 'ArrowRight':
-      return current === last ? 0 : current + 1;
-    case 'ArrowLeft':
-      return current === 0 ? last : current - 1;
-    case 'Home':
-      return 0;
-    default:
-      return last;
-  }
-}
-
 export function Tab({
   value,
   className,
@@ -203,7 +189,11 @@ export function Tab({
   // and the tab that gets focus is activated (the automatic-activation tabs pattern).
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
     onKeyDown?.(event);
-    if (event.defaultPrevented || !NAVIGATION_KEYS.includes(event.key)) return;
+    if (
+      event.defaultPrevented ||
+      !(ROW_KEYS as readonly string[]).includes(event.key)
+    )
+      return;
     const list = event.currentTarget.closest('[role="tablist"]');
     if (list === null) return;
     const tabs = Array.from(
@@ -212,7 +202,7 @@ export function Tab({
     const current = tabs.indexOf(event.currentTarget);
     if (current === -1) return;
     event.preventDefault();
-    const target = tabs[nextIndex(event.key, current, tabs.length - 1)];
+    const target = tabs[nextRovingIndex(event.key, current, tabs.length - 1)];
     if (target === event.currentTarget) return;
     target.focus();
     // Activation goes through the tab's own click handler, so there is one path that selects.

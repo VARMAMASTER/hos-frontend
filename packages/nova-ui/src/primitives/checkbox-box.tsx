@@ -5,8 +5,8 @@ import {
   type InputHTMLAttributes,
   type Ref,
 } from 'react';
-import { cx } from '../../primitives/cx';
-import { focusRing } from '../../primitives/focus-ring';
+import { cx } from './cx';
+import { focusRing } from './focus-ring';
 
 export interface CheckboxBoxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {

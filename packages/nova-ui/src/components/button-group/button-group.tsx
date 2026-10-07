@@ -14,8 +14,12 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { nextRovingIndex, RADIO_KEYS } from '../../primitives/roving-index';
 import type { Size } from '../../primitives/types';
-import { useChoiceValue, type ChoiceValueProps } from './use-choice-value';
+import {
+  useChoiceValue,
+  type ChoiceValueProps,
+} from '../../primitives/use-choice-value';
 
 export type ButtonGroupSize = Size;
 
@@ -240,30 +244,6 @@ type ItemBaseProps = Omit<
 export type ButtonGroupItemProps = ItemBaseProps &
   ({ children: ReactNode } | { children?: undefined; 'aria-label': string });
 
-const NAVIGATION_KEYS = [
-  'ArrowRight',
-  'ArrowDown',
-  'ArrowLeft',
-  'ArrowUp',
-  'Home',
-  'End',
-];
-
-function nextIndex(key: string, current: number, last: number): number {
-  switch (key) {
-    case 'ArrowRight':
-    case 'ArrowDown':
-      return current === last ? 0 : current + 1;
-    case 'ArrowLeft':
-    case 'ArrowUp':
-      return current === 0 ? last : current - 1;
-    case 'Home':
-      return 0;
-    default:
-      return last;
-  }
-}
-
 // Padding and type match Button (the control tokens: sm 6px by 10px at 12px, md 8px by 16px at 13px).
 // Icon-only items are square: padding all round, and the glyph 16px (size-icon-md). The prototype's 18px radius step makes a 30 to 36px
 // tall segment a full pill, which is why the selected corners morph to rounded-overlay and not rounded-full:
@@ -302,7 +282,7 @@ export function ButtonGroupItem({
     if (
       event.defaultPrevented ||
       group.multiple ||
-      !NAVIGATION_KEYS.includes(event.key)
+      !(RADIO_KEYS as readonly string[]).includes(event.key)
     ) {
       return;
     }
@@ -314,7 +294,8 @@ export function ButtonGroupItem({
     const current = radios.indexOf(event.currentTarget);
     if (current === -1) return;
     event.preventDefault();
-    const target = radios[nextIndex(event.key, current, radios.length - 1)];
+    const target =
+      radios[nextRovingIndex(event.key, current, radios.length - 1)];
     if (target === event.currentTarget) return;
     target.focus();
     target.click();

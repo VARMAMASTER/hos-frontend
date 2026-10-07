@@ -12,7 +12,7 @@ import { focusRing } from '../../primitives/focus-ring';
 import { Surface } from '../../primitives/surface';
 import { useControllableState } from '../../primitives/use-controllable-state';
 import type { Size } from '../../primitives/types';
-import { getTabbables, trapTab } from './focus';
+import { getTabbables, trapTab } from '../../primitives/focus-trap';
 import { inertOutside } from './inert';
 
 export interface DialogProps {

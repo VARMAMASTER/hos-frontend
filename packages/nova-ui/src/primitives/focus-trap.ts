@@ -1,4 +1,4 @@
-// Focus helpers for the dialog's trap. "Visible" is judged from computed style and the hidden and
+// Focus helpers for a focus trap (Dialog, and AppShell's drawer). "Visible" is judged from computed style and the hidden and
 // inert attributes rather than from geometry, so it behaves the same under jsdom (no layout) and
 // in a browser.
 

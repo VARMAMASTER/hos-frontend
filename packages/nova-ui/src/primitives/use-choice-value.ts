@@ -1,4 +1,4 @@
-import { useControllableState } from '../../primitives/use-controllable-state';
+import { useControllableState } from './use-controllable-state';
 
 // The value contract ButtonGroup and ChoiceCardGroup share: one string when a single choice is
 // allowed (the default), an array of strings when several are. Controlled when `value` is given,

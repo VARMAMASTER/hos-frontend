@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { getTabbables, trapTab } from './focus';
+import { getTabbables, trapTab } from './focus-trap';
 
 function mount(html: string): HTMLElement {
   document.body.innerHTML = `<div id="root">${html}</div>`;

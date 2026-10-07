@@ -12,9 +12,9 @@ import { Surface } from '../../primitives/surface';
 import {
   useChoiceValue,
   type ChoiceValueProps,
-} from '../button-group/use-choice-value';
-import { CheckboxBox } from '../checkbox/checkbox-box';
-import { RadioDot } from '../radio/radio-dot';
+} from '../../primitives/use-choice-value';
+import { CheckboxBox } from '../../primitives/checkbox-box';
+import { RadioDot } from '../../primitives/radio-dot';
 
 interface ChoiceCardGroupContextValue {
   multiple: boolean;

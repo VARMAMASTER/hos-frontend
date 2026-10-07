@@ -5,7 +5,7 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../primitives/cx';
-import { RadioDot } from './radio-dot';
+import { RadioDot } from '../../primitives/radio-dot';
 
 export interface RadioProps
   extends Omit<

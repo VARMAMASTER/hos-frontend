@@ -253,18 +253,3 @@ export function DensityToggle({
 }
 
 // Bar widths vary by column so the placeholder rows read as text, not as a grid of stripes.
-const BAR_WIDTHS = ['w-3/4', 'w-1/2', 'w-2/3', 'w-5/6', 'w-1/3'];
-
-// One placeholder bar. It pulses only where motion is welcome: motion-safe, so under reduced motion
-// it is a still bar.
-export function SkeletonBar({ index }: { index: number }) {
-  return (
-    <div
-      data-skeleton=""
-      className={cx(
-        'h-s5 rounded-control bg-border motion-safe:animate-pulse',
-        BAR_WIDTHS[index % BAR_WIDTHS.length],
-      )}
-    />
-  );
-}

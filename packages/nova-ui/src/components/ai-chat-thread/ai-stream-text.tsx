@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 import { SafeMarkdown } from './safe-markdown';
-import { useLoopMotion, useMotionAllowed } from './use-ai-motion';
+import { useLoopMotion, useMotionAllowed } from '../../primitives/use-motion';
 
 // Where the text stands: arriving, complete, stopped by the person, or cut off by an error.
 export type AiStreamPhase = 'streaming' | 'done' | 'stopped' | 'error';

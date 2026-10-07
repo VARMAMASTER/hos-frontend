@@ -1,8 +1,8 @@
 import { useEffect, useState, type RefObject } from 'react';
-import { motionAllowed } from '../../primitives/motion';
+import { motionAllowed } from './motion';
 
-// The AI conversation's motion: the streaming caret, the thinking dots and the copilot orb's
-// breathing halo and orbit ring. They loop, so they are played with the Web Animations API (the
+// Looping motion (the AI conversation's streaming caret and thinking dots, the copilot orb's
+// breathing halo and orbit ring). It loops, so they are played with the Web Animations API (the
 // library ships no keyframes of its own, as primitives/motion.ts explains) and only while the person
 // has not asked for less motion. The preference is followed live: switching it on stops every loop
 // at once and leaves the still, fully visible state. Internal: not exported from the package.

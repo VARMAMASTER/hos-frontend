@@ -16,7 +16,7 @@ import { useControllableState } from '../../primitives/use-controllable-state';
 import { MOTION_EASINGS } from '../../tokens/scale';
 import { AiChatThread } from '../ai-chat-thread/ai-chat-thread';
 import { ChatComposer } from '../ai-chat-thread/chat-composer';
-import { useLoopMotion } from '../ai-chat-thread/use-ai-motion';
+import { useLoopMotion } from '../../primitives/use-motion';
 import { useCopilotShortcut } from './use-copilot-shortcut';
 
 // bottom-right: the corner orb, the panel above it. top: a pill for the app bar, the panel docked

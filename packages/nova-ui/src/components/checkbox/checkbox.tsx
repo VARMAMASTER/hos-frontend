@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { useControllableState } from '../../primitives/use-controllable-state';
-import { CheckboxBox } from './checkbox-box';
+import { CheckboxBox } from '../../primitives/checkbox-box';
 
 export interface CheckboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'children'> {
