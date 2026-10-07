@@ -29,6 +29,8 @@ describe('TopBar', () => {
     ]) {
       expect(root.classList.contains(name), name).toBe(true);
     }
+    // A frame: square, and no other corner competes with that.
+    expect(root.className.match(/rounded-[\w-]+/g)).toEqual(['rounded-none']);
   });
 
   it('renders the search slot inside a search landmark', () => {

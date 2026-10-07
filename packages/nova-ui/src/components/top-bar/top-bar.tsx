@@ -20,8 +20,7 @@ export interface TopBarProps extends HTMLAttributes<HTMLElement> {
 
 // The prototype's .topbar: a frame, not a card, so its corners are straight; 12px by 24px of padding
 // (py-s5, px-s8), 16px between its parts (gap-s6), sticky above the page.
-const bar =
-  'rounded-none sticky top-0 z-50 flex items-center gap-s6 px-s8 py-s5';
+const bar = 'sticky top-0 z-50 flex items-center gap-s6 px-s8 py-s5';
 
 // A 36px square (the chrome tile, as the brand mark is) in the chrome's ink; hover lifts it with a faint white, as a nav item does.
 const menuButton =
@@ -42,6 +41,7 @@ export function TopBar({
     <Surface
       as="header"
       material="chrome"
+      radius="none"
       className={cx(bar, className)}
       {...rest}
     >

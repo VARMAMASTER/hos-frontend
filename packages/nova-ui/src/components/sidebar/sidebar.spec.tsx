@@ -17,8 +17,8 @@ describe('Sidebar', () => {
     expect([...root.classList]).toEqual(
       expect.arrayContaining(['px-s5', 'py-s7', 'gap-s1']),
     );
-    // A frame, not a card: its edges are straight.
-    expect(root.classList.contains('rounded-none')).toBe(true);
+    // A frame, not a card: its edges are straight, and no other corner competes with that.
+    expect(root.className.match(/rounded-[\w-]+/g)).toEqual(['rounded-none']);
     expect(root.classList.contains('flex')).toBe(true);
     expect(root.classList.contains('flex-col')).toBe(true);
   });

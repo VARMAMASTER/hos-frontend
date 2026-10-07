@@ -96,6 +96,10 @@ describe('CallTranscriptConsole: the frame', () => {
     const { container } = render(<Console elapsed={92} state="live" />);
     const header = container.querySelector('[data-slot="call-header"]');
     expect(header?.getAttribute('data-surface')).toBe('chrome');
+    // It fills the frame's top edge square; the frame's own corners clip it.
+    expect(
+      header?.className.split(/\s+/).filter((cls) => cls.includes('rounded-')),
+    ).toEqual(['rounded-none']);
     const who = screen.getByText(TITLE);
     expect(who.className).toContain('text-input');
     expect(who.className).toContain('font-bold');

@@ -40,7 +40,7 @@ export interface SidebarProps
 
 // The prototype's .sidebar: a frame, not a card, so its corners are straight; 20px by 12px of
 // padding (py-s7, px-s5) and 4px between its parts (gap-s1).
-const frame = 'rounded-none flex flex-col gap-s1 px-s5 py-s7';
+const frame = 'flex flex-col gap-s1 px-s5 py-s7';
 
 // Beside the content, it is pinned to the viewport and scrolls on its own. As the rail it does not
 // scroll: a scroll container would clip the labels that pop out beside the icons. The sidebar sits
@@ -155,6 +155,7 @@ function SidebarView({
     <Surface
       ref={state.panelRef}
       material="sidebar"
+      radius="none"
       id={sidebarId}
       data-collapsed={collapsed ? 'true' : undefined}
       className={cx(layout, className)}

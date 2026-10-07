@@ -168,6 +168,7 @@ describe('@hos/nova-ui public API', () => {
     'focusRing',
     'Surface',
     'SURFACE_MATERIALS',
+    'SURFACE_RADII',
     'useControllableState',
     'VisuallyHidden',
     'PhoneFrame',

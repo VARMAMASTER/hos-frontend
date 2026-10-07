@@ -289,11 +289,11 @@ export function CallTranscriptConsole({
     >
       <Surface
         material="chrome"
-        radius="control"
+        radius="none"
         data-slot="call-header"
         // .call-h: the chrome gradient, 12px by 16px, 10px between its parts. It fills the frame's
         // top edge square; the frame's own corners clip it.
-        className="flex flex-wrap items-center gap-s4 px-card py-card-bar data-[slot=call-header]:rounded-none"
+        className="flex flex-wrap items-center gap-s4 px-card py-card-bar"
       >
         <div className="min-w-0">
           <Heading

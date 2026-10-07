@@ -9,7 +9,7 @@ import {
 } from '@testing-library/react';
 import { cx } from './cx';
 import { focusRing } from './focus-ring';
-import { Surface, SURFACE_MATERIALS } from './surface';
+import { Surface, SURFACE_MATERIALS, SURFACE_RADII } from './surface';
 import { useControllableState } from './use-controllable-state';
 import { VisuallyHidden } from './visually-hidden';
 
@@ -68,7 +68,10 @@ describe('Surface', () => {
     }
   });
 
-  it('lets a caller name a radius role (the default keeps the overlay corner on its old class while callers are converted)', () => {
+  const corners = (text: string) =>
+    screen.getByText(text).className.match(/rounded-[\w-]+/g);
+
+  it('draws exactly one radius role, the overlay corner by default', () => {
     render(
       <>
         <Surface material="surface">default</Surface>
@@ -78,27 +81,50 @@ describe('Surface', () => {
         <Surface material="card" radius="card">
           card
         </Surface>
+        <Surface material="hero" radius="hero">
+          hero
+        </Surface>
       </>,
     );
-    expect(screen.getByText('default').className).toContain('rounded-lg');
-    expect(screen.getByText('control').className).toContain('rounded-control');
-    expect(screen.getByText('card').className).toContain('rounded-card');
+    expect(corners('default')).toEqual(['rounded-overlay']);
+    expect(corners('control')).toEqual(['rounded-control']);
+    expect(corners('card')).toEqual(['rounded-card']);
+    expect(corners('hero')).toEqual(['rounded-hero']);
   });
 
-  // The scale names stay only until every caller names its role, drawing their old classes.
-  it('keeps a scale-named radius on its old class while callers are converted', () => {
+  // A frame (the sidebar, the top bar, a header that fills its parent's edge) is square, and says
+  // so: it never relies on a later rounded-none winning over the default corner.
+  it('draws a square frame with radius="none" and no other corner', () => {
     render(
-      <>
-        <Surface material="surface" radius="sm">
-          sm
-        </Surface>
-        <Surface material="surface" radius="xl">
-          xl
-        </Surface>
-      </>,
+      <Surface material="chrome" radius="none">
+        frame
+      </Surface>,
     );
-    expect(screen.getByText('sm').className).toContain('rounded-sm');
-    expect(screen.getByText('xl').className).toContain('rounded-xl');
+    expect(corners('frame')).toEqual(['rounded-none']);
+  });
+
+  it('takes every radius role and none, and no scale name', () => {
+    for (const radius of [...SURFACE_RADII]) {
+      cleanup();
+      render(
+        <Surface material="surface" radius={radius}>
+          {radius}
+        </Surface>,
+      );
+      expect(corners(radius)).toEqual([`rounded-${radius}`]);
+    }
+    expect([...SURFACE_RADII].sort()).toEqual(
+      [
+        'card',
+        'chip',
+        'control',
+        'hero',
+        'none',
+        'overlay',
+        'pill',
+        'tag',
+      ].sort(),
+    );
   });
 
   it('renders as another element, merges className and forwards its ref', () => {
@@ -107,7 +133,7 @@ describe('Surface', () => {
       <Surface
         as="section"
         material="data"
-        className="p-4"
+        className="p-card"
         ref={ref}
         aria-label="Beds"
       >
@@ -116,7 +142,7 @@ describe('Surface', () => {
     );
     const node = screen.getByRole('region', { name: 'Beds' });
     expect(node.tagName).toBe('SECTION');
-    expect(node.classList.contains('p-4')).toBe(true);
+    expect(node.classList.contains('p-card')).toBe(true);
     expect(ref.current).toBe(node);
   });
 });
