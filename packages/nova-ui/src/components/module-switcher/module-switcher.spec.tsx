@@ -684,3 +684,37 @@ describe('ModuleSwitcher attributes', () => {
     expect(root.contains(trigger())).toBe(true);
   });
 });
+
+// Tokens only: the trigger is the chrome's nav row; a module row is a menu row (8px all round, the
+// control corner, the dense UI type) with the .ic tile.
+describe('ModuleSwitcher tokens', () => {
+  it('draws the trigger and the rows from tokens', () => {
+    render(<Harness initialOpen />);
+    expect([...trigger().classList]).toEqual(
+      expect.arrayContaining([
+        'px-nav-item',
+        'py-nav-item',
+        'gap-s3',
+        'rounded-card',
+      ]),
+    );
+    const row = item(/Billing/);
+    expect([...row.classList]).toEqual(
+      expect.arrayContaining([
+        'p-s3',
+        'gap-s3',
+        'rounded-control',
+        'text-control',
+      ]),
+    );
+    const tile = row.querySelector('[data-module-glyph]') as HTMLElement;
+    expect([...tile.classList]).toEqual(
+      expect.arrayContaining([
+        'size-tile',
+        'text-badge',
+        'tracking-initials',
+        '[&_svg]:size-icon-tile',
+      ]),
+    );
+  });
+});

@@ -194,7 +194,7 @@ describe('ChartContainer', () => {
       screen.getByRole('figure', { name: 'Revenue by month' }).classList,
     );
     expect(classes).toContain('nova-data');
-    expect(classes).toContain('rounded-lg');
+    expect(classes).toContain('rounded-overlay');
     expect(classes).toContain('w-96');
     expect(classes).not.toContain('nova-surface');
   });
@@ -271,6 +271,19 @@ describe('ChartTooltipContent', () => {
     const classes = Array.from(screen.getByRole('tooltip').classList);
     expect(classes).toContain('nova-overlay');
     expect(classes).toContain('min-w-40');
+  });
+
+  it('takes its corner, least width, padding and type from tokens', () => {
+    renderTooltip();
+    expect(Array.from(screen.getByRole('tooltip').classList)).toEqual(
+      expect.arrayContaining([
+        'rounded-card',
+        'min-w-chart-tooltip',
+        'px-s4',
+        'py-s3',
+        'text-label',
+      ]),
+    );
   });
 
   it('shows the category label, the series labels from the config and the values', () => {

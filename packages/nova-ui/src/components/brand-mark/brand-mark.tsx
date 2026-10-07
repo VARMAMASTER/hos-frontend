@@ -37,15 +37,16 @@ function initialsOf(name: string): string {
   return letters.join('').toUpperCase();
 }
 
-// The prototype's .brand: a 36px mark (its 11px radius is off the --r-* scale, so md), 10px to the
-// name in the display face at 16px bold, and the 11px sub line on a 1.3 line in the chrome's
-// secondary ink.
-const row = 'flex min-w-0 items-center gap-2.5';
-const markBox = 'grid size-9 shrink-0 place-items-center rounded-md';
+// The prototype's .brand: a 36px mark (size-chrome-tile; its 11px radius is off the --r-* scale, so
+// the card corner), 10px to the name (gap-s4) in the display face at 16px bold (text-subtitle), and
+// the 11px sub line on a 1.3 line (text-meta, leading-tight) in the chrome's secondary ink.
+const row = 'flex min-w-0 items-center gap-s4';
+const markBox =
+  'grid size-chrome-tile shrink-0 place-items-center rounded-card';
 const nameClass =
-  'block truncate font-display text-[16px] font-bold text-on-primary';
+  'block truncate font-display text-subtitle font-bold text-on-primary';
 const subClass =
-  'block truncate text-[11px] leading-[1.3] text-(color:--nova-chrome-ink-2)';
+  'block truncate text-meta leading-tight text-(color:--nova-chrome-ink-2)';
 
 export function BrandMark({
   name,
@@ -63,7 +64,7 @@ export function BrandMark({
     logo === undefined ? (
       <span
         aria-hidden="true"
-        className={`${markBox} bg-primary font-display text-[14px] font-bold text-on-primary`}
+        className={`${markBox} bg-primary font-display text-body font-bold text-on-primary`}
       >
         {initialsOf(name)}
       </span>
@@ -83,7 +84,7 @@ export function BrandMark({
         href={href}
         aria-labelledby={nameId}
         aria-describedby={sub ? subId : undefined}
-        className={cx(row, 'rounded-md', focusRing, className)}
+        className={cx(row, 'rounded-card', focusRing, className)}
       >
         {mark}
         <span className="min-w-0">

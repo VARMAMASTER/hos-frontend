@@ -80,12 +80,17 @@ describe('FilterChip', () => {
     expect(tick.getAttribute('aria-hidden')).toBe('true');
     expect(slot.dataset['state']).toBe('off');
     expect([...slot.classList]).toEqual(
-      expect.arrayContaining(['max-w-0', 'opacity-0', '-translate-x-2']),
+      expect.arrayContaining([
+        'max-w-0',
+        'opacity-0',
+        '-translate-x-s3',
+        '-mr-s2',
+      ]),
     );
     fireEvent.click(chip);
     expect(slot.dataset['state']).toBe('on');
     expect([...slot.classList]).toEqual(
-      expect.arrayContaining(['max-w-4', 'opacity-100', 'translate-x-0']),
+      expect.arrayContaining(['max-w-s6', 'opacity-100', 'translate-x-0']),
     );
     expect([...slot.classList]).not.toContain('max-w-0');
     expect(screen.getByRole('button', { name: 'ICU' })).toBe(chip);
@@ -107,13 +112,16 @@ describe('FilterChip', () => {
     const chip = screen.getByRole('button', { name: 'ICU' });
     expect([...chip.classList]).toEqual(
       expect.arrayContaining([
-        'text-[12px]',
+        'text-label',
         'font-semibold',
         'border-border-strong',
         'bg-surface',
         'text-ink-2',
-        'px-2.5',
-        'py-1.5',
+        'px-s4',
+        'py-s2',
+        'gap-s2',
+        'motion-safe:duration-base',
+        'motion-safe:ease-standard',
       ]),
     );
     fireEvent.click(chip);
@@ -132,14 +140,14 @@ describe('FilterChip', () => {
   // Corner morph: the radius is the one property that changes shape. 8px to 18px, because the chip is
   // about 30px tall, so 18px is already the full pill and the change shows across the whole transition
   // (animating to 999px would finish in the first percent).
-  it('morphs its corners from rounded-sm to a pill when pressed, animating the radius under motion-safe', () => {
+  it('morphs its corners from the control corner to a pill when pressed, animating the radius under motion-safe', () => {
     render(<FilterChip>ICU</FilterChip>);
     const chip = screen.getByRole('button', { name: 'ICU' });
-    expect([...chip.classList]).toContain('rounded-sm');
-    expect([...chip.classList]).not.toContain('rounded-lg');
+    expect([...chip.classList]).toContain('rounded-control');
+    expect([...chip.classList]).not.toContain('rounded-filter-on');
     fireEvent.click(chip);
-    expect([...chip.classList]).toContain('rounded-lg');
-    expect([...chip.classList]).not.toContain('rounded-sm');
+    expect([...chip.classList]).toContain('rounded-filter-on');
+    expect([...chip.classList]).not.toContain('rounded-control');
     expect(chip.className).toMatch(
       /motion-safe:transition-\[[^\]]*border-radius/,
     );

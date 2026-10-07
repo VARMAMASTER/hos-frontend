@@ -46,8 +46,9 @@ export const NotificationBell = forwardRef<
       type={type}
       aria-label={unread > 0 ? `${label}, ${shown} ${unreadWord}` : label}
       className={cx(
-        // .tb-ico: 34px square, a 9px radius (--r-sm, the nearest step), the 16px glyph below.
-        'relative inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-sm border border-on-primary/14 bg-on-primary/7 text-on-primary/80 transition-colors duration-150 hover:bg-on-primary/15 hover:text-on-primary',
+        // .tb-ico: the 34px top bar icon square (size-topbar-ico), a 9px radius (the control corner,
+        // the nearest step), the 16px glyph below.
+        'relative inline-flex size-topbar-ico shrink-0 items-center justify-center rounded-control border border-on-primary/14 bg-on-primary/7 text-on-primary/80 transition-colors duration-fast hover:bg-on-primary/15 hover:text-on-primary',
         focusRing,
         className,
       )}
@@ -62,7 +63,7 @@ export const NotificationBell = forwardRef<
         strokeLinejoin="round"
         aria-hidden="true"
         focusable="false"
-        className="h-4 w-4"
+        className="size-icon-md"
       >
         <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z" />
         <path d="M10 20a2 2 0 0 0 4 0" />
@@ -70,9 +71,10 @@ export const NotificationBell = forwardRef<
       {unread > 0 ? (
         <span
           aria-hidden="true"
-          // .tb-dot: 16px tall, crit, 9.5px bold white, a 2px ring, 3px past the corner. The ring is
-          // the chrome's colour in the prototype (#221448); ink is the nearest dark token.
-          className="absolute -right-[3px] -top-[3px] inline-flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-chrome-ring bg-crit px-0.5 text-[9.5px] font-bold text-on-primary"
+          // .tb-dot: 16px tall (s6), crit, the micro role (9.5px) bold white, a 2px ring (the emphasis
+          // edge), 3px past the corner (s1, 4px: the nearest step). The ring is the chrome's colour in
+          // the prototype (#221448); ink is the nearest dark token.
+          className="absolute -top-s1 -right-s1 inline-flex h-s6 min-w-s6 items-center justify-center rounded-full border-emphasis border-chrome-ring bg-crit px-s0 text-micro font-bold text-on-primary"
         >
           {shown}
         </span>

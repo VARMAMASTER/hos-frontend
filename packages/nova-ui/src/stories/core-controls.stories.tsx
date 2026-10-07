@@ -34,8 +34,8 @@ export default meta;
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-4">
-      <h2 className="text-[17px] font-bold text-ink">{title}</h2>
+    <section className="flex flex-col gap-s6">
+      <h2 className="text-title font-bold text-ink">{title}</h2>
       {children}
     </section>
   );
@@ -43,9 +43,9 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-[12px] text-ink-3">{label}</p>
-      <div className="flex flex-wrap items-center gap-3">{children}</div>
+    <div className="flex flex-col gap-s3">
+      <p className="text-label text-ink-3">{label}</p>
+      <div className="flex flex-wrap items-center gap-s5">{children}</div>
     </div>
   );
 }
@@ -86,7 +86,7 @@ function BedIcon() {
 function Filters() {
   const [active, setActive] = useState(['ICU']);
   return (
-    <div role="group" aria-label="Wards" className="flex flex-wrap gap-1">
+    <div role="group" aria-label="Wards" className="flex flex-wrap gap-s1">
       {['ICU', 'Medicine', 'Surgery'].map((ward) => (
         <FilterChip
           key={ward}
@@ -109,17 +109,17 @@ function RoomChoice() {
   const rooms = ['General ward', 'Semi-private'];
   const [chosen, setChosen] = useState(rooms[1]);
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-s6 sm:grid-cols-2">
       {rooms.map((room) => (
         <Card
           key={room}
           interactive
           selected={room === chosen}
-          className="has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-primary"
+          className="has-[input:focus-visible]:outline-focus has-[input:focus-visible]:outline-offset-focus has-[input:focus-visible]:outline-primary"
         >
-          <label className="flex cursor-pointer flex-col gap-2 p-5">
-            <span className="text-[17px] font-semibold text-ink">{room}</span>
-            <span className="text-[13px] text-ink-3">
+          <label className="flex cursor-pointer flex-col gap-s3 p-s7">
+            <span className="text-title font-semibold text-ink">{room}</span>
+            <span className="text-control text-ink-3">
               {room === chosen ? 'Selected' : 'Interactive: press me'}
             </span>
             <input
@@ -138,12 +138,12 @@ function RoomChoice() {
 
 export const CoreControls: StoryObj = {
   render: () => (
-    <div className="mx-auto flex max-w-5xl flex-col gap-12 p-6">
-      <header className="flex flex-col gap-2">
-        <h1 className="font-display text-[23px] font-semibold tracking-h1 text-ink">
+    <div className="mx-auto flex max-w-5xl flex-col gap-s10 p-s8">
+      <header className="flex flex-col gap-s3">
+        <h1 className="font-display text-display font-semibold tracking-h1 text-ink">
           Core controls
         </h1>
-        <p className="max-w-2xl text-[13px] text-ink-2">
+        <p className="max-w-2xl text-control text-ink-2">
           Every control as the HOS prototype draws it: Google Sans Flex, body
           text at 14px on a 1.55 line, form text at 13.5px, labels at 12px
           semibold, buttons at 13px semibold.
@@ -151,24 +151,22 @@ export const CoreControls: StoryObj = {
       </header>
 
       <Section title="Type sizes">
-        <div className="flex flex-col gap-1">
-          <p className="font-display text-[26px] font-bold text-ink">
+        <div className="flex flex-col gap-s1">
+          <p className="font-display text-kpi font-bold text-ink">
             KPI figure · 26 · 4,280
           </p>
-          <p className="font-display text-[23px] font-semibold tracking-h1 text-ink">
+          <p className="font-display text-display font-semibold tracking-h1 text-ink">
             h1 · 23 · Good morning, Swapna
           </p>
-          <p className="font-display text-[17px] font-semibold tracking-h2 text-ink">
+          <p className="font-display text-title font-semibold tracking-h2 text-ink">
             h2 · 17 · Now serving
           </p>
-          <p className="text-[14px] text-ink">
-            Body · 14 · Ramesh Kumar, bed 12
-          </p>
-          <p className="text-[13.5px] text-ink">Form and nav · 13.5</p>
-          <p className="text-[13px] text-ink-2">Table, button, banner · 13</p>
-          <p className="text-[12px] text-ink-2">Small print · 12 · .tiny</p>
-          <p className="text-[11.5px] font-semibold text-ink-2">Chip · 11.5</p>
-          <p className="text-[11px] font-semibold uppercase tracking-[.06em] text-ink-2">
+          <p className="text-body text-ink">Body · 14 · Ramesh Kumar, bed 12</p>
+          <p className="text-input text-ink">Form and nav · 13.5</p>
+          <p className="text-control text-ink-2">Table, button, banner · 13</p>
+          <p className="text-label text-ink-2">Small print · 12 · .tiny</p>
+          <p className="text-caption font-semibold text-ink-2">Chip · 11.5</p>
+          <p className="text-meta font-semibold uppercase tracking-caps text-ink-2">
             Table header · 11
           </p>
         </div>
@@ -211,7 +209,7 @@ export const CoreControls: StoryObj = {
       </Section>
 
       <Section title="Fields">
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-s7 md:grid-cols-2">
           <TextField
             label="Patient name"
             placeholder="As on the ID card"
@@ -245,14 +243,14 @@ export const CoreControls: StoryObj = {
       </Section>
 
       <Section title="Choices">
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-s8 md:grid-cols-3">
           <div className="flex flex-col">
             <Checkbox label="Consent recorded" defaultChecked />
             <Checkbox label="Allergies reviewed" />
             <Checkbox label="Locked" disabled />
           </div>
           <fieldset className="flex flex-col">
-            <legend className="text-[13px] font-semibold text-ink">
+            <legend className="text-control font-semibold text-ink">
               Triage
             </legend>
             <Radio name="core-triage" label="Immediate" defaultChecked />
@@ -291,13 +289,13 @@ export const CoreControls: StoryObj = {
               Archived
             </Tab>
           </TabList>
-          <TabPanel value="overview" className="pt-3 text-[14px] text-ink-2">
+          <TabPanel value="overview" className="pt-s5 text-body text-ink-2">
             Vitals stable since admission.
           </TabPanel>
-          <TabPanel value="labs" className="pt-3 text-[14px] text-ink-2">
+          <TabPanel value="labs" className="pt-s5 text-body text-ink-2">
             Haemoglobin 11.2 g/dL.
           </TabPanel>
-          <TabPanel value="billing" className="pt-3 text-[14px] text-ink-2">
+          <TabPanel value="billing" className="pt-s5 text-body text-ink-2">
             Pre-auth approved.
           </TabPanel>
         </Tabs>
@@ -314,10 +312,10 @@ export const CoreControls: StoryObj = {
       </Section>
 
       <Section title="Cards">
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-s6 md:grid-cols-2">
           <Card>
             <CardHeader title="Ward 4B" description="Medicine, second floor" />
-            <CardBody className="text-[13px] text-ink-2">
+            <CardBody className="text-control text-ink-2">
               14 of 18 beds occupied.
             </CardBody>
             <CardFooter>
@@ -332,7 +330,7 @@ export const CoreControls: StoryObj = {
               title="Collections"
               description="Dense data stays opaque"
             />
-            <CardBody className="font-mono text-[23px] text-ink">
+            <CardBody className="font-mono text-display text-ink">
               ₹4.2L
             </CardBody>
           </Card>

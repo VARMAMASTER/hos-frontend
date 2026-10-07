@@ -133,7 +133,7 @@ export function FunnelChart({
         x={Number(x) + Number(width) + 8}
         y={Number(y) + Number(height) / 2}
         dominantBaseline="central"
-        className="fill-ink text-[12px] font-semibold tabular-nums"
+        className="fill-ink text-label font-semibold tabular-nums"
       >
         {`${show(value)}${change}`}
       </text>

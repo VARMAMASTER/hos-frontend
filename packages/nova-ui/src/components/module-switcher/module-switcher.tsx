@@ -65,18 +65,19 @@ export interface ModuleSwitcherProps
   hint?: ReactNode;
 }
 
-// The prototype's .ws-switch: a faint white lift with a white rim, 8px by 10px, radius md; open, it
+// The prototype's .ws-switch: a faint white lift with a white rim, the nav row's 8px by 10px, the
+// card corner; open, it
 // takes the chrome accent's soft fill and rim. Inside, the .ws-cur-l eyebrow (9.5px capitals), the
 // module in the display face at 13.5px semibold, and the chevron.
 const triggerClasses =
-  'group flex w-full items-center gap-2 rounded-md border border-chrome-ink/15 bg-chrome-ink/5 ' +
-  'px-2.5 py-2 text-left text-on-primary transition-colors hover:border-chrome-ink/20 hover:bg-chrome-ink/10 ' +
+  'group flex w-full items-center gap-s3 rounded-card border border-chrome-ink/15 bg-chrome-ink/5 ' +
+  'px-nav-item py-nav-item text-left text-on-primary transition-colors hover:border-chrome-ink/20 hover:bg-chrome-ink/10 ' +
   'aria-expanded:border-chrome-accent/45 aria-expanded:bg-chrome-accent-soft';
 
 // Menu's own item treatment (the prototype's .ws-item), so a module row and any other menu row look
-// alike: 13px at 500, 8px all round and between its parts.
+// alike: 13px at 500 (text-control), 8px all round and between its parts (p-s3, gap-s3).
 const itemClasses = cx(
-  'flex w-full items-center gap-2 rounded-sm p-2 text-left text-[13px] font-medium text-ink transition-colors',
+  'flex w-full items-center gap-s3 rounded-control p-s3 text-left text-control font-medium text-ink transition-colors',
   'hover:bg-primary-soft focus:bg-primary-soft',
   focusRing,
   'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
@@ -123,7 +124,7 @@ function ModuleGlyph({
       data-module-glyph=""
       data-tone={module.ai ? 'ai' : 'default'}
       className={cx(
-        'inline-grid size-6 shrink-0 place-items-center rounded-sm border font-display text-[10px] font-bold tracking-[.01em] [&_svg]:size-[15px]',
+        'inline-grid size-tile shrink-0 place-items-center rounded-control border font-display text-badge font-bold tracking-initials [&_svg]:size-icon-tile',
         module.ai
           ? 'border-ai-line bg-ai-soft text-ai-deep'
           : current
@@ -167,7 +168,7 @@ function ModuleRow({
       <span className="min-w-0 flex-1">
         <span className="block truncate">{module.label}</span>
         {module.description ? (
-          <span className="block truncate text-[11px] font-normal text-ink-3">
+          <span className="block truncate text-meta font-normal text-ink-3">
             {module.description}
           </span>
         ) : null}
@@ -191,7 +192,7 @@ function ModuleRow({
           aria-hidden="true"
           focusable="false"
           viewBox="0 0 16 16"
-          className="size-4 shrink-0"
+          className="size-icon-md shrink-0"
         >
           <path
             d="M3.5 8.5l3 3 6-7"
@@ -373,13 +374,13 @@ export function ModuleSwitcher({
         onOpenChange={handleOpenChange}
         header={
           <>
-            {hint ? <div className="pb-2">{hint}</div> : null}
+            {hint ? <div className="pb-s3">{hint}</div> : null}
             <div className="relative">
               <svg
                 aria-hidden="true"
                 focusable="false"
                 viewBox="0 0 16 16"
-                className="pointer-events-none absolute inset-y-0 left-2.5 my-auto size-4 text-ink-3"
+                className="pointer-events-none absolute inset-y-0 left-field my-auto size-icon-md text-ink-3"
               >
                 <circle
                   cx="7"
@@ -408,7 +409,7 @@ export function ModuleSwitcher({
                 onChange={(event) => setQuery(event.currentTarget.value)}
                 onKeyDown={handleFilterKeyDown}
                 className={cx(
-                  'nova-field block w-full rounded-sm py-2 pr-2.5 pl-8 text-[13px] text-ink placeholder:text-ink-3 transition-colors',
+                  'nova-field block w-full rounded-control py-s3 pr-field pl-field-icon text-control text-ink placeholder:text-ink-3 transition-colors',
                   focusRing,
                 )}
               />
@@ -418,7 +419,9 @@ export function ModuleSwitcher({
             <p
               role="status"
               className={cx(
-                noMatch ? 'px-1 pt-2 pb-1 text-[13px] text-ink-2' : 'sr-only',
+                noMatch
+                  ? 'px-s1 pt-s3 pb-s1 text-control text-ink-2'
+                  : 'sr-only',
               )}
             >
               {status}
@@ -437,11 +440,11 @@ export function ModuleSwitcher({
               <VisuallyHidden>Current module:</VisuallyHidden>{' '}
               <span
                 aria-hidden="true"
-                className="block text-[9.5px] font-semibold tracking-[.09em] uppercase text-(color:--nova-chrome-ink-2)"
+                className="block text-micro font-semibold tracking-group uppercase text-(color:--nova-chrome-ink-2)"
               >
                 Module
               </span>
-              <span className="block truncate font-display text-[13.5px] font-semibold">
+              <span className="block truncate font-display text-input font-semibold">
                 {label}
               </span>
             </span>
@@ -449,7 +452,7 @@ export function ModuleSwitcher({
               aria-hidden="true"
               focusable="false"
               viewBox="0 0 16 16"
-              className="size-4 shrink-0 text-(color:--nova-chrome-ink-2) transition-transform group-aria-expanded:rotate-180"
+              className="size-icon-md shrink-0 text-(color:--nova-chrome-ink-2) transition-transform group-aria-expanded:rotate-180"
             >
               <path
                 d="M4 6l4 4 4-4"

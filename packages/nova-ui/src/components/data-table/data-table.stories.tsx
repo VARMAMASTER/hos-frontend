@@ -107,7 +107,7 @@ const columns: DataTableColumn<Patient>[] = [
     cell: (p) => (
       <span className="font-semibold">
         {p.name}
-        <span className="ml-2 font-normal text-ink-2">
+        <span className="ml-s3 font-normal text-ink-2">
           {p.age}
           {p.sex}
         </span>
@@ -210,7 +210,7 @@ export const Patients: Story = {
       selectable
       stickyFirstColumn
       keyboardNavigation
-      maxHeight="28rem"
+      maxHeight="var(--nova-measure-md)"
       bulkActions={({ selectedRows }) => (
         <>
           <Button size="sm" variant="outline">
@@ -311,11 +311,11 @@ export const Empty: Story = {
       rows={[]}
       getRowId={(p) => p.id}
       emptyState={
-        <div className="flex flex-col items-center gap-3 py-8 text-center">
-          <p className="font-display text-[17px] font-semibold">
+        <div className="flex flex-col items-center gap-s5 py-s9 text-center">
+          <p className="font-display text-title font-semibold">
             No patients admitted
           </p>
-          <p className="text-[13px] text-ink-2">
+          <p className="text-control text-ink-2">
             New admissions appear here as soon as they are registered.
           </p>
           <Button size="sm">Register a patient</Button>
@@ -346,8 +346,8 @@ export const ErrorState: Story = {
       rows={[]}
       getRowId={(p) => p.id}
       error={
-        <div className="flex flex-col items-start gap-3">
-          <p className="text-[13px] font-semibold text-crit-deep">
+        <div className="flex flex-col items-start gap-s5">
+          <p className="text-control font-semibold text-crit-deep">
             Could not load patients. Check your connection and try again.
           </p>
           <Button size="sm" variant="outline">

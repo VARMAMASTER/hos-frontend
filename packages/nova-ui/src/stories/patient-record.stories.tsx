@@ -180,7 +180,7 @@ function PatientRecord() {
   const rows = results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-6">
+    <div className="mx-auto flex max-w-6xl flex-col gap-s8">
       <Breadcrumbs
         items={[
           { label: 'Patients', href: '#patients' },
@@ -195,7 +195,7 @@ function PatientRecord() {
         actions={<Button variant="outline">Print summary</Button>}
       />
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-s6 sm:grid-cols-3">
         <KpiTile label="Length of stay" value="3 days" />
         <KpiTile
           label="Potassium"
@@ -213,16 +213,16 @@ function PatientRecord() {
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-s5">
         <Avatar name="Meera Iyer" size="sm" />
-        <span className="text-[13px] text-ink-2">
+        <span className="text-control text-ink-2">
           Attending: Dr. Meera Iyer
         </span>
         <StatusDot tone="warn" label="Under observation" className="ml-auto" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="flex flex-col gap-6 lg:col-span-2">
+      <div className="grid gap-s8 lg:grid-cols-3">
+        <div className="flex flex-col gap-s8 lg:col-span-2">
           <AiPanel
             title="Discharge summary"
             state={phase === 'approved' ? 'approved' : 'draft'}
@@ -242,7 +242,7 @@ function PatientRecord() {
               within 48 hours and the white cell count and C-reactive protein
               are falling.
             </p>
-            <p className="mt-3">
+            <p className="mt-s5">
               Potassium was critically high on 14 Oct and a recheck is ordered.
               Discharge should wait for that result.
             </p>
@@ -250,12 +250,9 @@ function PatientRecord() {
 
           <section
             aria-labelledby="results-title"
-            className="flex flex-col gap-3"
+            className="flex flex-col gap-s5"
           >
-            <h2
-              id="results-title"
-              className="text-[14px] font-semibold text-ink"
-            >
+            <h2 id="results-title" className="text-body font-semibold text-ink">
               Lab results
             </h2>
             <Table
@@ -295,12 +292,9 @@ function PatientRecord() {
 
           <section
             aria-labelledby="imaging-title"
-            className="flex flex-col gap-3"
+            className="flex flex-col gap-s5"
           >
-            <h2
-              id="imaging-title"
-              className="text-[14px] font-semibold text-ink"
-            >
+            <h2 id="imaging-title" className="text-body font-semibold text-ink">
               Imaging
             </h2>
             <EmptyState

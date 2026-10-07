@@ -21,8 +21,8 @@ export const WardFilters: Story = {
     const wards = ['ICU', 'Medicine', 'Surgery', 'Paediatrics', 'Maternity'];
     const [active, setActive] = useState<string[]>(['ICU']);
     return (
-      <div className="flex flex-col gap-3">
-        <div role="group" aria-label="Wards" className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-s5">
+        <div role="group" aria-label="Wards" className="flex flex-wrap gap-s3">
           {wards.map((ward) => (
             <FilterChip
               key={ward}
@@ -39,7 +39,7 @@ export const WardFilters: Story = {
             </FilterChip>
           ))}
         </div>
-        <p className="text-[12px] text-ink-2" aria-live="polite">
+        <p className="text-label text-ink-2" aria-live="polite">
           {active.length === 0
             ? 'Showing every ward'
             : `Showing ${active.join(', ')}`}

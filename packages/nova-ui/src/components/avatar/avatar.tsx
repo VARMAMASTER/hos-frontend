@@ -22,12 +22,13 @@ export interface AvatarProps
   highlightLabel?: string;
 }
 
-// 20 (inline), 32 (the prototype's .avatar, initials at 12.5px), 40 and 48 (a list card).
+// 20 (inline), 32 (the prototype's .avatar, initials at 12.5px), 40 and 48 (a list card): the
+// --nova-avatar-* tokens.
 const sizes: Record<AvatarSize, string> = {
-  xs: 'size-5 text-[10px]',
-  sm: 'size-8 text-[12.5px]',
-  md: 'size-10 text-[14px]',
-  lg: 'size-12 text-[16px]',
+  xs: 'size-avatar-xs text-badge',
+  sm: 'size-avatar-sm text-body-sm',
+  md: 'size-avatar-md text-body',
+  lg: 'size-avatar-lg text-subtitle',
 };
 
 const tones: Record<AvatarTone, string> = {
@@ -36,10 +37,10 @@ const tones: Record<AvatarTone, string> = {
 };
 
 const glyphSizes: Record<AvatarSize, string> = {
-  xs: 'size-2.5',
-  sm: 'size-3.5',
-  md: 'size-4',
-  lg: 'size-4.5',
+  xs: 'size-avatar-glyph-xs',
+  sm: 'size-avatar-glyph-sm',
+  md: 'size-avatar-glyph-md',
+  lg: 'size-avatar-glyph-lg',
 };
 
 function firstLetter(word: string): string {
@@ -84,7 +85,7 @@ export function Avatar({
       className={cx(
         // The prototype's .avatar: a circle, initials at 700 in the display face. The frame does not
         // clip, so the verified glyph can sit on its edge; the photo rounds itself.
-        'relative inline-flex shrink-0 select-none items-center justify-center rounded-full font-display font-bold tracking-[.01em]',
+        'relative inline-flex shrink-0 select-none items-center justify-center rounded-full font-display font-bold tracking-initials',
         sizes[size],
         tones[tone],
         highlight && 'nova-highlight-ring',
@@ -113,7 +114,7 @@ export function Avatar({
             aria-hidden="true"
             focusable="false"
             className={cx(
-              'absolute -right-0.5 -bottom-0.5 text-primary',
+              'absolute -right-s0 -bottom-s0 text-primary',
               glyphSizes[size],
             )}
           >

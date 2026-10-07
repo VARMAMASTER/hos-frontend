@@ -101,3 +101,21 @@ describe('BrandMark', () => {
     ).toBe(true);
   });
 });
+
+// Tokens only: the 36px chrome tile with the card corner, the name and the sub line in their type
+// roles.
+describe('BrandMark tokens', () => {
+  it('sizes the mark and sets the name and the sub line from tokens', () => {
+    const { container } = render(<BrandMark name="Apollo" sub="Hospital OS" />);
+    const mark = container.querySelector('[aria-hidden="true"]') as HTMLElement;
+    expect([...mark.classList]).toEqual(
+      expect.arrayContaining(['size-chrome-tile', 'rounded-card', 'text-body']),
+    );
+    expect([...screen.getByText('Apollo').classList]).toContain(
+      'text-subtitle',
+    );
+    expect([...screen.getByText('Hospital OS').classList]).toEqual(
+      expect.arrayContaining(['text-meta', 'leading-tight']),
+    );
+  });
+});

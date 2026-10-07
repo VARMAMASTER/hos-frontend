@@ -165,7 +165,7 @@ export function RadialGauge({
         />
       }
     >
-      <div className="mx-auto grid max-w-xs justify-items-center gap-1">
+      <div className="mx-auto grid max-w-xs justify-items-center gap-s1">
         <svg
           viewBox="0 0 200 110"
           aria-hidden="true"
@@ -206,16 +206,20 @@ export function RadialGauge({
             x={CX}
             y={CY - 8}
             textAnchor="middle"
-            className="fill-ink font-display text-[26px] font-bold tabular-nums"
+            className="fill-ink font-display text-kpi font-bold tabular-nums"
           >
             {shown}
           </text>
         </svg>
-        <span className="text-[12.5px] font-semibold text-ink">{name}</span>
+        <span className="text-body-sm font-semibold text-ink">{name}</span>
         {status ? (
-          <p className="flex items-center gap-1.5 text-[12px] text-ink-2">
+          <p className="flex items-center gap-s2 text-label text-ink-2">
             {breach && reading !== null && hasTarget ? (
-              <svg viewBox="0 0 12 12" aria-hidden="true" className="size-3">
+              <svg
+                viewBox="0 0 12 12"
+                aria-hidden="true"
+                className="size-icon-xs"
+              >
                 <Marker
                   shape={reading > target ? 'triangle-up' : 'triangle-down'}
                   cx={6}

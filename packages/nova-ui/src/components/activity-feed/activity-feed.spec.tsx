@@ -161,3 +161,20 @@ describe('ActivityFeed', () => {
     expect(screen.getByRole('list', { name: 'Ward activity' })).toBeTruthy();
   });
 });
+
+// Tokens only: a feed row is a row of data, so it shares the table's row padding.
+describe('ActivityFeed tokens', () => {
+  it('pads each row with the row tokens and sets it in the dense UI type', () => {
+    render(<ActivityFeed items={items} />);
+    const [row] = screen.getAllByRole('listitem');
+    expect([...(row as HTMLElement).classList]).toEqual(
+      expect.arrayContaining([
+        'px-row',
+        'py-row-comfortable',
+        'gap-s5',
+        'text-control',
+      ]),
+    );
+    expect([...markerOf(row as HTMLElement).classList]).toContain('size-s4');
+  });
+});

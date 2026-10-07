@@ -37,7 +37,7 @@ function EditorPlaceholder(props: RichTextEditorProps) {
         <div
           aria-busy="true"
           style={{ minHeight }}
-          className="rounded-sm border border-border-control bg-surface"
+          className="rounded-control border border-border-control bg-surface"
         >
           <VisuallyHidden role="status">Loading the editor</VisuallyHidden>
         </div>

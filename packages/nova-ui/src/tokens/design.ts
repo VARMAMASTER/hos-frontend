@@ -138,6 +138,11 @@ export const MEASURE_TOKENS = Object.fromEntries(
   ]),
 ) as Record<NovaVariable, string>;
 
+// Tailwind's responsive breakpoints, in rem, for a component that must match a responsive variant
+// in script: AppShell's sidebar is a drawer below md (a media query cannot read a custom property).
+// design.spec.ts holds each to Tailwind's own --breakpoint-*.
+export const BREAKPOINT_REM = { md: 48 } as const;
+
 // The whole layer, in the order theme.css declares it.
 export const NOVA_DESIGN_TOKENS: Readonly<Record<NovaVariable, string>> = {
   ...TYPE_TOKENS,

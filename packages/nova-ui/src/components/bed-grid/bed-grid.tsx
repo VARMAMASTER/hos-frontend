@@ -31,18 +31,19 @@ export interface BedGridProps
 
 // Status is always a word on the cell and in its accessible text; colour only backs it up. A
 // blocked bed is neutral and dashed (not red) because red is kept for clinical urgency. The tint
-// replaces the data surface's white fill, and the border marks the cell's edge.
+// replaces the data surface's white fill, and the border marks the cell's edge: the status colour at
+// --nova-status-edge-tint (18%).
 const statusStyles: Record<BedStatus, { cell: string; word: string }> = {
   free: {
-    cell: 'bg-good-soft [--nova-card-edge:color-mix(in_srgb,var(--nova-color-good)_18%,transparent)]',
+    cell: 'bg-good-soft [--nova-card-edge:color-mix(in_srgb,var(--nova-color-good)_var(--nova-status-edge-tint),transparent)]',
     word: 'text-good-deep',
   },
   occupied: {
-    cell: 'bg-info-soft [--nova-card-edge:color-mix(in_srgb,var(--nova-color-info)_18%,transparent)]',
+    cell: 'bg-info-soft [--nova-card-edge:color-mix(in_srgb,var(--nova-color-info)_var(--nova-status-edge-tint),transparent)]',
     word: 'text-info-deep',
   },
   cleaning: {
-    cell: 'bg-warn-soft [--nova-card-edge:color-mix(in_srgb,var(--nova-color-warn)_18%,transparent)]',
+    cell: 'bg-warn-soft [--nova-card-edge:color-mix(in_srgb,var(--nova-color-warn)_var(--nova-status-edge-tint),transparent)]',
     word: 'text-warn-deep',
   },
   blocked: {
@@ -71,12 +72,12 @@ function BedContent({ bed }: { bed: Bed }) {
   return (
     <>
       <span aria-hidden="true" className="block">
-        <span className="flex flex-wrap items-baseline justify-between gap-x-2">
-          <span className="font-mono text-[10px] text-ink-3">{bed.label}</span>
+        <span className="flex flex-wrap items-baseline justify-between gap-x-s3">
+          <span className="font-mono text-badge text-ink-3">{bed.label}</span>
           {/* The status word is the cue; colour only backs it up. */}
           <span
             className={cx(
-              'text-[10px] font-bold tracking-[.04em] uppercase',
+              'text-badge font-bold tracking-label uppercase',
               statusStyles[bed.status].word,
             )}
           >
@@ -84,12 +85,12 @@ function BedContent({ bed }: { bed: Bed }) {
           </span>
         </span>
         {patient ? (
-          <span className="mt-0.5 block truncate text-[12px] font-semibold text-ink">
+          <span className="mt-s0 block truncate text-label font-semibold text-ink">
             {patient}
           </span>
         ) : null}
         {bed.ward ? (
-          <span className="block truncate text-[11px] text-ink-2">
+          <span className="block truncate text-meta text-ink-2">
             {bed.ward}
           </span>
         ) : null}
@@ -111,35 +112,36 @@ export function BedGrid({
       {...rest}
       aria-label={ariaLabel}
       className={cx(
-        // The prototype's .bed-grid: 96px cells, 8px apart.
-        'grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2',
+        // The prototype's .bed-grid: cells at least --nova-bed-min-w (96px) wide, 8px apart.
+        'grid grid-cols-[repeat(auto-fill,minmax(var(--nova-bed-min-w),1fr))] gap-s3',
         className,
       )}
     >
       {beds.map((bed) => (
         // Every cell is the prototype's .bed: an opaque tile (bed status is clinical, so it must stay
-        // legible under glass) with no resting shadow, 11px type, 8px of padding, 64px tall (its 10px
-        // radius is off the --r-* scale, so sm). A selectable bed lifts 2px to shadow-lg on hover.
+        // legible under glass) with no resting shadow, 11px type (text-meta), 8px of padding (p-s3), at
+        // least --nova-bed-min-h (64px) tall (its 10px radius is off the --r-* scale, so the control
+        // corner). A selectable bed lifts 2px (s0) to shadow-lg on hover.
         // The list item carries the surface and the status; a button, when there is one, fills it.
         <Surface
           key={bed.id}
           as="li"
           material="card"
-          radius="sm"
+          radius="control"
           data-status={bed.status}
           className={cx(
-            'text-[11px] [--nova-surface-lift:none]',
+            'text-meta [--nova-surface-lift:none]',
             statusStyles[bed.status].cell,
-            !onSelect && 'min-h-16 p-2',
+            !onSelect && 'min-h-bed p-s3',
             onSelect &&
-              'transition-[transform,box-shadow] duration-150 ease-out motion-reduce:transition-none hover:[--nova-surface-lift:var(--nova-shadow-lg)] motion-safe:hover:-translate-y-0.5',
+              'transition-[transform,box-shadow] duration-fast ease-standard motion-reduce:transition-none hover:[--nova-surface-lift:var(--nova-shadow-lg)] motion-safe:hover:-translate-y-s0',
           )}
         >
           {onSelect ? (
             <button
               type="button"
               className={cx(
-                'block min-h-16 w-full cursor-pointer nova-radius-inherit p-2 text-left',
+                'block min-h-bed w-full cursor-pointer nova-radius-inherit p-s3 text-left',
                 focusRing,
               )}
               onClick={() => onSelect(bed.id)}

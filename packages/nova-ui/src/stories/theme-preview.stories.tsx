@@ -40,7 +40,7 @@ function Icon({ children }: { children: ReactNode }) {
       strokeWidth="1.6"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="size-5"
+      className="size-icon-lg"
     >
       {children}
     </svg>
@@ -92,8 +92,8 @@ function PreviewPage() {
       sidebar={
         <Sidebar
           brand={
-            <span className="flex items-center gap-2 text-[14px] font-semibold">
-              <span className="grid size-8 place-items-center rounded-md bg-primary text-[13px] text-on-primary">
+            <span className="flex items-center gap-s3 text-body font-semibold">
+              <span className="grid size-s9 place-items-center rounded-card bg-primary text-control text-on-primary">
                 H
               </span>
               Acme Hospital
@@ -128,7 +128,7 @@ function PreviewPage() {
           </>
         }
       />
-      <div className="flex flex-col gap-6 p-6">
+      <div className="flex flex-col gap-s8 p-s8">
         <HeroBand
           title="Good morning, Dr. Rao"
           description="14 admissions are waiting for review and 3 claims need a reply today."
@@ -139,7 +139,7 @@ function PreviewPage() {
             </>
           }
         />
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-s6 sm:grid-cols-2 xl:grid-cols-4">
           <KpiTile
             label="Bed occupancy"
             value="82%"
@@ -168,7 +168,7 @@ function PreviewPage() {
             tone="crit"
           />
         </div>
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid gap-s6 lg:grid-cols-2">
           <Card variant="data">
             <CardHeader
               title="Today's admissions"
@@ -197,11 +197,11 @@ function PreviewPage() {
               </TableBody>
             </Table>
           </Card>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-s6">
             <AiPanel
               title="Discharge summary draft"
               footer={
-                <div className="flex gap-2">
+                <div className="flex gap-s3">
                   <Button variant="ai" size="sm">
                     Approve
                   </Button>
@@ -221,7 +221,7 @@ function PreviewPage() {
                 description="Frosts on glass and frost, opaque on solid"
                 actions={<Chip tone="info">Ward 4B</Chip>}
               />
-              <CardBody className="flex flex-wrap gap-2">
+              <CardBody className="flex flex-wrap gap-s3">
                 <Chip tone="good">5 filed</Chip>
                 <Chip tone="warn">2 queries</Chip>
                 <Chip>8 pending</Chip>

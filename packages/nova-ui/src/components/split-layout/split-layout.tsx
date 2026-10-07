@@ -17,8 +17,8 @@ export interface SplitLayoutProps
 // names. With the order swapped the template flips too, so the wider track stays on the primary.
 const columns: Record<SplitRatio, readonly [string, string]> = {
   '1-1': ['md:grid-cols-2', 'md:grid-cols-2'],
-  '2-1': ['md:grid-cols-[2fr_1fr]', 'md:grid-cols-[1fr_2fr]'],
-  '3-2': ['md:grid-cols-[3fr_2fr]', 'md:grid-cols-[2fr_3fr]'],
+  '2-1': ['md:grid-cols-(--nova-split-2-1)', 'md:grid-cols-(--nova-split-1-2)'],
+  '3-2': ['md:grid-cols-(--nova-split-3-2)', 'md:grid-cols-(--nova-split-2-3)'],
 };
 
 export function SplitLayout({
@@ -43,7 +43,7 @@ export function SplitLayout({
     <div
       {...rest}
       className={cx(
-        'grid grid-cols-1 gap-5',
+        'grid grid-cols-1 gap-s7',
         columns[ratio][secondaryFirst ? 1 : 0],
         className,
       )}

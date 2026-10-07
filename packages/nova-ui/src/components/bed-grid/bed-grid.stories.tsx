@@ -52,9 +52,9 @@ function Selectable() {
   const [selected, setSelected] = useState<string | null>(null);
   const bed = beds.find((b) => b.id === selected);
   return (
-    <div className="space-y-3">
+    <div className="space-y-s5">
       <BedGrid beds={beds} ariaLabel="Ward A beds" onSelect={setSelected} />
-      <p role="status" className="text-[13px] text-ink-2">
+      <p role="status" className="text-control text-ink-2">
         {bed ? `Selected bed ${bed.label} (${bed.status})` : 'No bed selected'}
       </p>
     </div>

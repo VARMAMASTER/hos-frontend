@@ -38,23 +38,24 @@ export function StatGauge({
   return (
     <Surface
       material="data"
-      radius="md"
-      // .kpi: --r-md, a 1px line border, 16px padding, --shadow-sm.
+      radius="card"
+      // .kpi: the card corner, a 1px line border, the card padding, --shadow-sm.
       className={cx(
-        'flex flex-col border border-border p-4 shadow-sm',
+        'flex flex-col border border-border p-card shadow-sm',
         className,
       )}
       {...rest}
     >
-      {/* .kpi-l: 12px / 500 in ink-2. */}
-      <p id={labelId} className="text-[12px] font-medium text-ink-2">
+      {/* .kpi-l: the label role (12px) / 500 in ink-2. */}
+      <p id={labelId} className="text-label font-medium text-ink-2">
         {label}
       </p>
-      {/* .kpi-v: 26px / 700, tabular figures with a slashed zero, a 2px gap under the label. */}
-      <p className="mt-0.5 text-[26px] font-bold tabular-nums slashed-zero text-ink">
+      {/* .kpi-v: the kpi role (26px) / 700, tabular figures with a slashed zero, an s0 (2px) gap under
+          the label. */}
+      <p className="mt-s0 text-kpi font-bold tabular-nums slashed-zero text-ink">
         {text}
       </p>
-      {/* .sb-bar: a 5px track, a full radius, an 8px gap above. The fill extends the prototype's
+      {/* .sb-bar: a 5px track (--nova-dot-sm), a full radius, an s3 (8px) gap above. The fill extends the prototype's
           .sb-bar gradient to a panel: the brand into the highlight (nova-highlight-grad). */}
       <div
         role="meter"
@@ -63,10 +64,10 @@ export function StatGauge({
         aria-valuemin={min}
         aria-valuemax={max}
         aria-valuetext={text}
-        className="mt-2 h-[5px] w-full overflow-hidden rounded-full bg-border"
+        className="mt-s3 h-(--nova-dot-sm) w-full overflow-hidden rounded-full bg-border"
       >
         <div
-          className="h-full rounded-full nova-highlight-grad motion-safe:transition-[width] motion-safe:duration-200"
+          className="h-full rounded-full nova-highlight-grad motion-safe:transition-[width] motion-safe:duration-base"
           style={{ width: `${percent}%` }}
         />
       </div>

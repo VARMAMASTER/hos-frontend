@@ -72,8 +72,8 @@ describe('Table', () => {
     renderResults();
     const column = screen.getByText('Test');
     const row = screen.getByText('Haemoglobin');
-    expect(column.classList.contains('text-[11px]')).toBe(true);
-    expect(row.classList.contains('text-[11px]')).toBe(false);
+    expect(column.classList.contains('text-meta')).toBe(true);
+    expect(row.classList.contains('text-meta')).toBe(false);
     expect(row.classList.contains('font-semibold')).toBe(true);
   });
 
@@ -149,7 +149,7 @@ describe('Table', () => {
     const scroller = frame.firstElementChild as HTMLElement;
     expect(scroller.classList.contains('overflow-x-auto')).toBe(true);
     expect(scroller.firstElementChild?.tagName).toBe('TABLE');
-    expect(frame.classList.contains('rounded-md')).toBe(true);
+    expect(frame.classList.contains('rounded-card')).toBe(true);
   });
 
   it('does not scroll the frame itself, so the data material rim stays put', () => {
@@ -315,16 +315,16 @@ describe('Table, for data that scrolls', () => {
     );
     for (const text of ['Name', 'Ramesh']) {
       const cell = screen.getByText(text);
-      expect(cell.classList.contains('py-1.5')).toBe(true);
-      expect(cell.classList.contains('py-2.5')).toBe(false);
+      expect(cell.classList.contains('py-row-compact')).toBe(true);
+      expect(cell.classList.contains('py-row-comfortable')).toBe(false);
     }
   });
 
   it('is comfortable, the prototype padding, by default', () => {
     renderResults();
-    expect(screen.getByText('Ferritin').classList.contains('py-2.5')).toBe(
-      true,
-    );
+    expect(
+      screen.getByText('Ferritin').classList.contains('py-row-comfortable'),
+    ).toBe(true);
   });
 
   it('sets a mono cell in IBM Plex Mono', () => {

@@ -60,12 +60,12 @@ export const Controlled: Story = {
   render: function Render() {
     const [view, setView] = useState('grid');
     return (
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-s5">
         <ButtonGroup aria-label="Bed view" value={view} onValueChange={setView}>
           <ButtonGroupItem value="list">List</ButtonGroupItem>
           <ButtonGroupItem value="grid">Grid</ButtonGroupItem>
         </ButtonGroup>
-        <p className="text-[12px] text-ink-2" aria-live="polite">
+        <p className="text-label text-ink-2" aria-live="polite">
           Showing the {view}.
         </p>
       </div>

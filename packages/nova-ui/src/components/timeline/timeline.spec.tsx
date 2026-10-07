@@ -539,7 +539,7 @@ describe('Timeline density', () => {
       'compact',
     );
     expect(markers(container)[0]?.className).not.toBe(comfortable);
-    expect(markers(container)[0]?.classList.contains('size-5')).toBe(true);
+    expect(markers(container)[0]?.classList.contains('size-s7')).toBe(true);
   });
 });
 

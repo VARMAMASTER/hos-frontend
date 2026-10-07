@@ -3,7 +3,7 @@ import { Button } from '../button/button';
 import { Tooltip } from './tooltip';
 
 const roomAround: Decorator = (Story) => (
-  <div className="flex justify-center py-16">
+  <div className="flex justify-center py-s10">
     <Story />
   </div>
 );

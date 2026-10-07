@@ -9,10 +9,10 @@ export interface NavSectionProps
   children: ReactNode;
 }
 
-// The prototype's .nav-label: 10.5px at 600, uppercase, 0.08em tracking, 12px / 10px / 6px around
-// it, in the chrome's secondary ink (which the proofs cover; the prototype's .42 alpha does not).
+// The prototype's .nav-label: 10.5px at 600 (text-overline), uppercase, 0.08em tracking
+// (tracking-eyebrow), 12px / 10px / 6px around it (pt-s5, the nav row's inset, pb-s2), in the chrome's secondary ink (which the proofs cover; the prototype's .42 alpha does not).
 const heading =
-  'px-2.5 pt-3 pb-1.5 text-[10.5px] font-semibold tracking-[0.08em] uppercase text-[color:var(--nova-chrome-ink-2)]';
+  'px-nav-item pt-s5 pb-s2 text-overline font-semibold tracking-eyebrow uppercase text-[color:var(--nova-chrome-ink-2)]';
 
 export function NavSection({
   label,
@@ -33,7 +33,7 @@ export function NavSection({
         <div
           aria-hidden="true"
           data-nova-nav-divider=""
-          className="mx-2 my-2 h-px bg-chrome-line motion-safe:animate-fade-in"
+          className="mx-s3 my-s3 h-px bg-chrome-line motion-safe:animate-fade-in"
         />
       ) : null}
       <p id={headingId} className={collapsed ? 'sr-only' : heading}>

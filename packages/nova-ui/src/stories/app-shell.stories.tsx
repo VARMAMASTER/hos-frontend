@@ -22,7 +22,7 @@ export default meta;
 
 function Icon({
   children,
-  size = 'size-5',
+  size = 'size-icon-lg',
 }: {
   children: ReactNode;
   size?: string;
@@ -82,7 +82,7 @@ const icons = {
     </Icon>
   ),
   search: (
-    <Icon size="size-4">
+    <Icon size="size-icon-md">
       <circle cx="9" cy="9" r="5" />
       <path d="m13 13 3.5 3.5" />
     </Icon>
@@ -91,8 +91,8 @@ const icons = {
 
 function Brand() {
   return (
-    <span className="flex items-center gap-2 text-[14px] font-semibold">
-      <span className="grid size-8 place-items-center rounded-md bg-primary text-[13px] text-on-primary">
+    <span className="flex items-center gap-s3 text-body font-semibold">
+      <span className="grid size-s9 place-items-center rounded-card bg-primary text-control text-on-primary">
         H
       </span>
       Acme Hospital
@@ -102,8 +102,8 @@ function Brand() {
 
 function Overview() {
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="flex flex-col gap-s8">
+      <div className="grid gap-s6 sm:grid-cols-2 xl:grid-cols-4">
         <KpiTile
           label="Bed occupancy"
           value="82%"
@@ -132,14 +132,14 @@ function Overview() {
           tone="good"
         />
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-s6 lg:grid-cols-2">
         <Card variant="data">
           <CardHeader
             title="Claims in flight"
             description="Every scheme's own clock, in one place"
             actions={<Button size="sm">File claim</Button>}
           />
-          <CardBody className="flex flex-wrap gap-2">
+          <CardBody className="flex flex-wrap gap-s3">
             <Chip tone="warn">2 queries</Chip>
             <Chip tone="good">5 filed</Chip>
             <Chip tone="info">3 pre-auth</Chip>
@@ -152,7 +152,7 @@ function Overview() {
             description="Waiting for review"
             actions={<Chip tone="ai">AI summary ready</Chip>}
           />
-          <CardBody className="text-[13px] text-ink-2">
+          <CardBody className="text-control text-ink-2">
             14 admissions across 6 wards. Ward 4B has the longest queue.
           </CardBody>
         </Card>
@@ -169,7 +169,7 @@ function ShellPage() {
         <Sidebar
           brand={<Brand />}
           footer={
-            <div className="text-[13px]">
+            <div className="text-control">
               <p className="font-semibold">Dr. Anita Rao</p>
               <p className="text-[color:var(--nova-chrome-ink-2)]">
                 Cardiology
@@ -216,7 +216,7 @@ function ShellPage() {
           </>
         }
       />
-      <div className="flex flex-col gap-6 p-6">
+      <div className="flex flex-col gap-s8 p-s8">
         <HeroBand
           title="Good morning, Dr. Rao"
           description="14 admissions are waiting for review and 3 claims need a reply today."
@@ -227,13 +227,13 @@ function ShellPage() {
             <Tab value="claims">Claims</Tab>
             <Tab value="occupancy">Occupancy</Tab>
           </TabList>
-          <TabPanel value="overview" className="mt-6">
+          <TabPanel value="overview" className="mt-s8">
             <Overview />
           </TabPanel>
-          <TabPanel value="claims" className="mt-6 text-ink-2">
+          <TabPanel value="claims" className="mt-s8 text-ink-2">
             Claims by scheme would list here.
           </TabPanel>
-          <TabPanel value="occupancy" className="mt-6 text-ink-2">
+          <TabPanel value="occupancy" className="mt-s8 text-ink-2">
             Occupancy by ward would list here.
           </TabPanel>
         </Tabs>

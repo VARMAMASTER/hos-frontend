@@ -273,3 +273,40 @@ describe('SectionNav', () => {
     );
   });
 });
+
+// Tokens only: the row is the chrome's nav row (shared with NavItem and the module switcher's
+// trigger), the glyph and the active rail are the nav tokens, so a token change restyles every one.
+describe('SectionNav tokens', () => {
+  it('draws the row, the glyph and the active rail from the nav tokens', () => {
+    render(
+      <SectionNav
+        items={[
+          { ...items[0], icon: <svg aria-hidden="true" /> },
+          ...items.slice(1),
+        ]}
+        ariaLabel="Sections"
+      />,
+    );
+    const active = screen.getByRole('button', { name: 'My queue' });
+    for (const name of [
+      'gap-nav-item',
+      'px-nav-item',
+      'py-nav-item',
+      'rounded-control',
+      'text-input',
+      'before:w-nav-mark',
+      'before:h-nav-mark',
+      'before:-left-s2',
+    ]) {
+      expect(active.classList.contains(name), name).toBe(true);
+    }
+    const glyph = active.querySelector('[data-icon]') as HTMLElement;
+    expect([...glyph.classList]).toEqual(
+      expect.arrayContaining(['size-nav-glyph', '[&>svg]:size-nav-glyph-icon']),
+    );
+    const badge = screen.getByText('12');
+    expect([...badge.classList]).toEqual(
+      expect.arrayContaining(['px-badge', 'py-badge', 'text-badge']),
+    );
+  });
+});

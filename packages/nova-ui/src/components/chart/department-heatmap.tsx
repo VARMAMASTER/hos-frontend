@@ -177,26 +177,26 @@ export function DepartmentHeatmap({
       bare={bare}
       legend={
         <div data-heat-legend="">
-          <ul className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 pt-3 text-[12px] text-ink-2">
-            <li className="me-3">{label}</li>
-            <li className="flex items-center gap-1.5">
+          <ul className="flex flex-wrap items-center justify-center gap-x-s2 gap-y-s1 pt-s5 text-label text-ink-2">
+            <li className="me-s5">{label}</li>
+            <li className="flex items-center gap-s2">
               {show(0)}
               <span aria-hidden="true" className="flex">
                 {Array.from({ length: HEAT_STEPS }, (_, level) => (
                   <span
                     key={level}
                     data-heat-swatch=""
-                    className="h-2.5 w-3.5"
+                    className="h-s4 w-legend-mark"
                     style={{ backgroundColor: heatFill(colour, level) }}
                   />
                 ))}
               </span>
             </li>
             <li>{show(max)}</li>
-            <li className="ms-3 flex items-center gap-1.5">
+            <li className="ms-s5 flex items-center gap-s2">
               <span
                 aria-hidden="true"
-                className="size-2.5 shrink-0 border border-border-strong"
+                className="size-s4 shrink-0 border border-border-strong"
               />
               No data
             </li>
@@ -226,7 +226,7 @@ export function DepartmentHeatmap({
         onMouseLeave={() => setHover(null)}
       >
         <div
-          className="grid min-w-0 items-center gap-0.5"
+          className="grid min-w-0 items-center gap-s0"
           style={{
             gridTemplateColumns: `auto repeat(${columnOrder.length}, minmax(0, 1fr))`,
           }}
@@ -237,7 +237,7 @@ export function DepartmentHeatmap({
               key={`head-${String(column)}`}
               data-heat-column=""
               // Labelled columns are spaced out, so a label may run over its unlabelled neighbours.
-              className="overflow-visible whitespace-nowrap pb-1 text-center text-[11px] text-ink-2 tabular-nums"
+              className="overflow-visible whitespace-nowrap pb-s1 text-center text-meta text-ink-2 tabular-nums"
             >
               {index % every === 0 ? columnFormatter(column) : ''}
             </span>
@@ -245,7 +245,7 @@ export function DepartmentHeatmap({
           {rowOrder.map((row) => [
             <span
               key={`row-${String(row)}`}
-              className="whitespace-nowrap pe-2 text-[12px] text-ink-2"
+              className="whitespace-nowrap pe-s3 text-label text-ink-2"
             >
               {rowFormatter(row)}
             </span>,
@@ -259,7 +259,7 @@ export function DepartmentHeatmap({
                   data-heat-level={level === null ? 'none' : String(level)}
                   onMouseEnter={enter(row, column)}
                   className={cx(
-                    'h-6 min-w-0 rounded-none',
+                    'h-s8 min-w-0 rounded-none',
                     level === null && 'border border-border-strong',
                   )}
                   style={

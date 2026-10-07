@@ -33,7 +33,7 @@ export const Verified: Story = { args: { verified: true, size: 'lg' } };
 // 20 (inline), 32, 40 and 48 (a list card).
 export const Sizes: Story = {
   render: (args) => (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-s5">
       <Avatar {...args} size="xs" />
       <Avatar {...args} size="sm" />
       <Avatar {...args} size="md" />

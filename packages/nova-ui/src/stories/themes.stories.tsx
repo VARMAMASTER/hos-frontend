@@ -24,18 +24,18 @@ function Preset({
     <NovaThemeProvider
       theme={theme}
       scheme={scheme}
-      className="nova-canvas flex flex-col gap-3 rounded-lg p-4 text-ink motion-safe:transition-colors motion-safe:duration-base motion-safe:ease-standard"
+      className="nova-canvas flex flex-col gap-s5 rounded-overlay p-s6 text-ink motion-safe:transition-colors motion-safe:duration-base motion-safe:ease-standard"
     >
-      <div className="nova-chrome flex items-center justify-between rounded-md px-4 py-2.5">
-        <span className="text-[13px] font-semibold">{theme.name}</span>
-        <span className="text-[12px] text-(color:--nova-chrome-ink-2)">
+      <div className="nova-chrome flex items-center justify-between rounded-card px-s6 py-s4">
+        <span className="text-control font-semibold">{theme.name}</span>
+        <span className="text-label text-(color:--nova-chrome-ink-2)">
           Top bar
         </span>
       </div>
-      <div className="flex gap-3">
-        <div className="nova-sidebar flex w-24 shrink-0 flex-col gap-1 rounded-md p-3">
-          <span className="text-[12px] font-semibold">Sidebar</span>
-          <span className="text-[11px] text-(color:--nova-chrome-ink-2)">
+      <div className="flex gap-s5">
+        <div className="nova-sidebar flex w-rail shrink-0 flex-col gap-s1 rounded-card p-s5">
+          <span className="text-label font-semibold">Sidebar</span>
+          <span className="text-meta text-(color:--nova-chrome-ink-2)">
             Patients
           </span>
         </div>
@@ -51,7 +51,7 @@ function Preset({
           description="This hospital's brand"
           actions={<Chip tone="ai">AI draft</Chip>}
         />
-        <CardBody className="flex flex-wrap gap-2">
+        <CardBody className="flex flex-wrap gap-s3">
           <Button size="sm">Approve</Button>
           <Button size="sm" variant="ghost">
             Edit
@@ -65,7 +65,7 @@ function Preset({
 
 export const SideBySide: StoryObj = {
   render: () => (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-s6 md:grid-cols-2 xl:grid-cols-3">
       {Object.values(EXAMPLE_THEMES).map((theme) => (
         <Preset key={theme.name} theme={theme} />
       ))}
@@ -77,7 +77,7 @@ export const SideBySide: StoryObj = {
 // independent of the theme and the material.
 export const LightAndDark: StoryObj = {
   render: () => (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid gap-s6 lg:grid-cols-2">
       {Object.values(EXAMPLE_THEMES).flatMap((theme) =>
         (['light', 'dark'] as const).map((scheme) => (
           <Preset

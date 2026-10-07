@@ -88,7 +88,12 @@ describe('Textarea, the prototype form control', () => {
     render(<Textarea label="Notes" />);
     const field = screen.getByLabelText('Notes');
     expect([...field.classList]).toEqual(
-      expect.arrayContaining(['text-[13.5px]', 'px-2.5', 'py-2', 'rounded-sm']),
+      expect.arrayContaining([
+        'text-input',
+        'px-field',
+        'py-control-md',
+        'rounded-control',
+      ]),
     );
     expect(field.className).not.toMatch(/text-sm/);
   });

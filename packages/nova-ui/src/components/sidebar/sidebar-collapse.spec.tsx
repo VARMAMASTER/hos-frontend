@@ -113,7 +113,7 @@ describe('Sidebar collapse', () => {
     );
     const root = container.firstElementChild as HTMLElement;
     for (const name of [
-      'w-[var(--nova-sidebar-rail-w,4.25rem)]',
+      'w-rail',
       'motion-safe:transition-[width]',
       'motion-safe:duration-base',
       'motion-safe:ease-standard',

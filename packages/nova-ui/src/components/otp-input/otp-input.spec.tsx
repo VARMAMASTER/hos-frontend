@@ -316,11 +316,11 @@ describe('OtpInput look', () => {
     const view = setup();
     const box = view.container.querySelector('[data-otp-box]');
     expect(box?.className).toContain('font-mono');
-    expect(box?.className).toContain('text-[20px]');
+    expect(box?.className).toContain('text-headline');
     expect(box?.className).toContain('font-semibold');
-    expect(box?.className).toContain('border-[1.5px]');
-    expect(box?.className).toContain('rounded-sm');
-    expect(box?.className).toContain('h-[50px]');
+    expect(box?.className).toContain('border-otp-box');
+    expect(box?.className).toContain('rounded-control');
+    expect(box?.className).toContain('h-otp-box');
     expect(view.container.innerHTML).not.toMatch(
       /shadow|font-medium|text-title3/,
     );
@@ -329,11 +329,11 @@ describe('OtpInput look', () => {
   it('sets the label, hint and error at the prototype 12px (.f-label, .tiny)', () => {
     const view = setup({ hint: 'We sent it', error: 'Wrong' });
     const label = view.container.querySelector('label');
-    expect(label?.className).toContain('text-[12px]');
+    expect(label?.className).toContain('text-label');
     expect(label?.className).toContain('font-semibold');
     expect(label?.className).toContain('text-ink-2');
-    expect(screen.getByText('We sent it').className).toContain('text-[12px]');
-    expect(screen.getByRole('alert').className).toContain('text-[12px]');
+    expect(screen.getByText('We sent it').className).toContain('text-label');
+    expect(screen.getByRole('alert').className).toContain('text-label');
   });
 
   it('tints a filled box with the brand, like .otp-box.filled', () => {
@@ -354,11 +354,16 @@ describe('OtpInput look', () => {
     const row = view.container.querySelector('[data-otp-box]')
       ?.parentElement as HTMLElement;
     expect(row.className).toContain('w-full');
-    expect(row.className).toContain('gap-2');
+    expect(row.className).toContain('gap-s3');
     for (const box of view.container.querySelectorAll('[data-otp-box]')) {
       const classes = [...box.classList];
       expect(classes).toEqual(
-        expect.arrayContaining(['flex-1', 'basis-0', 'min-w-0', 'max-w-11']),
+        expect.arrayContaining([
+          'flex-1',
+          'basis-0',
+          'min-w-0',
+          'max-w-otp-box',
+        ]),
       );
       expect(classes.some((name) => /^(?:sm:)?[wh]-\d+$/.test(name))).toBe(
         false,

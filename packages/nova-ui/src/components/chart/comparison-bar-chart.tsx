@@ -171,7 +171,7 @@ export function ComparisonBarChart({
           y={Number(y) + Number(height) / 2}
           textAnchor={ahead ? 'start' : 'end'}
           dominantBaseline="central"
-          className="fill-ink text-[12px] font-semibold tabular-nums"
+          className="fill-ink text-label font-semibold tabular-nums"
         >
           {signed(value, show)}
         </text>
@@ -314,7 +314,7 @@ export function ComparisonBarChart({
         x={chartRight - FIGURES_MARGIN + 8}
         y={Number(y) + Number(height) / 2}
         dominantBaseline="central"
-        className="fill-ink text-[12px] font-semibold tabular-nums"
+        className="fill-ink text-label font-semibold tabular-nums"
       >
         {target !== null ? `${show(actual)} / ${show(target)}` : show(actual)}
       </text>

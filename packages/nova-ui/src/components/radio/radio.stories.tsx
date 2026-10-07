@@ -18,10 +18,10 @@ export const Disabled: Story = { args: { disabled: true } };
 export const Group: Story = {
   render: () => (
     <fieldset>
-      <legend className="text-[13px] font-semibold text-ink">
+      <legend className="text-control font-semibold text-ink">
         Triage category
       </legend>
-      <div className="mt-2 flex flex-col gap-3">
+      <div className="mt-s3 flex flex-col gap-s5">
         <Radio name="triage" value="red" label="Immediate" />
         <Radio name="triage" value="amber" label="Urgent" defaultChecked />
         <Radio name="triage" value="green" label="Non-urgent" />

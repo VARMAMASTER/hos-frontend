@@ -104,11 +104,11 @@ export const ChoiceCard = forwardRef<HTMLInputElement, ChoiceCardProps>(
       <Surface
         as="label"
         material="card"
-        radius="md"
+        radius="card"
         className={cx(
-          'group relative flex items-start gap-3 p-4',
+          'group relative flex items-start gap-card p-card',
           'has-checked:[--nova-card-edge:var(--nova-color-primary)]',
-          'motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out',
+          'motion-safe:transition-colors motion-safe:duration-base motion-safe:ease-standard',
           disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
           className,
         )}
@@ -121,32 +121,32 @@ export const ChoiceCard = forwardRef<HTMLInputElement, ChoiceCardProps>(
           data-slot="tint"
           className={cx(
             'nova-radius-inherit nova-highlight-edge pointer-events-none absolute inset-0 bg-primary-ghost opacity-0',
-            'group-has-checked:opacity-100 motion-safe:transition-opacity motion-safe:duration-200 motion-safe:ease-out',
+            'group-has-checked:opacity-100 motion-safe:transition-opacity motion-safe:duration-base motion-safe:ease-standard',
           )}
         />
         {kind === 'checkbox' ? (
-          <CheckboxBox ref={ref} boxClassName="mt-0.5" {...input} />
+          <CheckboxBox ref={ref} boxClassName="mt-s0" {...input} />
         ) : (
-          <RadioDot ref={ref} boxClassName="mt-0.5" {...input} />
+          <RadioDot ref={ref} boxClassName="mt-s0" {...input} />
         )}
         {icon ? (
           <span
             aria-hidden="true"
             data-slot="icon"
-            className="relative inline-grid size-8 shrink-0 place-items-center rounded-sm bg-primary-soft text-primary-strong [&_svg]:size-5"
+            className="relative inline-grid size-s9 shrink-0 place-items-center rounded-control bg-primary-soft text-primary-strong [&_svg]:size-icon-lg"
           >
             {icon}
           </span>
         ) : null}
-        <span className="relative flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="flex flex-wrap items-center gap-2">
-            <span id={titleId} className="text-[13.5px] font-semibold text-ink">
+        <span className="relative flex min-w-0 flex-1 flex-col gap-s0">
+          <span className="flex flex-wrap items-center gap-s3">
+            <span id={titleId} className="text-input font-semibold text-ink">
               {title}
             </span>
             {badge}
           </span>
           {description ? (
-            <span id={descriptionId} className="text-[12.5px] text-ink-2">
+            <span id={descriptionId} className="text-body-sm text-ink-2">
               {description}
             </span>
           ) : null}
@@ -216,12 +216,12 @@ export const ChoiceCardGroup = forwardRef<
         disabled={disabled}
         className={cx('min-w-0', className)}
       >
-        <legend className="mb-2 text-[13px] font-semibold text-ink">
+        <legend className="mb-s3 text-control font-semibold text-ink">
           {legend}
         </legend>
         <div
           data-slot="cards"
-          className={cx('grid gap-3', columnClasses[columns])}
+          className={cx('grid gap-s5', columnClasses[columns])}
         >
           {children}
         </div>

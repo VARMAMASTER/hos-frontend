@@ -20,7 +20,7 @@ describe('KpiTile', () => {
     const value = classesOf(screen.getByText('14'));
     for (const name of [
       'font-display',
-      'text-[26px]',
+      'text-kpi',
       'font-bold',
       'tabular-nums',
       'slashed-zero',
@@ -28,7 +28,7 @@ describe('KpiTile', () => {
       expect(value).toContain(name);
     }
     expect(classesOf(screen.getByText('Beds free'))).toEqual(
-      expect.arrayContaining(['text-[12px]', 'font-medium', 'text-ink-2']),
+      expect.arrayContaining(['text-label', 'font-medium', 'text-ink-2']),
     );
   });
 
@@ -37,17 +37,18 @@ describe('KpiTile', () => {
     expect(screen.getByText('0')).toBeTruthy();
   });
 
-  // The prototype's .kpi: radius md, 16px of padding, its own gradient edge, lifting on hover.
+  // The prototype's .kpi: the card corner, the card's 16px of padding, its own gradient edge, lifting
+  // 2px on hover.
   it('is an opaque, rounded, padded data tile with the KPI gradient edge', () => {
     render(<KpiTile label="Beds free" value="14" data-testid="tile" />);
     const tile = classesOf(screen.getByTestId('tile'));
     for (const name of [
       'nova-data',
-      'rounded-md',
-      'p-4',
+      'rounded-card',
+      'p-card',
       '[--nova-data-edge:var(--nova-gradient-edge-kpi)]',
       'hover:[--nova-data-lift:var(--nova-shadow-lg)]',
-      'motion-safe:hover:-translate-y-0.5',
+      'motion-safe:hover:-translate-y-s0',
     ]) {
       expect(tile).toContain(name);
     }
@@ -118,9 +119,11 @@ describe('KpiTile tone', () => {
       expect(screen.getByTestId('tile').dataset['tone']).toBe(tone);
       const [ink] = expected[tone];
       const delta = classesOf(screen.getByText('+4'));
-      // text-[11.5px] is the size, not a colour.
+      // text-caption is the size, not a colour.
       expect(delta.filter((name) => name.startsWith('bg-'))).toEqual([]);
-      expect(delta.filter((name) => /^text-(?!\[)/.test(name))).toEqual([ink]);
+      expect(
+        delta.filter((name) => /^text-/.test(name) && name !== 'text-caption'),
+      ).toEqual([ink]);
     },
   );
 });

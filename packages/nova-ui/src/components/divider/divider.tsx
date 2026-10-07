@@ -25,13 +25,13 @@ export type DividerProps = DividerBaseProps &
 
 const rule = {
   // The prototype's .divider: a 1px --line rule with 4px above and below.
-  horizontal: 'my-1 h-px w-full bg-border',
+  horizontal: 'my-s1 h-px w-full bg-border',
   vertical: 'w-px self-stretch bg-border',
 } as const satisfies Record<DividerOrientation, string>;
 
 const labelled = {
-  horizontal: 'my-1 flex w-full items-center gap-3',
-  vertical: 'flex flex-col items-center gap-3 self-stretch',
+  horizontal: 'my-s1 flex w-full items-center gap-s5',
+  vertical: 'flex flex-col items-center gap-s5 self-stretch',
 } as const satisfies Record<DividerOrientation, string>;
 
 const half = {
@@ -62,7 +62,7 @@ export function Divider({
         aria-label={label}
         className={cx(
           labelled[orientation],
-          'text-[12px] font-semibold text-ink-3',
+          'text-label font-semibold text-ink-3',
           className,
         )}
       >

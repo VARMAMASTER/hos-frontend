@@ -65,14 +65,14 @@ const iconProps = {
   strokeLinejoin: 'round' as const,
   'aria-hidden': true,
   focusable: false,
-  className: 'size-4',
+  className: 'size-icon-md',
 };
 
 // Letters stand in for the text marks, so they read as what they do.
 const glyph = (text: string, className?: string) => (
   <span
     aria-hidden="true"
-    className={cx('text-[13px] leading-none', className)}
+    className={cx('text-control leading-none', className)}
   >
     {text}
   </span>
@@ -379,15 +379,15 @@ export function Toolbar({
       aria-label={label}
       aria-orientation="horizontal"
       onKeyDown={move}
-      className="flex flex-wrap items-center gap-1 border-b border-border bg-surface-2 px-1.5 py-1"
+      className="flex flex-wrap items-center gap-s1 border-b border-border bg-surface-2 px-s2 py-s1"
     >
       {sections.map((tools, index) => (
-        <div key={tools[0]?.id} className="flex items-center gap-0.5">
+        <div key={tools[0]?.id} className="flex items-center gap-s0">
           {index > 0 ? (
             <span
               role="separator"
               aria-orientation="vertical"
-              className="mr-1 h-5 w-px bg-border-strong"
+              className="mr-s1 h-s7 w-px bg-border-strong"
             />
           ) : null}
           {tools.map((tool) => {
@@ -398,9 +398,9 @@ export function Toolbar({
                 key={key}
                 placement="bottom"
                 content={
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center gap-s3">
                     {tool.label}
-                    <kbd className="font-mono text-[11px] text-ink-2">
+                    <kbd className="font-mono text-meta text-ink-2">
                       {shortcutLabel(tool.shortcut)}
                     </kbd>
                   </span>
@@ -419,7 +419,7 @@ export function Toolbar({
                   onFocus={() => setActiveId(tool.id)}
                   onClick={() => press(tool)}
                   className={cx(
-                    'inline-flex size-8 items-center justify-center rounded-sm border text-ink-2 transition-colors',
+                    'inline-flex size-s9 items-center justify-center rounded-control border text-ink-2 transition-colors',
                     'border-transparent hover:bg-primary-ghost hover:text-ink',
                     // Pressed is a fill and a drawn edge, so it never relies on colour alone.
                     'aria-pressed:border-primary aria-pressed:bg-primary-soft aria-pressed:text-primary-strong',

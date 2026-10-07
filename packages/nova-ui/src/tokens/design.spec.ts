@@ -2,9 +2,11 @@
 // The design-token layer (tokens/design.ts) against theme.css: the same tokens, the same values, and
 // every component token tied to the scale wherever the prototype's value sits on it.
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { DIMENSION_TOKENS, NOVA_DESIGN_TOKENS } from './design';
+import { BREAKPOINT_REM, DIMENSION_TOKENS, NOVA_DESIGN_TOKENS } from './design';
 import { SPACING_PX } from './scale';
 import { NOVA_DEFAULTS } from './semantic';
 
@@ -110,5 +112,19 @@ describe('the design-token layer', () => {
     expect(px('--nova-control-h-md')).toBeCloseTo(8 * 2 + 13 * 1.55 + 2, 5);
     expect(px('--nova-control-h-sm')).toBeCloseTo(6 * 2 + 12 * 1.55 + 2, 5);
     expect(px('--nova-field-icon-inset')).toBe(32);
+  });
+});
+
+// A media query in script cannot read a custom property, so the breakpoints a component matches in
+// script (AppShell's drawer below md) are numbers here, held to the ones Tailwind compiles md: with.
+describe('breakpoints', () => {
+  it('match the ones Tailwind compiles, so a script media query and an md: variant switch together', () => {
+    const tailwindDir = dirname(
+      createRequire(import.meta.url).resolve('tailwindcss/package.json'),
+    );
+    const theme = readFileSync(join(tailwindDir, 'theme.css'), 'utf8');
+    for (const [name, rem] of Object.entries(BREAKPOINT_REM)) {
+      expect(theme, name).toContain(`--breakpoint-${name}: ${rem}rem;`);
+    }
   });
 });

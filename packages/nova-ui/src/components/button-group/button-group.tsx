@@ -201,10 +201,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           role={multiple ? 'group' : 'radiogroup'}
           aria-disabled={disabled || undefined}
           data-size={size}
-          className={cx(
-            'relative inline-flex items-stretch gap-0.5',
-            className,
-          )}
+          className={cx('relative inline-flex items-stretch gap-s0', className)}
         >
           {indicatorDrawn ? (
             <span
@@ -216,9 +213,9 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
               }}
               // The highlight edge rides on the indicator, so it slides with the fill.
               className={cx(
-                'nova-highlight-edge pointer-events-none absolute inset-y-0 left-0 rounded-lg bg-primary',
+                'nova-highlight-edge pointer-events-none absolute inset-y-0 left-0 rounded-overlay bg-primary',
                 animated &&
-                  'motion-safe:transition-[transform,width] motion-safe:duration-200 motion-safe:ease-out',
+                  'motion-safe:transition-[transform,width] motion-safe:duration-base motion-safe:ease-standard',
               )}
             />
           ) : null}
@@ -266,13 +263,13 @@ function nextIndex(key: string, current: number, last: number): number {
   }
 }
 
-// Padding and type match Button (sm 6px by 10px at 12px, md 8px by 16px at 13px). Icon-only items are
-// square: padding all round, and the glyph 16px. The prototype's 18px radius step makes a 30 to 36px
-// tall segment a full pill, which is why the selected corners morph to rounded-lg and not rounded-full:
+// Padding and type match Button (the control tokens: sm 6px by 10px at 12px, md 8px by 16px at 13px).
+// Icon-only items are square: padding all round, and the glyph 16px (size-icon-md). The prototype's 18px radius step makes a 30 to 36px
+// tall segment a full pill, which is why the selected corners morph to rounded-overlay and not rounded-full:
 // animating a radius to 999px finishes in its first percent and shows no morph.
 const sizes: Record<ButtonGroupSize, { text: string; iconOnly: string }> = {
-  sm: { text: 'px-2.5 py-1.5 text-[12px]', iconOnly: 'p-1.5' },
-  md: { text: 'px-4 py-2 text-[13px]', iconOnly: 'p-2' },
+  sm: { text: 'px-control-sm py-control-sm text-label', iconOnly: 'p-s2' },
+  md: { text: 'px-control-md py-control-md text-control', iconOnly: 'p-s3' },
 };
 
 export function ButtonGroupItem({
@@ -327,9 +324,9 @@ export function ButtonGroupItem({
   // unselected segment's edge hovers to the highlight. The tick or aria state says the same.
   const fill = selected
     ? group.multiple || !group.indicatorDrawn
-      ? 'relative nova-highlight-edge rounded-lg border-primary bg-primary text-on-primary'
-      : 'rounded-lg border-primary bg-transparent text-on-primary'
-    : 'rounded-sm border-border-control bg-surface text-ink-2 hover:border-highlight-hover hover:bg-surface-2 hover:text-ink';
+      ? 'relative nova-highlight-edge rounded-overlay border-primary bg-primary text-on-primary'
+      : 'rounded-overlay border-primary bg-transparent text-on-primary'
+    : 'rounded-control border-border-control bg-surface text-ink-2 hover:border-highlight-hover hover:bg-surface-2 hover:text-ink';
 
   return (
     <button
@@ -352,11 +349,11 @@ export function ButtonGroupItem({
       }}
       onKeyDown={handleKeyDown}
       className={cx(
-        'inline-flex cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap border font-semibold',
+        'inline-flex cursor-pointer items-center justify-center gap-s2 whitespace-nowrap border font-semibold',
         iconOnly
-          ? cx(sizes[group.size].iconOnly, '[&_svg]:size-4')
+          ? cx(sizes[group.size].iconOnly, '[&_svg]:size-icon-md')
           : sizes[group.size].text,
-        'motion-safe:transition-[color,background-color,border-color,border-radius,transform] motion-safe:duration-200 motion-safe:ease-out motion-safe:active:scale-95',
+        'motion-safe:transition-[color,background-color,border-color,border-radius,transform] motion-safe:duration-base motion-safe:ease-standard motion-safe:active:scale-95',
         fill,
         focusRing,
         'disabled:pointer-events-none disabled:opacity-50',
@@ -364,7 +361,7 @@ export function ButtonGroupItem({
       )}
     >
       {/* The content sits above the sliding indicator, which is a positioned sibling. */}
-      <span className="relative z-10 inline-flex items-center gap-1.5">
+      <span className="relative z-10 inline-flex items-center gap-s2">
         {group.multiple && !iconOnly ? (
           // A pressed multiple-select segment slides a tick in, so the state is never colour alone.
           <span
@@ -372,10 +369,10 @@ export function ButtonGroupItem({
             data-slot="tick"
             data-state={selected ? 'on' : 'off'}
             className={cx(
-              'inline-flex shrink-0 overflow-hidden motion-safe:transition-[max-width,margin,opacity,transform] motion-safe:duration-200 motion-safe:ease-out',
+              'inline-flex shrink-0 overflow-hidden motion-safe:transition-[max-width,margin,opacity,transform] motion-safe:duration-base motion-safe:ease-standard',
               selected
-                ? 'mr-0 max-w-4 translate-x-0 opacity-100'
-                : '-mr-1.5 max-w-0 -translate-x-2 opacity-0',
+                ? 'mr-0 max-w-s6 translate-x-0 opacity-100'
+                : '-mr-s2 max-w-0 -translate-x-s3 opacity-0',
             )}
           >
             <svg
@@ -387,7 +384,7 @@ export function ButtonGroupItem({
               strokeLinejoin="round"
               aria-hidden="true"
               focusable="false"
-              className="size-3.5 shrink-0"
+              className="size-icon-sm shrink-0"
             >
               <path d="M4.5 10.5l3.5 3.5 7.5-8" />
             </svg>
@@ -397,7 +394,7 @@ export function ButtonGroupItem({
           <span
             aria-hidden="true"
             data-slot="icon"
-            className="inline-flex shrink-0 items-center [&_svg]:size-4"
+            className="inline-flex shrink-0 items-center [&_svg]:size-icon-md"
           >
             {icon}
           </span>

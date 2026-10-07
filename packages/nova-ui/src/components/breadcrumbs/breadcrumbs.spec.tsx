@@ -103,3 +103,19 @@ describe('Breadcrumbs', () => {
     ).toBeTruthy();
   });
 });
+
+// Tokens only: the .crumb-bar trail's type role, line height and gap, and the link's corner and
+// underline offset.
+describe('Breadcrumbs tokens', () => {
+  it('sets the trail and its links from tokens', () => {
+    render(<Breadcrumbs items={trail} />);
+    const list = screen.getByRole('list');
+    expect([...list.classList]).toEqual(
+      expect.arrayContaining(['gap-s2', 'text-body-sm', 'leading-snug']),
+    );
+    const [link] = screen.getAllByRole('link');
+    expect([...(link as HTMLElement).classList]).toEqual(
+      expect.arrayContaining(['rounded-control', 'underline-offset-loose']),
+    );
+  });
+});

@@ -91,9 +91,7 @@ describe('AppShell with the icon rail', () => {
     const shell = root(container);
     expect(shell.dataset['collapsed']).toBe('true');
     expect(
-      shell.classList.contains(
-        '[--nova-shell-w:var(--nova-sidebar-rail-w,4.25rem)]',
-      ),
+      shell.classList.contains('[--nova-shell-w:var(--nova-sidebar-rail-w)]'),
     ).toBe(true);
     expect(
       shell.classList.contains('[--nova-shell-w:var(--nova-sidebar-w)]'),

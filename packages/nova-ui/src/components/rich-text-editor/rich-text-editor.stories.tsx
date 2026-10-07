@@ -61,7 +61,7 @@ export const ClinicalNoteWithChecklist: Story = {
   render: function Render(args) {
     const [value, setValue] = useState(CLINICAL_NOTE);
     return (
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-s5">
         <RichTextEditor
           {...(args as RichTextEditorHtmlProps)}
           format="html"
@@ -69,9 +69,9 @@ export const ClinicalNoteWithChecklist: Story = {
           onChange={setValue}
           minHeight={280}
         />
-        <details className="text-[12px] text-ink-2">
+        <details className="text-label text-ink-2">
           <summary className="cursor-pointer">The saved HTML</summary>
-          <pre className="mt-2 overflow-x-auto rounded-sm border border-border bg-surface-2 p-3 font-mono text-[12px] whitespace-pre-wrap text-ink">
+          <pre className="mt-s3 overflow-x-auto rounded-control border border-border bg-surface-2 p-s5 font-mono text-label whitespace-pre-wrap text-ink">
             {value}
           </pre>
         </details>
@@ -143,13 +143,13 @@ export const JsonFormat: Story = {
   render: function Render(args) {
     const [doc, setDoc] = useState<object>({});
     return (
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-s5">
         <RichTextEditor
           {...(args as RichTextEditorJsonProps)}
           format="json"
           onChange={(next) => setDoc(next)}
         />
-        <pre className="overflow-x-auto rounded-sm border border-border bg-surface-2 p-3 font-mono text-[12px] whitespace-pre-wrap text-ink">
+        <pre className="overflow-x-auto rounded-control border border-border bg-surface-2 p-s5 font-mono text-label whitespace-pre-wrap text-ink">
           {JSON.stringify(doc, null, 2)}
         </pre>
       </div>

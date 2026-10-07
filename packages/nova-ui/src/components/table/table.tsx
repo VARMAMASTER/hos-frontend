@@ -15,12 +15,13 @@ import { VisuallyHidden } from '../../primitives/visually-hidden';
 export type TableAlign = 'left' | 'center' | 'right';
 export type TableDensity = 'comfortable' | 'compact';
 
-// Cell padding follows the density, so a table sets it once. Comfortable is the prototype's
-// (10px by 16px); compact trims the vertical padding to 6px.
+// Cell padding follows the density, so a table sets it once: the row tokens every row of data shares
+// (the feed's rows too). Comfortable is the prototype's (10px by 16px); compact trims the vertical
+// padding to 6px.
 const DensityContext = createContext<TableDensity>('comfortable');
 const cellPadding: Record<TableDensity, string> = {
-  comfortable: 'px-4 py-2.5',
-  compact: 'px-4 py-1.5',
+  comfortable: 'px-row py-row-comfortable',
+  compact: 'px-row py-row-compact',
 };
 
 // Whether the head is pinned: its header cells read it, so each one carries its own sticky classes.
@@ -36,7 +37,8 @@ export interface TableProps extends HTMLAttributes<HTMLTableElement> {
 }
 
 // The frame is the data material: opaque under both materials, the card hairline with the prototype's
-// gradient edge, radius md. The table inside is the prototype's: 13px, cells 10px by 16px.
+// gradient edge, the card corner. The table inside is the prototype's: 13px (text-control), cells
+// 10px by 16px.
 // Glass behind a column of numbers costs legibility, so never swap it for a translucent surface.
 // The hairline is the frame's border, so the frame itself must not scroll; the scroller sits inside it.
 // className styles the frame (placement, spacing); every other attribute describes the <table>
@@ -51,7 +53,7 @@ export function Table({
 }: TableProps) {
   const captionId = useId();
   return (
-    <Surface material="data" radius="md" className={className}>
+    <Surface material="data" radius="card" className={className}>
       {/* A scroll container needs a tab stop, or keyboard users cannot scroll a wide table; naming
           it makes that stop announce as the table it scrolls. */}
       <div
@@ -66,7 +68,7 @@ export function Table({
         )}
       >
         <table
-          className="w-full border-collapse text-left text-[13px] text-ink"
+          className="w-full border-collapse text-left text-control text-ink"
           {...rest}
         >
           <caption id={captionId}>
@@ -164,7 +166,8 @@ function columnClasses(
 // A cell pinned to the start edge while the table scrolls sideways. It paints an opaque fill (a
 // pinned cell with none would show the cells scrolling under it) that follows the row's hover and
 // selection, and a hairline on its end edge drawn by a pseudo-element, since a border on a pinned
-// cell stays behind in a collapsed table. The caller sets the offset (left-0, left-11) with className.
+// cell stays behind in a collapsed table. The caller sets the offset (left-0, left-table-select) with
+// className.
 const pinnedBody =
   'sticky z-10 bg-surface group-hover:bg-primary-ghost group-aria-selected:bg-primary-soft after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-border';
 const pinnedHead =
@@ -201,9 +204,9 @@ export function TableHeaderCell({
       className={cx(
         cellPadding[density],
         // A row header is body text that labels its row; a column header is the prototype's thead
-        // th: 11px semibold capitals, tracked .06em.
+        // th: 11px semibold capitals, tracked .06em (text-meta, tracking-caps).
         isColumn
-          ? 'text-[11px] font-semibold uppercase tracking-[.06em]'
+          ? 'text-meta font-semibold uppercase tracking-caps'
           : 'font-semibold',
         columnClasses(align, numeric),
         // A pinned header corner sits above both the sticky head and the pinned body cells.

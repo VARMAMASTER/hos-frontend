@@ -325,7 +325,7 @@ export const PatientPathwayDark: Story = {
 
 function Gauges() {
   return (
-    <div className="grid max-w-3xl gap-4 sm:grid-cols-2">
+    <div className="grid max-w-3xl gap-s6 sm:grid-cols-2">
       <RadialGauge
         ariaLabel="IPD bed occupancy now"
         label="Bed occupancy"

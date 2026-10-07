@@ -18,13 +18,14 @@ export interface TopBarProps extends HTMLAttributes<HTMLElement> {
   menuLabel?: string;
 }
 
-// The prototype's .topbar: a frame, not a card, so its corners are straight; 12px by 24px of padding,
-// 16px between its parts, sticky above the page.
-const bar = 'rounded-none sticky top-0 z-50 flex items-center gap-4 px-6 py-3';
+// The prototype's .topbar: a frame, not a card, so its corners are straight; 12px by 24px of padding
+// (py-s5, px-s8), 16px between its parts (gap-s6), sticky above the page.
+const bar =
+  'rounded-none sticky top-0 z-50 flex items-center gap-s6 px-s8 py-s5';
 
-// A 36px square in the chrome's ink; hover lifts it with a faint white, as a nav item does.
+// A 36px square (the chrome tile, as the brand mark is) in the chrome's ink; hover lifts it with a faint white, as a nav item does.
 const menuButton =
-  'inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md text-on-primary transition-colors hover:bg-chrome-ink/10 md:hidden';
+  'inline-flex size-chrome-tile shrink-0 cursor-pointer items-center justify-center rounded-card text-on-primary transition-colors hover:bg-chrome-ink/10 md:hidden';
 
 export function TopBar({
   search,
@@ -65,20 +66,20 @@ export function TopBar({
             strokeLinecap="round"
             aria-hidden="true"
             focusable="false"
-            className="size-5"
+            className="size-icon-lg"
           >
             <path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13" />
           </svg>
         </button>
       ) : null}
       {search ? (
-        <div role="search" className="min-w-0 max-w-[440px] flex-1">
+        <div role="search" className="min-w-0 max-w-topbar-search flex-1">
           {search}
         </div>
       ) : null}
       {children}
       {actions ? (
-        <div className="ml-auto flex shrink-0 items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-s3">
           {actions}
         </div>
       ) : null}

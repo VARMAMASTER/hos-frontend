@@ -75,7 +75,7 @@ const journey: TimelineItem[] = [
     tone: 'info',
     actor: { name: 'Lab desk', role: 'Pathology' },
     details: (
-      <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+      <dl className="grid grid-cols-[auto_1fr] gap-x-s6 gap-y-s1">
         <dt>CRP</dt>
         <dd className="font-mono">42 mg/L</dd>
         <dt>WBC</dt>
@@ -211,7 +211,7 @@ export const CustomEmpty: Story = {
   args: {
     items: [],
     empty: (
-      <p className="text-[13px] text-ink-2">
+      <p className="text-control text-ink-2">
         Nothing has been recorded for this stay yet.
       </p>
     ),

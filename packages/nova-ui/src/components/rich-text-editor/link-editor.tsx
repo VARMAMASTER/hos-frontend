@@ -81,9 +81,9 @@ export function LinkEditor({ editor, onClose }: LinkEditorProps) {
       role="group"
       aria-label="Link"
       onKeyDown={onKeyDown}
-      className="flex flex-wrap items-start gap-2 border-b border-border bg-surface px-3 py-2"
+      className="flex flex-wrap items-start gap-s3 border-b border-border bg-surface px-s5 py-s3"
     >
-      <div className="flex min-w-48 flex-1 flex-col gap-1">
+      <div className="flex min-w-link-field flex-1 flex-col gap-s1">
         <input
           ref={inputRef}
           id={inputId}
@@ -101,7 +101,7 @@ export function LinkEditor({ editor, onClose }: LinkEditorProps) {
             setError(false);
           }}
           className={cx(
-            'nova-field block w-full rounded-sm px-2.5 py-1.5 text-[13px] text-ink placeholder:text-ink-3',
+            'nova-field block w-full rounded-control px-s4 py-s2 text-control text-ink placeholder:text-ink-3',
             focusRing,
           )}
         />
@@ -109,13 +109,13 @@ export function LinkEditor({ editor, onClose }: LinkEditorProps) {
           <p
             id={errorId}
             role="alert"
-            className="text-[12px] font-semibold text-crit-deep"
+            className="text-label font-semibold text-crit-deep"
           >
             {LINK_ERROR}
           </p>
         ) : null}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-s3">
         <Button size="sm" onClick={apply}>
           Apply link
         </Button>

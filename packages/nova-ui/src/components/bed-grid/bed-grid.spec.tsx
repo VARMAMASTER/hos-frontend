@@ -285,8 +285,8 @@ describe('BedGrid', () => {
   });
 
   // The prototype's .bed status edges (#C4D7EC, #BFE0D2, #EFD3AE) are the status colour at about
-  // 18% over its own -soft fill; the edge goes through the card's edge property so it is not lost to
-  // the utility's border shorthand.
+  // 18% (the --nova-status-edge-tint token) over its own -soft fill; the edge goes through the card's
+  // edge property so it is not lost to the utility's border shorthand.
   it.each([
     ['occupied', 'info'],
     ['free', 'good'],
@@ -298,7 +298,7 @@ describe('BedGrid', () => {
         <BedGrid beds={[{ id: 'b', label: '1', status }]} ariaLabel="Beds" />,
       );
       expect(screen.getByRole('listitem').className).toContain(
-        `[--nova-card-edge:color-mix(in_srgb,var(--nova-color-${token})_18%,transparent)]`,
+        `[--nova-card-edge:color-mix(in_srgb,var(--nova-color-${token})_var(--nova-status-edge-tint),transparent)]`,
       );
     },
   );
@@ -313,5 +313,27 @@ describe('BedGrid', () => {
   it('merges a caller className onto the list', () => {
     render(<BedGrid beds={beds} ariaLabel="Beds" className="mt-4" />);
     expect(screen.getByRole('list').classList.contains('mt-4')).toBe(true);
+  });
+});
+
+// Tokens only: the .bed-grid track and the .bed cell are the bed tokens and the scale.
+describe('BedGrid tokens', () => {
+  it('lays the grid and the cells out from tokens', () => {
+    render(<BedGrid beds={beds} ariaLabel="Beds" />);
+    expect([...screen.getByRole('list').classList]).toEqual(
+      expect.arrayContaining([
+        'grid-cols-[repeat(auto-fill,minmax(var(--nova-bed-min-w),1fr))]',
+        'gap-s3',
+      ]),
+    );
+    const [cell] = screen.getAllByRole('listitem');
+    expect([...(cell as HTMLElement).classList]).toEqual(
+      expect.arrayContaining([
+        'rounded-control',
+        'min-h-bed',
+        'p-s3',
+        'text-meta',
+      ]),
+    );
   });
 });

@@ -167,8 +167,8 @@ function WardBoard() {
   const picked = beds.find((bed) => bed.id === selected);
 
   return (
-    <div className="grid min-h-[36rem] md:grid-cols-[16rem_minmax(0,1fr)]">
-      <aside className="nova-chrome flex flex-col gap-4 p-3">
+    <div className="grid min-h-(--nova-measure-xl) md:grid-cols-[var(--nova-sidebar-w)_minmax(0,1fr)]">
+      <aside className="nova-chrome flex flex-col gap-s6 p-s5">
         <BrandMark name="HOS" sub="Hospital OS" href="#home" />
         <ModuleSwitcher
           current={moduleId}
@@ -185,12 +185,12 @@ function WardBoard() {
         />
       </aside>
 
-      <main className="min-w-0 space-y-4 p-6">
+      <main className="min-w-0 space-y-s6 p-s8">
         <HeroBand
           title={`${currentModule?.label} ward board`}
           description="Press a bed to open it"
         >
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-s5 sm:grid-cols-3">
             <KpiTile label="Free beds" value={count('free')} tone="good" />
             <KpiTile label="Occupied" value={count('occupied')} />
             <KpiTile
@@ -208,13 +208,13 @@ function WardBoard() {
                 title="Beds"
                 description="General and semi-private wards"
               />
-              <CardBody className="space-y-3">
+              <CardBody className="space-y-s5">
                 <BedGrid
                   beds={beds}
                   ariaLabel="General ward beds"
                   onSelect={setSelected}
                 />
-                <p role="status" className="text-[13px] text-ink-2">
+                <p role="status" className="text-control text-ink-2">
                   {picked
                     ? `Selected bed ${picked.label}, ${picked.status}`
                     : 'No bed selected'}
@@ -223,10 +223,10 @@ function WardBoard() {
             </Card>
           }
           secondary={
-            <section aria-labelledby="activity-heading" className="space-y-2">
+            <section aria-labelledby="activity-heading" className="space-y-s3">
               <h2
                 id="activity-heading"
-                className="text-[14px] font-semibold text-ink"
+                className="text-body font-semibold text-ink"
               >
                 Activity
               </h2>

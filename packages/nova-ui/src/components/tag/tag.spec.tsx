@@ -17,9 +17,9 @@ describe('Tag', () => {
       'bg-chrome-1',
       'text-chrome-ink',
       'font-mono',
-      'text-[10.5px]',
-      'px-2',
-      'py-0.5',
+      'text-overline',
+      'px-tag',
+      'py-tag',
     ]) {
       expect(tag.classList.contains(name), name).toBe(true);
     }

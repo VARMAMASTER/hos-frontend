@@ -29,7 +29,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   return (
     <div
       className={cx(
-        'inline-flex min-h-11 items-start gap-3',
+        'inline-flex min-h-touch items-start gap-s5',
         disabled && 'opacity-50',
         className,
       )}
@@ -38,7 +38,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
         ref={ref}
         id={id}
         // The 44px row centres the 20px circle: 12px down.
-        boxClassName="mt-3"
+        boxClassName="mt-s5"
         disabled={disabled}
         // Browsers never report a change on a disabled control; this keeps that true for
         // synthetic events as well.
@@ -48,7 +48,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
       <label
         htmlFor={id}
         className={cx(
-          'flex min-h-11 items-center py-2 text-[13.5px] text-ink',
+          'flex min-h-touch items-center py-s3 text-input text-ink',
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
         )}
       >
