@@ -19,7 +19,7 @@
 - Modify: `os/releases/release-1/mockups/assets/hos.css`
 - Test: `os/tools/token-sweep.mjs`
 
-- [ ] **Step 1: Enhance `.btn.is-loading` and `.btn[aria-busy="true"]` in `hos.css`**
+- [x] **Step 1: Enhance `.btn.is-loading` and `.btn[aria-busy="true"]` in `hos.css`**
 Add `color: transparent !important;` and explicit spinner colors so buttons with bare text nodes or mixed nodes conceal text and present high-contrast spinners.
 ```css
 .btn.is-loading,
@@ -68,14 +68,14 @@ Add `color: transparent !important;` and explicit spinner colors so buttons with
 }
 ```
 
-- [ ] **Step 2: Sync to `public/` and verify token sweep**
+- [x] **Step 2: Sync to `public/` and verify token sweep**
 Run:
 ```bash
 node scripts/build.mjs
 node tools/token-sweep.mjs
 ```
 
-- [ ] **Step 3: Commit Task 1 in `os/`**
+- [x] **Step 3: Commit Task 1 in `os/`**
 ```bash
 git add releases/release-1/mockups/assets/hos.css
 node scripts/build.mjs
@@ -90,15 +90,15 @@ git commit -m "feat(css): improve button loading state contrast and bare-text co
 - Modify: `os/releases/release-1/mockups/assets/hos-sim.js`
 - Test: `os/tools/facts-sweep.mjs`, `os/tools/adr7-sweep.mjs`
 
-- [ ] **Step 1: Upgrade `HOS.busy` to toggle `is-loading` and `aria-busy`**
+- [x] **Step 1: Upgrade `HOS.busy` to toggle `is-loading` and `aria-busy`**
 In `os/releases/release-1/mockups/assets/hos-sim.js`:
 Update `HOS.busy` so it sets `btn.classList.add("is-loading")` and `btn.setAttribute("aria-busy", "true")`.
 When complete, remove `is-loading` and `aria-busy`.
 
-- [ ] **Step 2: Add interactive loading feedback to approval buttons (`onApproveClick`)**
+- [x] **Step 2: Add interactive loading feedback to approval buttons (`onApproveClick`)**
 In `onApproveClick`, mark the button as `is-loading` / `aria-busy="true"` immediately during the approval countdown.
 
-- [ ] **Step 3: Sync to `public/` and run verification sweeps**
+- [x] **Step 3: Sync to `public/` and run verification sweeps**
 Run:
 ```bash
 node scripts/build.mjs
@@ -106,7 +106,7 @@ node tools/facts-sweep.mjs
 node tools/adr7-sweep.mjs
 ```
 
-- [ ] **Step 4: Commit Task 2 in `os/`**
+- [x] **Step 4: Commit Task 2 in `os/`**
 ```bash
 git add releases/release-1/mockups/assets/hos-sim.js
 node scripts/build.mjs
@@ -121,18 +121,18 @@ git commit -m "feat(sim): wire universal is-loading state to busy actions and ap
 - Modify: `os/releases/release-1/mockups/03-doctor.html`
 - Test: `os/tools/token-sweep.mjs`, `os/tools/adr7-sweep.mjs`, `os/tools/facts-sweep.mjs`
 
-- [ ] **Step 1: Add canonical `data-component` annotations to buttons and cards in `03-doctor.html`**
+- [x] **Step 1: Add canonical `data-component` annotations to buttons and cards in `03-doctor.html`**
 Tag buttons with `data-component="Button"` (or `AiButton`), `data-variant`, `data-size`.
 Tag approval bars with `data-component="ApprovalBar"`.
 Tag cards with `data-component="Card"`.
 
-- [ ] **Step 2: Wire loading states to doctor consultation actions**
+- [x] **Step 2: Wire loading states to doctor consultation actions**
 1. `#btnStartConsult`: add `data-busy="Opening consultation…"` or wire button loading state on click before switching tabs.
 2. `#stopScribe`: set `stopBtn.classList.add("is-loading")` while interim transcription finishes and SOAP note generates.
 3. Health memory ask button: add `data-busy="Thinking…"` with `data-busy-ms="400"`.
 4. WhatsApp prescription approve: auto-inherits loading spinner from Task 2.
 
-- [ ] **Step 3: Sync to `public/` and run all verification sweeps**
+- [x] **Step 3: Sync to `public/` and run all verification sweeps**
 Run:
 ```bash
 node scripts/build.mjs
@@ -141,7 +141,7 @@ node tools/adr7-sweep.mjs
 node tools/facts-sweep.mjs
 ```
 
-- [ ] **Step 4: Commit Task 3 in `os/`**
+- [x] **Step 4: Commit Task 3 in `os/`**
 ```bash
 git add releases/release-1/mockups/03-doctor.html
 node scripts/build.mjs
@@ -156,8 +156,8 @@ git commit -m "feat(doctor): consolidate components with data-component annotati
 - `os/` repository
 - `hos-frontend/` repository
 
-- [ ] **Step 1: Push `os/` commits to git remote**
+- [x] **Step 1: Push `os/` commits to git remote**
 Run `git push origin main` in `os/`.
 
-- [ ] **Step 2: Commit and push plan tracking in `hos-frontend/`**
+- [x] **Step 2: Commit and push plan tracking in `hos-frontend/`**
 Run `git add docs/superpowers/plans/2026-10-09-prototype-inline-component-enhancement.md; git commit -m "docs: add inline component enhancement plan"; git push origin main` in `hos-frontend/`.
