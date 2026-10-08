@@ -12,9 +12,12 @@ import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export type AiButtonSize = Size;
 export type AiButtonState = 'idle' | 'thinking' | 'done';
+export type AiButtonVariant = 'default' | 'glow' | 'hero';
 
 export interface AiButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+  variant?: AiButtonVariant;
+  badge?: ReactNode;
   size?: AiButtonSize;
   // The label while idle ("Draft summary"): the caller's words, in the caller's language (set `lang`).
   children: ReactNode;
@@ -39,7 +42,7 @@ export interface AiButtonProps
 // under prefers-reduced-motion nothing moves and each state is still told apart by its fill, its
 // label, the ✦ and the check.
 const base = cx(
-  'group/ai relative inline-flex items-center justify-center gap-control rounded-control border border-transparent font-semibold text-on-primary',
+  'group/ai relative inline-flex items-center justify-center gap-control border border-transparent font-semibold text-on-primary',
   focusRing,
   disabledControl,
   ariaDisabled,
@@ -73,6 +76,8 @@ const BURST_ANGLES = [0, 60, 120, 180, 240, 300] as const;
 export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
   function AiButton(
     {
+      variant = 'default',
+      badge,
       size = 'md',
       type = 'button',
       state: stateProp,
@@ -88,6 +93,7 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
     },
     ref,
   ) {
+    const isPill = variant === 'glow' || variant === 'hero';
     const state: AiButtonState = stateProp ?? (loading ? 'thinking' : 'idle');
     const thinking = state === 'thinking';
     const ariaDisabled =
@@ -108,12 +114,20 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
           type={type}
           data-state={state}
           data-size={size}
+          data-variant={variant !== 'default' ? variant : undefined}
           data-idle={idle || undefined}
           aria-busy={thinking || undefined}
           className={cx(
             base,
-            sizes[size],
-            thinking ? thinkingFill : 'bg-ai',
+            isPill ? 'rounded-full' : 'rounded-control',
+            variant === 'hero'
+              ? 'min-h-touch px-s8 py-s3 text-body font-medium'
+              : sizes[size],
+            isPill
+              ? 'nova-ai-hero-fill'
+              : thinking
+              ? thinkingFill
+              : 'bg-ai',
             available && interactive,
             available && idle && breathing,
             fullWidth && 'w-full',
@@ -122,6 +136,47 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
           {...rest}
           onClick={unavailable ? (event) => event.preventDefault() : onClick}
         >
+          {badge ? (
+            <span
+              data-badge="true"
+              className="pointer-events-none absolute -top-s2 -right-s1 z-10 flex items-center justify-center rounded-full nova-ai-badge px-s2 py-0 text-badge font-bold uppercase tracking-normal"
+            >
+              {badge}
+            </span>
+          ) : null}
+
+          {isPill && playing ? (
+            <span
+              aria-hidden="true"
+              data-layer="aura"
+              className="pointer-events-none absolute -inset-s1 rounded-full nova-ai-hero-aura opacity-75 motion-safe:animate-ai-aura-pulse motion-reduce:hidden"
+            />
+          ) : null}
+
+          {isPill && playing ? (
+            <span
+              aria-hidden="true"
+              data-layer="conic-border"
+              className="nova-ai-conic-border motion-reduce:hidden"
+            >
+              <span
+                className={cx(
+                  'nova-ai-conic-sweep',
+                  thinking
+                    ? 'motion-safe:animate-ai-conic-spin-fast'
+                    : 'motion-safe:animate-ai-conic-spin',
+                )}
+              />
+            </span>
+          ) : null}
+
+          {isPill ? (
+            <span
+              aria-hidden="true"
+              className="nova-ai-static-border hidden motion-reduce:block"
+            />
+          ) : null}
+
           {/* Light passes over the fill: once on hover or focus, and on a loop while thinking. It is
               clipped to the button's own corners. */}
           <span
@@ -142,15 +197,25 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
             ) : null}
           </span>
           {thinking && playing ? <Orbit /> : null}
-          {/* Every label carries its own ✦, so the mark and the words sit together whichever label is
+          {/* Every label carries its own mark, so the mark and the words sit together whichever label is
               the widest. All three labels share one grid cell: the widest sets the width, so the
               button never changes size between states. Only the live one is visible and in the
               accessible name. */}
           <span className="relative grid justify-items-center">
-            <Label name="idle" live={state === 'idle'} twinkle={available}>
+            <Label
+              name="idle"
+              live={state === 'idle'}
+              twinkle={available}
+              isPill={isPill}
+            >
               {children}
             </Label>
-            <Label name="thinking" live={thinking} twinkle={false}>
+            <Label
+              name="thinking"
+              live={thinking}
+              twinkle={false}
+              isPill={isPill}
+            >
               {thinkingLabel}
             </Label>
             <Label
@@ -158,6 +223,7 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
               live={state === 'done'}
               twinkle={available}
               burst={playing}
+              isPill={isPill}
             >
               <span className="inline-flex items-center gap-s2">
                 {state === 'done' ? (
@@ -186,11 +252,38 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
 
 const checkSlot = 'inline-block size-icon-sm shrink-0';
 
+function SparkleCluster() {
+  return (
+    <svg
+      data-sparkle-cluster=""
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      className="size-icon-sm shrink-0 inline-block"
+    >
+      <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" />
+      <path
+        d="M5 4L5.8 6.2L8 7L5.8 7.8L5 10L4.2 7.8L2 7L4.2 6.2L5 4Z"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M6 16L6.6 17.4L8 18L6.6 18.6L6 20L5.4 18.6L4 18L5.4 17.4L6 16Z"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
 function Label({
   name,
   live,
   twinkle,
   burst = false,
+  isPill = false,
   children,
 }: {
   name: AiButtonState;
@@ -199,6 +292,7 @@ function Label({
   twinkle: boolean;
   // The done label bursts sparkles from its mark when it becomes the live one.
   burst?: boolean;
+  isPill?: boolean;
   children: ReactNode;
 }) {
   return (
@@ -210,7 +304,7 @@ function Label({
         !live && 'invisible',
       )}
     >
-      {/* The ✦ is always drawn: AI is never marked by colour alone. It is decoration, so it is never
+      {/* The ✦ or cluster is always drawn: AI is never marked by colour alone. It is decoration, so it is never
           in the accessible name. */}
       <span aria-hidden="true" className="relative inline-grid">
         <span
@@ -223,7 +317,7 @@ function Label({
               'motion-safe:group-hover/ai:animate-ai-twinkle motion-safe:group-focus-visible/ai:animate-ai-twinkle',
           )}
         >
-          ✦
+          {isPill ? <SparkleCluster /> : '✦'}
         </span>
         {live && burst ? <Burst /> : null}
       </span>

@@ -11,6 +11,11 @@ const meta = {
   component: AiButton,
   args: { children: 'Draft summary' },
   argTypes: {
+    variant: {
+      control: 'select',
+      options: ['default', 'glow', 'hero'],
+    },
+    badge: { control: 'text' },
     state: {
       control: 'select',
       options: [undefined, 'idle', 'thinking', 'done'],
@@ -36,6 +41,70 @@ export const Breathing: Story = { args: { idle: true } };
 export const Thinking: Story = { args: { state: 'thinking' } };
 export const Done: Story = { args: { state: 'done' } };
 export const Disabled: Story = { args: { disabled: true } };
+
+export const HeroGlow: Story = {
+  args: {
+    variant: 'hero',
+    badge: 'NEW',
+    children: 'Chat with our AI agent',
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center rounded-overlay bg-chrome-1 p-s10">
+      <AiButton {...args} />
+    </div>
+  ),
+};
+
+export const GlowVariant: Story = {
+  args: {
+    variant: 'glow',
+    badge: 'AI',
+    children: 'Analyze patient vitals',
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center rounded-overlay bg-chrome-1 p-s8">
+      <AiButton {...args} />
+    </div>
+  ),
+};
+
+export const HeroInteractive: Story = {
+  render: () => {
+    function InteractiveHero() {
+      const [state, setState] = useState<AiButtonState>('idle');
+      const timers = useRef<number[]>([]);
+      useEffect(
+        () => () => timers.current.forEach((t) => window.clearTimeout(t)),
+        [],
+      );
+      const handleClick = () => {
+        setState('thinking');
+        timers.current.push(
+          window.setTimeout(() => setState('done'), 2000),
+          window.setTimeout(() => setState('idle'), 4500),
+        );
+      };
+      return (
+        <div className="flex flex-col items-center gap-s5 rounded-overlay bg-chrome-1 p-s10">
+          <AiButton
+            variant="hero"
+            badge="NEW"
+            state={state}
+            thinkingLabel="Synthesizing clinical response…"
+            doneLabel="Response generated"
+            onClick={handleClick}
+          >
+            Chat with our AI agent
+          </AiButton>
+          <span className="text-label text-ink-2">
+            Click to test interactive state transitions (Idle &rarr; Thinking &rarr; Done &rarr; Idle)
+          </span>
+        </div>
+      );
+    }
+    return <InteractiveHero />;
+  },
+};
 export const FullWidth: Story = {
   args: { fullWidth: true },
   render: (args) => (

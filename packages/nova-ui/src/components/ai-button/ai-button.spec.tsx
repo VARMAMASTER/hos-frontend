@@ -435,3 +435,31 @@ describe('AiButton: reduced motion', () => {
     expect(unsafe).toEqual([]);
   });
 });
+
+describe('AiButton: glow & hero variants', () => {
+  it('renders glow variant with data-variant="glow" and rounded-full pill styling', () => {
+    render(<AiButton variant="glow">Chat with AI</AiButton>);
+    const btn = button('Chat with AI');
+    expect(btn.dataset['variant']).toBe('glow');
+    expect(btn.classList).toContain('rounded-full');
+  });
+
+  it('renders hero variant with data-variant="hero", 3-star cluster icon, and prominent pill padding', () => {
+    render(<AiButton variant="hero">Chat with our AI agent</AiButton>);
+    const btn = button('Chat with our AI agent');
+    expect(btn.dataset['variant']).toBe('hero');
+    expect(btn.classList).toContain('rounded-full');
+    expect(btn.querySelector('[data-sparkle-cluster]')).not.toBeNull();
+  });
+
+  it('renders floating badge when provided', () => {
+    render(
+      <AiButton variant="hero" badge="NEW">
+        Chat with our AI agent
+      </AiButton>,
+    );
+    const badge = screen.getByText('NEW');
+    expect(badge).not.toBeNull();
+    expect(badge.getAttribute('data-badge')).toBe('true');
+  });
+});

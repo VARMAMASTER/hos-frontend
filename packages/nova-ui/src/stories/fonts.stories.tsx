@@ -59,7 +59,7 @@ export const InteractiveFontSwitcher: Story = {
             </div>
 
             <div
-              className="rounded-card border border-border-subtle bg-canvas p-s6 transition-all"
+              className="rounded-card border border-border bg-canvas p-s6 transition-all"
               style={{
                 fontFamily: NOVA_FONTS[selectedFont],
                 ['--nova-font-body' as string]: NOVA_FONTS[selectedFont],

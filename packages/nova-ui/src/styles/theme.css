@@ -207,6 +207,39 @@
   }
 }
 
+@keyframes nova-ai-conic-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes nova-ai-aura-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@utility animate-ai-conic-spin {
+  animation: nova-ai-conic-spin calc(var(--nova-duration-slow) * 16) linear infinite;
+}
+
+@utility animate-ai-conic-spin-fast {
+  animation: nova-ai-conic-spin calc(var(--nova-duration-slow) * 6) linear infinite;
+}
+
+@utility animate-ai-aura-pulse {
+  animation: nova-ai-aura-pulse calc(var(--nova-duration-slow) * 12) ease-in-out infinite;
+}
+
 @utility animate-ai-twinkle {
   animation: nova-ai-twinkle calc(var(--nova-duration-base) * 3)
     var(--nova-ease-spring);
@@ -287,6 +320,68 @@
   pointer-events: none;
   transform: translateX(-120%) skewX(-18deg);
   background-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--nova-color-on-primary) 14%, transparent), transparent);
+}
+
+/* prettier-ignore */
+@utility nova-ai-hero-fill {
+  background-color: #030a1c;
+  background-image: radial-gradient(130% 100% at 20% 50%, #0c255c 0%, #030a1c 85%);
+}
+
+/* prettier-ignore */
+@utility nova-ai-hero-aura {
+  background-image: radial-gradient(circle at 40% 50%, color-mix(in srgb, var(--nova-color-ai-bright) 50%, transparent), transparent 70%);
+  filter: blur(14px);
+}
+
+/* prettier-ignore */
+@utility nova-ai-hero-conic {
+  background-image: conic-gradient(from 0deg, transparent 0deg, transparent 200deg, var(--nova-color-ai-bright) 280deg, var(--nova-color-highlight) 330deg, transparent 360deg);
+}
+
+/* prettier-ignore */
+@utility nova-ai-hero-conic-fast {
+  background-image: conic-gradient(from 0deg, transparent 0deg, transparent 160deg, var(--nova-color-ai-bright) 260deg, var(--nova-color-highlight) 320deg, transparent 360deg);
+}
+
+/* prettier-ignore */
+@utility nova-ai-badge {
+  background-color: var(--nova-color-highlight);
+  color: #ffffff;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--nova-color-highlight) 60%, transparent);
+}
+
+/* prettier-ignore */
+@utility nova-ai-conic-border {
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--nova-radius-full);
+  padding: 1.5px;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* prettier-ignore */
+@utility nova-ai-conic-sweep {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  border-radius: var(--nova-radius-full);
+  background-image: conic-gradient(from 0deg, transparent 0deg, transparent 200deg, var(--nova-color-ai-bright) 280deg, var(--nova-color-highlight) 330deg, transparent 360deg);
+}
+
+/* prettier-ignore */
+@utility nova-ai-static-border {
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--nova-radius-full);
+  border: 1px solid color-mix(in srgb, var(--nova-color-ai-bright) 60%, transparent);
+  pointer-events: none;
 }
 
 @theme inline {
