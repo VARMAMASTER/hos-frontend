@@ -31,4 +31,14 @@ describe('Text Component', () => {
     expect(label.tagName).toBe('LABEL');
     expect(label.className).toContain('text-label');
   });
+
+  it('applies multi-font family class when font prop is specified', () => {
+    render(<Text font="mono">Monospace Text</Text>);
+    const text = screen.getByText('Monospace Text');
+    expect(text.className).toContain('font-mono');
+
+    render(<Text font="display">Display Text</Text>);
+    const disp = screen.getByText('Display Text');
+    expect(disp.className).toContain('font-display');
+  });
 });

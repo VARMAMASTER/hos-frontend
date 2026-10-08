@@ -14,11 +14,11 @@ describe('Box Component', () => {
   });
 
   it('renders requested polymorphic element with border and radius', () => {
-    render(<Box as="section" border="bottom" radius="md">Section</Box>);
+    render(<Box as="section" border="bottom" radius="card">Section</Box>);
     const section = screen.getByText('Section');
     expect(section.tagName).toBe('SECTION');
     expect(section.className).toContain('border-b');
-    expect(section.className).toContain('rounded-md');
+    expect(section.className).toContain('rounded-card');
   });
 
   it('supports directional paddingX and paddingY', () => {

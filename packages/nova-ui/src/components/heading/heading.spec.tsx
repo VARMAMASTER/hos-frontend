@@ -32,4 +32,10 @@ describe('Heading Component', () => {
     expect(heading.className).toContain('text-display');
     expect(heading.className).toContain('text-center');
   });
+
+  it('applies multi-font family class when font prop is specified', () => {
+    render(<Heading font="display">Display Font Heading</Heading>);
+    const heading = screen.getByRole('heading', { level: 2 });
+    expect(heading.className).toContain('font-display');
+  });
 });

@@ -4,6 +4,9 @@ import { Text } from './text';
 const meta = {
   title: 'Typography/Text',
   component: Text,
+  args: {
+    children: '',
+  },
 } satisfies Meta<typeof Text>;
 
 export default meta;

@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { MODULE_REGISTRY, getEntitledModules, getModuleManifest } from './registry';
+import type { ModuleManifest } from './types';
 
 describe('Module Registry', () => {
   it('registers all 16 canonical staff modules', () => {
     expect(MODULE_REGISTRY.length).toBe(16);
-    const ids = MODULE_REGISTRY.map(m => m.id);
+    const ids = MODULE_REGISTRY.map((m: ModuleManifest) => m.id);
     expect(ids).toContain('reception');
     expect(ids).toContain('doctor');
     expect(ids).toContain('patient-record');
@@ -25,7 +26,7 @@ describe('Module Registry', () => {
 
   it('filters entitled modules based on tenant subscription and user roles', () => {
     const entitled = getEntitledModules(['billing', 'reception'], ['ROLE_BILLING']);
-    expect(entitled.map(m => m.id)).toEqual(['billing']);
+    expect(entitled.map((m: ModuleManifest) => m.id)).toEqual(['billing']);
   });
 
   it('retrieves manifest by id', () => {

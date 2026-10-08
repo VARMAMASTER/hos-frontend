@@ -10,10 +10,14 @@ import { Chip } from '../chip/chip';
 import { KpiTile } from '../kpi-tile/kpi-tile';
 import { Card, CardBody } from '../card/card';
 import { Text } from '../text/text';
+import { Box } from '../box/box';
 
 const meta = {
   title: 'Layout/TabPage',
   component: TabPage,
+  args: {
+    children: null,
+  },
 } satisfies Meta<typeof TabPage>;
 
 export default meta;
@@ -26,16 +30,16 @@ export const FullModuleTab: Story = {
         title="Live Queue"
         description="Real-time OPD triage, token tracking, and doctor room allocations."
         badge={<Chip tone="good">18 Active</Chip>}
-        actions={<Button tone="accent">Register Walk-in</Button>}
+        actions={<Button variant="primary">Register Walk-in</Button>}
       />
       <TabKPIStrip columns={4}>
-        <KpiTile title="Waiting" value="12" tone="warn" />
-        <KpiTile title="In Consultation" value="6" tone="good" />
-        <KpiTile title="Avg Wait Time" value="14m" tone="accent" />
-        <KpiTile title="Completed" value="84" />
+        <KpiTile label="Waiting" value="12" tone="warn" />
+        <KpiTile label="In Consultation" value="6" tone="good" />
+        <KpiTile label="Avg Wait Time" value="14m" tone="neutral" />
+        <KpiTile label="Completed" value="84" />
       </TabKPIStrip>
       <TabToolbar
-        search={<SearchField placeholder="Search by token or patient name…" />}
+        search={<SearchField label="Search patients" placeholder="Search by token or patient name…" />}
         actions={<Button variant="ghost">Export CSV</Button>}
       />
       <TabContent>
@@ -52,7 +56,7 @@ export const FullModuleTab: Story = {
 export const LoadingState: Story = {
   render: () => (
     <TabPage loading>
-      <div>Content</div>
+      <Box padding="s4"><Text>Content</Text></Box>
     </TabPage>
   ),
 };

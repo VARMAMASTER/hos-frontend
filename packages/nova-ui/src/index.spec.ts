@@ -49,6 +49,16 @@ type ShellPropTypes =
 describe('@hos/nova-ui public API', () => {
   it.each([
     'AppShell',
+    'Heading',
+    'Text',
+    'Box',
+    'Stack',
+    'Grid',
+    'TabPage',
+    'TabHeader',
+    'TabToolbar',
+    'TabContent',
+    'TabKPIStrip',
     'ActivityFeed',
     'AiActionFeed',
     'BedGrid',

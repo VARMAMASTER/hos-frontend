@@ -1,6 +1,16 @@
 import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
 
+export type BoxRadius =
+  | 'none'
+  | 'control'
+  | 'card'
+  | 'overlay'
+  | 'hero'
+  | 'tag'
+  | 'pill'
+  | 'full';
+
 export interface BoxProps extends HTMLAttributes<HTMLElement> {
   as?: 'div' | 'section' | 'article' | 'header' | 'footer' | 'main';
   padding?: 'none' | 's1' | 's2' | 's3' | 's4' | 's6' | 's8';
@@ -9,7 +19,7 @@ export interface BoxProps extends HTMLAttributes<HTMLElement> {
   margin?: 'none' | 's1' | 's2' | 's3' | 's4' | 's6' | 's8';
   surface?: 'base' | 'elevated' | 'inset' | 'sunken' | 'transparent';
   border?: boolean | 'top' | 'bottom' | 'left' | 'right';
-  radius?: 'none' | 'sm' | 'md' | 'lg' | 'full';
+  radius?: BoxRadius;
   className?: string;
   children?: ReactNode;
 }
@@ -72,9 +82,12 @@ const borderClasses = {
 
 const radiusClasses = {
   none: '',
-  sm: 'rounded-sm',
-  md: 'rounded-md',
-  lg: 'rounded-lg',
+  control: 'rounded-control',
+  card: 'rounded-card',
+  overlay: 'rounded-overlay',
+  hero: 'rounded-hero',
+  tag: 'rounded-tag',
+  pill: 'rounded-pill',
   full: 'rounded-full',
 } as const;
 

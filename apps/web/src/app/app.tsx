@@ -30,6 +30,7 @@ export interface AppProps {
   userRoles?: string[];
   initialModuleId?: string;
   initialTabId?: string;
+  fontPreset?: 'googleSans' | 'ibmPlexSans';
 }
 
 const UNEXPECTED_RESPONSE = 'The API answered with an unexpected response.';
@@ -68,7 +69,9 @@ export function App({
   userRoles,
   initialModuleId,
   initialTabId,
+  fontPreset = 'googleSans',
 }: AppProps) {
+  const [currentFont, setCurrentFont] = useState<'googleSans' | 'ibmPlexSans'>(fontPreset);
   const [status, setStatus] = useState<ApiStatus>({ kind: 'checking' });
 
   useEffect(() => {
@@ -192,10 +195,35 @@ export function App({
 
   return (
     <AppShell sidebar={sidebar}>
-      <div className="flex min-h-screen flex-col">
+      <div
+        className="flex min-h-screen flex-col"
+        style={{
+          ['--nova-font-body' as string]:
+            currentFont === 'ibmPlexSans'
+              ? '"IBM Plex Sans", system-ui, -apple-system, sans-serif'
+              : '"Google Sans Flex", system-ui, -apple-system, sans-serif',
+        }}
+      >
         <TopBar
           role="banner"
-          actions={api ? <StatusChip status={status} /> : undefined}
+          actions={
+            <div className="flex items-center gap-s2">
+              <button
+                type="button"
+                onClick={() =>
+                  setCurrentFont((f) =>
+                    f === 'googleSans' ? 'ibmPlexSans' : 'googleSans',
+                  )
+                }
+                className="rounded-control border border-white/20 bg-white/10 px-s2 py-s1 text-badge text-on-primary hover:bg-white/20"
+                title="Toggle UI Font Family"
+                aria-label={`Current font: ${currentFont === 'googleSans' ? 'Google Sans Flex' : 'IBM Plex Sans'}. Click to toggle.`}
+              >
+                Font: {currentFont === 'googleSans' ? 'Google Sans' : 'IBM Plex'}
+              </button>
+              {api ? <StatusChip status={status} /> : null}
+            </div>
+          }
         >
           <div className="flex items-center gap-s3">
             <span className="font-display text-subtitle font-bold text-on-primary">

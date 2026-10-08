@@ -4,6 +4,9 @@ import { Heading } from './heading';
 const meta = {
   title: 'Typography/Heading',
   component: Heading,
+  args: {
+    children: '',
+  },
 } satisfies Meta<typeof Heading>;
 
 export default meta;

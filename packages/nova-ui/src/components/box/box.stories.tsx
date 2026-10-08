@@ -12,16 +12,16 @@ type Story = StoryObj<typeof meta>;
 export const Surfaces: Story = {
   render: () => (
     <div className="flex flex-col gap-s3 p-s4">
-      <Box surface="base" padding="s4" border radius="md">
+      <Box surface="base" padding="s4" border radius="card">
         Base Surface Box
       </Box>
-      <Box surface="elevated" padding="s4" border radius="md">
+      <Box surface="elevated" padding="s4" border radius="card">
         Elevated Surface Box
       </Box>
-      <Box surface="inset" padding="s4" radius="md">
+      <Box surface="inset" padding="s4" radius="card">
         Inset Surface Box
       </Box>
-      <Box surface="sunken" padding="s4" radius="md">
+      <Box surface="sunken" padding="s4" radius="card">
         Sunken Surface Box
       </Box>
     </div>

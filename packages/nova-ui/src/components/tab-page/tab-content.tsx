@@ -5,7 +5,7 @@ import { cx } from '../../primitives/cx';
 export interface TabContentProps {
   padding?: 'none' | 's1' | 's2' | 's3' | 's4' | 's6' | 's8';
   className?: string;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export function TabContent({

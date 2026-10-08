@@ -153,7 +153,12 @@ export {
   NOVA_SCHEMES,
   type NovaScheme,
 } from './tokens/scheme';
-export { NOVA_DEFAULTS, type NovaVariable } from './tokens/semantic';
+export {
+  NOVA_DEFAULTS,
+  NOVA_FONTS,
+  type NovaFontPreset,
+  type NovaVariable,
+} from './tokens/semantic';
 export * from './components/heading/heading';
 export * from './components/text/text';
 export * from './components/box/box';

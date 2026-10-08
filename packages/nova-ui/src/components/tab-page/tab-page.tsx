@@ -31,10 +31,11 @@ export function TabPage({
         data-compact={compactMode ? 'true' : undefined}
         role="status"
         aria-live="polite"
+        aria-busy={loading ? 'true' : undefined}
       >
         <Stack gap="s6">
-          <Box surface="inset" padding="s6" radius="md" className="animate-pulse h-20" />
-          <Box surface="inset" padding="s8" radius="md" className="animate-pulse h-64" />
+          <Box surface="inset" padding="s6" radius="card" className="motion-safe:animate-pulse" />
+          <Box surface="inset" padding="s8" radius="card" className="motion-safe:animate-pulse" />
         </Stack>
       </Box>
     );
@@ -49,6 +50,7 @@ export function TabPage({
       className={cx('min-h-full flex-1', className)}
       data-patient-id={patientId}
       data-compact={compactMode ? 'true' : undefined}
+      aria-busy={loading ? 'true' : undefined}
     >
       <Stack gap="s6">
         {errorMessage ? (
