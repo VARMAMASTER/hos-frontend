@@ -35,6 +35,7 @@ const FONT_TITLES: Record<NovaFontPreset, string> = {
   googleSans: 'Google Sans Flex (Default)',
   ibmPlexSans: 'IBM Plex Sans',
   ibmPlexMono: 'IBM Plex Mono',
+  inter: 'Inter',
 };
 
 // Glass only shows over something to frost, so every story sits on nova-canvas, the brand-tinted

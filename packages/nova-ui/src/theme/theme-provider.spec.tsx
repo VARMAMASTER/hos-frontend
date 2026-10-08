@@ -79,6 +79,22 @@ describe('NovaThemeProvider', () => {
       'IBM Plex Sans',
     );
   });
+
+  it('applies inter font preset variables', () => {
+    render(
+      <NovaThemeProvider font="inter">
+        <p>inter test</p>
+      </NovaThemeProvider>,
+    );
+    const wrapper = screen.getByText('inter test').parentElement as HTMLElement;
+    expect(wrapper.dataset['novaFont']).toBe('inter');
+    expect(wrapper.style.getPropertyValue('--nova-font-body')).toContain(
+      'Inter',
+    );
+    expect(wrapper.style.getPropertyValue('--nova-font-display')).toContain(
+      'Inter',
+    );
+  });
 });
 
 describe('applyNovaTheme', () => {

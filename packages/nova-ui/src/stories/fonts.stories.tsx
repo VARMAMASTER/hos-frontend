@@ -35,7 +35,7 @@ export const InteractiveFontSwitcher: Story = {
                 </Text>
               </div>
               <div className="flex items-center gap-s2">
-                {(['googleSans', 'ibmPlexSans', 'ibmPlexMono'] as NovaFontPreset[]).map((preset) => (
+                {(['googleSans', 'ibmPlexSans', 'ibmPlexMono', 'inter'] as NovaFontPreset[]).map((preset) => (
                   <button
                     key={preset}
                     type="button"
@@ -50,7 +50,9 @@ export const InteractiveFontSwitcher: Story = {
                       ? 'Google Sans Flex'
                       : preset === 'ibmPlexSans'
                       ? 'IBM Plex Sans'
-                      : 'IBM Plex Mono'}
+                      : preset === 'ibmPlexMono'
+                      ? 'IBM Plex Mono'
+                      : 'Inter'}
                   </button>
                 ))}
               </div>
@@ -107,7 +109,7 @@ export const InteractiveFontSwitcher: Story = {
         {/* Side-by-Side Typography Comparison */}
         <div>
           <Heading level="h3" className="mb-s3">Side-by-Side Typography Comparison</Heading>
-          <Grid columns={3} gap="s4">
+          <Grid columns={2} gap="s4">
             {/* Google Sans Flex */}
             <Box
               className="rounded-card border border-border bg-surface p-s5"
@@ -152,6 +154,23 @@ export const InteractiveFontSwitcher: Story = {
                 <Heading level="h3">The quick brown fox jumps over the lazy dog</Heading>
                 <Text variant="body">
                   Monospaced companion for tabular clinical numbers, financial ledgers, and technical identifiers.
+                </Text>
+                <Text variant="code" tone="muted">
+                  0123456789 • ₹45,290.00
+                </Text>
+              </Stack>
+            </Box>
+
+            {/* Inter */}
+            <Box
+              className="rounded-card border border-border bg-surface p-s5"
+              style={{ fontFamily: NOVA_FONTS.inter }}
+            >
+              <Stack gap="s2">
+                <Chip tone="neutral">Inter</Chip>
+                <Heading level="h3">The quick brown fox jumps over the lazy dog</Heading>
+                <Text variant="body">
+                  Highly legible screen-optimized modern neutral sans-serif with tall x-height and exceptional clarity.
                 </Text>
                 <Text variant="code" tone="muted">
                   0123456789 • ₹45,290.00

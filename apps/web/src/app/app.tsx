@@ -11,6 +11,8 @@ import {
   TabPanel,
   Tabs,
   TopBar,
+  NOVA_FONTS,
+  type NovaFontPreset,
 } from '@hos/nova-ui';
 import { toApiError, type ApiClient } from '@hos/hos-utility';
 import { MODULE_REGISTRY, getEntitledModules } from '../modules/registry';
@@ -30,7 +32,7 @@ export interface AppProps {
   userRoles?: string[];
   initialModuleId?: string;
   initialTabId?: string;
-  fontPreset?: 'googleSans' | 'ibmPlexSans';
+  fontPreset?: NovaFontPreset;
 }
 
 const UNEXPECTED_RESPONSE = 'The API answered with an unexpected response.';
@@ -71,7 +73,7 @@ export function App({
   initialTabId,
   fontPreset = 'googleSans',
 }: AppProps) {
-  const [currentFont, setCurrentFont] = useState<'googleSans' | 'ibmPlexSans'>(fontPreset);
+  const [currentFont, setCurrentFont] = useState<NovaFontPreset>(fontPreset);
   const [status, setStatus] = useState<ApiStatus>({ kind: 'checking' });
 
   useEffect(() => {
@@ -199,9 +201,9 @@ export function App({
         className="flex min-h-screen flex-col"
         style={{
           ['--nova-font-body' as string]:
-            currentFont === 'ibmPlexSans'
-              ? '"IBM Plex Sans", system-ui, -apple-system, sans-serif'
-              : '"Google Sans Flex", system-ui, -apple-system, sans-serif',
+            currentFont && currentFont in NOVA_FONTS
+              ? NOVA_FONTS[currentFont]
+              : NOVA_FONTS.googleSans,
         }}
       >
         <TopBar
@@ -211,15 +213,25 @@ export function App({
               <button
                 type="button"
                 onClick={() =>
-                  setCurrentFont((f) =>
-                    f === 'googleSans' ? 'ibmPlexSans' : 'googleSans',
-                  )
+                  setCurrentFont((f) => {
+                    if (f === 'googleSans') return 'ibmPlexSans';
+                    if (f === 'ibmPlexSans') return 'inter';
+                    if (f === 'inter') return 'ibmPlexMono';
+                    return 'googleSans';
+                  })
                 }
                 className="rounded-control border border-white/20 bg-white/10 px-s2 py-s1 text-badge text-on-primary hover:bg-white/20"
                 title="Toggle UI Font Family"
-                aria-label={`Current font: ${currentFont === 'googleSans' ? 'Google Sans Flex' : 'IBM Plex Sans'}. Click to toggle.`}
+                aria-label={`Current font: ${currentFont}. Click to toggle.`}
               >
-                Font: {currentFont === 'googleSans' ? 'Google Sans' : 'IBM Plex'}
+                Font:{' '}
+                {currentFont === 'inter'
+                  ? 'Inter'
+                  : currentFont === 'ibmPlexSans'
+                    ? 'IBM Plex'
+                    : currentFont === 'ibmPlexMono'
+                      ? 'Mono'
+                      : 'Google Sans'}
               </button>
               {api ? <StatusChip status={status} /> : null}
             </div>

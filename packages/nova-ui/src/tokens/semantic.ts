@@ -172,6 +172,7 @@ export const NOVA_FONTS = {
   googleSans: '"Google Sans Flex", system-ui, -apple-system, sans-serif',
   ibmPlexSans: '"IBM Plex Sans", system-ui, -apple-system, sans-serif',
   ibmPlexMono: '"IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace',
+  inter: '"Inter", system-ui, -apple-system, sans-serif',
 } as const;
 
 export type NovaFontPreset = keyof typeof NOVA_FONTS;
