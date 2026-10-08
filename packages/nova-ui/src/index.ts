@@ -159,3 +159,8 @@ export * from './components/text/text';
 export * from './components/box/box';
 export * from './components/stack/stack';
 export * from './components/grid/grid';
+export * from './components/tab-page/tab-page';
+export * from './components/tab-page/tab-header';
+export * from './components/tab-page/tab-toolbar';
+export * from './components/tab-page/tab-content';
+export * from './components/tab-page/tab-kpi-strip';
