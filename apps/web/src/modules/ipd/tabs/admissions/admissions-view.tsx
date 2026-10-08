@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { AdmissionsWidgetProps } from './types';
 
 export function AdmissionsWidget({
@@ -7,15 +7,18 @@ export function AdmissionsWidget({
   className,
 }: AdmissionsWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Admissions</h3>
-        <p className="text-body text-ink-2">Curated workflow for Admissions.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Admissions"
+        description="Curated workflow for Admissions."
+      />
+      <TabContent>
+        {/* Curated Inpatient (IPD) - Admissions workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

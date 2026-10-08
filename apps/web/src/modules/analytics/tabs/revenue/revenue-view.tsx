@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { RevenueWidgetProps } from './types';
 
 export function RevenueWidget({
@@ -7,15 +7,18 @@ export function RevenueWidget({
   className,
 }: RevenueWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Revenue Trends</h3>
-        <p className="text-body text-ink-2">Curated workflow for Revenue Trends.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Revenue Trends"
+        description="Curated workflow for Revenue Trends."
+      />
+      <TabContent>
+        {/* Curated Analytics & Insights - Revenue Trends workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

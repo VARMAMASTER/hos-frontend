@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { CriticalWidgetProps } from './types';
 
 export function CriticalWidget({
@@ -7,15 +7,18 @@ export function CriticalWidget({
   className,
 }: CriticalWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Critical Results</h3>
-        <p className="text-body text-ink-2">Curated workflow for Critical Results.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Critical Results"
+        description="Curated workflow for Critical Results."
+      />
+      <TabContent>
+        {/* Curated Laboratory & Diagnostics - Critical Results workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

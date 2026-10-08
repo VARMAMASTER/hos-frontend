@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { BedboardWidgetProps } from './types';
 
 export function BedboardWidget({
@@ -7,15 +7,18 @@ export function BedboardWidget({
   className,
 }: BedboardWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Bed Board</h3>
-        <p className="text-body text-ink-2">Curated workflow for Bed Board.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Bed Board"
+        description="Curated workflow for Bed Board."
+      />
+      <TabContent>
+        {/* Curated Inpatient (IPD) - Bed Board workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

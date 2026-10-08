@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { BillingWidgetProps } from './types';
 
 export function BillingWidget({
@@ -7,15 +7,18 @@ export function BillingWidget({
   className,
 }: BillingWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Billing Agent</h3>
-        <p className="text-body text-ink-2">Curated workflow for Billing Agent.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Billing Agent"
+        description="Curated workflow for Billing Agent."
+      />
+      <TabContent>
+        {/* Curated AI Workforce Fleet - Billing Agent workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

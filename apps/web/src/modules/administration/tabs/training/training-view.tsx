@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { TrainingWidgetProps } from './types';
 
 export function TrainingWidget({
@@ -7,15 +7,18 @@ export function TrainingWidget({
   className,
 }: TrainingWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Training Sandbox</h3>
-        <p className="text-body text-ink-2">Curated workflow for Training Sandbox.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Training Sandbox"
+        description="Curated workflow for Training Sandbox."
+      />
+      <TabContent>
+        {/* Curated Administration - Training Sandbox workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

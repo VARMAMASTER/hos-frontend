@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { ComplianceWidgetProps } from './types';
 
 export function ComplianceWidget({
@@ -7,15 +7,18 @@ export function ComplianceWidget({
   className,
 }: ComplianceWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Compliance & NABH</h3>
-        <p className="text-body text-ink-2">Curated workflow for Compliance & NABH.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Compliance & NABH"
+        description="Curated workflow for Compliance & NABH."
+      />
+      <TabContent>
+        {/* Curated Administration - Compliance & NABH workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

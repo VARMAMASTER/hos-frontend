@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { DispenseWidgetProps } from './types';
 
 export function DispenseWidget({
@@ -7,15 +7,18 @@ export function DispenseWidget({
   className,
 }: DispenseWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Dispense Queue</h3>
-        <p className="text-body text-ink-2">Curated workflow for Dispense Queue.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Dispense Queue"
+        description="Curated workflow for Dispense Queue."
+      />
+      <TabContent>
+        {/* Curated Pharmacy & Dispense - Dispense Queue workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

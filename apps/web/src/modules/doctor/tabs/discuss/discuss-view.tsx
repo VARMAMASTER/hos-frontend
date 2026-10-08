@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { DiscussWidgetProps } from './types';
 
 export function DiscussWidget({
@@ -7,15 +7,18 @@ export function DiscussWidget({
   className,
 }: DiscussWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Case Discussion</h3>
-        <p className="text-body text-ink-2">Curated workflow for Case Discussion.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Case Discussion"
+        description="Curated workflow for Case Discussion."
+      />
+      <TabContent>
+        {/* Curated Doctor Workspace - Case Discussion workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

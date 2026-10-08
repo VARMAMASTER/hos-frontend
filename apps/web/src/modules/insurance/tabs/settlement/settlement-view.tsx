@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { SettlementWidgetProps } from './types';
 
 export function SettlementWidget({
@@ -7,15 +7,18 @@ export function SettlementWidget({
   className,
 }: SettlementWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Settlement & Deductions</h3>
-        <p className="text-body text-ink-2">Curated workflow for Settlement & Deductions.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Settlement & Deductions"
+        description="Curated workflow for Settlement & Deductions."
+      />
+      <TabContent>
+        {/* Curated Insurance & Claims - Settlement & Deductions workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

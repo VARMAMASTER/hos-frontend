@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { InsightsWidgetProps } from './types';
 
 export function InsightsWidget({
@@ -7,15 +7,18 @@ export function InsightsWidget({
   className,
 }: InsightsWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">AI Insights</h3>
-        <p className="text-body text-ink-2">Curated workflow for AI Insights.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="AI Insights"
+        description="Curated workflow for AI Insights."
+      />
+      <TabContent>
+        {/* Curated Doctor Workspace - AI Insights workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

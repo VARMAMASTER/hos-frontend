@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { SupportWidgetProps } from './types';
 
 export function SupportWidget({
@@ -7,15 +7,18 @@ export function SupportWidget({
   className,
 }: SupportWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Tickets & Issues</h3>
-        <p className="text-body text-ink-2">Curated workflow for Tickets & Issues.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Tickets & Issues"
+        description="Curated workflow for Tickets & Issues."
+      />
+      <TabContent>
+        {/* Curated HOS HQ Superadmin - Tickets & Issues workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

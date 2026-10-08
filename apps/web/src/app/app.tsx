@@ -98,9 +98,14 @@ export function App({
     };
   }, [api]);
 
-  const allModuleIds = useMemo(() => MODULE_REGISTRY.map((m) => m.id), []);
-  const effectiveTenantModules = tenantModules ?? allModuleIds;
-  const effectiveUserRoles = userRoles ?? ['ROLE_SUPERADMIN'];
+  const effectiveTenantModules = useMemo(
+    () => tenantModules ?? MODULE_REGISTRY.map((m) => m.id),
+    [tenantModules],
+  );
+  const effectiveUserRoles = useMemo(
+    () => userRoles ?? ['ROLE_SUPERADMIN'],
+    [userRoles],
+  );
 
   const entitledModules = useMemo(
     () => getEntitledModules(effectiveTenantModules, effectiveUserRoles),

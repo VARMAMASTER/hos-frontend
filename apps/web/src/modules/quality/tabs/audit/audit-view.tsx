@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { AuditWidgetProps } from './types';
 
 export function AuditWidget({
@@ -7,15 +7,18 @@ export function AuditWidget({
   className,
 }: AuditWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Clinical Audit</h3>
-        <p className="text-body text-ink-2">Curated workflow for Clinical Audit.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Clinical Audit"
+        description="Curated workflow for Clinical Audit."
+      />
+      <TabContent>
+        {/* Curated Quality & Accreditation - Clinical Audit workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

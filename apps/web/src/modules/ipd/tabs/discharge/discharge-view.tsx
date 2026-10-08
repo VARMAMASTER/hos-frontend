@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { DischargeWidgetProps } from './types';
 
 export function DischargeWidget({
@@ -7,15 +7,18 @@ export function DischargeWidget({
   className,
 }: DischargeWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Discharge</h3>
-        <p className="text-body text-ink-2">Curated workflow for Discharge.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Discharge"
+        description="Curated workflow for Discharge."
+      />
+      <TabContent>
+        {/* Curated Inpatient (IPD) - Discharge workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

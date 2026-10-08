@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { AppointmentsWidgetProps } from './types';
 
 export function AppointmentsWidget({
@@ -7,15 +7,18 @@ export function AppointmentsWidget({
   className,
 }: AppointmentsWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Appointments</h3>
-        <p className="text-body text-ink-2">Curated workflow for Appointments.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Appointments"
+        description="Curated workflow for Appointments."
+      />
+      <TabContent>
+        {/* Curated Reception / OPD - Appointments workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

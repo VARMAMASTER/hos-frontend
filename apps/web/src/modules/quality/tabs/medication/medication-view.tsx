@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { MedicationWidgetProps } from './types';
 
 export function MedicationWidget({
@@ -7,15 +7,18 @@ export function MedicationWidget({
   className,
 }: MedicationWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Medication Safety</h3>
-        <p className="text-body text-ink-2">Curated workflow for Medication Safety.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Medication Safety"
+        description="Curated workflow for Medication Safety."
+      />
+      <TabContent>
+        {/* Curated Quality & Accreditation - Medication Safety workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

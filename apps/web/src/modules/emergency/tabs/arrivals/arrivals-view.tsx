@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { ArrivalsWidgetProps } from './types';
 
 export function ArrivalsWidget({
@@ -7,15 +7,18 @@ export function ArrivalsWidget({
   className,
 }: ArrivalsWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Arrivals</h3>
-        <p className="text-body text-ink-2">Curated workflow for Arrivals.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Arrivals"
+        description="Curated workflow for Arrivals."
+      />
+      <TabContent>
+        {/* Curated Emergency & Casualty - Arrivals workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

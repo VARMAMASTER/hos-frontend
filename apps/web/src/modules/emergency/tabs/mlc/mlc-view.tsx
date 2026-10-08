@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { MlcWidgetProps } from './types';
 
 export function MlcWidget({
@@ -7,15 +7,18 @@ export function MlcWidget({
   className,
 }: MlcWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">MLC Register</h3>
-        <p className="text-body text-ink-2">Curated workflow for MLC Register.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="MLC Register"
+        description="Curated workflow for MLC Register."
+      />
+      <TabContent>
+        {/* Curated Emergency & Casualty - MLC Register workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

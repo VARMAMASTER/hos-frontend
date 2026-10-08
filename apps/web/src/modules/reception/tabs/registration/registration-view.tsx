@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { RegistrationWidgetProps } from './types';
 
 export function RegistrationWidget({
@@ -7,15 +7,18 @@ export function RegistrationWidget({
   className,
 }: RegistrationWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Registration</h3>
-        <p className="text-body text-ink-2">Curated workflow for Registration.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Registration"
+        description="Curated workflow for Registration."
+      />
+      <TabContent>
+        {/* Curated Reception / OPD - Registration workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

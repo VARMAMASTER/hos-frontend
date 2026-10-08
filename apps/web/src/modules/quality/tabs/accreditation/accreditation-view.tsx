@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { AccreditationWidgetProps } from './types';
 
 export function AccreditationWidget({
@@ -7,15 +7,18 @@ export function AccreditationWidget({
   className,
 }: AccreditationWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Accreditation</h3>
-        <p className="text-body text-ink-2">Curated workflow for Accreditation.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Accreditation"
+        description="Curated workflow for Accreditation."
+      />
+      <TabContent>
+        {/* Curated Quality & Accreditation - Accreditation workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { AgeingWidgetProps } from './types';
 
 export function AgeingWidget({
@@ -7,15 +7,18 @@ export function AgeingWidget({
   className,
 }: AgeingWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Ageing by Payer</h3>
-        <p className="text-body text-ink-2">Curated workflow for Ageing by Payer.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Ageing by Payer"
+        description="Curated workflow for Ageing by Payer."
+      />
+      <TabContent>
+        {/* Curated Insurance & Claims - Ageing by Payer workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

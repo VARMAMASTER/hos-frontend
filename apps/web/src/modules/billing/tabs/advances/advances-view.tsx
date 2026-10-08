@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { AdvancesWidgetProps } from './types';
 
 export function AdvancesWidget({
@@ -7,15 +7,18 @@ export function AdvancesWidget({
   className,
 }: AdvancesWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Advances & Packages</h3>
-        <p className="text-body text-ink-2">Curated workflow for Advances & Packages.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Advances & Packages"
+        description="Curated workflow for Advances & Packages."
+      />
+      <TabContent>
+        {/* Curated Billing & Cashier - Advances & Packages workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }
