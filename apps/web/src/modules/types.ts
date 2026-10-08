@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export type ModuleCategory = 'clinical' | 'financial' | 'intelligence' | 'governance' | 'settings' | 'platform';
 
 export type ModuleRegistry = ModuleManifest[];
@@ -26,4 +28,11 @@ export interface ComposableWidgetProps {
   compactMode?: boolean;
   readonly?: boolean;
   className?: string;
+}
+
+export interface RouteObject {
+  path?: string;
+  index?: boolean;
+  children?: RouteObject[];
+  element?: ReactNode;
 }

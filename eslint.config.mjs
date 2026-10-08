@@ -53,4 +53,35 @@ export default [
     // Override or add rules here
     rules: {},
   },
+  {
+    files: [
+      'apps/web/src/modules/**/*.ts',
+      'apps/web/src/modules/**/*.tsx',
+      'src/modules/**/*.ts',
+      'src/modules/**/*.tsx',
+    ],
+    rules: {
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/no-empty-interface': 'off',
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '@/modules/*/tabs/*',
+                '@/modules/*/tabs/*/**',
+                '../*/tabs/*',
+                '../*/tabs/*/**',
+                '../../*/tabs/*',
+                '../../*/tabs/*/**',
+              ],
+              message:
+                'Cross-module deep imports are forbidden. Import from the root @/modules/<name> barrel instead.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
