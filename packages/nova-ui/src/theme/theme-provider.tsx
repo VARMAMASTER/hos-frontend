@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import type { NovaMaterial } from '../tokens/material';
 import type { NovaScheme } from '../tokens/scheme';
+import { NOVA_FONTS, type NovaFontPreset } from '../tokens/semantic';
 import {
   NOVA_THEME_VARIABLES,
   supportsLightDark,
@@ -16,6 +17,9 @@ export interface NovaThemeProviderProps {
   // light, dark, or system (follows prefers-color-scheme). Independent of the theme and the material;
   // unset everywhere means the CSS default, light.
   scheme?: NovaScheme;
+  // The font preset for this subtree: googleSans, ibmPlexSans, or ibmPlexMono.
+  font?: NovaFontPreset;
+  style?: CSSProperties;
   className?: string;
   children: ReactNode;
 }
@@ -26,21 +30,34 @@ export function NovaThemeProvider({
   theme,
   material,
   scheme,
+  font,
+  style,
   className,
   children,
 }: NovaThemeProviderProps) {
+  const fontStyle =
+    font && font in NOVA_FONTS
+      ? ({
+          '--nova-font-body': NOVA_FONTS[font],
+          '--nova-font-display': NOVA_FONTS[font],
+        } as CSSProperties)
+      : undefined;
+
   return (
     <div
       data-nova-theme={theme?.name ?? 'default'}
       data-nova-material={theme?.material ?? material}
       data-nova-scheme={scheme}
+      data-nova-font={font}
       className={className}
       // Through the allow-list: a theme that skipped createNovaTheme still sets no status or AI token.
-      style={
-        themeVariables(theme, {
+      style={{
+        ...(themeVariables(theme, {
           lightDark: supportsLightDark(),
-        }) as CSSProperties
-      }
+        }) as CSSProperties),
+        ...fontStyle,
+        ...style,
+      }}
     >
       {children}
     </div>

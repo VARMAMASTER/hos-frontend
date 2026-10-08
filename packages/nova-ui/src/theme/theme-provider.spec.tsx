@@ -63,6 +63,22 @@ describe('NovaThemeProvider', () => {
       ],
     ).toBe('default');
   });
+
+  it('applies font preset variables and data-nova-font attribute', () => {
+    render(
+      <NovaThemeProvider font="ibmPlexSans">
+        <p>font test</p>
+      </NovaThemeProvider>,
+    );
+    const wrapper = screen.getByText('font test').parentElement as HTMLElement;
+    expect(wrapper.dataset['novaFont']).toBe('ibmPlexSans');
+    expect(wrapper.style.getPropertyValue('--nova-font-body')).toContain(
+      'IBM Plex Sans',
+    );
+    expect(wrapper.style.getPropertyValue('--nova-font-display')).toContain(
+      'IBM Plex Sans',
+    );
+  });
 });
 
 describe('applyNovaTheme', () => {
