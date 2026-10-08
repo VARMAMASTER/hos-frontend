@@ -16,11 +16,22 @@ export const Default: Story = {};
 
 export const CustomLabel: Story = { args: { label: 'AI summary' } };
 
+export const Glowing: Story = {
+  args: { variant: 'glow', label: 'AI draft' },
+};
+
 export const InContext: Story = {
   render: () => (
-    <p className="flex items-center gap-s3 text-control text-ink">
-      Discharge summary
-      <AiBadge />
-    </p>
+    <div className="flex flex-col gap-s3 text-control text-ink">
+      <p className="flex items-center gap-s3">
+        Discharge summary
+        <AiBadge />
+      </p>
+      <p className="flex items-center gap-s3">
+        Clinical suggestion
+        <AiBadge variant="glow" label="AI recommended" />
+      </p>
+    </div>
   ),
 };
+

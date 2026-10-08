@@ -508,11 +508,12 @@ export function AmbientScribeRecorder({
             <Chip tone="info">{currentLanguage}</Chip>
           )
         ) : null}
-        {status === 'idle' ? (
+        {status === 'idle' || status === 'requesting' ? (
           <Button
             variant="ai"
             size="sm"
             data-action="start"
+            loading={status === 'requesting'}
             onClick={() => {
               setStatus('requesting');
               onStart?.();

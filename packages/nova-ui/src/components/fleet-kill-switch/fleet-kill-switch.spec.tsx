@@ -280,4 +280,28 @@ describe('ReasonDialog', () => {
         .getAttribute('aria-disabled'),
     ).toBe('true');
   });
+
+  it('shows loading spinner on confirm button and disables cancel button when busy', () => {
+    render(
+      <ReasonDialog
+        open
+        busy
+        title="Promote AI Scribe v4.3 to canary"
+        confirmLabel="Promote to canary"
+        danger={false}
+        onCancel={() => undefined}
+        onConfirm={() => undefined}
+      />,
+    );
+    const dialog = screen.getByRole('dialog', {
+      name: 'Promote AI Scribe v4.3 to canary',
+    });
+    const confirm = within(dialog).getByRole('button', {
+      name: 'Promote to canary',
+    });
+    expect(confirm.getAttribute('aria-busy')).toBe('true');
+    expect(confirm.querySelector('[data-spinner]')).not.toBeNull();
+    const cancel = within(dialog).getByRole('button', { name: 'Cancel' });
+    expect((cancel as HTMLButtonElement).disabled).toBe(true);
+  });
 });

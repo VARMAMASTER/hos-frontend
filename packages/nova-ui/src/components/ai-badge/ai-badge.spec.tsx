@@ -60,4 +60,11 @@ describe('AiBadge', () => {
     expect(badge.classList.contains('bg-ai-soft')).toBe(true);
     expect(badge.id).toBe('draft-badge');
   });
+
+  it('supports the glow variant for elevated glass styling', () => {
+    render(<AiBadge variant="glow" />);
+    const badge = screen.getByText('AI draft');
+    expect(badge.dataset['variant']).toBe('glow');
+    expect(badge.classList.contains('nova-ai-badge-pill')).toBe(true);
+  });
 });

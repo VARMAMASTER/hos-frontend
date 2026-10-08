@@ -84,9 +84,10 @@ describe('ChatComposer', () => {
 
   it('shows the send button as unavailable while busy when it cannot stop', () => {
     render(<ChatComposer onSend={() => undefined} busy />);
-    expect(
-      screen.getByRole('button', { name: 'Ask' }).getAttribute('aria-disabled'),
-    ).toBe('true');
+    const askButton = screen.getByRole('button', { name: 'Ask' });
+    expect(askButton.getAttribute('aria-disabled')).toBe('true');
+    expect(askButton.getAttribute('aria-busy')).toBe('true');
+    expect(askButton.querySelector('[data-spinner]')).not.toBeNull();
   });
 
   it('is controlled when given a value', () => {

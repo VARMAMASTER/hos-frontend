@@ -14,6 +14,7 @@ import {
 } from 'react';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
+import { Spinner } from '../../primitives/spinner';
 import { disabledControl } from '../../primitives/states';
 import { nextRovingIndex, RADIO_KEYS } from '../../primitives/roving-index';
 import type { Size } from '../../primitives/types';
@@ -239,6 +240,7 @@ type ItemBaseProps = Omit<
   value: string;
   // A leading glyph, hidden from assistive technology: the label (or aria-label) names the item.
   icon?: ReactNode;
+  loading?: boolean;
 };
 
 // With a label, the label names the item. Without one (an icon-only item), an aria-label must.
@@ -267,13 +269,14 @@ export function ButtonGroupItem({
   className,
   children,
   disabled: disabledProp = false,
+  loading = false,
   onClick,
   onKeyDown,
   ...rest
 }: ButtonGroupItemProps) {
   const group = useButtonGroup();
   const ref = useRef<HTMLButtonElement>(null);
-  const disabled = disabledProp || group.disabled;
+  const disabled = disabledProp || group.disabled || loading;
   const selected = group.selected.includes(value);
   const iconOnly = children === undefined || children === null;
 
@@ -331,15 +334,17 @@ export function ButtonGroupItem({
       data-value={value}
       data-size={group.size}
       data-selected={selected ? 'true' : undefined}
+      aria-busy={loading || undefined}
       onClick={(event) => {
         onClick?.(event);
         // A disabled <button> never reaches here: React drops its clicks.
-        if (event.defaultPrevented) return;
+        if (event.defaultPrevented || loading) return;
         group.choose(value);
       }}
       onKeyDown={handleKeyDown}
       className={cx(
-        'inline-flex cursor-pointer items-center justify-center gap-s2 whitespace-nowrap border font-semibold',
+        'relative inline-flex cursor-pointer items-center justify-center gap-s2 whitespace-nowrap border font-semibold',
+        loading && 'cursor-progress',
         iconOnly
           ? cx(sizes[group.size].iconOnly, '[&_svg]:size-icon-md')
           : sizes[group.size].text,
@@ -351,7 +356,7 @@ export function ButtonGroupItem({
       )}
     >
       {/* The content sits above the sliding indicator, which is a positioned sibling. */}
-      <span className="relative z-10 inline-flex items-center gap-s2">
+      <span className={cx('relative z-10 inline-flex items-center gap-s2', loading && 'opacity-0')}>
         {group.multiple && !iconOnly ? (
           // A pressed multiple-select segment slides a tick in, so the state is never colour alone.
           <span
@@ -391,6 +396,7 @@ export function ButtonGroupItem({
         ) : null}
         {children}
       </span>
+      {loading ? <Spinner size={group.size === 'sm' ? 'sm' : 'md'} /> : null}
     </button>
   );
 }

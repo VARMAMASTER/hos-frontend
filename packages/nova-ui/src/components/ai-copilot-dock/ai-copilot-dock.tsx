@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { cx } from '../../primitives/cx';
+import { SparkleCluster } from '../../primitives/ai-sparkle';
 import { focusRing } from '../../primitives/focus-ring';
 import { Surface } from '../../primitives/surface';
 import { useControllableState } from '../../primitives/use-controllable-state';
@@ -110,20 +111,23 @@ function Orb({ expanded }: { expanded: boolean }) {
       aria-hidden="true"
       data-orb=""
       className={cx(
-        'nova-ai-mark relative grid size-(--nova-copilot-orb) shrink-0 place-items-center rounded-full text-headline leading-none text-on-primary shadow-lg',
+        'nova-ai-hero-fill relative grid size-(--nova-copilot-orb) shrink-0 place-items-center rounded-full text-headline leading-none text-on-primary shadow-lg',
         'max-md:size-s10 max-md:text-title',
         'motion-safe:transition-transform motion-safe:duration-fast motion-safe:ease-spring motion-safe:group-hover:scale-110 motion-safe:group-active:scale-(--nova-copilot-press-scale)',
       )}
     >
       <span
         ref={halo}
-        className="pointer-events-none absolute -inset-(--nova-copilot-orb-halo) -z-10 rounded-full bg-ai-bright/25 opacity-50"
+        className="pointer-events-none absolute -inset-(--nova-copilot-orb-halo) -z-10 rounded-full bg-ai-bright/35 opacity-60"
       />
       <span
         ref={ring}
-        className="pointer-events-none absolute -inset-(--nova-copilot-orb-ring) rounded-full border-emphasis border-transparent border-r-ai-bright/40 border-t-ai-bright"
+        className="pointer-events-none absolute -inset-(--nova-copilot-orb-ring) rounded-full border-emphasis border-transparent border-r-ai-bright/50 border-t-ai-bright"
       />
-      <span className="relative">✦</span>
+      <span className="relative flex items-center justify-center">
+        <SparkleCluster size="md" className="text-ai-bright" />
+        <span className="sr-only">✦</span>
+      </span>
     </span>
   );
 }
@@ -270,14 +274,16 @@ export function AiCopilotDock({
       <button
         {...triggerProps}
         className={cx(
-          'inline-flex shrink-0 items-center gap-s3 whitespace-nowrap rounded-full border border-ai-bright/45 bg-ai py-s3 pl-s3 pr-s4 text-body-sm font-semibold text-on-primary hover:bg-ai-hover',
-          'motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-standard',
+          'relative inline-flex shrink-0 items-center gap-s3 whitespace-nowrap rounded-full border border-ai-bright/45 py-s3 pl-s3 pr-s4 text-body-sm font-semibold text-on-primary shadow-md hover:bg-ai-hover hover:nova-ai-glow focus-visible:nova-ai-glow',
+          'nova-ai-hero-fill',
+          'motion-safe:transition-all motion-safe:duration-fast motion-safe:ease-standard',
           focusRing,
           className,
         )}
       >
-        <span aria-hidden="true" className="text-body leading-none">
-          ✦
+        <span aria-hidden="true" className="relative flex items-center justify-center text-body leading-none">
+          <SparkleCluster size="sm" className="text-ai-bright" />
+          <span className="sr-only">✦</span>
         </span>
         <span className={cx(retracted && 'sr-only')}>{label}</span>
         <kbd
@@ -358,11 +364,12 @@ export function AiCopilotDock({
       )}
     >
       {/* The AI hairline along the top edge, so the panel is never mistaken for a generic chat. */}
-      <div aria-hidden="true" className="h-s0 shrink-0 bg-ai" />
+      <div aria-hidden="true" className="h-s0 shrink-0 nova-ai-grad" />
       {/* .hcp-h: the spark, the title, the small print, and the close button. */}
       <div className="flex shrink-0 flex-wrap items-center gap-s3 border-b border-border bg-ai-ghost px-card py-card-bar">
         <span aria-hidden="true" className="nova-ai-spark">
-          ✦
+          <SparkleCluster size="xs" className="text-on-primary" />
+          <span className="sr-only">✦</span>
         </span>
         <Heading
           id={titleId}

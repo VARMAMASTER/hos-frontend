@@ -122,6 +122,7 @@ export function ApprovalBar({
             variant="ai"
             size="sm"
             data-action="approve"
+            loading={busy}
             aria-disabled={busy || approveDisabled || undefined}
             onClick={() => onApprove()}
             {...named('approve')}

@@ -162,7 +162,12 @@ export const ChatComposer = forwardRef<HTMLTextAreaElement, ChatComposerProps>(
             {stopLabel}
           </Button>
         ) : (
-          <Button type="submit" variant="ai" aria-disabled={busy || undefined}>
+          <Button
+            type="submit"
+            variant="ai"
+            loading={busy}
+            aria-disabled={busy || undefined}
+          >
             {sendLabel}
           </Button>
         )}

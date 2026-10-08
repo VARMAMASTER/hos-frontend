@@ -36,6 +36,7 @@ export interface ReasonDialogProps {
   // A destructive action (the kill switch) is an alertdialog with the danger button; a restoring or
   // promoting one is a plain dialog with the primary button.
   danger?: boolean;
+  busy?: boolean;
   minLength?: number;
   placeholder?: string;
   labels?: Partial<ReasonDialogLabels>;
@@ -58,6 +59,7 @@ export function ReasonDialog({
   impact,
   confirmLabel,
   danger = true,
+  busy = false,
   minLength = 15,
   placeholder,
   labels,
@@ -90,12 +92,13 @@ export function ReasonDialog({
       role={danger ? 'alertdialog' : 'dialog'}
       footer={
         <>
-          <Button variant="ghost" autoFocus onClick={onCancel}>
+          <Button variant="ghost" autoFocus disabled={busy} onClick={onCancel}>
             {words.cancel}
           </Button>
           <Button
             variant={danger ? 'danger' : 'primary'}
-            aria-disabled={ready ? undefined : true}
+            loading={busy}
+            aria-disabled={ready && !busy ? undefined : true}
             aria-describedby={countId}
             onClick={() => onConfirm(trimmed)}
           >

@@ -352,6 +352,14 @@
 }
 
 /* prettier-ignore */
+@utility nova-ai-badge-pill {
+  border-color: color-mix(in srgb, var(--nova-color-ai-bright) 60%, transparent);
+  background-color: color-mix(in srgb, var(--nova-color-ai-bright) 14%, var(--nova-color-surface));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--nova-color-ai-bright) 35%, transparent);
+}
+
+
+/* prettier-ignore */
 @utility nova-ai-conic-border {
   position: absolute;
   inset: -1px;

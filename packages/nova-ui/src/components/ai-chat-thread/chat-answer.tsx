@@ -1,5 +1,6 @@
 import { useState, type HTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
+import { SparkleCluster } from '../../primitives/ai-sparkle';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 import { Button } from '../button/button';
 import { AiStreamText } from './ai-stream-text';
@@ -142,7 +143,8 @@ export function ChatAnswer({
       {...rest}
     >
       <span aria-hidden="true" className="nova-ai-spark mt-s0">
-        ✦
+        <SparkleCluster size="xs" className="text-on-primary" />
+        <span className="sr-only">✦</span>
       </span>
       <div className="flex min-w-0 max-w-(--nova-ai-bubble-max-w) flex-col items-start gap-s2">
         <span
@@ -153,7 +155,7 @@ export function ChatAnswer({
         </span>
         <VisuallyHidden>{`${speakerLabel}:`}</VisuallyHidden>
         {content !== null ? (
-          <div className="min-w-0 max-w-full break-words rounded-card border border-ai-line bg-ai-ghost px-s5 py-s3 text-control text-ink">
+          <div className="min-w-0 max-w-full break-words rounded-card border border-ai-line bg-ai-ghost px-s5 py-s3 text-control text-ink shadow-sm">
             {content}
             {gloss ? (
               <p lang={glossLang} className="mt-s2 text-label text-ink-2">

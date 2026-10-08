@@ -1,5 +1,6 @@
 import { useRef, type HTMLAttributes } from 'react';
 import { cx } from '../../primitives/cx';
+import { SparkleCluster } from '../../primitives/ai-sparkle';
 import { MOTION_EASINGS } from '../../tokens/scale';
 import { useLoopMotion } from '../../primitives/use-motion';
 
@@ -34,9 +35,7 @@ function Dot({ timing }: { timing: KeyframeAnimationOptions }) {
 }
 
 // The row HOS AI shows while it works on an answer: the ✦ mark and a label in words, then three
-// dots. The prototype's .ai-thinking: 12.5px semibold in the deep AI ink, 6px apart. The dots are
-// decoration (hidden from assistive technology) and still under reduced motion; the label carries
-// the state, and inside AiChatThread's polite log it is announced once.
+// dots. Elevated with radiant 3-star sparkle cluster and glowing glass styling.
 export function AiThinking({
   label = 'Thinking…',
   className,
@@ -46,13 +45,14 @@ export function AiThinking({
     <div
       data-ai-thinking=""
       className={cx(
-        'inline-flex items-center gap-s2 text-body-sm font-semibold text-ai-deep',
+        'inline-flex items-center gap-s2 rounded-full border border-ai-bright/20 bg-ai-soft/40 px-s3 py-s1 text-body-sm font-semibold text-ai-deep shadow-sm',
         className,
       )}
       {...rest}
     >
-      <span aria-hidden="true" className="text-ai">
-        ✦
+      <span aria-hidden="true" className="relative inline-flex items-center text-ai-bright">
+        <SparkleCluster size="xs" className="text-ai-bright motion-safe:animate-pulse" />
+        <span className="sr-only">✦</span>
       </span>
       {label}
       <span aria-hidden="true" className="inline-flex items-center">

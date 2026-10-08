@@ -92,6 +92,7 @@ describe('ApprovalBar', () => {
     expect(onApprove).not.toHaveBeenCalled();
     expect(onEdit).not.toHaveBeenCalled();
     expect(onReject).not.toHaveBeenCalled();
+    expect(button('Approve').querySelector('[data-spinner]')).not.toBeNull();
   });
 
   it('replaces the controls with who approved, as an audit trail', () => {

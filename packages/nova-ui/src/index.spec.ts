@@ -184,6 +184,8 @@ describe('@hos/nova-ui public API', () => {
     'SURFACE_RADII',
     'useControllableState',
     'VisuallyHidden',
+    'SparkleCluster',
+    'Spinner',
     'PhoneFrame',
     'WaBilingualMessage',
     'WaMessage',

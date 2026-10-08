@@ -84,6 +84,13 @@ describe('AmbientScribeRecorder: idle', () => {
     expect(onStatusChange).toHaveBeenCalledWith('requesting');
     expect(recorder().dataset['status']).toBe('idle');
   });
+
+  it('renders a loading spinner on the Start button while requesting microphone access', () => {
+    render(<Recorder status="requesting" />);
+    const startBtn = button('Start recording');
+    expect(startBtn.getAttribute('aria-busy')).toBe('true');
+    expect(startBtn.querySelector('[data-spinner]')).not.toBeNull();
+  });
 });
 
 describe('AmbientScribeRecorder: permission denied', () => {

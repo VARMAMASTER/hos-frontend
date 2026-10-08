@@ -1,19 +1,37 @@
 import type { HTMLAttributes } from 'react';
+import { cx } from '../../primitives/cx';
 import { Chip } from '../chip/chip';
+
+export type AiBadgeVariant = 'default' | 'glow';
 
 export interface AiBadgeProps
   extends Omit<HTMLAttributes<HTMLSpanElement>, 'children'> {
   // What the machine produced, in words: "AI draft", "AI summary". The label carries the meaning
   // and the spark is only a marker, so AI output is never identified by colour alone.
   label?: string;
+  variant?: AiBadgeVariant;
 }
 
-// The ai tone of Chip, so the badge can never drift from the rest of the AI colour. AI is its own
-// colour family, not a status colour: the prototype's cyan in HOS Violet, and a hue each hospital
+// The ai tone of Chip, elevated with radiant 3-star sparkle cluster and optional glass glow pill.
+// AI is its own colour family, not a status colour: the prototype's cyan in HOS Violet, and a hue each hospital
 // theme derives (theme/derive.ts), proven distinct from good, warn, crit, info and the brand.
-export function AiBadge({ label = 'AI draft', ...rest }: AiBadgeProps) {
+export function AiBadge({
+  label = 'AI draft',
+  variant = 'default',
+  className,
+  ...rest
+}: AiBadgeProps) {
   return (
-    <Chip tone="ai" data-badge="" {...rest}>
+    <Chip
+      tone="ai"
+      data-badge=""
+      data-variant={variant !== 'default' ? variant : undefined}
+      className={cx(
+        variant === 'glow' && 'nova-ai-badge-pill',
+        className,
+      )}
+      {...rest}
+    >
       <span aria-hidden="true">✦</span>
       {label}
     </Chip>

@@ -122,8 +122,10 @@ export type {
   ChartBaseProps,
   ChartDatum,
 } from './components/chart/chart-shared';
+export * from './primitives/ai-sparkle';
 export * from './primitives/cx';
 export * from './primitives/focus-ring';
+export * from './primitives/spinner';
 export * from './primitives/surface';
 export type { Size, StatusTone, Tone } from './primitives/types';
 export * from './primitives/use-controllable-state';

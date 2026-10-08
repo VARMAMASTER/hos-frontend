@@ -291,6 +291,18 @@ describe('Button', () => {
       expect(label.classList.contains('invisible')).toBe(false);
       expect(spinner?.classList.contains('absolute')).toBe(true);
     });
+
+    it('displays loadingText alongside the inline spinner when provided', () => {
+      render(
+        <Button loading loadingText="Saving…">
+          Save
+        </Button>,
+      );
+      const button = screen.getByRole('button', { name: 'Saving…' });
+      expect(button.getAttribute('aria-busy')).toBe('true');
+      expect(button.querySelector('[data-spinner]')).not.toBeNull();
+      expect(screen.getByText('Saving…')).toBeTruthy();
+    });
   });
 
   it('forwards its ref to the underlying <button>', () => {

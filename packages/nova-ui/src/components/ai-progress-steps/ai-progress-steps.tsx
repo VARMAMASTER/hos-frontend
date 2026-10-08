@@ -1,5 +1,6 @@
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
+import { SparkleCluster } from '../../primitives/ai-sparkle';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export type AiStepStatus = 'pending' | 'running' | 'done';
@@ -155,8 +156,9 @@ export function AiProgressSteps({
       id={labelId}
       className="mb-s1 inline-flex items-center gap-s2 text-label font-semibold text-ai-deep"
     >
-      <span aria-hidden="true" className="text-ai">
-        ✦
+      <span aria-hidden="true" className="relative inline-flex items-center text-ai-bright">
+        <SparkleCluster size="xs" className="text-ai-bright" />
+        <span className="sr-only">✦</span>
       </span>
       {label}
     </p>

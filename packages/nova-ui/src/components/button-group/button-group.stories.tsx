@@ -72,3 +72,16 @@ export const Controlled: Story = {
     );
   },
 };
+
+export const LoadingSegment: Story = {
+  render: () => (
+    <ButtonGroup aria-label="Sync status" defaultValue="saved">
+      <ButtonGroupItem value="saved">Saved</ButtonGroupItem>
+      <ButtonGroupItem value="syncing" loading>
+        Syncing
+      </ButtonGroupItem>
+      <ButtonGroupItem value="cloud">Cloud</ButtonGroupItem>
+    </ButtonGroup>
+  ),
+};
+

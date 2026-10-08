@@ -431,3 +431,37 @@ describe('ButtonGroup, the sliding indicator', () => {
     expect([...radio('Grid').classList]).toContain('text-on-primary');
   });
 });
+
+describe('ButtonGroupItem loading state', () => {
+  it('renders a spinner, sets aria-busy, and disables the item', () => {
+    const handleSelect = vi.fn();
+    render(
+      <ButtonGroup aria-label="Actions" onValueChange={handleSelect}>
+        <ButtonGroupItem value="a">Option A</ButtonGroupItem>
+        <ButtonGroupItem value="b" loading>
+          Option B
+        </ButtonGroupItem>
+      </ButtonGroup>,
+    );
+
+    const itemB = screen.getByRole('radio', { name: 'Option B' });
+    expect(itemB.getAttribute('aria-busy')).toBe('true');
+    expect((itemB as HTMLButtonElement).disabled).toBe(true);
+    expect(itemB.className).toContain('cursor-progress');
+
+    // Spinner is present
+    const spinner = itemB.querySelector('[data-spinner]');
+    expect(spinner).not.toBeNull();
+    expect(spinner?.getAttribute('aria-hidden')).toBe('true');
+
+    // Label container has opacity-0 to conceal text behind spinner while keeping accessible name
+    const labelSpan = itemB.querySelector('span.opacity-0');
+    expect(labelSpan).not.toBeNull();
+    expect(labelSpan?.textContent).toBe('Option B');
+
+    // Clicks are prevented
+    fireEvent.click(itemB);
+    expect(handleSelect).not.toHaveBeenCalled();
+  });
+});
+

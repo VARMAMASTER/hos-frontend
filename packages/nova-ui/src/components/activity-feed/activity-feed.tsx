@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
+import { SparkleCluster } from '../../primitives/ai-sparkle';
 import { Surface } from '../../primitives/surface';
 import type { ChipTone } from '../chip/chip';
 import { ToneLabel } from '../chip/tone-label';
@@ -78,7 +79,12 @@ export function ActivityFeed({
             aria-hidden="true"
             className={cx('mt-s1 shrink-0', markers[tone])}
           >
-            {tone === 'ai' ? '✦' : null}
+            {tone === 'ai' ? (
+              <span className="relative inline-flex items-center justify-center">
+                <SparkleCluster size="xs" className="text-ai-bright" />
+                <span className="sr-only">✦</span>
+              </span>
+            ) : null}
           </span>
           <span className="shrink-0 pt-s0 font-mono text-meta whitespace-nowrap text-ink-3">
             {time}
