@@ -1,6 +1,6 @@
-import React from 'react';
-
 export type ModuleCategory = 'clinical' | 'financial' | 'intelligence' | 'governance' | 'settings' | 'platform';
+
+export type ModuleRegistry = ModuleManifest[];
 
 export interface ModuleTab {
   id: string;
