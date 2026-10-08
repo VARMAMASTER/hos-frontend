@@ -22,7 +22,7 @@
 - Modify: `os/public/assets/hos.css:1-25` and `os/public/assets/hos.css:190-205`
 - Test: `os/tools/token-sweep.mjs`
 
-- [ ] **Step 1: Update font import and root font variables**
+- [x] **Step 1: Update font import and root font variables**
 
 In `os/public/assets/hos.css`:
 1. Add Google Fonts `@import` for Inter at the top of the file:
@@ -36,12 +36,12 @@ In `os/public/assets/hos.css`:
   --f-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
 ```
 
-- [ ] **Step 2: Run verification script**
+- [x] **Step 2: Run verification script**
 
 Run: `node tools/token-sweep.mjs` in `os/`
 Expected: PASS with 0 raw literals.
 
-- [ ] **Step 3: Commit Task 1**
+- [x] **Step 3: Commit Task 1**
 
 Run:
 ```bash
@@ -57,7 +57,7 @@ git commit -m "feat(tokens): align font stack with Inter body typography"
 - Modify: `os/public/assets/hos.css:774-810`
 - Test: `os/tools/token-sweep.mjs`
 
-- [ ] **Step 1: Implement `.btn-ai` glowing neon pill and conic sweep border**
+- [x] **Step 1: Implement `.btn-ai` glowing neon pill and conic sweep border**
 
 In `os/public/assets/hos.css`, replace the flat `.btn-ai` rule with the enhanced neon glass styling:
 ```css
@@ -118,12 +118,12 @@ In `os/public/assets/hos.css`, replace the flat `.btn-ai` rule with the enhanced
 }
 ```
 
-- [ ] **Step 2: Run verification script**
+- [x] **Step 2: Run verification script**
 
 Run: `node tools/token-sweep.mjs` in `os/`
 Expected: PASS with 0 raw literals.
 
-- [ ] **Step 3: Commit Task 2**
+- [x] **Step 3: Commit Task 2**
 
 Run:
 ```bash
@@ -139,7 +139,7 @@ git commit -m "feat(buttons): elevate btn-ai with neon glass pill and rotating c
 - Modify: `os/public/assets/hos.css:800-840`
 - Test: `os/tools/token-sweep.mjs`
 
-- [ ] **Step 1: Implement `.btn.is-loading` and `.btn[aria-busy="true"]` rules**
+- [x] **Step 1: Implement `.btn.is-loading` and `.btn[aria-busy="true"]` rules**
 
 In `os/public/assets/hos.css`:
 ```css
@@ -191,12 +191,12 @@ In `os/public/assets/hos.css`:
 }
 ```
 
-- [ ] **Step 2: Run verification script**
+- [x] **Step 2: Run verification script**
 
 Run: `node tools/token-sweep.mjs` in `os/`
 Expected: PASS with 0 raw literals.
 
-- [ ] **Step 3: Commit Task 3**
+- [x] **Step 3: Commit Task 3**
 
 Run:
 ```bash
@@ -212,7 +212,7 @@ git commit -m "feat(buttons): add universal loading state and spinner animation"
 - Modify: `os/public/assets/hos.css`
 - Test: `os/tools/token-sweep.mjs`
 
-- [ ] **Step 1: Add `.badge-ai.glow` and modernize `.ai-spark`**
+- [x] **Step 1: Add `.badge-ai.glow` and modernize `.ai-spark`**
 
 In `os/public/assets/hos.css`:
 ```css
@@ -229,12 +229,12 @@ In `os/public/assets/hos.css`:
 }
 ```
 
-- [ ] **Step 2: Run verification script**
+- [x] **Step 2: Run verification script**
 
 Run: `node tools/token-sweep.mjs` in `os/`
 Expected: PASS with 0 raw literals.
 
-- [ ] **Step 3: Commit Task 4**
+- [x] **Step 3: Commit Task 4**
 
 Run:
 ```bash
@@ -249,7 +249,7 @@ git commit -m "feat(badges): add glow variant for AI badge and spark accents"
 **Files:**
 - All touched files in `os/` and `hos-frontend/`
 
-- [ ] **Step 1: Run all sweep tests in `os/`**
+- [x] **Step 1: Run all sweep tests in `os/`**
 Run:
 ```bash
 node tools/token-sweep.mjs
@@ -258,10 +258,10 @@ node tools/facts-sweep.mjs
 ```
 Expected: All 3 pass cleanly with 0 defects.
 
-- [ ] **Step 2: Push `os/` commits to git remote**
+- [x] **Step 2: Push `os/` commits to git remote**
 Run: `git push origin main` in `os/`
 
-- [ ] **Step 3: Commit and push plan in `hos-frontend/`**
+- [x] **Step 3: Commit and push plan in `hos-frontend/`**
 Run:
 ```bash
 git add docs/superpowers/plans/2026-10-09-prototype-foundation-alignment.md
