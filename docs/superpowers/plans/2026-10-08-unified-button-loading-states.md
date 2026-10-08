@@ -71,4 +71,4 @@
 
 - [x] **Step 1: Run all tests in `nova-ui` and `web`**
 - [x] **Step 2: Run Storybook build**
-- [ ] **Step 3: Git commit, push to `origin main`, deploy to Vercel**
+- [x] **Step 3: Git commit, push to `origin main`, deploy to Vercel**
