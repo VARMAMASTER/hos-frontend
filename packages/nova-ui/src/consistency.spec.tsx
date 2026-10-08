@@ -85,12 +85,7 @@ const CONTROLS: Control[] = [
         ),
     },
   ]),
-  {
-    name: 'AiButton',
-    size: 'sm',
-    kind: 'pressable',
-    element: () => one(mount(<AiButton size="sm">Draft</AiButton>), 'button'),
-  },
+
   {
     name: 'FilterChip',
     size: 'sm',
@@ -213,13 +208,11 @@ describe('control height and padding', () => {
     );
     const textarea = one(mount(<Textarea label="Notes" />), 'textarea');
     for (const property of ['padding-inline', 'padding-block', 'font-size']) {
-      expect(computed(aiButton, property), `AiButton ${property}`).toBe(
-        computed(button, property),
-      );
       expect(computed(tab, property), `Tab ${property}`).toBe(
         computed(button, property),
       );
     }
+    expect(computed(aiButton, 'font-size'), 'AiButton font-size').toBe('14px');
     expect(computed(textarea, 'padding-block')).toBe(
       computed(button, 'padding-block'),
     );
@@ -241,11 +234,17 @@ describe('the corner of each kind of surface', () => {
     control: token('--nova-radius-control'),
     card: token('--nova-radius-card'),
     overlay: token('--nova-radius-overlay'),
+    full: token('--nova-radius-full'),
   };
+
+  it('AiButton takes the full pill corner', () => {
+    expect(corner(one(mount(<AiButton>Draft</AiButton>), 'button'))).toBe(
+      roles.full,
+    );
+  });
 
   it.each([
     ['Button', () => one(mount(<Button>Save</Button>), 'button')],
-    ['AiButton', () => one(mount(<AiButton>Draft</AiButton>), 'button')],
     [
       'ButtonGroupItem (unselected)',
       () =>

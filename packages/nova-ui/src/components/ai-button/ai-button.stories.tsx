@@ -9,7 +9,7 @@ import { AiButton, type AiButtonState } from './ai-button';
 const meta = {
   title: 'Components/AiButton',
   component: AiButton,
-  args: { children: 'Draft summary' },
+  args: { children: 'Chat with our AI agent' },
   argTypes: {
     variant: {
       control: 'select',
@@ -26,7 +26,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'The AI action: animated and playful, so it is easy to find and feels alive, while an ordinary Button stays plain and solid. Hover or Tab to it and the ✦ twinkles, one band of light sweeps across and the edge glows; press and it squashes and springs back. `loading` (or state="thinking") shows "Thinking…" with a sparkle circling the label and a gentle shimmer; state="done" bursts a few sparkles and settles a check into the label. `idle` adds a slow breathing glow and is off by default so a clinical screen stays calm. Every movement is motion-safe: under prefers-reduced-motion nothing moves and each state is still told apart by its fill, its label, the ✦ and the check. The ✦ and a text label are always drawn, so AI is never marked by colour alone. The caller owns the state: AiButton never starts or finishes the work.',
+          'The AI action: an upgraded neon glowing glass pill with GPU-accelerated rotating conic border sweep, ambient aura backlight, 3-star sparkle cluster, and optional floating badge. Matches the futuristic AI identity while strictly honoring Nova tokens, motion-safety, and WCAG contrast.',
       },
     },
   },
@@ -37,7 +37,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    variant: 'hero',
     badge: 'NEW',
     children: 'Chat with our AI agent',
   },
@@ -48,35 +47,9 @@ export const Default: Story = {
   ),
 };
 
-export const ClinicalCompact: Story = {
+export const Small: Story = {
   args: {
-    variant: 'default',
-    children: 'Draft summary',
-  },
-};
-
-export const Small: Story = { args: { size: 'sm', variant: 'glow' } };
-export const Breathing: Story = { args: { idle: true } };
-export const Thinking: Story = { args: { state: 'thinking', variant: 'hero' } };
-export const Done: Story = { args: { state: 'done', variant: 'hero' } };
-export const Disabled: Story = { args: { disabled: true, variant: 'hero' } };
-
-export const HeroGlow: Story = {
-  args: {
-    variant: 'hero',
-    badge: 'NEW',
-    children: 'Chat with our AI agent',
-  },
-  render: (args) => (
-    <div className="flex items-center justify-center rounded-overlay bg-chrome-1 p-s10">
-      <AiButton {...args} />
-    </div>
-  ),
-};
-
-export const GlowVariant: Story = {
-  args: {
-    variant: 'glow',
+    size: 'sm',
     badge: 'AI',
     children: 'Analyze patient vitals',
   },
@@ -87,47 +60,64 @@ export const GlowVariant: Story = {
   ),
 };
 
-export const HeroInteractive: Story = {
-  render: () => {
-    function InteractiveHero() {
-      const [state, setState] = useState<AiButtonState>('idle');
-      const timers = useRef<number[]>([]);
-      useEffect(
-        () => () => timers.current.forEach((t) => window.clearTimeout(t)),
-        [],
-      );
-      const handleClick = () => {
-        setState('thinking');
-        timers.current.push(
-          window.setTimeout(() => setState('done'), 2000),
-          window.setTimeout(() => setState('idle'), 4500),
-        );
-      };
-      return (
-        <div className="flex flex-col items-center gap-s5 rounded-overlay bg-chrome-1 p-s10">
-          <AiButton
-            variant="hero"
-            badge="NEW"
-            state={state}
-            thinkingLabel="Synthesizing clinical response…"
-            doneLabel="Response generated"
-            onClick={handleClick}
-          >
-            Chat with our AI agent
-          </AiButton>
-          <span className="text-label text-ink-2">
-            Click to test interactive state transitions (Idle &rarr; Thinking &rarr; Done &rarr; Idle)
-          </span>
-        </div>
-      );
-    }
-    return <InteractiveHero />;
+export const Breathing: Story = {
+  args: {
+    idle: true,
+    children: 'Chat with our AI agent',
   },
-};
-export const FullWidth: Story = {
-  args: { fullWidth: true },
   render: (args) => (
-    <div className="max-w-sm">
+    <div className="flex items-center justify-center rounded-overlay bg-chrome-1 p-s10">
+      <AiButton {...args} />
+    </div>
+  ),
+};
+
+export const Thinking: Story = {
+  args: {
+    state: 'thinking',
+    thinkingLabel: 'Synthesizing clinical response…',
+    children: 'Chat with our AI agent',
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center rounded-overlay bg-chrome-1 p-s10">
+      <AiButton {...args} />
+    </div>
+  ),
+};
+
+export const Done: Story = {
+  args: {
+    state: 'done',
+    doneLabel: 'Analysis complete',
+    children: 'Chat with our AI agent',
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center rounded-overlay bg-chrome-1 p-s10">
+      <AiButton {...args} />
+    </div>
+  ),
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    children: 'Chat with our AI agent',
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center rounded-overlay bg-chrome-1 p-s10">
+      <AiButton {...args} />
+    </div>
+  ),
+};
+
+export const FullWidth: Story = {
+  args: {
+    fullWidth: true,
+    badge: 'AI',
+    children: 'Ask AI clinical assistant',
+  },
+  render: (args) => (
+    <div className="max-w-md rounded-overlay bg-chrome-1 p-s8">
       <AiButton {...args} />
     </div>
   ),
@@ -153,20 +143,26 @@ function DraftSummary({ size = 'md' }: { size?: 'sm' | 'md' }) {
     );
   };
   return (
-    <AiButton size={size} state={state} onClick={start}>
-      Draft summary
+    <AiButton
+      size={size}
+      state={state}
+      badge="NEW"
+      thinkingLabel="Synthesizing response…"
+      doneLabel="Response generated"
+      onClick={start}
+    >
+      Chat with our AI agent
     </AiButton>
   );
 }
 
 export const Interactive: Story = {
   render: () => (
-    <div className="flex flex-col items-start gap-s5">
+    <div className="flex flex-col items-center gap-s5 rounded-overlay bg-chrome-1 p-s10">
       <DraftSummary />
-      <p className="max-w-md text-label text-ink-2">
-        Press it: idle, then thinking for about two seconds, then done, then
-        back to idle. A timer stands in for the real work.
-      </p>
+      <span className="text-label text-ink-2">
+        Press to test interactive flow: Idle &rarr; Thinking &rarr; Done &rarr; Idle
+      </span>
     </div>
   ),
 };

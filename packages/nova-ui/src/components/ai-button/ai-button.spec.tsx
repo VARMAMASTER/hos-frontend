@@ -30,21 +30,23 @@ describe('AiButton: structure', () => {
     expect(button().getAttribute('type')).toBe('button');
   });
 
-  it('always draws the ✦ mark with the label, so AI is never colour-only', () => {
+  it('always draws the 3-star sparkle cluster with the label, so AI is never colour-only', () => {
     render(<AiButton>Draft summary</AiButton>);
     const mark = button().querySelector('[data-mark]');
-    expect(mark?.textContent).toBe('✦');
+    expect(mark?.querySelector('[data-sparkle-cluster]')).not.toBeNull();
     // The mark is decoration: never in the accessible name.
     expect(mark?.getAttribute('aria-hidden')).toBe('true');
     expect(button().textContent).toContain('Draft summary');
   });
 
-  it('keeps the ✦ and a text label in every state', () => {
+  it('keeps the 3-star sparkle cluster and a text label in every state', () => {
     for (const state of ['idle', 'thinking', 'done'] as const) {
       const { unmount } = render(
         <AiButton state={state}>Draft summary</AiButton>,
       );
-      expect(liveMark(button(/./))?.textContent).toBe('✦');
+      expect(
+        liveMark(button(/./))?.querySelector('[data-sparkle-cluster]'),
+      ).not.toBeNull();
       const visible = button(/./).querySelector(
         '[data-label]:not([aria-hidden])',
       );
@@ -82,7 +84,7 @@ describe('AiButton: structure', () => {
     expect(button().classList).toContain('min-h-touch');
   });
 
-  it('takes its padding, gap, corner and type from the control tokens, as Button does', () => {
+  it('takes its pill corner, touch height, and AI sizing tokens', () => {
     render(
       <>
         <AiButton>Draft summary</AiButton>
@@ -90,15 +92,15 @@ describe('AiButton: structure', () => {
       </>,
     );
     for (const cls of [
-      'rounded-control',
-      'gap-control',
-      'px-control-md',
-      'py-control-md',
-      'text-control',
+      'rounded-full',
+      'gap-s3',
+      'px-s8',
+      'py-s3',
+      'text-body',
     ]) {
       expect(button().classList).toContain(cls);
     }
-    for (const cls of ['px-control-sm', 'py-control-sm', 'text-label']) {
+    for (const cls of ['px-s5', 'py-s2', 'text-label']) {
       expect(button('Draft note').classList).toContain(cls);
     }
   });
@@ -106,7 +108,7 @@ describe('AiButton: structure', () => {
   it('draws its fill and text from the AI tokens, with the proven hover fill', () => {
     render(<AiButton>Draft summary</AiButton>);
     const classes = button().classList;
-    expect(classes).toContain('bg-ai');
+    expect(classes).toContain('nova-ai-hero-fill');
     expect(classes).toContain('text-on-primary');
     expect(classes).toContain('hover:bg-ai-hover');
   });
@@ -137,11 +139,13 @@ describe('AiButton: structure', () => {
 });
 
 describe('AiButton: thinking', () => {
-  it('shows "Thinking…" by default, is aria-busy and keeps the ✦', () => {
+  it('shows "Thinking…" by default, is aria-busy and keeps the sparkle cluster', () => {
     render(<AiButton loading>Draft summary</AiButton>);
     expect(button('Thinking…').getAttribute('aria-busy')).toBe('true');
     expect(button('Thinking…').dataset['state']).toBe('thinking');
-    expect(liveMark(button('Thinking…'))?.textContent).toBe('✦');
+    expect(
+      liveMark(button('Thinking…'))?.querySelector('[data-sparkle-cluster]'),
+    ).not.toBeNull();
   });
 
   it('takes the thinking label as a prop, for translation', () => {
@@ -216,19 +220,20 @@ describe('AiButton: thinking', () => {
     expect(button(/./).querySelector('[data-layer="shimmer"]')).not.toBeNull();
   });
 
-  it('turns to the darker AI fill so thinking is distinct without motion', () => {
+  it('indicates thinking state with cursor-progress', () => {
     render(<AiButton loading>Draft summary</AiButton>);
-    expect(button('Thinking…').classList).toContain('bg-ai-hover');
-    expect(button('Thinking…').classList).not.toContain('hover:bg-ai-hover');
+    expect(button('Thinking…').classList).toContain('cursor-progress');
   });
 });
 
 describe('AiButton: done', () => {
-  it('shows "Done" with a check, and keeps the ✦', () => {
+  it('shows "Done" with a check, and keeps the sparkle cluster', () => {
     render(<AiButton state="done">Draft summary</AiButton>);
     const done = button('Done');
     expect(done.dataset['state']).toBe('done');
-    expect(liveMark(done)?.textContent).toBe('✦');
+    expect(
+      liveMark(done)?.querySelector('[data-sparkle-cluster]'),
+    ).not.toBeNull();
     expect(done.querySelector('[data-check]')).not.toBeNull();
     expect(done.getAttribute('aria-busy')).toBeNull();
   });

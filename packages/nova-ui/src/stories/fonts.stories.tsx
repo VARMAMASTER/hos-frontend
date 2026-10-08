@@ -19,14 +19,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const InteractiveFontSwitcher: Story = {
-  render: () => {
-    const [selectedFont, setSelectedFont] = useState<NovaFontPreset>('googleSans');
+function FontSwitcher() {
+  const [selectedFont, setSelectedFont] = useState<NovaFontPreset>('googleSans');
 
-    return (
-      <Stack gap="s6" className="max-w-4xl">
-        <Box className="rounded-card border border-border bg-surface p-s6">
-          <Stack gap="s4">
+  return (
+    <Stack gap="s6" className="max-w-4xl">
+      <Box className="rounded-card border border-border bg-surface p-s6">
+        <Stack gap="s4">
             <div className="flex flex-wrap items-center justify-between gap-s3">
               <div>
                 <Heading level="h2">Nova UI Multi-Font System</Heading>
@@ -181,5 +180,8 @@ export const InteractiveFontSwitcher: Story = {
         </div>
       </Stack>
     );
-  },
+}
+
+export const InteractiveFontSwitcher: Story = {
+  render: () => <FontSwitcher />,
 };
