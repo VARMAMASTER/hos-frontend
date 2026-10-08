@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { NotesWidgetProps } from './types';
 
 export function NotesWidget({
@@ -7,15 +7,18 @@ export function NotesWidget({
   className,
 }: NotesWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Progress Notes</h3>
-        <p className="text-body text-ink-2">Curated workflow for Progress Notes.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Progress Notes"
+        description="Curated workflow for Progress Notes."
+      />
+      <TabContent>
+        {/* Curated Doctor Workspace - Progress Notes workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

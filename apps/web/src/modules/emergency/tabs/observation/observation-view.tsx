@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { ObservationWidgetProps } from './types';
 
 export function ObservationWidget({
@@ -7,15 +7,18 @@ export function ObservationWidget({
   className,
 }: ObservationWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Observation</h3>
-        <p className="text-body text-ink-2">Curated workflow for Observation.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Observation"
+        description="Curated workflow for Observation."
+      />
+      <TabContent>
+        {/* Curated Emergency & Casualty - Observation workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

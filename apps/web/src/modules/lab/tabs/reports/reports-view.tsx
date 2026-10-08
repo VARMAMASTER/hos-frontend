@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { ReportsWidgetProps } from './types';
 
 export function ReportsWidget({
@@ -7,15 +7,18 @@ export function ReportsWidget({
   className,
 }: ReportsWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Reports & Delivery</h3>
-        <p className="text-body text-ink-2">Curated workflow for Reports & Delivery.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Reports & Delivery"
+        description="Curated workflow for Reports & Delivery."
+      />
+      <TabContent>
+        {/* Curated Laboratory & Diagnostics - Reports & Delivery workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

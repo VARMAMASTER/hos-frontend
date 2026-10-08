@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { VoiceWidgetProps } from './types';
 
 export function VoiceWidget({
@@ -7,15 +7,18 @@ export function VoiceWidget({
   className,
 }: VoiceWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Voice Assistant</h3>
-        <p className="text-body text-ink-2">Curated workflow for Voice Assistant.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Voice Assistant"
+        description="Curated workflow for Voice Assistant."
+      />
+      <TabContent>
+        {/* Curated AI Workforce Fleet - Voice Assistant workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

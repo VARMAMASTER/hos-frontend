@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { StaffWidgetProps } from './types';
 
 export function StaffWidget({
@@ -7,15 +7,18 @@ export function StaffWidget({
   className,
 }: StaffWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Staff & Roles</h3>
-        <p className="text-body text-ink-2">Curated workflow for Staff & Roles.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Staff & Roles"
+        description="Curated workflow for Staff & Roles."
+      />
+      <TabContent>
+        {/* Curated Administration - Staff & Roles workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

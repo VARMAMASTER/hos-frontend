@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { OrdersWidgetProps } from './types';
 
 export function OrdersWidget({
@@ -7,15 +7,18 @@ export function OrdersWidget({
   className,
 }: OrdersWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Orders & Rx</h3>
-        <p className="text-body text-ink-2">Curated workflow for Orders & Rx.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Orders & Rx"
+        description="Curated workflow for Orders & Rx."
+      />
+      <TabContent>
+        {/* Curated Doctor Workspace - Orders & Rx workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

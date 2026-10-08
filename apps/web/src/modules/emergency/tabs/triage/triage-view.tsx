@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { TriageWidgetProps } from './types';
 
 export function TriageWidget({
@@ -7,15 +7,18 @@ export function TriageWidget({
   className,
 }: TriageWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Triage Board</h3>
-        <p className="text-body text-ink-2">Curated workflow for Triage Board.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Triage Board"
+        description="Curated workflow for Triage Board."
+      />
+      <TabContent>
+        {/* Curated Emergency & Casualty - Triage Board workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

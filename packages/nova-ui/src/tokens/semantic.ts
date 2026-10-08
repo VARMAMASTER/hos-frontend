@@ -167,3 +167,11 @@ export const NOVA_DEFAULTS = {
   '--nova-font-mono':
     '"IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace',
 } as const satisfies Record<NovaVariable, string>;
+
+export const NOVA_FONTS = {
+  googleSans: '"Google Sans Flex", system-ui, -apple-system, sans-serif',
+  ibmPlexSans: '"IBM Plex Sans", system-ui, -apple-system, sans-serif',
+  ibmPlexMono: '"IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace',
+} as const;
+
+export type NovaFontPreset = keyof typeof NOVA_FONTS;

@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { ReleasesWidgetProps } from './types';
 
 export function ReleasesWidget({
@@ -7,15 +7,18 @@ export function ReleasesWidget({
   className,
 }: ReleasesWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Release & Rollout</h3>
-        <p className="text-body text-ink-2">Curated workflow for Release & Rollout.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Release & Rollout"
+        description="Curated workflow for Release & Rollout."
+      />
+      <TabContent>
+        {/* Curated HOS HQ Superadmin - Release & Rollout workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

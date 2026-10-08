@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { TariffWidgetProps } from './types';
 
 export function TariffWidget({
@@ -7,15 +7,18 @@ export function TariffWidget({
   className,
 }: TariffWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Tariff Master</h3>
-        <p className="text-body text-ink-2">Curated workflow for Tariff Master.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Tariff Master"
+        description="Curated workflow for Tariff Master."
+      />
+      <TabContent>
+        {/* Curated Administration - Tariff Master workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

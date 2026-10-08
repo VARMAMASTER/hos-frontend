@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { UsageWidgetProps } from './types';
 
 export function UsageWidget({
@@ -7,15 +7,18 @@ export function UsageWidget({
   className,
 }: UsageWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Usage Metering</h3>
-        <p className="text-body text-ink-2">Curated workflow for Usage Metering.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Usage Metering"
+        description="Curated workflow for Usage Metering."
+      />
+      <TabContent>
+        {/* Curated HOS HQ Superadmin - Usage Metering workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

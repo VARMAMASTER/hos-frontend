@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { FillrateWidgetProps } from './types';
 
 export function FillrateWidget({
@@ -7,15 +7,18 @@ export function FillrateWidget({
   className,
 }: FillrateWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Fill Rate & Lost Sales</h3>
-        <p className="text-body text-ink-2">Curated workflow for Fill Rate & Lost Sales.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Fill Rate & Lost Sales"
+        description="Curated workflow for Fill Rate & Lost Sales."
+      />
+      <TabContent>
+        {/* Curated Pharmacy & Dispense - Fill Rate & Lost Sales workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }

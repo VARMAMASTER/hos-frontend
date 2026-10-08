@@ -1,4 +1,4 @@
-import { Card } from '@hos/nova-ui';
+import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { TrackingWidgetProps } from './types';
 
 export function TrackingWidget({
@@ -7,15 +7,18 @@ export function TrackingWidget({
   className,
 }: TrackingWidgetProps) {
   return (
-    <Card
+    <TabPage
+      patientId={patientId}
+      compactMode={compactMode}
       className={className}
-      data-patient-id={patientId}
-      data-compact={compactMode ? 'true' : undefined}
     >
-      <div className="p-s4">
-        <h3 className="text-h3 font-semibold mb-s2">Sample Tracking</h3>
-        <p className="text-body text-ink-2">Curated workflow for Sample Tracking.</p>
-      </div>
-    </Card>
+      <TabHeader
+        title="Sample Tracking"
+        description="Curated workflow for Sample Tracking."
+      />
+      <TabContent>
+        {/* Curated Laboratory & Diagnostics - Sample Tracking workflow payload */}
+      </TabContent>
+    </TabPage>
   );
 }
