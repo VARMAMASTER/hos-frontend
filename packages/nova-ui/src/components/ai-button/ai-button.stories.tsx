@@ -35,12 +35,31 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-export const Small: Story = { args: { size: 'sm' } };
+export const Default: Story = {
+  args: {
+    variant: 'hero',
+    badge: 'NEW',
+    children: 'Chat with our AI agent',
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center rounded-overlay bg-chrome-1 p-s10">
+      <AiButton {...args} />
+    </div>
+  ),
+};
+
+export const ClinicalCompact: Story = {
+  args: {
+    variant: 'default',
+    children: 'Draft summary',
+  },
+};
+
+export const Small: Story = { args: { size: 'sm', variant: 'glow' } };
 export const Breathing: Story = { args: { idle: true } };
-export const Thinking: Story = { args: { state: 'thinking' } };
-export const Done: Story = { args: { state: 'done' } };
-export const Disabled: Story = { args: { disabled: true } };
+export const Thinking: Story = { args: { state: 'thinking', variant: 'hero' } };
+export const Done: Story = { args: { state: 'done', variant: 'hero' } };
+export const Disabled: Story = { args: { disabled: true, variant: 'hero' } };
 
 export const HeroGlow: Story = {
   args: {
