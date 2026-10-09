@@ -1,11 +1,8 @@
 # Agents working in hos-frontend
 
-Two AI agents work in this repository at the same time:
+**Claude Code does all the work in this repository** (owner decision, 2026-10-09: no second agent). Claude may run several of its own subagents at once; these rules keep them from colliding.
 
-- **Claude Code** owns `packages/nova-ui/**` (the Nova component library), `packages/hos-utility/**`, the build and CI config, and the Storybook and Vercel deploy.
-- **Gemini Antigravity** owns the product modules in `apps/web/src/modules/**`.
-
-**The task board is `AGENTS-BOARD.md`.** Read it before you start, claim a task there, and update it when you finish. Never work on a task someone else has claimed.
+**The task board is `AGENTS-BOARD.md`.** Every task is listed there with the folders it owns. A subagent works only on its task, in its own worktree, and updates the board when it finishes.
 
 ## Ground rules for every agent
 
@@ -33,4 +30,4 @@ Two AI agents work in this repository at the same time:
    - Anything AI-made is shown as a draft until approved.
    - AI is marked with ✦ plus a text label, never colour alone.
 8. **Test first.** Every tab gets a spec that renders it, checks its key content, and checks its accessibility (roles, labels, keyboard).
-9. **Commits:** small and descriptive (`feat(reception): live queue tab from the prototype`). End each message with your own trailer, for example `Co-Authored-By: Gemini <noreply@google.com>` for Antigravity.
+9. **Commits:** small and descriptive (`feat(reception): live queue tab from the prototype`). End each message with the `Co-Authored-By` trailer for the model that wrote it.
