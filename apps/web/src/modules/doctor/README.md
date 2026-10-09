@@ -33,10 +33,16 @@ All tabs within this module are organized under the tab-as-a-folder architecture
 - `tabs/<tab-id>/index.ts`: Tab barrel export
 - `tabs/index.ts`: Aggregator barrel exporting all tab widgets
 
+## Data
+
+The tabs never import the mock. They read and write through `useDoctor()` (and `useDoctorQuery`), which return a `DoctorDataSource` (`data/source.ts`, typed by `data/types.ts`). Until the app mounts `DoctorDataProvider` with the real API client, they share one in-memory `createMockDoctorSource()` (`data/mock.ts`, with invented sample data in `data/seed-*.ts`). Specs pass a stub source to check the loading, empty and error states.
+
+The clinical rules the data layer keeps: no method returns a dose, a drug choice or a diagnosis; every method that files, sends, orders or prescribes something an AI drafted is called only from a person's approval; nothing is logged or stored in the browser.
+
 ## Curation Checklist
 
 - [ ] Responsive layout adhering to Nova UI tokens
 - [ ] Role-based access control and tenant entitlement checks
 - [ ] Live updates / token queue subscriptions where applicable
-- [ ] Error boundary & loading skeletons implemented
-- [ ] Zero deep cross-module imports (strict architectural boundary)
+- [x] Error boundary & loading skeletons implemented (each tab: loading, empty and error states)
+- [x] Zero deep cross-module imports (strict architectural boundary)
