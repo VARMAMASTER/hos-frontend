@@ -15,9 +15,9 @@ For each module:
 
 | #   | Task                                                                                                     | Folders                                  | Prototype page                        | Owner  | Status |
 | --- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------- | ------ | ------ |
-| M1  | Reception / OPD: queue, registration, appointments, schedule, admission, referrals, WhatsApp, AI calling | `apps/web/src/modules/reception/**`      | `../os/public/02-reception.html`      | Claude | todo   |
+| M1  | Reception / OPD: queue, registration, appointments, schedule, admission, referrals, WhatsApp, AI calling | `apps/web/src/modules/reception/**`      | `../os/public/02-reception.html`      | Claude | review |
 | M2  | Doctor                                                                                                   | `apps/web/src/modules/doctor/**`         | `../os/public/03-doctor.html`         | Claude | review |
-| M3  | Patient record                                                                                           | `apps/web/src/modules/patient-record/**` | `../os/public/04-patient-record.html` | Claude | todo   |
+| M3  | Patient record                                                                                           | `apps/web/src/modules/patient-record/**` | `../os/public/04-patient-record.html` | Claude | review |
 | M4  | IPD                                                                                                      | `apps/web/src/modules/ipd/**`            | `../os/public/05-ipd.html`            | Claude | todo   |
 | M5  | Nursing                                                                                                  | `apps/web/src/modules/nursing/**`        | `../os/public/14-nursing.html`        | Claude | todo   |
 | M6  | Billing                                                                                                  | `apps/web/src/modules/billing/**`        | `../os/public/06-billing.html`        | Claude | todo   |
@@ -49,6 +49,8 @@ Work in order: M1 to M3 first (the walking skeleton), then any order. Don't star
 
 A module task adds a row here instead of editing `packages/nova-ui`; the library task picks it up as C4 and fills in the result.
 
-| #   | From | Need | For which tab | Status | Result |
-| --- | ---- | ---- | ------------- | ------ | ------ |
-|     |      |      |               |        |        |
+| #   | From | Need                                                                                                                                                                                                                        | For which tab       | Status | Result |
+| --- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ------ | ------ |
+| R1  | M1   | App shell: a tab URL such as `/reception/admission` still opens Live Queue (tabs switch only by click), so a tab cannot be deep-linked or screenshotted by URL                                                              | all Reception tabs  | open   |        |
+| R2  | M1   | `apps/web/src/app/app.spec.tsx` asserts the scaffold wording "Curated workflow for Live Queue." and "…for Appointments."; M1 kept those two descriptions so it passes. Loosen the spec, then M1 can write real descriptions | queue, appointments | open   |        |
+| R3  | M1   | App-level colour scheme: nothing sets `data-nova-scheme` (the app follows light only); `prefers-color-scheme: dark` has no effect. M1 checked dark by setting the attribute by hand                                         | all                 | open   |        |
