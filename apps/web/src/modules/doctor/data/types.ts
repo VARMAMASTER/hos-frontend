@@ -401,3 +401,71 @@ export interface TeluguCopy {
   text: string;
   gloss: string;
 }
+
+// --- Coding & claims ---------------------------------------------------------------------------
+
+// How sure the coder is, in words: high, needs the doctor, low, or "yours" for a code the doctor
+// added by hand (the strongest signal).
+export type CodeConfidence = 'high' | 'needs-you' | 'low' | 'yours';
+
+export interface IcdProposal {
+  code: string;
+  term: string;
+  // The line of the note, or the record, the code came from.
+  origin: string;
+  confidence: CodeConfidence;
+}
+
+export interface CodingOverview {
+  patient: PatientRef;
+  doctorName: string;
+  codes: IcdProposal[];
+  notCoded: string;
+  whyNote: string;
+  metrics: DoctorMetric[];
+}
+
+export interface ManualCode {
+  code: string;
+  term: string;
+}
+
+// --- AI insights -------------------------------------------------------------------------------
+
+export interface InsightChart {
+  // Names the chart for assistive technology.
+  label: string;
+  unit: string;
+  bars: { label: string; value: number }[];
+}
+
+export interface InsightAction {
+  id: string;
+  label: string;
+  // What it did, once the doctor approved it: said in the notice.
+  doneLabel: string;
+}
+
+export interface InsightCard {
+  id: string;
+  title: string;
+  // "✦ From 412 transcripts": where it came from, with the AI mark.
+  chip: string;
+  chipTone: 'ai' | 'good';
+  text: string;
+  chart?: InsightChart;
+  // The approval: the doctor acts on the insight, or does not.
+  action: InsightAction;
+  secondary?: InsightAction;
+}
+
+export interface InsightsOverview {
+  doctorName: string;
+  intro: string;
+  steps: string[];
+}
+
+export interface InsightsResult {
+  insights: InsightCard[];
+  footnote: string;
+}

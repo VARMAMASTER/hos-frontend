@@ -1,5 +1,6 @@
 import { Box, Grid, Stack, Text } from '@hos/nova-ui';
 import type { DoctorMetric } from '../data';
+import { Prose } from './prose';
 
 export interface MetricStripProps {
   // Names the strip for assistive technology.
@@ -26,9 +27,9 @@ export function MetricStrip({ label, metrics, columns = 4 }: MetricStripProps) {
             <Text font="display" size="lg" weight="bold">
               {metric.value}
             </Text>
-            <Text size="xs" tone="muted">
-              {metric.label}
-            </Text>
+            <Box className="text-caption text-ink-2">
+              <Prose text={metric.label} />
+            </Box>
             {metric.source ? (
               <Text size="xs" tone="muted">
                 {metric.source}

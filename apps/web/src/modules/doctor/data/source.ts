@@ -1,7 +1,12 @@
 import type {
   ChatReply,
   CheckBlock,
+  CodingOverview,
   HistoryOverview,
+  IcdProposal,
+  InsightsOverview,
+  InsightsResult,
+  ManualCode,
   ReferralLetter,
   ReferralsOverview,
   TeluguCopy,
@@ -93,4 +98,19 @@ export interface DoctorDataSource {
   // A separate one-page Telugu sheet the patient can read, drafted for the doctor to approve.
   draftTeluguCopy(letterId: string): Promise<TeluguCopy>;
   approveTeluguCopy(letterId: string): Promise<void>;
+
+  // Coding & claims. null when no chart is open.
+  getCoding(): Promise<CodingOverview | null>;
+  // The doctor approved the codes they confirmed. Nothing is filed that they did not confirm.
+  approveCodes(codes: string[]): Promise<void>;
+  // A code the doctor added by hand: a stronger signal than anything the model proposed.
+  addManualCode(code: ManualCode): Promise<IcdProposal>;
+
+  // AI insights: patterns across the doctor's own consultations, private to them.
+  getInsights(): Promise<InsightsOverview>;
+  analyzeInsights(): Promise<InsightsResult>;
+  // The doctor approved acting on an insight (add a screen to a template, adjust slots).
+  actOnInsight(insightId: string, actionId: string): Promise<void>;
+  // The doctor dismissed an insight, with a reason.
+  dismissInsight(insightId: string, reason: string): Promise<void>;
 }

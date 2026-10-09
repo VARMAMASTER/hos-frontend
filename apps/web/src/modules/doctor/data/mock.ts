@@ -1,5 +1,7 @@
+import { codingMethods } from './mock-coding';
 import { consultMethods } from './mock-consult';
 import { historyMethods } from './mock-history';
+import { insightsMethods } from './mock-insights';
 import { notesMethods } from './mock-notes';
 import { ordersMethods } from './mock-orders';
 import { queueMethods } from './mock-queue';
@@ -23,5 +25,7 @@ export function createMockDoctorSource(): DoctorDataSource {
     ...ordersMethods(state),
     ...historyMethods(state),
     ...referralsMethods(state),
+    ...codingMethods(state),
+    ...insightsMethods(),
   };
 }

@@ -451,3 +451,110 @@ describe('mock doctor source: referrals', () => {
     expect(referrals.out).toHaveLength(4);
   });
 });
+
+describe('mock doctor source: coding & claims', () => {
+  it('proposes six codes, each naming where it came from, none confirmed for the doctor', async () => {
+    const coding = await source.getCoding();
+    expect(coding?.codes.map((code) => code.code)).toEqual([
+      'E11.40',
+      'E11.65',
+      'I10',
+      'Z79.84',
+      'N18.30',
+      'D64.9',
+    ]);
+    for (const code of coding?.codes ?? []) {
+      expect(code.origin.length).toBeGreaterThan(0);
+    }
+    expect(
+      coding?.codes.find((code) => code.code === 'N18.30')?.confidence,
+    ).toBe('needs-you');
+    expect(
+      coding?.codes.find((code) => code.code === 'D64.9')?.confidence,
+    ).toBe('low');
+  });
+
+  it('never proposes a cause for the anaemia: a coded cause would be a diagnosis', async () => {
+    const coding = await source.getCoding();
+    const anaemia = coding?.codes.find((code) => code.code === 'D64.9');
+    expect(anaemia?.origin).toMatch(/HOS will not pick one/);
+  });
+
+  it('approves the codes the doctor confirmed, and refuses none or unknown ones', async () => {
+    await expect(source.approveCodes([])).rejects.toThrow(
+      'Confirm at least one code first.',
+    );
+    await expect(source.approveCodes(['Z99.9'])).rejects.toThrow(
+      'One of those codes is not on the list.',
+    );
+    await expect(
+      source.approveCodes(['E11.40', 'I10']),
+    ).resolves.toBeUndefined();
+  });
+
+  it('adds a code by hand, validated, and lists it as the doctor’s own', async () => {
+    await expect(
+      source.addManualCode({ code: 'banana', term: 'x' }),
+    ).rejects.toThrow('Enter an ICD-10 code like E11.65.');
+    await expect(
+      source.addManualCode({ code: 'E78.5', term: ' ' }),
+    ).rejects.toThrow('Enter the term for the code.');
+    await expect(
+      source.addManualCode({ code: 'I10', term: 'Hypertension' }),
+    ).rejects.toThrow('That code is already on the list.');
+    const added = await source.addManualCode({
+      code: 'e78.5',
+      term: 'Hyperlipidaemia, unspecified',
+    });
+    expect(added).toMatchObject({ code: 'E78.5', confidence: 'yours' });
+    const coding = await source.getCoding();
+    expect(coding?.codes.map((code) => code.code)).toContain('E78.5');
+  });
+
+  it('has no coding proposal for another patient', async () => {
+    await source.startConsultation('T-14');
+    expect(await source.getCoding()).toBeNull();
+  });
+});
+
+describe('mock doctor source: AI insights', () => {
+  it('analyses the last 30 days into three insights, each with an action the doctor approves', async () => {
+    const overview = await source.getInsights();
+    expect(overview.steps.length).toBeGreaterThan(0);
+    const result = await source.analyzeInsights();
+    expect(result.insights.map((insight) => insight.id)).toEqual([
+      'neuropathy',
+      'tuesday',
+      'working',
+    ]);
+    for (const insight of result.insights) {
+      expect(insight.action.label.length).toBeGreaterThan(0);
+    }
+    expect(result.footnote).toMatch(/not to management/);
+  });
+
+  it('draws two of the insights as charts', async () => {
+    const { insights } = await source.analyzeInsights();
+    expect(insights[0].chart?.bars.map((bar) => bar.value)).toEqual([14, 5, 9]);
+    expect(insights[1].chart?.bars.length).toBeGreaterThan(2);
+    expect(insights[2].chart).toBeUndefined();
+  });
+
+  it('acts on an insight only by an action it offers, and dismisses only with a reason', async () => {
+    await expect(
+      source.actOnInsight('neuropathy', 'template'),
+    ).resolves.toBeUndefined();
+    await expect(source.actOnInsight('neuropathy', 'nope')).rejects.toThrow(
+      'That action is not on this insight.',
+    );
+    await expect(source.actOnInsight('nobody', 'template')).rejects.toThrow(
+      'That insight is not on your list.',
+    );
+    await expect(source.dismissInsight('tuesday', ' ')).rejects.toThrow(
+      'Say why you are dismissing this insight.',
+    );
+    await expect(
+      source.dismissInsight('tuesday', 'Already handled'),
+    ).resolves.toBeUndefined();
+  });
+});
