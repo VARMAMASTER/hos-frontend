@@ -7,7 +7,7 @@ import { Button } from '../button/button';
 import { AiButton, type AiButtonState } from './ai-button';
 
 const meta = {
-  title: 'Components/AiButton',
+  title: 'AI/AiButton',
   component: AiButton,
   args: { children: 'Chat with our AI agent' },
   argTypes: {
@@ -102,6 +102,32 @@ export const Disabled: Story = {
   args: {
     disabled: true,
     children: 'Chat with our AI agent',
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center rounded-overlay bg-chrome-1 p-s10">
+      <AiButton {...args} />
+    </div>
+  ),
+};
+
+export const GlowVariant: Story = {
+  args: {
+    variant: 'glow',
+    children: 'Draft SOAP note',
+    badge: 'AI',
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center rounded-overlay bg-chrome-1 p-s10">
+      <AiButton {...args} />
+    </div>
+  ),
+};
+
+export const HeroVariant: Story = {
+  args: {
+    variant: 'hero',
+    children: 'Launch Clinical Copilot',
+    badge: 'NEW',
   },
   render: (args) => (
     <div className="flex items-center justify-center rounded-overlay bg-chrome-1 p-s10">

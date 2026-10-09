@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button } from '../button/button';
+import { AiButton } from '../ai-button/ai-button';
 import {
   AiQualityScorecard,
   type AiQualityThreshold,
@@ -63,9 +63,9 @@ export const Drift: Story = {
     driftMessage:
       'Concentrated in Orthopedics since the TKR package pathway was added on 09 Jul. Recommended: re-ground on the 12 post-09-Jul orthopedic discharges (about 4 min, no downtime).',
     driftAction: (
-      <Button variant="ai" size="sm">
+      <AiButton size="sm">
         Approve re-grounding
-      </Button>
+      </AiButton>
     ),
     corrections: [
       {

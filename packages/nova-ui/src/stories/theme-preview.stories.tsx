@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { ReactNode } from 'react';
+import { AiButton } from '../components/ai-button/ai-button';
 import { AiPanel } from '../components/ai-panel/ai-panel';
 import { AppShell } from '../components/app-shell/app-shell';
 import { Button } from '../components/button/button';
@@ -202,9 +203,9 @@ function PreviewPage() {
               title="Discharge summary draft"
               footer={
                 <div className="flex gap-s3">
-                  <Button variant="ai" size="sm">
+                  <AiButton size="sm">
                     Approve
-                  </Button>
+                  </AiButton>
                   <Button variant="ghost" size="sm">
                     Edit
                   </Button>

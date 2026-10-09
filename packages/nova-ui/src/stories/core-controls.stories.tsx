@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AiBadge } from '../components/ai-badge/ai-badge';
+import { AiButton } from '../components/ai-button/ai-button';
 import { Avatar } from '../components/avatar/avatar';
 import { Button } from '../components/button/button';
 import {
@@ -178,7 +179,7 @@ export const CoreControls: StoryObj = {
           <Button variant="outline">Edit</Button>
           <Button variant="ghost">Cancel</Button>
           <Button variant="danger">Discharge</Button>
-          <Button variant="ai">Draft summary</Button>
+          <AiButton>Draft summary</AiButton>
         </Row>
         <Row label="Small">
           <Button size="sm">Admit</Button>
@@ -191,9 +192,9 @@ export const CoreControls: StoryObj = {
           <Button size="sm" variant="danger">
             Discharge
           </Button>
-          <Button size="sm" variant="ai">
+          <AiButton size="sm">
             Draft
-          </Button>
+          </AiButton>
         </Row>
         <Row label="States: loading (keeps its width), disabled, unavailable but focusable">
           <Button loading>Saving record</Button>

@@ -11,6 +11,7 @@ import {
   AlgorithmChangeGate,
   type ChangeGateCheck,
 } from '../components/algorithm-change-gate/algorithm-change-gate';
+import { AiButton } from '../components/ai-button/ai-button';
 import { Button } from '../components/button/button';
 import { Card, CardBody, CardHeader } from '../components/card/card';
 import { FleetKillSwitch } from '../components/fleet-kill-switch/fleet-kill-switch';
@@ -224,9 +225,9 @@ function Scorecards() {
         fleet={{ approvedAsIs: 71.2 }}
         driftMessage="Concentrated in Orthopedics since the TKR package pathway was added on 09 Jul."
         driftAction={
-          <Button variant="ai" size="sm">
+          <AiButton size="sm">
             Approve re-grounding
-          </Button>
+          </AiButton>
         }
         corrections={[
           {

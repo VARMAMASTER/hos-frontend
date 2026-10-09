@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button } from '../button/button';
+import { AiButton } from '../ai-button/ai-button';
 import { AiActionFeed, type AiAction } from './ai-action-feed';
 
 // Every patient and member of staff here is fictional.
@@ -106,9 +106,9 @@ function Live() {
   return (
     <div className="flex flex-col gap-s5">
       <div>
-        <Button variant="ai" size="sm" onClick={() => setAdded(added + 1)}>
+        <AiButton size="sm" onClick={() => setAdded(added + 1)}>
           Simulate an AI action
-        </Button>
+        </AiButton>
       </div>
       <AiActionFeed actions={[...fresh, ...ACTIONS.slice(2)]} />
     </div>

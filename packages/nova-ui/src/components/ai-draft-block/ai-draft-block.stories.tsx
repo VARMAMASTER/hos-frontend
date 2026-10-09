@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { AiButton } from '../ai-button/ai-button';
 import { AiSourceLine } from '../ai-source-line/ai-source-line';
-import { Button } from '../button/button';
 import { AiDraftBlock } from './ai-draft-block';
 
 // Fictional patients and staff throughout.
@@ -60,9 +60,9 @@ export const Blocked: Story = {
     blockedReason:
       'No plan dictated yet. The Scribe never writes a plan; the note cannot be signed until you dictate one.',
     actions: (
-      <Button variant="ai" size="sm">
+      <AiButton size="sm">
         Dictate the plan
-      </Button>
+      </AiButton>
     ),
     source: undefined,
   },

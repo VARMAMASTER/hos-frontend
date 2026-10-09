@@ -38,7 +38,7 @@ type DrawnVariant = Exclude<ButtonVariant, 'secondary'>;
 // It lifts to shadow-md on hover and presses down 1px to shadow-sm, only when motion is welcome, on
 // the motion roles.
 const base = cx(
-  'relative inline-flex items-center justify-center rounded-control border font-semibold',
+  'relative inline-flex items-center justify-center border font-semibold',
   'transition-[color,background-color,border-color,box-shadow,transform] duration-fast ease-standard motion-reduce:transition-none',
   'hover:shadow-md motion-safe:active:translate-y-px active:shadow-sm aria-disabled:active:translate-y-0 aria-busy:active:translate-y-0',
   focusRing,
@@ -46,19 +46,16 @@ const base = cx(
   ariaDisabled,
 );
 
-// primary is .btn-primary, ai .btn-ai, ghost .btn-ghost and danger .btn-danger-ghost. outline is the
-// prototype's outlined primary (the row action): its 1px primary border is its only boundary, and
-// material.spec.ts proves the primary at 3:1 on every light surface and on the bare canvas, for every
-// hospital brand. Its fill is the surface (the white of the prototype's row), so its primary-strong
-// text holds 4.5:1 wherever it is placed, the dark chrome included; white on its hover is gated.
+// primary is .btn-primary, ai is the elevated neon pill action, ghost .btn-ghost and danger .btn-danger-ghost.
+// outline is the prototype's outlined primary (the row action).
 const variants: Record<DrawnVariant, string> = {
   primary:
-    'border-transparent bg-primary text-on-primary hover:bg-primary-hover',
+    'rounded-control border-transparent bg-primary text-on-primary hover:bg-primary-hover',
   outline:
-    'border-primary bg-surface text-primary-strong hover:bg-primary hover:text-on-primary',
-  ghost: 'border-border-strong bg-surface text-ink hover:bg-surface-2',
-  danger: 'border-border-strong bg-surface text-crit-deep hover:bg-surface-2',
-  ai: 'border-transparent bg-ai text-on-primary hover:bg-ai-hover hover:nova-ai-glow focus-visible:nova-ai-glow',
+    'rounded-control border-primary bg-surface text-primary-strong hover:bg-primary hover:text-on-primary',
+  ghost: 'rounded-control border-border-strong bg-surface text-ink hover:bg-surface-2',
+  danger: 'rounded-control border-border-strong bg-surface text-crit-deep hover:bg-surface-2',
+  ai: 'rounded-full border-transparent nova-ai-hero-fill text-on-primary hover:bg-ai-hover hover:nova-ai-glow focus-visible:nova-ai-glow motion-safe:active:scale-95',
 };
 
 // variant="ai" is the plain, solid .btn-ai of the prototype (a table row action, the Approve button of
@@ -113,6 +110,29 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...rest}
         onClick={unavailable ? (event) => event.preventDefault() : onClick}
       >
+        {drawn === 'ai' && !rest.disabled && !rest['aria-disabled'] ? (
+          <>
+            <span
+              aria-hidden="true"
+              data-layer="aura"
+              className="pointer-events-none absolute -inset-s1 rounded-full nova-ai-hero-aura opacity-75 motion-safe:animate-ai-aura-pulse motion-reduce:hidden"
+            />
+            <span
+              aria-hidden="true"
+              data-layer="conic-border"
+              className="nova-ai-conic-border motion-reduce:hidden"
+            >
+              <span
+                className={cx(
+                  'nova-ai-conic-sweep',
+                  loading
+                    ? 'motion-safe:animate-ai-conic-spin-fast'
+                    : 'motion-safe:animate-ai-conic-spin',
+                )}
+              />
+            </span>
+          </>
+        ) : null}
         {/* The label stays in the layout and in the accessible name while loading, only invisible,
             so the button keeps its width; the spinner sits over it. When loadingText is provided,
             the spinner is drawn inline with the label. */}
