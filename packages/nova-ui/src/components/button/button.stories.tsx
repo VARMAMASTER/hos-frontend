@@ -4,7 +4,13 @@ import { Button } from './button';
 const meta = {
   title: 'Components/Button',
   component: Button,
-  args: { children: 'Approve draft' },
+  args: { children: 'Confirm action' },
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['primary', 'outline', 'ghost', 'danger'],
+    },
+  },
 } satisfies Meta<typeof Button>;
 
 export default meta;
@@ -13,7 +19,6 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = { args: { variant: 'primary' } };
 export const Outline: Story = { args: { variant: 'outline' } };
 export const Ghost: Story = { args: { variant: 'ghost' } };
-export const Ai: Story = { args: { variant: 'ai', children: 'Draft with AI' } };
 export const Small: Story = { args: { size: 'sm' } };
 export const Disabled: Story = { args: { disabled: true } };
 export const Danger: Story = {
@@ -30,7 +35,7 @@ export const FullWidth: Story = {
 };
 
 // Every variant side by side, as the prototype's .btn family: a 13px semibold label, an 8px radius,
-// flat fills, shadow-md on hover.
+// flat fills, shadow-md on hover. For AI actions, see the dedicated AI/AiButton component.
 export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-s5">
@@ -38,7 +43,6 @@ export const AllVariants: Story = {
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
       <Button variant="danger">Danger</Button>
-      <Button variant="ai">Draft with AI</Button>
       <Button size="sm">Small</Button>
       <Button loading>Saving</Button>
       <Button disabled>Disabled</Button>
@@ -58,14 +62,12 @@ export const AllLoadingVariants: Story = {
         <Button variant="outline" loading>Outline</Button>
         <Button variant="ghost" loading>Ghost</Button>
         <Button variant="danger" loading>Danger</Button>
-        <Button variant="ai" loading>AI Action</Button>
       </div>
       <div className="flex flex-wrap items-center gap-s5">
         <Button loading loadingText="Saving…">Primary</Button>
         <Button variant="outline" loading loadingText="Updating…">Outline</Button>
         <Button variant="ghost" loading loadingText="Canceling…">Ghost</Button>
         <Button variant="danger" loading loadingText="Deleting…">Danger</Button>
-        <Button variant="ai" loading loadingText="Generating…">AI Action</Button>
       </div>
     </div>
   ),
