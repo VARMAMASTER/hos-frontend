@@ -6,7 +6,6 @@ import {
   CardHeader,
   EmptyState,
   Stack,
-  Text,
 } from '@hos/nova-ui';
 import { useDoctorQuery } from '../../data';
 import { ActionFeedback, AskPanel, DoctorTab, useFeedback } from '../../ui';
