@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  AiDraftReply,
   AiSourceLine,
   Button,
   Card,
@@ -16,7 +15,6 @@ import {
   TableHeaderCell,
   TableRow,
   Text,
-  type AiDraftStatus,
 } from '@hos/nova-ui';
 import {
   useReceptionAction,
@@ -26,7 +24,12 @@ import {
   type ReferralsOverview,
   type ReceptionDataSource,
 } from '../../data';
-import { ActionFeedback, ReceptionTab, type ActionNotice } from '../../ui';
+import {
+  ActionFeedback,
+  ReceptionDraftReply,
+  ReceptionTab,
+  type ActionNotice,
+} from '../../ui';
 import type { ReferralsWidgetProps } from './types';
 
 // The prototype's Referrals (02-reception.html, data-panel="referrals"): the referrals that came in,
@@ -243,24 +246,22 @@ function ReferralRow({
   );
 }
 
-interface ReplyDraftProps {
-  draft: ReferralReplyDraft;
-  // Sends it. Resolves false when the source refused, so the draft goes back to pending.
-  onSend: (message: string) => Promise<boolean>;
-}
-
 // The AI-drafted acceptance reply. Nothing goes to the referring clinic until a person approves it,
 // as drafted or as edited.
-function ReplyDraft({ draft, onSend }: ReplyDraftProps) {
-  const [status, setStatus] = useState<AiDraftStatus>('pending');
+function ReplyDraft({
+  draft,
+  onSend,
+}: {
+  draft: ReferralReplyDraft;
+  onSend: (message: string) => Promise<boolean>;
+}) {
   return (
-    <AiDraftReply
+    <ReceptionDraftReply
       title="AI-drafted acceptance reply"
       channel="whatsapp"
       recipient={draft.recipient}
-      defaultMessage={draft.message}
-      status={status}
-      onStatusChange={setStatus}
+      message={draft.message}
+      onSend={onSend}
       consent="Ready to send via WhatsApp or email to the referring clinic."
       source={
         <AiSourceLine label="Read from">
@@ -268,11 +269,6 @@ function ReplyDraft({ draft, onSend }: ReplyDraftProps) {
           approve
         </AiSourceLine>
       }
-      onSend={(message) => {
-        void onSend(message).then((ok) => {
-          if (!ok) setStatus('pending');
-        });
-      }}
     />
   );
 }
