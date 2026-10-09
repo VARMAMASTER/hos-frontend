@@ -175,12 +175,7 @@ export function TimelineWidget({
                         pressed={kind === filter.id}
                         onPressedChange={() => setKind(filter.id)}
                       >
-                        {filter.label}{' '}
-                        <Text as="span" size="xs" className="tabular-nums">
-                          {filter.id === 'all'
-                            ? timeline.totals.events
-                            : timeline.kindCounts[filter.id]}
-                        </Text>
+                        {`${filter.label} ${filter.id === 'all' ? timeline.totals.events : timeline.kindCounts[filter.id]}`}
                       </FilterChip>
                     ))}
                   </Stack>
@@ -201,19 +196,13 @@ export function TimelineWidget({
                       pressed={origin === 'in'}
                       onPressedChange={() => setOrigin('in')}
                     >
-                      This hospital{' '}
-                      <Text as="span" size="xs" className="tabular-nums">
-                        {timeline.totals.internal}
-                      </Text>
+                      {`This hospital ${timeline.totals.internal}`}
                     </FilterChip>
                     <FilterChip
                       pressed={origin === 'ext'}
                       onPressedChange={() => setOrigin('ext')}
                     >
-                      Other hospitals · ABHA{' '}
-                      <Text as="span" size="xs" className="tabular-nums">
-                        {timeline.totals.external}
-                      </Text>
+                      {`Other hospitals · ABHA ${timeline.totals.external}`}
                     </FilterChip>
                   </Stack>
                   <Text size="sm" tone="muted">
