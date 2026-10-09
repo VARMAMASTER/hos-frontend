@@ -23,7 +23,7 @@ export function InteropSection({ trace }: InteropSectionProps) {
         </Text>
       }
     >
-      <Stack gap="s5">
+      <Stack gap="s6">
         <Text size="sm" tone="muted">
           {trace.intro}
         </Text>

@@ -94,7 +94,7 @@ export function SnapshotWidget({
               }
               footnote="HOS flags contradictions between records it already holds. It does not diagnose, and it never changes a prescription."
             >
-              <Stack as="ul" gap="s5">
+              <Stack as="ul" gap="s6">
                 {snapshot.attention.map((item) => (
                   <li key={item.id}>
                     <Stack gap="s1">
