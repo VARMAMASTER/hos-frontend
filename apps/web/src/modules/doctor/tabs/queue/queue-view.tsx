@@ -17,7 +17,7 @@ export function QueueWidget({
         description="Curated workflow for My Queue."
       />
       <TabContent>
-        {/* Curated Doctor Workspace - My Queue workflow payload */}
+        {/* Curated Doctor module - My Queue workflow payload */}
       </TabContent>
     </TabPage>
   );

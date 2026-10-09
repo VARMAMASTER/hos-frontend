@@ -19,6 +19,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// The four presets, each with the name it shows (NOVA_FONTS' keys).
+const FONT_NAMES: Record<NovaFontPreset, string> = {
+  googleSans: 'Google Sans Flex',
+  ibmPlexSans: 'IBM Plex Sans',
+  ibmPlexMono: 'IBM Plex Mono',
+  inter: 'Inter',
+};
+
 function FontSwitcher() {
   const [selectedFont, setSelectedFont] =
     useState<NovaFontPreset>('googleSans');
@@ -52,23 +60,17 @@ function FontSwitcher() {
                   className={`rounded-control px-s3 py-s2 text-control transition-colors ${
                     selectedFont === preset
                       ? 'border border-primary bg-primary text-on-primary'
-                      : 'border border-border bg-surface-subtle text-ink hover:bg-hover'
+                      : 'border border-border bg-surface-2 text-ink hover:bg-primary-ghost'
                   }`}
                 >
-                  {preset === 'googleSans'
-                    ? 'Google Sans Flex'
-                    : preset === 'ibmPlexSans'
-                      ? 'IBM Plex Sans'
-                      : preset === 'ibmPlexMono'
-                        ? 'IBM Plex Mono'
-                        : 'Inter'}
+                  {FONT_NAMES[preset]}
                 </button>
               ))}
             </div>
           </div>
 
           <div
-            className="rounded-card border border-border bg-canvas p-s6 transition-all"
+            className="rounded-card border border-border bg-bg p-s6 transition-all"
             style={{
               fontFamily: NOVA_FONTS[selectedFont],
               ['--nova-font-body' as string]: NOVA_FONTS[selectedFont],
@@ -77,14 +79,7 @@ function FontSwitcher() {
           >
             <Stack gap="s4">
               <div className="flex items-center gap-s3">
-                <Chip tone="info">
-                  Active:{' '}
-                  {selectedFont === 'googleSans'
-                    ? 'Google Sans Flex'
-                    : selectedFont === 'ibmPlexSans'
-                      ? 'IBM Plex Sans'
-                      : 'IBM Plex Mono'}
-                </Chip>
+                <Chip tone="info">Active: {FONT_NAMES[selectedFont]}</Chip>
                 <StatusDot tone="good" label="Variable Web Font Loaded" pulse />
               </div>
 

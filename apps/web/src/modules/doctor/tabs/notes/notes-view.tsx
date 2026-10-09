@@ -17,7 +17,7 @@ export function NotesWidget({
         description="Curated workflow for Progress Notes."
       />
       <TabContent>
-        {/* Curated Doctor Workspace - Progress Notes workflow payload */}
+        {/* Curated Doctor module - Progress Notes workflow payload */}
       </TabContent>
     </TabPage>
   );

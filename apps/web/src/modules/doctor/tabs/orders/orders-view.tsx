@@ -17,7 +17,7 @@ export function OrdersWidget({
         description="Curated workflow for Orders & Rx."
       />
       <TabContent>
-        {/* Curated Doctor Workspace - Orders & Rx workflow payload */}
+        {/* Curated Doctor module - Orders & Rx workflow payload */}
       </TabContent>
     </TabPage>
   );

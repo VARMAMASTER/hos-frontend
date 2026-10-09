@@ -105,7 +105,8 @@ const preview: Preview = {
       },
     },
     font: {
-      description: 'Font family: Google Sans Flex, IBM Plex Sans, or Mono',
+      description:
+        'Font family: Google Sans Flex, IBM Plex Sans, IBM Plex Mono or Inter',
       toolbar: {
         title: 'Font',
         icon: 'type',

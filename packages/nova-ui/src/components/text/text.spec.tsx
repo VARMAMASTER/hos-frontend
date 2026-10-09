@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
+import { computed } from '../../test/token-css';
 import { Text } from './text';
 
 afterEach(() => cleanup());
@@ -29,6 +30,10 @@ describe('Text Component', () => {
     render(<Text variant="code">MRN-1029</Text>);
     const code = screen.getByText('MRN-1029');
     expect(code.className).toContain('font-mono');
+    // The code chip sits on the prototype's --panel-2, a colour the token layer defines.
+    expect(computed(code, 'background-color').replace(/^\(+|\)+$/g, '')).toBe(
+      '#F8F7FD',
+    );
 
     render(
       <Text as="label" variant="label">

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+/* The fonts (Google Sans Flex, IBM Plex Sans, IBM Plex Mono, Inter) load once, from index.html. */
 @import 'tailwindcss';
 /* In-repo path while nova-ui is a folder; becomes '@hos/nova-ui/theme.css' once it is its own package. */
 @import '../../../packages/nova-ui/src/styles/theme.css';

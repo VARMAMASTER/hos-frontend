@@ -1,11 +1,12 @@
 import { cx } from './cx';
+import type { ExtendedSize } from './types';
 
 export interface SparkleClusterProps {
   className?: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  size?: ExtendedSize;
 }
 
-const sizes = {
+const sizes: Record<ExtendedSize, string> = {
   xs: 'size-icon-xs',
   sm: 'size-icon-sm',
   md: 'size-icon-md',
@@ -35,7 +36,7 @@ export function SparkleCluster({
       )}
     >
       <path
-        d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"
+        d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"
         fill="currentColor"
         fillOpacity="0.25"
       />

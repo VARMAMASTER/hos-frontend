@@ -7,6 +7,12 @@
 // default everywhere.
 export type Size = 'sm' | 'md';
 
+// The shared sizes plus the two a mark, a glyph or a face has beyond the control scale: xs (inline
+// in a dense row) and lg (a profile header, a large mark). For an icon-like element that is not a
+// control (Avatar, SparkleCluster, Spinner, narrowed with Exclude / Extract where it has fewer);
+// controls stay on Size.
+export type ExtendedSize = 'xs' | Size | 'lg';
+
 // The status tones: each has a colour, a -soft fill and a -deep ink, and is always carried by a word
 // or a glyph too, never by colour alone.
 export type StatusTone = 'good' | 'warn' | 'crit' | 'info';

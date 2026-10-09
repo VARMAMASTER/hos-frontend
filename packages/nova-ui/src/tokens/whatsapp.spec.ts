@@ -111,9 +111,15 @@ describe('the WhatsApp brand colours in the token layer', () => {
     );
     expect(wall['background-color']).toBe('var(--nova-wa-wall)');
     expect(wall['background-image']).toBe(
-      'radial-gradient(var(--nova-wa-wall-dot) 1px, transparent 1px)',
+      'radial-gradient(var(--nova-wa-wall-dot) var(--nova-phone-wall-dot-r), transparent var(--nova-phone-wall-dot-r))',
     );
-    expect(wall['background-size']).toBe('18px 18px');
+    expect(wall['background-size']).toBe(
+      'var(--nova-phone-wall-grid) var(--nova-phone-wall-grid)',
+    );
+    // The prototype's 18px grid of 1px dots, as tokens outside the WhatsApp block (they are sizes,
+    // not WhatsApp's colours).
+    expect(css).toContain('--nova-phone-wall-dot-r: 1px;');
+    expect(css).toContain('--nova-phone-wall-grid: 18px;');
   });
 });
 

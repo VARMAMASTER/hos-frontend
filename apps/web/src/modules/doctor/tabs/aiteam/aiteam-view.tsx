@@ -17,7 +17,7 @@ export function AiteamWidget({
         description="Curated workflow for My AI Team."
       />
       <TabContent>
-        {/* Curated Doctor Workspace - My AI Team workflow payload */}
+        {/* Curated Doctor module - My AI Team workflow payload */}
       </TabContent>
     </TabPage>
   );
