@@ -233,16 +233,16 @@ describe('material', () => {
 
   it('hands the chrome, the sidebar and the hero their secondary inks at the alphas the proofs use', () => {
     expect(css).toContain(
-      `--nova-chrome-ink-2: rgb(255 255 255 / ${GLASS.chromeInk2Alpha});`,
+      `--nova-topbar-ink-2: rgb(255 255 255 / ${GLASS.chromeInk2Alpha});`,
     );
     expect(css).toContain(
-      `--nova-chrome-field: rgb(255 255 255 / ${GLASS.chromeFieldAlpha});`,
+      `--nova-topbar-field: rgb(255 255 255 / ${GLASS.chromeFieldAlpha});`,
     );
     expect(css).toContain(
       `--nova-chrome-ink-2: color-mix(in srgb, var(--nova-color-chrome-ink) ${percent(GLASS.sidebarInk2Alpha)}, transparent);`,
     );
     expect(css).toContain(
-      `--nova-hero-ink-2: rgb(255 255 255 / ${GLASS.heroInk2Alpha});`,
+      `--nova-hero-band-ink-2: rgb(255 255 255 / ${GLASS.heroInk2Alpha});`,
     );
     expect(css).toContain(
       `color-mix(in srgb, var(--nova-color-sidebar-lift) ${percent(GLASS.sidebarBrandShare)}, transparent)`,

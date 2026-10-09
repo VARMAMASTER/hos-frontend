@@ -93,6 +93,16 @@ function rulesFor(selector: string): Rule[] {
 }
 
 const percent = (share: number) => `${Math.round(share * 100)}%`;
+
+// A token's value where the plain :root blocks declare it (the utilities read their literals from
+// "Component tokens: family e", so no @utility writes a raw value).
+function rootToken(name: string): string | undefined {
+  return rulesFor(':root')
+    .map((rule) => rule.declarations[name])
+    .find((value) => value !== undefined);
+}
+
+const MASK = 'var(--nova-mask-solid) content-box, var(--nova-mask-solid)';
 const BRAND_SCOPES = ':root, [data-nova-theme], [data-nova-material]';
 
 describe('theme.css utilities', () => {
@@ -245,15 +255,24 @@ describe('theme.css utilities', () => {
     });
 
     it('turns the keyboard focus ring white, since the chrome accent is 2.4:1 at the light end', () => {
-      expect(chrome().declarations['--nova-focus-ring']).toBe('#fff');
+      expect(chrome().declarations['--nova-focus-ring']).toBe(
+        'var(--nova-ink-on-dark)',
+      );
+      expect(rootToken('--nova-ink-on-dark')).toBe('#fff');
     });
 
     it('sets white text, and hands children their secondary ink at the alpha the proof assumes', () => {
-      expect(chrome().declarations['color']).toBe('#fff');
+      expect(chrome().declarations['color']).toBe('var(--nova-ink-on-dark)');
       expect(chrome().declarations['--nova-chrome-ink-2']).toBe(
+        'var(--nova-topbar-ink-2)',
+      );
+      expect(rootToken('--nova-topbar-ink-2')).toBe(
         `rgb(255 255 255 / ${GLASS.chromeInk2Alpha})`,
       );
       expect(chrome().declarations['--nova-chrome-field']).toBe(
+        'var(--nova-topbar-field)',
+      );
+      expect(rootToken('--nova-topbar-field')).toBe(
         `rgb(255 255 255 / ${GLASS.chromeFieldAlpha})`,
       );
     });
@@ -264,8 +283,11 @@ describe('theme.css utilities', () => {
         '-webkit-backdrop-filter': 'var(--nova-chrome-filter)',
         'border-bottom':
           'var(--nova-border-hairline) solid var(--nova-color-chrome-line)',
-        'box-shadow': 'inset 0 -1px 0 0 rgba(255,255,255,.06)',
+        'box-shadow': 'var(--nova-topbar-rim)',
       });
+      expect(rootToken('--nova-topbar-rim')).toBe(
+        'inset 0 -1px 0 0 rgba(255,255,255,.06)',
+      );
     });
   });
 
@@ -278,9 +300,12 @@ describe('theme.css utilities', () => {
         'background-blend-mode': 'overlay, screen, normal',
         'border-right':
           'var(--nova-border-hairline) solid var(--nova-color-chrome-line)',
-        'box-shadow': 'inset -1px 0 0 rgba(255,255,255,.05)',
+        'box-shadow': 'var(--nova-sidebar-rim)',
         color: 'var(--nova-color-chrome-ink)',
       });
+      expect(rootToken('--nova-sidebar-rim')).toBe(
+        'inset -1px 0 0 rgba(255,255,255,.05)',
+      );
       expect(sidebar().declarations).not.toHaveProperty('backdrop-filter');
     });
 
@@ -305,18 +330,24 @@ describe('theme.css utilities', () => {
         '-webkit-backdrop-filter': 'var(--nova-hero-filter)',
         border:
           'var(--nova-border-hairline) solid var(--nova-color-chrome-line)',
-        'box-shadow':
-          'var(--nova-shadow-glass), inset 0 1px 0 0 rgba(255,255,255,.16)',
+        'box-shadow': 'var(--nova-shadow-glass), var(--nova-hero-rim)',
         overflow: 'hidden',
       });
+      expect(rootToken('--nova-hero-rim')).toBe(
+        'inset 0 1px 0 0 rgba(255,255,255,.16)',
+      );
     });
 
     it('sets white text and a white ring, and hands children the proven secondary ink', () => {
       expect(hero().declarations).toMatchObject({
-        color: '#fff',
-        '--nova-focus-ring': '#fff',
-        '--nova-hero-ink-2': `rgb(255 255 255 / ${GLASS.heroInk2Alpha})`,
+        color: 'var(--nova-ink-on-dark)',
+        '--nova-focus-ring': 'var(--nova-ink-on-dark)',
+        '--nova-hero-ink-2': 'var(--nova-hero-band-ink-2)',
       });
+      expect(rootToken('--nova-ink-on-dark')).toBe('#fff');
+      expect(rootToken('--nova-hero-band-ink-2')).toBe(
+        `rgb(255 255 255 / ${GLASS.heroInk2Alpha})`,
+      );
     });
 
     it('lays the grain behind its content', () => {
@@ -365,10 +396,9 @@ describe('theme.css utilities', () => {
         padding: 'var(--nova-border-hairline)',
         'border-radius': 'inherit',
         background: 'var(--nova-data-edge, var(--nova-gradient-edge))',
-        '-webkit-mask':
-          'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+        '-webkit-mask': MASK,
         '-webkit-mask-composite': 'xor',
-        mask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+        mask: MASK,
         'mask-composite': 'exclude',
         'pointer-events': 'none',
       });
@@ -466,18 +496,29 @@ describe('theme.css utilities', () => {
     expect(spark.declarations).toMatchObject({
       width: 'var(--nova-mark)',
       height: 'var(--nova-mark)',
-      'border-radius': '7px',
+      'border-radius': 'var(--nova-ai-spark-radius)',
       'background-image': 'var(--nova-ai-mark)',
-      color: '#fff',
+      color: 'var(--nova-ink-on-dark)',
       'font-size': 'var(--nova-text-label)',
-      'text-shadow': '0 1px 2px rgba(20,10,0,.55), 0 0 3px rgba(20,10,0,.35)',
-      'box-shadow':
-        '0 1px 4px rgba(60,40,10,.28), inset 0 0 0 1px rgba(255,255,255,.28)',
+      'text-shadow': 'var(--nova-ai-spark-glyph-shadow)',
+      'box-shadow': 'var(--nova-ai-spark-lift)',
     });
     expect(spark.nested["[data-approved='true'] &"]?.declarations).toEqual({
       'background-image': 'none',
       'background-color': 'var(--nova-color-good)',
-      'box-shadow':
+      'box-shadow': 'var(--nova-ai-spark-lift-approved)',
+    });
+    // The prototype's values, now tokens.
+    expect({
+      radius: rootToken('--nova-ai-spark-radius'),
+      glyph: rootToken('--nova-ai-spark-glyph-shadow'),
+      lift: rootToken('--nova-ai-spark-lift'),
+      approved: rootToken('--nova-ai-spark-lift-approved'),
+    }).toEqual({
+      radius: '7px',
+      glyph: '0 1px 2px rgba(20,10,0,.55), 0 0 3px rgba(20,10,0,.35)',
+      lift: '0 1px 4px rgba(60,40,10,.28), inset 0 0 0 1px rgba(255,255,255,.28)',
+      approved:
         '0 1px 4px rgba(11,138,104,.3), inset 0 1px 0 rgba(255,255,255,.35)',
     });
   });
@@ -563,10 +604,9 @@ describe('theme.css utilities', () => {
         padding: 'var(--nova-border-hairline)',
         'border-radius': 'inherit',
         background: 'var(--nova-gradient-highlight-edge)',
-        '-webkit-mask':
-          'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+        '-webkit-mask': MASK,
         '-webkit-mask-composite': 'xor',
-        mask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+        mask: MASK,
         'mask-composite': 'exclude',
         'pointer-events': 'none',
       });
@@ -578,12 +618,14 @@ describe('theme.css utilities', () => {
       ).toMatchObject({
         content: "''",
         position: 'absolute',
-        inset: '-3px',
+        inset: 'var(--nova-highlight-ring-offset)',
         padding: 'var(--nova-border-emphasis)',
         'border-radius': 'inherit',
         background: 'var(--nova-gradient-highlight-edge)',
         'pointer-events': 'none',
       });
+      expect(rootToken('--nova-highlight-ring-offset')).toBe('-3px');
+      expect(rootToken('--nova-mask-solid')).toBe('linear-gradient(#000 0 0)');
     });
   });
 

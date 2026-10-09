@@ -1152,6 +1152,43 @@
 }
 /* ===== Component tokens: family d (end) ===== */
 
+/* ===== Component tokens: family e, the surface utilities' own values (begin) =====
+   The literals the @utility rules below draw with (the top bar, the sidebar, the hero, the data and
+   highlight edges, the AI spark, the WhatsApp wall), so no @utility writes a raw value
+   (conventions.spec.ts) and each is changed in one place. The values are the prototype's, as the
+   utilities drew them before; the alphas are the ones the legibility proofs hold (tokens/material.ts
+   GLASS). */
+/* prettier-ignore */
+:root {
+  /* White on the fixed dark grounds: the top bar's and the hero's text and keyboard ring, the AI
+     spark's glyph. Not on-primary, which follows the brand. */
+  --nova-ink-on-dark: #fff;
+  /* .topbar: its secondary ink and its field fill (GLASS.chromeInk2Alpha, GLASS.chromeFieldAlpha),
+     and the faint inner rim along its foot. */
+  --nova-topbar-ink-2: rgb(255 255 255 / 0.88);
+  --nova-topbar-field: rgb(255 255 255 / 0.08);
+  --nova-topbar-rim: inset 0 -1px 0 0 rgba(255,255,255,.06);
+  /* .sidebar: the faint inner rim along its right edge. */
+  --nova-sidebar-rim: inset -1px 0 0 rgba(255,255,255,.05);
+  /* .glass-hero: its secondary ink (GLASS.heroInk2Alpha) and its top inner highlight. */
+  --nova-hero-band-ink-2: rgb(255 255 255 / 0.9);
+  --nova-hero-rim: inset 0 1px 0 0 rgba(255,255,255,.16);
+  /* A solid mask layer: the ring of a masked edge (.edge-premium) is this painted twice, once on the
+     content box, composited out. Any opaque colour works; it is never seen. */
+  --nova-mask-solid: linear-gradient(#000 0 0);
+  /* The highlight ring sits this far outside its host (an avatar). */
+  --nova-highlight-ring-offset: -3px;
+  /* .ai-spark: its corner, and the tight shadows that keep the white glyph legible on the mark. */
+  --nova-ai-spark-radius: 7px;
+  --nova-ai-spark-glyph-shadow: 0 1px 2px rgba(20,10,0,.55), 0 0 3px rgba(20,10,0,.35);
+  --nova-ai-spark-lift: 0 1px 4px rgba(60,40,10,.28), inset 0 0 0 1px rgba(255,255,255,.28);
+  --nova-ai-spark-lift-approved: 0 1px 4px rgba(11,138,104,.3), inset 0 1px 0 rgba(255,255,255,.35);
+  /* The chat wallpaper (hos.css .phone-b): an 18px grid of 1px dots. */
+  --nova-phone-wall-dot-r: 1px;
+  --nova-phone-wall-grid: 18px;
+}
+/* ===== Component tokens: family e (end) ===== */
+
 /* The scheme: light (the prototype, and the default with no attribute), dark, or system, which
    follows prefers-color-scheme. A scheme is only a color-scheme: every colour that changes with it is
    light-dark(light, dark) (below, and in each hospital theme's inline palette), which the browser
@@ -1545,16 +1582,16 @@
    light end, so the ring is white. */
 /* prettier-ignore */
 @utility nova-chrome {
-  --nova-focus-ring: #fff;
-  --nova-chrome-ink-2: rgb(255 255 255 / 0.88);
-  --nova-chrome-field: rgb(255 255 255 / 0.08);
+  --nova-focus-ring: var(--nova-ink-on-dark);
+  --nova-chrome-ink-2: var(--nova-topbar-ink-2);
+  --nova-chrome-field: var(--nova-topbar-field);
   background-image: var(--nova-grain), var(--nova-chrome-fill);
   background-blend-mode: overlay, normal;
   -webkit-backdrop-filter: var(--nova-chrome-filter);
   backdrop-filter: var(--nova-chrome-filter);
   border-bottom: var(--nova-border-hairline) solid var(--nova-color-chrome-line);
-  box-shadow: inset 0 -1px 0 0 rgba(255,255,255,.06);
-  color: #fff;
+  box-shadow: var(--nova-topbar-rim);
+  color: var(--nova-ink-on-dark);
 }
 
 /* The sidebar: the prototype's .sidebar, opaque under either material (the prototype never frosts
@@ -1567,7 +1604,7 @@
   --nova-chrome-ink-2: color-mix(in srgb, var(--nova-color-chrome-ink) 70%, transparent);
   background-image: var(--nova-grain), var(--nova-gradient-sidebar);
   background-blend-mode: overlay, screen, normal;
-  box-shadow: inset -1px 0 0 rgba(255,255,255,.05);
+  box-shadow: var(--nova-sidebar-rim);
   border-right: var(--nova-border-hairline) solid var(--nova-color-chrome-line);
   color: var(--nova-color-chrome-ink);
 }
@@ -1577,8 +1614,8 @@
    (--nova-hero-ink-2) at 4.5:1 at its light end; the isolation keeps the grain behind the content. */
 /* prettier-ignore */
 @utility nova-hero {
-  --nova-focus-ring: #fff;
-  --nova-hero-ink-2: rgb(255 255 255 / 0.9);
+  --nova-focus-ring: var(--nova-ink-on-dark);
+  --nova-hero-ink-2: var(--nova-hero-band-ink-2);
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -1587,8 +1624,8 @@
   -webkit-backdrop-filter: var(--nova-hero-filter);
   backdrop-filter: var(--nova-hero-filter);
   border: var(--nova-border-hairline) solid var(--nova-color-chrome-line);
-  color: #fff;
-  box-shadow: var(--nova-shadow-glass), inset 0 1px 0 0 rgba(255,255,255,.16);
+  color: var(--nova-ink-on-dark);
+  box-shadow: var(--nova-shadow-glass), var(--nova-hero-rim);
 
   &::after {
     content: '';
@@ -1621,9 +1658,9 @@
     padding: var(--nova-border-hairline);
     border-radius: inherit;
     background: var(--nova-data-edge, var(--nova-gradient-edge));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask: var(--nova-mask-solid) content-box, var(--nova-mask-solid);
     -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: var(--nova-mask-solid) content-box, var(--nova-mask-solid);
     mask-composite: exclude;
     pointer-events: none;
   }
@@ -1693,17 +1730,17 @@
   flex-shrink: 0;
   width: var(--nova-mark);
   height: var(--nova-mark);
-  border-radius: 7px;
+  border-radius: var(--nova-ai-spark-radius);
   background-image: var(--nova-ai-mark);
-  color: #fff;
+  color: var(--nova-ink-on-dark);
   font-size: var(--nova-text-label);
-  text-shadow: 0 1px 2px rgba(20,10,0,.55), 0 0 3px rgba(20,10,0,.35);
-  box-shadow: 0 1px 4px rgba(60,40,10,.28), inset 0 0 0 1px rgba(255,255,255,.28);
+  text-shadow: var(--nova-ai-spark-glyph-shadow);
+  box-shadow: var(--nova-ai-spark-lift);
 
   [data-approved='true'] & {
     background-image: none;
     background-color: var(--nova-color-good);
-    box-shadow: 0 1px 4px rgba(11,138,104,.3), inset 0 1px 0 rgba(255,255,255,.35);
+    box-shadow: var(--nova-ai-spark-lift-approved);
   }
 }
 
@@ -1797,9 +1834,9 @@
     padding: var(--nova-border-hairline);
     border-radius: inherit;
     background: var(--nova-gradient-highlight-edge);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask: var(--nova-mask-solid) content-box, var(--nova-mask-solid);
     -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: var(--nova-mask-solid) content-box, var(--nova-mask-solid);
     mask-composite: exclude;
     pointer-events: none;
   }
@@ -1811,13 +1848,13 @@
   &::before {
     content: '';
     position: absolute;
-    inset: -3px;
+    inset: var(--nova-highlight-ring-offset);
     padding: var(--nova-border-emphasis);
     border-radius: inherit;
     background: var(--nova-gradient-highlight-edge);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask: var(--nova-mask-solid) content-box, var(--nova-mask-solid);
     -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: var(--nova-mask-solid) content-box, var(--nova-mask-solid);
     mask-composite: exclude;
     pointer-events: none;
   }
@@ -1882,9 +1919,9 @@
 @utility nova-wa-wall {
   background-color: var(--nova-wa-wall);
   background-image: radial-gradient(
-    var(--nova-wa-wall-dot) 1px,
-    transparent 1px
+    var(--nova-wa-wall-dot) var(--nova-phone-wall-dot-r),
+    transparent var(--nova-phone-wall-dot-r)
   );
-  background-size: 18px 18px;
+  background-size: var(--nova-phone-wall-grid) var(--nova-phone-wall-grid);
 }
 /* ===== WhatsApp brand colours (end) ===== */

@@ -47,9 +47,11 @@ describe('the keyboard focus ring a nested light surface resolves', () => {
         <button type="button">Wards</button>
       </div>,
     );
+    // White, through the token the chrome's @utility reads (no raw value inside a utility).
     expect(resolvedRing(screen.getByRole('button', { name: 'Wards' }))).toBe(
-      '#fff',
+      'var(--nova-ink-on-dark)',
     );
+    expect(css).toMatch(/--nova-ink-on-dark:\s*#fff;/);
   });
 
   it('is the brand primary for the module menu, an overlay anchored in the dark chrome', () => {
