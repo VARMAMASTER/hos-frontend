@@ -33,15 +33,16 @@ export function TabPage({
         aria-live="polite"
         aria-busy={loading ? 'true' : undefined}
       >
+        {/* Two placeholder blocks on the canvas colour, a step below the page's panel. */}
         <Stack gap="s6">
           <Box
-            surface="inset"
+            surface="sunken"
             padding="s6"
             radius="card"
             className="motion-safe:animate-pulse"
           />
           <Box
-            surface="inset"
+            surface="sunken"
             padding="s8"
             radius="card"
             className="motion-safe:animate-pulse"

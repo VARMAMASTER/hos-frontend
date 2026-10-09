@@ -64,11 +64,13 @@ const marginClasses = {
   s8: 'm-s8',
 } as const;
 
+// The prototype's grounds (hos.css :root): --panel (surface), --panel-2 (surface-2, a quiet inner
+// panel such as a toolbar) and --bg (the canvas, a step below the panel).
 const surfaceClasses = {
   base: 'bg-surface text-ink',
   elevated: 'bg-surface shadow-sm text-ink',
-  inset: 'bg-surface-inset text-ink',
-  sunken: 'bg-surface-sunken text-ink',
+  inset: 'bg-surface-2 text-ink',
+  sunken: 'bg-bg text-ink',
   transparent: '',
 } as const;
 

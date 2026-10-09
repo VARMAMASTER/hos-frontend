@@ -52,7 +52,7 @@ function FontSwitcher() {
                   className={`rounded-control px-s3 py-s2 text-control transition-colors ${
                     selectedFont === preset
                       ? 'border border-primary bg-primary text-on-primary'
-                      : 'border border-border bg-surface-subtle text-ink hover:bg-hover'
+                      : 'border border-border bg-surface-2 text-ink hover:bg-primary-ghost'
                   }`}
                 >
                   {preset === 'googleSans'
@@ -68,7 +68,7 @@ function FontSwitcher() {
           </div>
 
           <div
-            className="rounded-card border border-border bg-canvas p-s6 transition-all"
+            className="rounded-card border border-border bg-bg p-s6 transition-all"
             style={{
               fontFamily: NOVA_FONTS[selectedFont],
               ['--nova-font-body' as string]: NOVA_FONTS[selectedFont],
