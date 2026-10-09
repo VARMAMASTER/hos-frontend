@@ -13,24 +13,24 @@ For each module:
 3. Write a spec per tab: it renders, shows its key content, and passes the accessibility checks.
 4. Run the full check, then merge to `main`.
 
-| #   | Task                                                                                                     | Folders                                  | Prototype page                        | Owner  | Status |
-| --- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------- | ------ | ------ |
-| M1  | Reception / OPD: queue, registration, appointments, schedule, admission, referrals, WhatsApp, AI calling | `apps/web/src/modules/reception/**`      | `../os/public/02-reception.html`      | Claude | todo   |
-| M2  | Doctor                                                                                                   | `apps/web/src/modules/doctor/**`         | `../os/public/03-doctor.html`         | Claude | todo   |
-| M3  | Patient record                                                                                           | `apps/web/src/modules/patient-record/**` | `../os/public/04-patient-record.html` | Claude | todo   |
-| M4  | IPD                                                                                                      | `apps/web/src/modules/ipd/**`            | `../os/public/05-ipd.html`            | Claude | todo   |
-| M5  | Nursing                                                                                                  | `apps/web/src/modules/nursing/**`        | `../os/public/14-nursing.html`        | Claude | todo   |
-| M6  | Billing                                                                                                  | `apps/web/src/modules/billing/**`        | `../os/public/06-billing.html`        | Claude | todo   |
-| M7  | Pharmacy                                                                                                 | `apps/web/src/modules/pharmacy/**`       | `../os/public/07-pharmacy.html`       | Claude | todo   |
-| M8  | Lab                                                                                                      | `apps/web/src/modules/lab/**`            | `../os/public/08-lab.html`            | Claude | todo   |
-| M9  | Emergency                                                                                                | `apps/web/src/modules/emergency/**`      | `../os/public/16-emergency.html`      | Claude | todo   |
-| M10 | OT                                                                                                       | `apps/web/src/modules/ot/**`             | `../os/public/15-ot.html`             | Claude | todo   |
-| M11 | Insurance                                                                                                | `apps/web/src/modules/insurance/**`      | `../os/public/19-insurance.html`      | Claude | todo   |
-| M12 | Analytics                                                                                                | `apps/web/src/modules/analytics/**`      | `../os/public/09-analytics.html`      | Claude | todo   |
-| M13 | Quality                                                                                                  | `apps/web/src/modules/quality/**`        | `../os/public/13-quality.html`        | Claude | todo   |
-| M14 | AI workforce                                                                                             | `apps/web/src/modules/ai-workforce/**`   | `../os/public/10-ai-workforce.html`   | Claude | todo   |
-| M15 | Administration                                                                                           | `apps/web/src/modules/administration/**` | `../os/public/11-administration.html` | Claude | todo   |
-| M16 | Super admin                                                                                              | `apps/web/src/modules/superadmin/**`     | `../os/public/12-superadmin.html`     | Claude | todo   |
+| #   | Task                                                                                                     | Folders                                  | Prototype page                        | Owner  | Status      |
+| --- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------- | ------ | ----------- |
+| M1  | Reception / OPD: queue, registration, appointments, schedule, admission, referrals, WhatsApp, AI calling | `apps/web/src/modules/reception/**`      | `../os/public/02-reception.html`      | Claude | in progress |
+| M2  | Doctor                                                                                                   | `apps/web/src/modules/doctor/**`         | `../os/public/03-doctor.html`         | Claude | todo        |
+| M3  | Patient record                                                                                           | `apps/web/src/modules/patient-record/**` | `../os/public/04-patient-record.html` | Claude | todo        |
+| M4  | IPD                                                                                                      | `apps/web/src/modules/ipd/**`            | `../os/public/05-ipd.html`            | Claude | todo        |
+| M5  | Nursing                                                                                                  | `apps/web/src/modules/nursing/**`        | `../os/public/14-nursing.html`        | Claude | todo        |
+| M6  | Billing                                                                                                  | `apps/web/src/modules/billing/**`        | `../os/public/06-billing.html`        | Claude | todo        |
+| M7  | Pharmacy                                                                                                 | `apps/web/src/modules/pharmacy/**`       | `../os/public/07-pharmacy.html`       | Claude | todo        |
+| M8  | Lab                                                                                                      | `apps/web/src/modules/lab/**`            | `../os/public/08-lab.html`            | Claude | todo        |
+| M9  | Emergency                                                                                                | `apps/web/src/modules/emergency/**`      | `../os/public/16-emergency.html`      | Claude | todo        |
+| M10 | OT                                                                                                       | `apps/web/src/modules/ot/**`             | `../os/public/15-ot.html`             | Claude | todo        |
+| M11 | Insurance                                                                                                | `apps/web/src/modules/insurance/**`      | `../os/public/19-insurance.html`      | Claude | todo        |
+| M12 | Analytics                                                                                                | `apps/web/src/modules/analytics/**`      | `../os/public/09-analytics.html`      | Claude | todo        |
+| M13 | Quality                                                                                                  | `apps/web/src/modules/quality/**`        | `../os/public/13-quality.html`        | Claude | todo        |
+| M14 | AI workforce                                                                                             | `apps/web/src/modules/ai-workforce/**`   | `../os/public/10-ai-workforce.html`   | Claude | todo        |
+| M15 | Administration                                                                                           | `apps/web/src/modules/administration/**` | `../os/public/11-administration.html` | Claude | todo        |
+| M16 | Super admin                                                                                              | `apps/web/src/modules/superadmin/**`     | `../os/public/12-superadmin.html`     | Claude | todo        |
 
 Work in order: M1 to M3 first (the walking skeleton), then any order. Don't start a module while another one of yours is unmerged, so `main` stays reviewable.
 
