@@ -49,7 +49,7 @@ function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
   else if (ref) ref.current = value;
 }
 
-// Where a question is typed: the prototype's .hcp-form, the field and the ✦ Ask button 8px apart.
+// Where a question is typed: the prototype's .hcp-form, the field and the AI-marked Ask button 8px apart.
 // The field is Nova's Textarea (its label hidden, the prototype has none on screen) that starts one
 // line tall and grows with the text to maxHeight. Enter sends, Shift+Enter is a new line, and Enter
 // while an input method is composing (Telugu, Hindi) only picks the word. The text is the person's:

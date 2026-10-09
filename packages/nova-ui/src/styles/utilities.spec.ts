@@ -7,7 +7,7 @@ import { createNovaTheme, type NovaTheme } from '../theme/create-theme';
 import { GLASS, MATERIAL_FILLS, MATERIAL_TOKENS } from '../tokens/material';
 import { primitives } from '../tokens/primitives';
 import { NOVA_DESIGN_TOKENS } from '../tokens/design';
-import { RADIUS_ROLES, TYPE_ROLES } from '../tokens/scale';
+import { AI_SPARK_HALO, RADIUS_ROLES, TYPE_ROLES } from '../tokens/scale';
 import { NOVA_DEFAULTS } from '../tokens/semantic';
 
 const css = readFileSync(
@@ -119,7 +119,6 @@ describe('theme.css utilities', () => {
     'nova-ai-block',
     'nova-gradient-text',
     'nova-ai-grad',
-    'nova-ai-mark',
     'nova-ai-rail',
   ])('declares @utility %s', (name) => {
     expect(Object.keys(utility(name).declarations).length).toBeGreaterThan(0);
@@ -489,19 +488,25 @@ describe('theme.css utilities', () => {
     );
   });
 
-  // The prototype's .ai-spark: a 22px tile in the multicolour mark with a white glyph kept legible by a
-  // tight dark shadow; approved, it turns solid green.
-  it('nova-ai-spark is the prototype spark badge, green once its block is approved', () => {
+  // The AI tile (the prototype's .ai-spark, with the Care spark in it): a 22px tile in the HOS AI
+  // gradient, so it follows each hospital's theme, holding the white AiMark glyph at its own size, kept
+  // legible by a tight dark halo; approved, it turns solid green. The multicolour --ai-mark is gone.
+  it('nova-ai-spark is the AI tile on the AI gradient, green once its block is approved', () => {
     const spark = utility('nova-ai-spark');
     expect(spark.declarations).toMatchObject({
       width: 'var(--nova-mark)',
       height: 'var(--nova-mark)',
       'border-radius': 'var(--nova-ai-spark-radius)',
-      'background-image': 'var(--nova-ai-mark)',
+      'background-image': 'var(--nova-gradient-ai)',
       color: 'var(--nova-ink-on-dark)',
       'font-size': 'var(--nova-text-label)',
-      'text-shadow': 'var(--nova-ai-spark-glyph-shadow)',
       'box-shadow': 'var(--nova-ai-spark-lift)',
+    });
+    expect(spark.declarations).not.toHaveProperty('text-shadow');
+    expect(spark.nested['& [data-ai-mark]']?.declarations).toEqual({
+      width: 'var(--nova-ai-spark-glyph)',
+      height: 'var(--nova-ai-spark-glyph)',
+      filter: 'drop-shadow(var(--nova-ai-spark-glyph-shadow))',
     });
     expect(spark.nested["[data-approved='true'] &"]?.declarations).toEqual({
       'background-image': 'none',
@@ -511,12 +516,14 @@ describe('theme.css utilities', () => {
     // The prototype's values, now tokens.
     expect({
       radius: rootToken('--nova-ai-spark-radius'),
+      size: rootToken('--nova-ai-spark-glyph'),
       glyph: rootToken('--nova-ai-spark-glyph-shadow'),
       lift: rootToken('--nova-ai-spark-lift'),
       approved: rootToken('--nova-ai-spark-lift-approved'),
     }).toEqual({
       radius: '7px',
-      glyph: '0 1px 2px rgba(20,10,0,.55), 0 0 3px rgba(20,10,0,.35)',
+      size: 'var(--nova-icon-tile)',
+      glyph: '0 1px 1.5px rgba(0,25,35,.5)',
       lift: '0 1px 4px rgba(60,40,10,.28), inset 0 0 0 1px rgba(255,255,255,.28)',
       approved:
         '0 1px 4px rgba(11,138,104,.3), inset 0 1px 0 rgba(255,255,255,.35)',
@@ -538,13 +545,24 @@ describe('theme.css utilities', () => {
     );
   });
 
-  it('nova-ai-grad fills with the AI gradient and nova-ai-mark with the AI mark', () => {
+  it('nova-ai-grad fills with the AI gradient, and the multicolour nova-ai-mark is gone', () => {
     expect(utility('nova-ai-grad').declarations).toEqual({
       'background-image': 'var(--nova-gradient-ai)',
     });
-    expect(utility('nova-ai-mark').declarations).toEqual({
-      'background-image': 'var(--nova-ai-mark)',
-    });
+    expect(() => utility('nova-ai-mark')).toThrow();
+  });
+
+  // The tile's halo is proven in theme/legibility.ts as a model: the glyph's edge sees at least
+  // AI_SPARK_HALO.alpha of the halo ink. The stylesheet's halo must be at least that strong.
+  it('the tile glyph halo is as strong as the legibility proof assumes', () => {
+    const halo = rootToken('--nova-ai-spark-glyph-shadow') ?? '';
+    const match = /rgba\((\d+),(\d+),(\d+),([\d.]+)\)/.exec(halo);
+    expect(match, halo).not.toBeNull();
+    const [, r, g, b, alpha] = match ?? [];
+    expect(
+      `#${[r, g, b].map((v) => Number(v).toString(16).padStart(2, '0')).join('')}`.toUpperCase(),
+    ).toBe(AI_SPARK_HALO.ink);
+    expect(Number(alpha)).toBeGreaterThanOrEqual(AI_SPARK_HALO.alpha);
   });
 
   // The highlight, as utilities over the scoped gradient tokens: no component writes a gradient.
@@ -662,7 +680,6 @@ describe('theme.css named gradients', () => {
     '--nova-gradient-highlight-wash',
     '--nova-gradient-ai',
     '--nova-gradient-ai-rail',
-    '--nova-ai-mark',
     '--nova-tabbar-tint',
     ...Object.keys(MATERIAL_FILLS),
   ])(
@@ -673,9 +690,9 @@ describe('theme.css named gradients', () => {
     },
   );
 
-  // The AI gradient and mark are on the plain :root too (NOVA_DEFAULTS, compared with hos.css), with
-  // the same value, so the page with no theme is the prototype byte for byte.
-  it.each(['--nova-gradient-ai', '--nova-ai-mark'])(
+  // The AI gradient is on the plain :root too (NOVA_DEFAULTS, compared with hos.css), with the same
+  // value, so the page with no theme is the prototype byte for byte.
+  it.each(['--nova-gradient-ai'])(
     'keeps %s on :root as NOVA_DEFAULTS declares it, the same value the scopes re-resolve',
     (name) => {
       expect(fixedValue(name)).toBe(
@@ -757,10 +774,16 @@ describe('theme.css named gradients', () => {
       );
     });
 
-    it('--nova-ai-mark is the prototype conic mark, its four tints as tokens', () => {
-      expect(scoped()['--nova-ai-mark']).toBe(
-        'conic-gradient(from 0deg at 50% 50%, var(--nova-color-ai-mark-1) 0deg, var(--nova-color-ai-mark-2) 92deg, var(--nova-color-ai-mark-3) 184deg, var(--nova-color-ai-mark-4) 272deg, var(--nova-color-ai-mark-1) 360deg)',
-      );
+    // The multicolour conic mark (the prototype's --ai-mark) is not carried: the one AI mark is the
+    // Care spark, and its tile is on --nova-gradient-ai (owner decision, 2026-10-10).
+    it('has no multicolour mark token left: the tile follows --nova-gradient-ai', () => {
+      expect(scoped()).not.toHaveProperty('--nova-ai-mark');
+      expect(NOVA_DEFAULTS).not.toHaveProperty('--nova-ai-mark');
+      expect(
+        Object.keys(NOVA_DEFAULTS).filter((name) =>
+          name.startsWith('--nova-color-ai-mark'),
+        ),
+      ).toEqual([]);
       expect(primitives.violet[600]).toBe('#6D4FE0');
     });
   });
@@ -807,7 +830,7 @@ describe('theme.css named gradients', () => {
       },
     });
 
-    it('the AI gradients and mark follow the brand: its own stop, and its own AI colours when the cyan sits too close', () => {
+    it('the AI gradients follow the brand: its own stop, and its own AI colours when the cyan sits too close', () => {
       for (const name of ['--nova-gradient-ai', '--nova-gradient-ai-rail']) {
         const original = resolve(name);
         expect(original).toContain('#22D3EE');
@@ -821,8 +844,6 @@ describe('theme.css named gradients', () => {
           teal.cssVariables['--nova-color-ai'] ?? '',
         );
       }
-      expect(resolve('--nova-ai-mark')).toContain('#EA4335');
-      expect(resolve('--nova-ai-mark', teal)).not.toContain('#EA4335');
     });
 
     it('while --nova-gradient-brand follows the brand', () => {

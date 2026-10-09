@@ -5,6 +5,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from 'react';
+import { AiMark } from '../../primitives/ai-mark';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
@@ -310,7 +311,7 @@ function Event({
             (milestone ? (
               <HighlightMark />
             ) : tone === 'ai' ? (
-              '✦'
+              <AiMark size="xs" />
             ) : (
               <Glyph name={glyphs[tone]} />
             ))}

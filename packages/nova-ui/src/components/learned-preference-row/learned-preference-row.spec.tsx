@@ -23,16 +23,17 @@ const row = () => screen.getByRole('group', { name: LEARNED });
 const toggle = () => screen.getByRole('switch', { name: LEARNED });
 
 describe('LearnedPreferenceRow', () => {
-  it('shows what was learned, why, and what it now does, with the spark', () => {
+  it('shows what was learned, why, and what it now does, with the AI mark', () => {
     render(<LearnedPreferenceRow {...base} />);
     const text = row().textContent ?? '';
     expect(text).toContain('Learned from 6 corrections');
     expect(text).toContain('Now does automatically:');
     expect(text).toContain('carries your renal line');
     expect(text).toContain('ON');
-    expect(row().querySelector('[aria-hidden="true"]')?.textContent).toContain(
-      '✦',
-    );
+    expect(row().querySelector('[data-ai-mark]')).not.toBeNull();
+    expect(
+      row().querySelector('[data-ai-mark]')?.getAttribute('aria-hidden'),
+    ).toBe('true');
   });
 
   it('has an ON/OFF switch named for the preference; off dims the row and says it is doing nothing', () => {

@@ -66,11 +66,11 @@ describe('AiActionFeed', () => {
     ).toContain('Confirmed by Swapna');
   });
 
-  it('marks every row as AI with the spark and a text label, the agent in the AI ink', () => {
+  it('marks every row as AI with the AI mark and a text label, the agent in the AI ink', () => {
     render(<AiActionFeed actions={ACTIONS} />);
     const first = rows()[0] as HTMLElement;
     expect(first.querySelector('[data-badge]')?.textContent).toContain('AI');
-    expect(first.textContent).toContain('✦');
+    expect(first.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(first.querySelector('[data-agent]')?.className).toContain(
       'text-ai-deep',
     );

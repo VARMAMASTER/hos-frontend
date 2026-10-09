@@ -1,6 +1,6 @@
 import { useState, type HTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
-import { SparkleCluster } from '../../primitives/ai-sparkle';
+import { AiMark } from '../../primitives/ai-mark';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 import { Button } from '../button/button';
 import { AiStreamText } from './ai-stream-text';
@@ -66,7 +66,7 @@ function ErrorIcon() {
   );
 }
 
-// HOS AI's turn: the prototype's .aichat-a. The ✦ spark, then the bubble (.aichat-a-body: the AI
+// HOS AI's turn: the prototype's .aichat-a. The AI mark in its tile, then the bubble (.aichat-a-body: the AI
 // wash with the AI line, 13px ink, padded 8px by 12px, at most 88% wide). Nova adds a small visible
 // "HOS AI" above the bubble, so the answer is marked in words as well as by the spark (AI is never
 // colour-only), and a hidden "HOS AI answered:" for screen readers. The prototype tucks one corner
@@ -142,9 +142,7 @@ export function ChatAnswer({
       className={cx('my-s2 flex items-start gap-s3', className)}
       {...rest}
     >
-      <span aria-hidden="true" className="nova-ai-spark mt-s0">
-        <SparkleCluster size="xs" className="text-on-primary" />
-      </span>
+      <AiMark tile className="mt-s0" />
       <div className="flex min-w-0 max-w-(--nova-ai-bubble-max-w) flex-col items-start gap-s2">
         <span
           aria-hidden="true"

@@ -1,4 +1,5 @@
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
+import { AiMark } from '../../primitives/ai-mark';
 import { Surface } from '../../primitives/surface';
 import { AiBadge } from '../ai-badge/ai-badge';
 import { Chip } from '../chip/chip';
@@ -21,7 +22,7 @@ export interface AiPanelProps
   badgeLabel?: string;
   // The title's id, so controls elsewhere ("Approve <title>") can be named by it.
   titleId?: string;
-  // The spark's glyph: ✦, or ✓ once approved. The prototype gives some blocks a meaning of their
+  // The tile's content: the AI mark, or ✓ once approved. The prototype gives some blocks a meaning of their
   // own (₹ on a money gate); it is hidden from assistive technology either way.
   spark?: ReactNode;
 }
@@ -58,9 +59,10 @@ export function AiPanel({
     >
       {/* .ai-block-h: the spark, the title in bold at 13.5px, then the badges, 8px apart. */}
       <div className="mb-s4 flex flex-wrap items-center gap-s3">
-        <span aria-hidden="true" className="nova-ai-spark">
-          {spark ?? (state === 'approved' ? '✓' : '✦')}
-        </span>
+        <AiMark
+          tile
+          symbol={spark ?? (state === 'approved' ? '✓' : undefined)}
+        />
         <Heading
           id={titleId}
           className="font-display text-input font-bold text-ink"

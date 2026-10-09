@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
-import { SparkleCluster } from '../../primitives/ai-sparkle';
+import { AiMark } from '../../primitives/ai-mark';
 import { Surface } from '../../primitives/surface';
 import type { ChipTone } from '../chip/chip';
 import { ToneLabel } from '../chip/tone-label';
@@ -81,7 +81,7 @@ export function ActivityFeed({
           >
             {tone === 'ai' ? (
               <span className="relative inline-flex items-center justify-center">
-                <SparkleCluster size="xs" className="text-ai-bright" />
+                <AiMark size="xs" className="text-ai" />
               </span>
             ) : null}
           </span>

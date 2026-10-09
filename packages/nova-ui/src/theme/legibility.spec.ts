@@ -52,6 +52,51 @@ describe('the legibility proof', () => {
     }
   });
 
+  // The AI tile (AiMark tile): the white Care spark on the HOS AI gradient (bright, AI, brand), a
+  // graphic mark at 3:1 against every stop and the gradient's visible end, for every brand.
+  it('measures the white AI-tile glyph against every stop of the AI gradient, in both schemes', () => {
+    for (const scheme of SCHEMES) {
+      const uses = legibilityChecks(
+        resolvePalette(scheme),
+        scheme,
+        'glass',
+      ).filter((check) => check.usedBy.startsWith('the AI tile glyph'));
+      expect(
+        uses.map((check) => check.usedBy),
+        scheme,
+      ).toEqual([
+        'the AI tile glyph (white) on the AI gradient: the bright stop',
+        'the AI tile glyph (white) on the AI gradient: the AI stop',
+        'the AI tile glyph (white) on the AI gradient: the brand stop',
+        'the AI tile glyph (white) on the AI gradient: its visible end',
+      ]);
+      for (const check of uses) {
+        expect(check.minimum).toBe(3);
+        expect(check.foreground).toBe('#FFFFFF');
+        expect(check.brand).toBe(true);
+      }
+    }
+  });
+
+  it('would catch a failing AI tile: a pale brand stop, and a bright stop too pale for the halo', () => {
+    const pale = {
+      ...resolvePalette('light'),
+      '--nova-color-primary': '#FDE68A',
+    };
+    expect(
+      legibilityFailures(pale, 'light', 'glass').map((f) => f.usedBy),
+    ).toContain('the AI tile glyph (white) on the AI gradient: the brand stop');
+    const white = {
+      ...resolvePalette('light'),
+      '--nova-color-ai-bright': '#FFFFFF',
+    };
+    expect(
+      legibilityFailures(white, 'light', 'glass').map((f) => f.usedBy),
+    ).toContain(
+      'the AI tile glyph (white) on the AI gradient: the bright stop',
+    );
+  });
+
   // HOS Violet in both schemes, on all three materials.
   it.each(SCHEMES.flatMap((s) => NOVA_MATERIALS.map((m) => [s, m] as const)))(
     'holds for HOS Violet in the %s scheme on %s',

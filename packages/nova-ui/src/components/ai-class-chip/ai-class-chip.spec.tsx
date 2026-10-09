@@ -127,7 +127,7 @@ describe('TierCard', () => {
     expect(screen.getByText('Drafts only. A human always signs.')).toBeTruthy();
     expect(screen.getByText(/Tier: green/)).toBeTruthy();
     const spark = document.querySelector('.nova-ai-spark');
-    expect(spark?.textContent).toBe('✦');
+    expect(spark?.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(spark?.getAttribute('aria-hidden')).toBe('true');
   });
 

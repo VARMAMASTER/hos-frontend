@@ -104,28 +104,29 @@ describe('ChatBubble: speaker, gloss, time and delivery', () => {
     expect(spoken(bubble(container))).toBe('K. Yadamma · patient: Yes.');
   });
 
-  it('marks AI with the ✦ and a word, never colour alone', () => {
+  it('marks AI with the AI mark and a word, never colour alone', () => {
     const { container, rerender } = render(
       <ChatBubble tone="ai" speaker="AI agent">
         Namaste.
       </ChatBubble>,
     );
     const label = container.querySelector('[data-slot="speaker"]');
-    expect(label?.textContent).toBe('✦ AI agent');
-    // The spark is decoration: the word carries the meaning.
+    expect(label?.textContent?.trim()).toBe('AI agent');
+    expect(label?.querySelector('svg[data-ai-mark]')).not.toBeNull();
+    // The mark is decoration: the word carries the meaning.
     expect(spoken(label as Node)).toBe('AI agent');
     rerender(<ChatBubble tone="ai">Namaste.</ChatBubble>);
-    expect(container.querySelector('[data-slot="speaker"]')?.textContent).toBe(
-      '✦ AI',
-    );
+    const plain = container.querySelector('[data-slot="speaker"]');
+    expect(plain?.textContent?.trim()).toBe('AI');
+    expect(plain?.querySelector('[data-ai-mark]')).not.toBeNull();
     rerender(
       <ChatBubble tone="ai" aiLabel="AI assistant">
         Namaste.
       </ChatBubble>,
     );
-    expect(container.querySelector('[data-slot="speaker"]')?.textContent).toBe(
-      '✦ AI assistant',
-    );
+    const named = container.querySelector('[data-slot="speaker"]');
+    expect(named?.textContent?.trim()).toBe('AI assistant');
+    expect(named?.querySelector('[data-ai-mark]')).not.toBeNull();
   });
 
   it('sets the language on the content and English on the gloss', () => {

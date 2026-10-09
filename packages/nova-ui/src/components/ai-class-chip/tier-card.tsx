@@ -1,4 +1,5 @@
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
+import { AiMark } from '../../primitives/ai-mark';
 import { cx } from '../../primitives/cx';
 import {
   AiClassChip,
@@ -58,9 +59,7 @@ export function TierCard({
       {...rest}
     >
       <div className="flex flex-wrap items-center gap-s3">
-        <span aria-hidden="true" className="nova-ai-spark">
-          ✦
-        </span>
+        <AiMark tile />
         <Heading
           id={titleId}
           className="font-display text-input font-bold text-ink"

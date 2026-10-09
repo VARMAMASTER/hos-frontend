@@ -34,7 +34,7 @@ export const Outgoing: Story = {
   args: { direction: 'out', speaker: 'Swapna · front desk', time: '0:14' },
 };
 
-// A machine's words: the ✦ and a word, never colour alone.
+// A machine's words: the AI mark and a word, never colour alone.
 export const Ai: Story = {
   args: {
     tone: 'ai',

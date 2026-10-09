@@ -52,7 +52,7 @@ describe('AiDraftBlock: anatomy', () => {
     render(<Draft source={<p>Source: IPD chart</p>} />);
     const group = block();
     expect(group.classList.contains('nova-ai-block')).toBe(true);
-    expect(group.querySelector('.nova-ai-spark')?.textContent).toBe('✦');
+    expect(group.querySelector('.nova-ai-spark [data-ai-mark]')).not.toBeNull();
     expect(screen.getByRole('heading', { level: 3, name: TITLE })).toBeTruthy();
     expect(screen.getByText('AI draft')).toBeTruthy();
     expect(screen.getByText(/Admitted with a chest infection/)).toBeTruthy();

@@ -45,10 +45,10 @@ function Recorder(props: Partial<AmbientScribeRecorderProps>) {
 }
 
 describe('AmbientScribeRecorder: idle', () => {
-  it('is a group named "AI Scribe", marked with the spark and the words, never colour alone', () => {
+  it('is a group named "AI Scribe", marked with the AI mark and the words, never colour alone', () => {
     render(<Recorder />);
     const badge = recorder().querySelector('[data-badge]');
-    expect(badge?.textContent).toContain('✦');
+    expect(badge?.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(badge?.textContent).toContain('AI Scribe');
   });
 

@@ -8,7 +8,7 @@ afterEach(() => cleanup());
 const button = (name: string | RegExp = 'Draft summary') =>
   screen.getByRole('button', { name });
 
-// The ✦ of the label that is showing.
+// The AI mark of the label that is showing.
 const liveMark = (root: Element) =>
   root.querySelector('[data-label]:not([aria-hidden]) [data-mark]');
 
@@ -30,22 +30,22 @@ describe('AiButton: structure', () => {
     expect(button().getAttribute('type')).toBe('button');
   });
 
-  it('always draws the 3-star sparkle cluster with the label, so AI is never colour-only', () => {
+  it('always draws the AI mark with the label, so AI is never colour-only', () => {
     render(<AiButton>Draft summary</AiButton>);
     const mark = button().querySelector('[data-mark]');
-    expect(mark?.querySelector('[data-sparkle-cluster]')).not.toBeNull();
+    expect(mark?.querySelector('[data-ai-mark]')).not.toBeNull();
     // The mark is decoration: never in the accessible name.
     expect(mark?.getAttribute('aria-hidden')).toBe('true');
     expect(button().textContent).toContain('Draft summary');
   });
 
-  it('keeps the 3-star sparkle cluster and a text label in every state', () => {
+  it('keeps the AI mark and a text label in every state', () => {
     for (const state of ['idle', 'thinking', 'done'] as const) {
       const { unmount } = render(
         <AiButton state={state}>Draft summary</AiButton>,
       );
       expect(
-        liveMark(button(/./))?.querySelector('[data-sparkle-cluster]'),
+        liveMark(button(/./))?.querySelector('[data-ai-mark]'),
       ).not.toBeNull();
       const visible = button(/./).querySelector(
         '[data-label]:not([aria-hidden])',
@@ -139,12 +139,12 @@ describe('AiButton: structure', () => {
 });
 
 describe('AiButton: thinking', () => {
-  it('shows "Thinking…" by default, is aria-busy and keeps the sparkle cluster', () => {
+  it('shows "Thinking…" by default, is aria-busy and keeps the AI mark', () => {
     render(<AiButton loading>Draft summary</AiButton>);
     expect(button('Thinking…').getAttribute('aria-busy')).toBe('true');
     expect(button('Thinking…').dataset['state']).toBe('thinking');
     expect(
-      liveMark(button('Thinking…'))?.querySelector('[data-sparkle-cluster]'),
+      liveMark(button('Thinking…'))?.querySelector('[data-ai-mark]'),
     ).not.toBeNull();
   });
 
@@ -227,13 +227,11 @@ describe('AiButton: thinking', () => {
 });
 
 describe('AiButton: done', () => {
-  it('shows "Done" with a check, and keeps the sparkle cluster', () => {
+  it('shows "Done" with a check, and keeps the AI mark', () => {
     render(<AiButton state="done">Draft summary</AiButton>);
     const done = button('Done');
     expect(done.dataset['state']).toBe('done');
-    expect(
-      liveMark(done)?.querySelector('[data-sparkle-cluster]'),
-    ).not.toBeNull();
+    expect(liveMark(done)?.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(done.querySelector('[data-check]')).not.toBeNull();
     expect(done.getAttribute('aria-busy')).toBeNull();
   });
@@ -319,7 +317,7 @@ describe('AiButton: idle breathing', () => {
 });
 
 describe('AiButton: interactive motion', () => {
-  it('twinkles the ✦, sweeps one sheen and glows the edge on hover and keyboard focus', () => {
+  it('twinkles the AI mark, sweeps one sheen and glows the edge on hover and keyboard focus', () => {
     render(<AiButton>Draft summary</AiButton>);
     const tokens = classTokens(button());
     for (const trigger of ['hover', 'focus-visible']) {
@@ -376,7 +374,7 @@ describe('AiButton: interactive motion', () => {
 describe('AiButton: reduced motion', () => {
   // Every moving class is behind motion-safe (a media query for "no reduced-motion preference"), so
   // under prefers-reduced-motion nothing moves and every state is still told by its fill, label and
-  // ✦. Static cues (the glow, the darker thinking fill, the check) have no motion prefix.
+  // AI mark. Static cues (the glow, the darker thinking fill, the check) have no motion prefix.
   const MOVING = /animate-ai-|scale-|transition|duration-|ease-/;
 
   it.each([
@@ -449,12 +447,12 @@ describe('AiButton: glow & hero variants', () => {
     expect(btn.classList).toContain('rounded-full');
   });
 
-  it('renders hero variant with data-variant="hero", 3-star cluster icon, and prominent pill padding', () => {
+  it('renders hero variant with data-variant="hero", AI mark, and prominent pill padding', () => {
     render(<AiButton variant="hero">Chat with our AI agent</AiButton>);
     const btn = button('Chat with our AI agent');
     expect(btn.dataset['variant']).toBe('hero');
     expect(btn.classList).toContain('rounded-full');
-    expect(btn.querySelector('[data-sparkle-cluster]')).not.toBeNull();
+    expect(btn.querySelector('[data-ai-mark]')).not.toBeNull();
   });
 
   it('renders floating badge when provided', () => {

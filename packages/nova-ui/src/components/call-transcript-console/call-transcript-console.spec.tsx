@@ -148,7 +148,7 @@ describe('CallTranscriptConsole: the frame', () => {
 });
 
 describe('CallTranscriptConsole: turns and events', () => {
-  it('draws the AI’s turns on the left, marked with ✦ and its speaker label in text', () => {
+  it('draws the AI’s turns on the left, marked with the AI mark and its speaker label in text', () => {
     const { container } = render(<Console />);
     const [ai, caller] = Array.from(
       container.querySelectorAll<HTMLElement>(
@@ -156,9 +156,9 @@ describe('CallTranscriptConsole: turns and events', () => {
       ),
     );
     expect(ai.dataset.direction).toBe('in');
-    expect(ai.querySelector('[data-slot="speaker"]')?.textContent).toBe(
-      '✦ AI agent',
-    );
+    const speaker = ai.querySelector('[data-slot="speaker"]');
+    expect(speaker?.textContent?.trim()).toBe('AI agent');
+    expect(speaker?.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(spoken(ai)).toBe(
       'AI agent : యాదమ్మ గారు మాట్లాడుతున్నారా? Am I speaking with Yadamma garu? 0:06',
     );

@@ -1,7 +1,7 @@
 import { cx } from '../../primitives/cx';
 
 // The highlight's marker: a five-pointed star, so a highlight chip, tag, announcement or milestone is
-// never told apart by colour alone. It is deliberately not the AI's four-pointed spark (✦), which
+// never told apart by colour alone. It is deliberately not the AI's four-pointed spark (the AI mark, the Care spark), which
 // only ever marks something a machine wrote. Decorative: the words beside it carry the meaning.
 export function HighlightMark({ className }: { className?: string }) {
   return (

@@ -122,6 +122,7 @@ export type {
   ChartBaseProps,
   ChartDatum,
 } from './components/chart/chart-shared';
+export * from './primitives/ai-mark';
 export * from './primitives/ai-sparkle';
 export * from './primitives/cx';
 export * from './primitives/focus-ring';

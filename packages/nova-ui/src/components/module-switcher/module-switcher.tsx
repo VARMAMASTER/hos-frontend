@@ -5,6 +5,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react';
+import { AiMark } from '../../primitives/ai-mark';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
 import { menuItem } from '../../primitives/menu-item';
@@ -94,7 +95,9 @@ function monogram(label: string): string {
 }
 
 function glyphOf(module: ModuleOption): ReactNode {
-  return module.icon ?? (module.ai ? '✦' : monogram(module.label));
+  return (
+    module.icon ?? (module.ai ? <AiMark size="md" /> : monogram(module.label))
+  );
 }
 
 function searchable(module: ModuleOption): string {

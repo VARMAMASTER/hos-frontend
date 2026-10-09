@@ -21,7 +21,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Draft: the ai-toned rail, the ✦ AI draft badge, and an ApprovalBar in the footer.
+// Draft: the ai-toned rail, the AI mark in the AI draft badge, and an ApprovalBar in the footer.
 export const Draft: Story = {
   args: {
     footer: (

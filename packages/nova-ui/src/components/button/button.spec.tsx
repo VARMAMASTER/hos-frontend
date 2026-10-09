@@ -142,9 +142,9 @@ describe('Button', () => {
     }
   });
 
-  // Generated content with empty alternative text: the spark is seen, never read, and the
-  // button's text stays the caller's own words.
-  it('marks the ai variant with the spark, kept out of the accessible name and the text', () => {
+  // The AI mark is drawn in the markup (AiMark), decoration: seen, never read, and the button's text
+  // stays the caller's own words, so the label is always what names it.
+  it('marks the ai variant with the AI mark, kept out of the accessible name and the text', () => {
     render(
       <>
         <Button variant="ai">Draft summary</Button>
@@ -154,8 +154,39 @@ describe('Button', () => {
     const button = screen.getByRole('button', { name: 'Draft summary' });
     expect(button.textContent).toBe('Draft summary');
     const label = screen.getByText('Draft summary');
-    expect(label.classList).toContain("before:content-['✦'_/_'']");
+    const mark = label.querySelector('svg[data-ai-mark]');
+    expect(mark).not.toBeNull();
+    expect(mark?.getAttribute('aria-hidden')).toBe('true');
+    expect(mark?.getAttribute('class')).toContain('size-icon-xs');
+    expect(label.className).not.toMatch(/content-/);
+    // Only the ai variant is marked.
+    expect(
+      screen.getByText('Plain').querySelector('[data-ai-mark]'),
+    ).toBeNull();
     expect(screen.getByText('Plain').className).not.toMatch(/content-/);
+  });
+
+  it('keeps the AI mark with its label while loading, and the button aria-busy with its name', () => {
+    render(
+      <Button variant="ai" loading>
+        Draft summary
+      </Button>,
+    );
+    const button = screen.getByRole('button', { name: 'Draft summary' });
+    expect(button.getAttribute('aria-busy')).toBe('true');
+    const label = screen.getByText('Draft summary');
+    expect(label.querySelector('[data-ai-mark]')).not.toBeNull();
+    expect(label.classList.contains('opacity-0')).toBe(true);
+  });
+
+  it('keeps the AI mark and the label on a disabled ai button too', () => {
+    render(
+      <Button variant="ai" disabled>
+        Draft summary
+      </Button>,
+    );
+    const label = screen.getByText('Draft summary');
+    expect(label.querySelector('[data-ai-mark]')).not.toBeNull();
   });
 
   describe('the prototype .btn', () => {

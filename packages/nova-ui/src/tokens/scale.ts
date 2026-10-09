@@ -163,6 +163,11 @@ export const MOTION_EASINGS = {
 // on the lightened fill for every hospital's AI colour.
 export const AI_SHEEN_PEAK = 0.14;
 
+// The halo behind the white glyph of the AI tile (AiMark tile): a tight dark shadow, `--nova-ai-spark-
+// glyph-shadow` in theme.css. The legibility proof models the glyph's edge as the halo ink over each
+// stop of the AI gradient at `alpha`; utilities.spec.ts holds theme.css at least that strong.
+export const AI_SPARK_HALO = { ink: '#001923', alpha: 0.3 } as const;
+
 export const MOTION_DURATIONS_MS = { fast: 150, base: 200, slow: 240 } as const;
 
 export const EASE_UTILITIES = Object.keys(MOTION_EASINGS).map(

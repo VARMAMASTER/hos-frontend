@@ -59,7 +59,6 @@ const PROTOTYPE_NAMES: Record<string, keyof typeof NOVA_DEFAULTS> = {
   '--ai-ghost': '--nova-color-ai-ghost',
   '--ai-line': '--nova-color-ai-line',
   '--ai-grad': '--nova-gradient-ai',
-  '--ai-mark': '--nova-ai-mark',
   '--good': '--nova-color-good',
   '--good-soft': '--nova-color-good-soft',
   '--good-deep': '--nova-color-good-deep',
@@ -105,7 +104,7 @@ const HELD_BY_A_PROOF: Record<string, [prototype: string, nova: string]> = {
 
 describe('the prototype token set (hos.css :root)', () => {
   it('names every prototype token Nova carries', () => {
-    expect(Object.keys(PROTOTYPE_NAMES)).toHaveLength(67);
+    expect(Object.keys(PROTOTYPE_NAMES)).toHaveLength(66);
     for (const name of Object.values(PROTOTYPE_NAMES)) {
       expect(NOVA_DEFAULTS, name).toHaveProperty(name);
     }
@@ -171,19 +170,11 @@ describe('the prototype token set (hos.css :root)', () => {
           /var\((--[\w-]+)\)/g,
           (_, name: string) => `var(${PROTOTYPE_NAMES[name] ?? name})`,
         );
-      // Nova may name a colour the prototype writes as a literal (the AI mark's four tints are
-      // tokens, so a theme can move them): compared with every Nova token resolved.
-      const tokens = NOVA_DEFAULTS as Record<string, string>;
-      const resolved = (value: string): string =>
-        value.replace(
-          /var\((--nova-color-ai-mark-\d)\)/g,
-          (_, ref: string) => tokens[ref] ?? ref,
-        );
       for (const [name, nova] of Object.entries(PROTOTYPE_NAMES)) {
         const held = HELD_BY_A_PROOF[name];
         expect(prototype[name], name).toBe(held ? held[0] : prototype[name]);
         const expected = held ? held[1] : renamed(prototype[name] ?? '');
-        expect(resolved(NOVA_DEFAULTS[nova]), name).toBe(expected);
+        expect(NOVA_DEFAULTS[nova], name).toBe(expected);
       }
     },
   );

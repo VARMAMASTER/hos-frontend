@@ -68,10 +68,6 @@ export const BRAND_CHROME_TOKENS = [
   '--nova-color-sidebar-lift',
   // The AI's single-value colours (AI_FIXED_TOKENS below): the same in both schemes, like the chrome.
   '--nova-color-ai-bright',
-  '--nova-color-ai-mark-1',
-  '--nova-color-ai-mark-2',
-  '--nova-color-ai-mark-3',
-  '--nova-color-ai-mark-4',
 ] as const;
 
 export type BrandSchemeToken = (typeof BRAND_SCHEME_TOKENS)[number];
@@ -99,13 +95,7 @@ export const AI_SCHEME_TOKENS = [
   '--nova-color-ai-hover',
 ] as const;
 
-export const AI_FIXED_TOKENS = [
-  '--nova-color-ai-bright',
-  '--nova-color-ai-mark-1',
-  '--nova-color-ai-mark-2',
-  '--nova-color-ai-mark-3',
-  '--nova-color-ai-mark-4',
-] as const;
+export const AI_FIXED_TOKENS = ['--nova-color-ai-bright'] as const;
 
 type AiToken =
   | (typeof AI_SCHEME_TOKENS)[number]

@@ -5,6 +5,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from 'react';
+import { AiMark } from '../../primitives/ai-mark';
 import { cx } from '../../primitives/cx';
 import { motionAllowed } from '../../primitives/motion';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
@@ -13,7 +14,7 @@ import { MOTION_DURATIONS_MS, MOTION_EASINGS } from '../../tokens/scale';
 // Which side of the conversation: in (the other party, on the left) or out (this side, on the right).
 export type ChatBubbleDirection = 'in' | 'out';
 // Not a status Tone: who is speaking. default is a message; ai is a message a machine wrote (marked
-// with the ✦ and a word); system is an event between messages ("Call ended · 2:12"), drawn as a
+// with the AI mark and a word); system is an event between messages ("Call ended · 2:12"), drawn as a
 // centred pill rather than a bubble.
 export type ChatBubbleTone = 'default' | 'ai' | 'system';
 // nova is the product's own colours (the call transcript); whatsapp is WhatsApp's brand, from the
@@ -247,7 +248,9 @@ export const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
                   quiet[palette].speaker,
                 )}
               >
-                {ai ? <span aria-hidden="true">✦ </span> : null}
+                {ai ? (
+                  <AiMark size="xs" className="mr-s1 align-text-top" />
+                ) : null}
                 {speakerText}
               </span>
             ) : null}

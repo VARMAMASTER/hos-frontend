@@ -393,7 +393,7 @@ export interface CallTurnProps
     | 'critical'
     | 'criticalLabel'
   > {
-  // The AI agent's turn (on the left, marked ✦); the caller's otherwise.
+  // The AI agent's turn (on the left, marked with the AI mark); the caller's otherwise.
   ai?: boolean;
 }
 

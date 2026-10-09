@@ -1,6 +1,6 @@
 import { useRef, type HTMLAttributes } from 'react';
 import { cx } from '../../primitives/cx';
-import { SparkleCluster } from '../../primitives/ai-sparkle';
+import { AiMark } from '../../primitives/ai-mark';
 import { MOTION_EASINGS } from '../../tokens/scale';
 import { useLoopMotion } from '../../primitives/use-motion';
 
@@ -34,8 +34,8 @@ function Dot({ timing }: { timing: KeyframeAnimationOptions }) {
   );
 }
 
-// The row HOS AI shows while it works on an answer: the ✦ mark and a label in words, then three
-// dots. Elevated with radiant 3-star sparkle cluster and glowing glass styling.
+// The row HOS AI shows while it works on an answer: the AI mark and a label in words, then three
+// dots. Led by the AI mark, with glowing glass styling.
 export function AiThinking({
   label = 'Thinking…',
   className,
@@ -54,10 +54,7 @@ export function AiThinking({
         aria-hidden="true"
         className="relative inline-flex items-center text-ai-bright"
       >
-        <SparkleCluster
-          size="xs"
-          className="text-ai-bright motion-safe:animate-pulse"
-        />
+        <AiMark size="xs" className="text-ai motion-safe:animate-pulse" />
       </span>
       {label}
       <span aria-hidden="true" className="inline-flex items-center">

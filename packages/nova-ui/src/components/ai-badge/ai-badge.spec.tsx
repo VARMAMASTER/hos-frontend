@@ -30,17 +30,17 @@ describe('AiBadge', () => {
     expect(assistiveText(container).trim()).toBe('AI summary');
   });
 
-  it('shows a visible ✦ spark that assistive technology skips', () => {
+  it('shows the AI mark, which assistive technology skips', () => {
     const { container } = render(<AiBadge />);
     const spark = container.querySelector('[aria-hidden="true"]');
-    expect(spark?.textContent).toBe('✦');
+    expect(spark?.hasAttribute('data-ai-mark')).toBe(true);
     expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(1);
   });
 
-  it('is never identified by colour alone: the spark and the label are both in the markup', () => {
+  it('is never identified by colour alone: the mark and the label are both in the markup', () => {
     render(<AiBadge />);
     const badge = screen.getByText('AI draft');
-    expect(badge.textContent).toContain('✦');
+    expect(badge.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(badge.textContent).toContain('AI draft');
   });
 

@@ -34,7 +34,8 @@ describe('WorkerCard', () => {
       within(article).getByRole('heading', { level: 3 }).textContent,
     ).toContain('WhatsApp Assistant');
     const spark = article.querySelector('[data-spark]');
-    expect(spark?.textContent).toBe('✦');
+    expect(spark?.querySelector('[data-ai-mark]')).not.toBeNull();
+    expect(spark?.textContent).toBe('');
     expect(spark?.getAttribute('aria-hidden')).toBe('true');
     expect(article.textContent).toContain('Front desk · Te/En/Hi');
     expect(article.textContent).toContain(

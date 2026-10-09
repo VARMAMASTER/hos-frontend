@@ -1,4 +1,5 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
+import { AiMark } from '../../primitives/ai-mark';
 import { IconTile } from './icon-tile';
 
 const decorate: Decorator = (Story) => (
@@ -38,7 +39,7 @@ export const Monogram: Story = {};
 
 export const Glyph: Story = { args: { children: glyph } };
 
-export const Ai: Story = { args: { tone: 'ai', children: '✦' } };
+export const Ai: Story = { args: { tone: 'ai', children: <AiMark /> } };
 
 export const Sizes: Story = {
   render: () => (

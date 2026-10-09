@@ -1,6 +1,6 @@
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../primitives/cx';
-import { SparkleCluster } from '../../primitives/ai-sparkle';
+import { AiMark } from '../../primitives/ai-mark';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
 
 export type AiStepStatus = 'pending' | 'running' | 'done';
@@ -24,7 +24,7 @@ export interface AiProgressStepsProps
   density?: AiProgressDensity;
   // Shown, and announced, once every step is done: "Done in 1.8 s".
   summary?: ReactNode;
-  // The list's name, shown as a caption with the ✦ mark. Inside an AI block that already says it is
+  // The list's name, shown as a caption with the AI mark. Inside an AI block that already says it is
   // AI, showLabel={false} hides the caption and keeps the name.
   label?: string;
   showLabel?: boolean;
@@ -160,7 +160,7 @@ export function AiProgressSteps({
         aria-hidden="true"
         className="relative inline-flex items-center text-ai-bright"
       >
-        <SparkleCluster size="xs" className="text-ai-bright" />
+        <AiMark size="xs" className="text-ai" />
       </span>
       {label}
     </p>

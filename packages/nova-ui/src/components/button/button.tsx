@@ -1,4 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
+import { AiMark } from '../../primitives/ai-mark';
 import { cx } from '../../primitives/cx';
 import { focusRing } from '../../primitives/focus-ring';
 import { Spinner } from '../../primitives/spinner';
@@ -61,8 +62,7 @@ const variants: Record<DrawnVariant, string> = {
 };
 
 // variant="ai" is the plain, solid .btn-ai of the prototype (a table row action, the Approve button of
-// an approval bar). The animated, playful AI button is AiButton (components/ai-button).
-const AI_SPARK = "before:content-['✦'_/_'']";
+// an approval bar), led by the AI mark. The animated, playful AI button is AiButton (components/ai-button).
 
 // md is .btn, sm is .btn-sm (10px by 6px, the label type role; its 7px radius is off-scale too).
 const sizes: Record<ButtonSize, string> = {
@@ -148,12 +148,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             <span
               className={cx(
                 'inline-flex items-center justify-center gap-control',
-                // The AI spark is decoration: generated content with empty alternative text, so it is
-                // neither in the accessible name nor in the button's text.
-                drawn === 'ai' && AI_SPARK,
                 loading && 'opacity-0',
               )}
             >
+              {/* The AI mark is decoration (aria-hidden): the label names the button. */}
+              {drawn === 'ai' ? <AiMark size="xs" /> : null}
               {children}
             </span>
             {loading ? <Spinner /> : null}

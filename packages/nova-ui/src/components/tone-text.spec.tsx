@@ -43,13 +43,14 @@ describe('tone is never carried by colour alone', () => {
       expect(visibleText(row)).toContain(TONE_WORDS[tone]);
     });
 
-    it('marks AI with the AI badge (a spark and the word), not a coloured dot', () => {
+    it('marks AI with the AI badge (the AI mark and the word), not a coloured dot', () => {
       render(renderers[name]('ai'));
       const badge = screen
         .getByRole('listitem')
         .querySelector('[data-tone="ai"][data-badge]');
       expect(badge).not.toBeNull();
-      expect(visibleText(badge as Element)).toBe('✦AI');
+      expect(visibleText(badge as Element)).toBe('AI');
+      expect((badge as Element).querySelector('[data-ai-mark]')).not.toBeNull();
     });
 
     it('adds no tone word to a neutral event', () => {

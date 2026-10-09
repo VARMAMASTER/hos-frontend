@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { AiMark } from '../primitives/ai-mark';
 import { AiDraftReply } from '../components/ai-draft-reply/ai-draft-reply';
 import {
   CallSystemEvent,
@@ -96,13 +97,12 @@ function WhatsAppBooking() {
       subtitle="+91 98480 1123•"
       status={
         <>
-          <span aria-hidden="true">✦ </span>AI Assistant
+          <AiMark size="xs" /> AI Assistant
         </>
       }
       badge={
         <>
-          Front desk closed · 11:47 PM · <span aria-hidden="true">✦ </span>AI
-          handling solo
+          Front desk closed · 11:47 PM · <AiMark size="xs" /> AI handling solo
         </>
       }
       maxBodyHeight={520}

@@ -734,10 +734,6 @@
   --nova-color-ai-ghost: #F6FDFF;
   --nova-color-ai-line: #B9E6F2;
   --nova-color-ai-hover: #0B5567;
-  --nova-color-ai-mark-1: #EA4335;
-  --nova-color-ai-mark-2: #4285F4;
-  --nova-color-ai-mark-3: #34A853;
-  --nova-color-ai-mark-4: #FBBC04;
   --nova-color-good: #0B8A68;
   --nova-color-good-soft: #E3F2EC;
   --nova-color-good-deep: #07634B;
@@ -773,7 +769,6 @@
   --nova-chart-5: #A779FD;
   --nova-chart-6: #9C1B80;
   --nova-gradient-ai: linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, var(--nova-color-primary) 105%);
-  --nova-ai-mark: conic-gradient(from 0deg at 50% 50%, var(--nova-color-ai-mark-1) 0deg, var(--nova-color-ai-mark-2) 92deg, var(--nova-color-ai-mark-3) 184deg, var(--nova-color-ai-mark-4) 272deg, var(--nova-color-ai-mark-1) 360deg);
   --nova-radius-sm: 8px;
   --nova-radius-md: 12px;
   --nova-radius-lg: 18px;
@@ -1178,9 +1173,11 @@
   --nova-mask-solid: linear-gradient(#000 0 0);
   /* The highlight ring sits this far outside its host (an avatar). */
   --nova-highlight-ring-offset: -3px;
-  /* .ai-spark: its corner, and the tight shadows that keep the white glyph legible on the mark. */
+  /* The AI tile (.ai-spark): its corner, the Care spark's size inside it, and the tight halo that keeps
+     the white glyph legible on every stop of the AI gradient (theme/legibility.ts proves it). */
   --nova-ai-spark-radius: 7px;
-  --nova-ai-spark-glyph-shadow: 0 1px 2px rgba(20,10,0,.55), 0 0 3px rgba(20,10,0,.35);
+  --nova-ai-spark-glyph: var(--nova-icon-tile);
+  --nova-ai-spark-glyph-shadow: 0 1px 1.5px rgba(0,25,35,.5);
   --nova-ai-spark-lift: 0 1px 4px rgba(60,40,10,.28), inset 0 0 0 1px rgba(255,255,255,.28);
   --nova-ai-spark-lift-approved: 0 1px 4px rgba(11,138,104,.3), inset 0 1px 0 rgba(255,255,255,.35);
   /* The chat wallpaper (hos.css .phone-b): an 18px grid of 1px dots. */
@@ -1467,7 +1464,6 @@
   --nova-gradient-highlight-wash: linear-gradient(90deg, var(--nova-color-primary-soft), var(--nova-color-highlight-soft));
   --nova-gradient-ai: linear-gradient(135deg, var(--nova-color-ai-bright) 0%, var(--nova-color-ai) 48%, var(--nova-color-primary) 105%);
   --nova-gradient-ai-rail: linear-gradient(180deg, var(--nova-color-primary) 0%, var(--nova-color-ai) 52%, var(--nova-color-ai-bright) 100%);
-  --nova-ai-mark: conic-gradient(from 0deg at 50% 50%, var(--nova-color-ai-mark-1) 0deg, var(--nova-color-ai-mark-2) 92deg, var(--nova-color-ai-mark-3) 184deg, var(--nova-color-ai-mark-4) 272deg, var(--nova-color-ai-mark-1) 360deg);
   --nova-tabbar-tint: color-mix(in srgb, var(--nova-color-chrome-2) 7%, transparent);
   --nova-surface-fill: color-mix(in srgb, color-mix(in srgb, var(--nova-color-surface-2) var(--nova-surface-tint), var(--nova-color-surface)) var(--nova-surface-alpha), transparent);
   --nova-surface-border: color-mix(in srgb, var(--nova-surface-rim) calc(var(--nova-glass) * 100%), var(--nova-color-border));
@@ -1747,9 +1743,10 @@
   }
 }
 
-/* The prototype's .ai-spark: the 22px badge in the multicolour mark that heads an AI block. The tight
-   dark shadow keeps the white glyph legible over the mark's amber quadrant. Inside an approved block
-   it settles to solid green. */
+/* The AI tile (the prototype's .ai-spark): the 22px tile in the HOS AI gradient (cyan into the brand, so
+   it follows each hospital's theme) that heads an AI block. It holds the white Care spark (AiMark) at
+   its own size, kept legible by a tight dark halo on the glyph. Inside an approved block it settles to
+   solid green. Reached only through <AiMark tile />. */
 /* prettier-ignore */
 @utility nova-ai-spark {
   display: inline-grid;
@@ -1758,11 +1755,16 @@
   width: var(--nova-mark);
   height: var(--nova-mark);
   border-radius: var(--nova-ai-spark-radius);
-  background-image: var(--nova-ai-mark);
+  background-image: var(--nova-gradient-ai);
   color: var(--nova-ink-on-dark);
   font-size: var(--nova-text-label);
-  text-shadow: var(--nova-ai-spark-glyph-shadow);
   box-shadow: var(--nova-ai-spark-lift);
+
+  & [data-ai-mark] {
+    width: var(--nova-ai-spark-glyph);
+    height: var(--nova-ai-spark-glyph);
+    filter: drop-shadow(var(--nova-ai-spark-glyph-shadow));
+  }
 
   [data-approved='true'] & {
     background-image: none;
@@ -1789,11 +1791,6 @@
 /* The prototype's .sb-bar fill: a progress or gauge bar, the chrome accent into the sky glow. */
 @utility nova-bar-grad {
   background-image: var(--nova-gradient-bar);
-}
-
-/* The multicolour AI mark (--ai-mark), for the mark only (the spark badge, the copilot orb). */
-@utility nova-ai-mark {
-  background-image: var(--nova-ai-mark);
 }
 
 /* The AI gradient rail alone, down the left edge of any surface: 3px, flush with the border. */

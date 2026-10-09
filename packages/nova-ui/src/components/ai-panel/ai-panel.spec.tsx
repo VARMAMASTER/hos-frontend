@@ -51,14 +51,18 @@ describe('AiPanel', () => {
     expect(panel().dataset['surface']).toBe('ai-block');
     expect(panel().dataset['approved']).toBeUndefined();
     const spark = panel().querySelector('.nova-ai-spark');
-    expect(spark?.textContent).toBe('✦');
+    expect(spark?.querySelector('[data-ai-mark]')).not.toBeNull();
+    expect(spark?.textContent).toBe('');
     expect(spark?.getAttribute('aria-hidden')).toBe('true');
+    // The tile is only the mark: the title and the badge beside it are the words.
+    expect(screen.getByText('AI draft')).toBeTruthy();
   });
 
   it('shows the AI badge in draft: a spark and the text "AI draft"', () => {
     render(<AiPanel title="Discharge summary">Body</AiPanel>);
     const badge = screen.getByText('AI draft');
-    expect(badge.textContent).toContain('✦');
+    expect(badge.querySelector('[data-ai-mark]')).not.toBeNull();
+    expect(badge.textContent).toBe('AI draft');
     expect(badge.dataset['tone']).toBe('ai');
     expect(screen.queryByText('Approved')).toBeNull();
   });
@@ -82,7 +86,9 @@ describe('AiPanel', () => {
     expect(screen.queryByText('AI draft')).toBeNull();
     // The block settles to green (theme.css) and its spark turns to a tick.
     expect(panel().dataset['approved']).toBe('true');
-    expect(panel().querySelector('.nova-ai-spark')?.textContent).toBe('✓');
+    const tile = panel().querySelector('.nova-ai-spark');
+    expect(tile?.textContent).toBe('✓');
+    expect(tile?.querySelector('[data-ai-mark]')).toBeNull();
   });
 
   it('still says an AI produced it once approved: provenance outlives the draft', () => {
@@ -92,7 +98,8 @@ describe('AiPanel', () => {
       </AiPanel>,
     );
     const badge = screen.getByText('AI-assisted');
-    expect(badge.textContent).toContain('✦');
+    expect(badge.querySelector('[data-ai-mark]')).not.toBeNull();
+    expect(badge.textContent).toBe('AI-assisted');
     expect(badge.dataset['tone']).toBe('ai');
   });
 

@@ -33,7 +33,7 @@ const violet = {
 const distance = (a: number, b: number) => Math.abs(hueDelta(a, b));
 
 describe('the AI family is brand-derived', () => {
-  it('is every AI token: the scheme family and the single-value bright stop and mark tints', () => {
+  it('is every AI token: the scheme family and the single-value bright stop', () => {
     expect([...AI_SCHEME_TOKENS]).toEqual([
       '--nova-color-ai',
       '--nova-color-ai-deep',
@@ -42,13 +42,7 @@ describe('the AI family is brand-derived', () => {
       '--nova-color-ai-line',
       '--nova-color-ai-hover',
     ]);
-    expect([...AI_FIXED_TOKENS]).toEqual([
-      '--nova-color-ai-bright',
-      '--nova-color-ai-mark-1',
-      '--nova-color-ai-mark-2',
-      '--nova-color-ai-mark-3',
-      '--nova-color-ai-mark-4',
-    ]);
+    expect([...AI_FIXED_TOKENS]).toEqual(['--nova-color-ai-bright']);
     for (const token of AI_SCHEME_TOKENS) {
       expect(BRAND_SCHEME_TOKENS as readonly string[]).toContain(token);
     }

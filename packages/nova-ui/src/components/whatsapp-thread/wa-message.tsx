@@ -82,7 +82,7 @@ export interface WaMessageProps
     | 'tone'
     | 'contentId'
   > {
-  // ai marks a message the hospital's AI assistant wrote, with the ✦ and a word.
+  // ai marks a message the hospital's AI assistant wrote, with the AI mark and a word.
   tone?: 'default' | 'ai';
   // Delivery, for a message this side sent.
   status?: WaDeliveryStatus;

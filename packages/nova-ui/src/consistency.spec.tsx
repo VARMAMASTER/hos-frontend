@@ -613,7 +613,7 @@ const TONE_WORDS = [
   'brand',
 ];
 
-// The primitives (Spinner, SparkleCluster …) take their sizes and tones from the same vocabulary.
+// The primitives (Spinner, AiMark …) take their sizes and tones from the same vocabulary.
 // primitives/types.ts is where the unions are declared, so it is the one file not scanned.
 const primitivesDir = join(srcDir, 'primitives');
 const primitiveFiles = sources(primitivesDir)
@@ -627,6 +627,9 @@ describe('the shared vocabulary (primitives/types.ts)', () => {
   it('scans the primitives as well as the components', () => {
     expect(primitiveFiles.map((file) => file.path)).toContain(
       'primitives/spinner.tsx',
+    );
+    expect(primitiveFiles.map((file) => file.path)).toContain(
+      'primitives/ai-mark.tsx',
     );
     expect(primitiveFiles.map((file) => file.path)).toContain(
       'primitives/ai-sparkle.tsx',

@@ -5,7 +5,7 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../primitives/cx';
-import { SparkleCluster } from '../../primitives/ai-sparkle';
+import { AiMark } from '../../primitives/ai-mark';
 import { focusRing } from '../../primitives/focus-ring';
 import { ariaDisabled, disabledControl } from '../../primitives/states';
 import type { Size } from '../../primitives/types';
@@ -37,7 +37,7 @@ export interface AiButtonProps
 }
 
 // The upgraded AI action: glowing neon pill with GPU-accelerated rotating conic border,
-// ambient aura backlight, 3-star sparkle cluster, and deep space navy glass gradient fill.
+// ambient aura backlight, AI mark (the Care spark), and deep space navy glass gradient fill.
 // Every moving part is motion-safe (keyframes in theme.css), so under prefers-reduced-motion
 // it falls back to a crisp static border and calm steady glow.
 const base = cx(
@@ -264,7 +264,7 @@ function Label({
               'motion-safe:group-hover/ai:animate-ai-twinkle motion-safe:group-focus-visible/ai:animate-ai-twinkle',
           )}
         >
-          <SparkleCluster />
+          <AiMark />
         </span>
         {live && burst ? <Burst /> : null}
       </span>
@@ -331,8 +331,8 @@ function Orbit() {
       className="pointer-events-none absolute inset-s1 motion-reduce:hidden"
     >
       <span className="absolute inset-y-0 left-0 motion-safe:animate-ai-orbit-x">
-        <span className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 text-micro leading-none motion-safe:animate-ai-orbit-y">
-          ✦
+        <span className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 leading-none motion-safe:animate-ai-orbit-y">
+          <AiMark size="xs" />
         </span>
       </span>
     </span>

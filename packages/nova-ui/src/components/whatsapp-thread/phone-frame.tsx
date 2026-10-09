@@ -11,7 +11,7 @@ export interface PhoneFrameProps
   avatar?: ReactNode;
   // Under the name: a phone number, "online".
   subtitle?: ReactNode;
-  // A tag at the right of the header ("✦ AI Assistant"): the prototype's .tag-offline.
+  // A tag at the right of the header (the AI mark and "AI Assistant"): the prototype's .tag-offline.
   status?: ReactNode;
   // A notice at the top of the chat ("Front desk closed · 11:47 PM · AI handling solo").
   badge?: ReactNode;

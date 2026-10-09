@@ -1,5 +1,5 @@
 import { GLASS, MATERIAL_LEVELS, type NovaMaterial } from '../tokens/material';
-import { AI_SHEEN_PEAK } from '../tokens/scale';
+import { AI_SHEEN_PEAK, AI_SPARK_HALO } from '../tokens/scale';
 import { NOVA_DARK } from '../tokens/scheme';
 import { NOVA_DEFAULTS } from '../tokens/semantic';
 import { WHATSAPP_PAIRINGS } from '../tokens/whatsapp';
@@ -378,6 +378,30 @@ function materialChecks(
     TEXT,
     true,
   );
+  // The AI tile (AiMark tile): the white Care spark, a graphic mark at 3:1, on the HOS AI gradient
+  // (`--nova-gradient-ai`: bright 0%, AI 48%, brand 105%) against every stop, and against the end the
+  // tile actually shows (the 105% brand stop is clipped at 100%). The glyph carries a tight dark halo
+  // (`--nova-ai-spark-glyph-shadow`), so what its edge sits on is the halo ink over the stop, at the
+  // halo's modelled strength (AI_SPARK_HALO; utilities.spec.ts holds theme.css at least that strong).
+  // The bright stop is pale (cyan-400 is 1.7:1 under raw white): it is the one that needs the halo.
+  const aiBright = hex('--nova-color-ai-bright');
+  const aiStop = hex('--nova-color-ai');
+  const brandStop = primary;
+  const gradientEnd = mixColours(brandStop, (100 - 48) / (105 - 48), aiStop);
+  for (const [stop, colour] of [
+    ['the bright stop', aiBright],
+    ['the AI stop', aiStop],
+    ['the brand stop', brandStop],
+    ['its visible end', gradientEnd],
+  ] as const) {
+    check(
+      `the AI tile glyph (white) on the AI gradient: ${stop}`,
+      WHITE,
+      mixColours(AI_SPARK_HALO.ink, AI_SPARK_HALO.alpha, colour),
+      MARK,
+      true,
+    );
+  }
   // The AI line (the AI block's edge) holds no contrast of its own: the block is told apart by its
   // gradient rail, the spark and its label. The AI mark is the one AI edge, at 3:1 above.
 

@@ -198,7 +198,6 @@ describe('component conventions', () => {
     }
     for (const good of [
       "'nova-ai-grad'",
-      "'nova-ai-mark'",
       "'[--nova-data-edge:var(--nova-gradient-edge-kpi)]'",
       "'nova-highlight-grad'",
       "'nova-highlight-text'",
@@ -1078,7 +1077,7 @@ describe('tokens only: every design value is a named token', () => {
     'duration-base',
     'motion-safe:ease-standard',
     'transition-[color,background-color,box-shadow]',
-    "before:content-['✦'_/_'']",
+    "before:content-['•'_/_'']",
     'grid-cols-[auto_1fr]',
     'grid-cols-[auto_repeat(2,max-content)_max-content]',
     'grid-cols-[2fr_1fr]',

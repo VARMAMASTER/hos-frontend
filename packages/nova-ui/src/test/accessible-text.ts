@@ -21,7 +21,10 @@ export function deadScreenReaderText(element: Element): Element[] {
   return Array.from(element.querySelectorAll('[aria-hidden="true"] .sr-only'));
 }
 
-// The AI spark drawn as decoration: the SparkleCluster mark inside an aria-hidden subtree.
+// The AI mark drawn as decoration: the AiMark glyph, itself aria-hidden or inside an aria-hidden
+// subtree (the tile).
 export function decorativeSpark(element: Element): Element | null {
-  return element.querySelector('[aria-hidden="true"] [data-sparkle-cluster]');
+  return element.querySelector(
+    '[data-ai-mark][aria-hidden="true"], [aria-hidden="true"] [data-ai-mark]',
+  );
 }

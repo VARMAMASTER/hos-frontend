@@ -137,14 +137,14 @@ describe('Timeline nodes', () => {
     expect(new Set(shapes).size).toBe(tones.length);
   });
 
-  it('fills the AI node with the AI gradient and the spark', () => {
+  it('fills the AI node with the AI gradient and the AI mark', () => {
     const { container } = render(
       <Timeline
         items={[{ id: 'ai', time: '09:12', title: 'Draft', tone: 'ai' }]}
       />,
     );
     const [node] = markers(container);
-    expect(node?.textContent).toBe('✦');
+    expect(node?.querySelector('svg[data-ai-mark]')).not.toBeNull();
     expect(node?.classList.contains('nova-ai-grad')).toBe(true);
   });
 

@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { cx } from '../../primitives/cx';
-import { SparkleCluster } from '../../primitives/ai-sparkle';
+import { AiMark } from '../../primitives/ai-mark';
 import { focusRing } from '../../primitives/focus-ring';
 import { Surface } from '../../primitives/surface';
 import { useControllableState } from '../../primitives/use-controllable-state';
@@ -99,8 +99,8 @@ const ORBIT_FAST: KeyframeAnimationOptions = {
   easing: 'linear',
 };
 
-// The orb: the multicolour AI mark (the prototype's --ai-mark), 54px (48px on a phone), the ✦ in
-// white, lifted on shadow-lg. Its halo and ring are decoration, and still under reduced motion.
+// The orb: the AI mark on the dark hero fill, 54px (48px on a phone), the Care spark in the
+// AI's bright cyan, lifted on shadow-lg. Its halo and ring are decoration, and still under reduced motion.
 function Orb({ expanded }: { expanded: boolean }) {
   const halo = useRef<HTMLSpanElement>(null);
   const ring = useRef<HTMLSpanElement>(null);
@@ -125,7 +125,7 @@ function Orb({ expanded }: { expanded: boolean }) {
         className="pointer-events-none absolute -inset-(--nova-copilot-orb-ring) rounded-full border-emphasis border-transparent border-r-ai-bright/50 border-t-ai-bright"
       />
       <span className="relative flex items-center justify-center">
-        <SparkleCluster size="md" className="text-ai-bright" />
+        <AiMark size="md" className="text-ai-bright" />
       </span>
     </span>
   );
@@ -269,7 +269,7 @@ export function AiCopilotDock({
 
   const dockedTrigger =
     placement === 'top' ? (
-      // The prototype's .tb-ask: a pill in the app bar, the ✦ and the words, then the shortcut.
+      // The prototype's .tb-ask: a pill in the app bar, the AI mark and the words, then the shortcut.
       <button
         {...triggerProps}
         className={cx(
@@ -284,7 +284,7 @@ export function AiCopilotDock({
           aria-hidden="true"
           className="relative flex items-center justify-center text-body leading-none"
         >
-          <SparkleCluster size="sm" className="text-ai-bright" />
+          <AiMark size="sm" className="text-ai-bright" />
         </span>
         <span className={cx(retracted && 'sr-only')}>{label}</span>
         <kbd
@@ -368,9 +368,7 @@ export function AiCopilotDock({
       <div aria-hidden="true" className="h-s0 shrink-0 nova-ai-grad" />
       {/* .hcp-h: the spark, the title, the small print, and the close button. */}
       <div className="flex shrink-0 flex-wrap items-center gap-s3 border-b border-border bg-ai-ghost px-card py-card-bar">
-        <span aria-hidden="true" className="nova-ai-spark">
-          <SparkleCluster size="xs" className="text-on-primary" />
-        </span>
+        <AiMark tile />
         <Heading
           id={titleId}
           className="font-display text-body font-bold text-ink"

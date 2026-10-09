@@ -6,6 +6,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from 'react';
+import { AiMark } from '../../primitives/ai-mark';
 import { cx } from '../../primitives/cx';
 import { useControllableState } from '../../primitives/use-controllable-state';
 import { VisuallyHidden } from '../../primitives/visually-hidden';
@@ -131,9 +132,7 @@ export function LearnedPreferenceRow({
             on ? 'text-ink' : 'text-ink-2',
           )}
         >
-          <span aria-hidden="true" className="text-ai">
-            ✦
-          </span>
+          <AiMark className="mt-s0 text-ai" />
           <span id={titleId} data-learned="">
             {learned}
           </span>

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { AiMark } from '../../primitives/ai-mark';
 import {
   PhoneFrame,
   WaBilingualMessage,
@@ -9,7 +10,7 @@ import {
 } from './whatsapp-thread';
 
 // Fictional patients and staff throughout. The thread is the hospital's view: the patient's
-// messages come in on the left, the hospital's (the AI assistant's, marked ✦) go out on the right.
+// messages come in on the left, the hospital's (the AI assistant's, marked with the AI mark) go out on the right.
 const meta = {
   title: 'AI/WhatsAppThread',
   component: WhatsAppThread,
@@ -18,7 +19,7 @@ const meta = {
     subtitle: '+91 98480 1123•',
     status: (
       <>
-        <span aria-hidden="true">✦ </span>AI Assistant
+        <AiMark size="xs" /> AI Assistant
       </>
     ),
   },
@@ -93,8 +94,7 @@ export const AfterHours: Story = {
   args: {
     badge: (
       <>
-        Front desk closed · 11:47 PM · <span aria-hidden="true">✦ </span>AI
-        handling solo
+        Front desk closed · 11:47 PM · <AiMark size="xs" /> AI handling solo
       </>
     ),
   },

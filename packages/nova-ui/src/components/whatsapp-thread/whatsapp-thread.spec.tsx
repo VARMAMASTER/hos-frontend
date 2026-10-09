@@ -117,16 +117,16 @@ describe('WaMessage', () => {
     );
   });
 
-  it('marks the AI’s messages with the ✦ and a word, and says so', () => {
+  it('marks the AI’s messages with the AI mark and a word, and says so', () => {
     const { container } = render(
       <WaMessage direction="out" tone="ai">
         Confirmed ✅
       </WaMessage>,
     );
     const bubble = container.querySelector('[data-chat-bubble]') as HTMLElement;
-    expect(container.querySelector('[data-slot="speaker"]')?.textContent).toBe(
-      '✦ AI assistant',
-    );
+    const speaker = container.querySelector('[data-slot="speaker"]');
+    expect(speaker?.textContent?.trim()).toBe('AI assistant');
+    expect(speaker?.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(spoken(bubble)).toBe('AI assistant sent: Confirmed ✅');
   });
 
