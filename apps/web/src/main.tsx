@@ -1,7 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createApiClient, createLogger } from '@hos/hos-utility';
-import { App } from './app/app';
+import { DEMO_ENTITLEMENTS } from './app/demo-entitlements';
+import { Root } from './app/root';
 import './styles.css';
 
 const api = createApiClient({
@@ -12,8 +13,11 @@ const api = createApiClient({
 const root = document.getElementById('root');
 if (!root) throw new Error('index.html is missing <div id="root">');
 
+// Root mounts the one NovaThemeProvider (theme, scheme, material, font). Until sign-in and the
+// tenant's entitlements come from the API, the demo build grants DEMO_ENTITLEMENTS explicitly: the
+// app itself grants nothing by default.
 createRoot(root).render(
   <StrictMode>
-    <App api={api} />
+    <Root api={api} {...DEMO_ENTITLEMENTS} />
   </StrictMode>,
 );
