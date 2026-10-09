@@ -32,7 +32,7 @@ const variantClasses = {
   body: 'text-body',
   caption: 'text-caption',
   meta: 'text-control text-ink-2',
-  code: 'font-mono text-control bg-surface-inset px-s1 rounded-tag',
+  code: 'font-mono text-control bg-surface-2 px-s1 rounded-tag',
   label: 'text-label font-medium',
 } as const;
 

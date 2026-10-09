@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
 import {
@@ -189,6 +190,45 @@ describe('the allow-list a theme is applied through', () => {
     expect(wrapper.style.getPropertyValue('--nova-color-ai-deep')).not.toMatch(
       /#000000/,
     );
+  });
+
+  // The style prop is the other way in: it must not reopen what the allow-list closes.
+  it('ignores a style prop that tries to recolour status or AI, and keeps its own theme values', () => {
+    render(
+      <NovaThemeProvider
+        theme={teal}
+        font="inter"
+        style={
+          {
+            '--nova-color-crit': '#00FF00',
+            '--nova-color-primary': '#123456',
+            '--nova-color-ai': '#000000',
+            '--nova-ai-hero-glow': '#000000',
+            '--nova-gradient-ai': 'none',
+            '--nova-font-body': 'Comic Sans MS',
+            minHeight: '100%',
+          } as CSSProperties
+        }
+      >
+        <p>styled</p>
+      </NovaThemeProvider>,
+    );
+    const wrapper = screen.getByText('styled').parentElement as HTMLElement;
+    expect(wrapper.style.getPropertyValue('--nova-color-crit')).toBe('');
+    expect(wrapper.style.getPropertyValue('--nova-color-ai')).toBe(
+      `light-dark(${tealPalette.light['--nova-color-ai']}, ${tealPalette.dark['--nova-color-ai']})`,
+    );
+    expect(wrapper.style.getPropertyValue('--nova-ai-hero-glow')).toBe('');
+    expect(wrapper.style.getPropertyValue('--nova-gradient-ai')).toBe('');
+    // The provider's own variables win over the style prop.
+    expect(wrapper.style.getPropertyValue('--nova-color-primary')).toBe(
+      tealPrimary,
+    );
+    expect(wrapper.style.getPropertyValue('--nova-font-body')).toContain(
+      'Inter',
+    );
+    // An ordinary style still applies.
+    expect(wrapper.style.minHeight).toBe('100%');
   });
 
   it('applyNovaTheme writes only allow-listed variables too', () => {

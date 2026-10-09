@@ -2,7 +2,7 @@ import type { ModuleManifest } from '../types';
 
 export const doctorManifest: ModuleManifest = {
   id: 'doctor',
-  title: 'Doctor Workspace',
+  title: 'Doctor',
   category: 'clinical',
   icon: 'Dr',
   requiredRoles: ['ROLE_DOCTOR', 'ROLE_CLINICAL_HEAD'],

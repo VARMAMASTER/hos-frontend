@@ -1,21 +1,27 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   AppShell,
+  Box,
   BrandMark,
+  Button,
   Chip,
+  Heading,
   NavItem,
   NavSection,
+  NOVA_FONTS,
   Sidebar,
+  Stack,
   Tab,
   TabList,
   TabPanel,
   Tabs,
+  Tag,
+  Text,
   TopBar,
-  NOVA_FONTS,
   type NovaFontPreset,
 } from '@hos/nova-ui';
 import { toApiError, type ApiClient } from '@hos/hos-utility';
-import { MODULE_REGISTRY, getEntitledModules } from '../modules/registry';
+import { getEntitledModules } from '../modules/registry';
 import { getTabWidget } from '../modules/routes';
 import type { ModuleCategory } from '../modules/types';
 
@@ -28,12 +34,20 @@ type ApiStatus =
 export interface AppProps {
   api?: Pick<ApiClient, 'get'>;
   tenantName?: string;
-  tenantModules?: string[];
-  userRoles?: string[];
+  // The modules the tenant has bought and the signed-in user's roles. Both default to none: the app
+  // grants nothing it was not given (entitlements fail closed). The demo entry point passes
+  // DEMO_ENTITLEMENTS explicitly.
+  tenantModules?: readonly string[];
+  userRoles?: readonly string[];
   initialModuleId?: string;
   initialTabId?: string;
-  fontPreset?: NovaFontPreset;
+  // The font preset NovaThemeProvider applies at the root (see root.tsx). The switcher in the top
+  // bar is shown when onFontChange is given.
+  font?: NovaFontPreset;
+  onFontChange?: (font: NovaFontPreset) => void;
 }
+
+const NO_ENTITLEMENTS: readonly string[] = [];
 
 const UNEXPECTED_RESPONSE = 'The API answered with an unexpected response.';
 
@@ -64,16 +78,30 @@ const CATEGORY_LABELS: Record<ModuleCategory, string> = {
   platform: 'Platform',
 };
 
+// The font presets in the order the switcher steps through them, each with the name it shows.
+const FONT_ORDER = Object.keys(NOVA_FONTS) as NovaFontPreset[];
+const FONT_NAMES: Record<NovaFontPreset, string> = {
+  googleSans: 'Google Sans Flex',
+  ibmPlexSans: 'IBM Plex Sans',
+  ibmPlexMono: 'IBM Plex Mono',
+  inter: 'Inter',
+};
+
+function nextFont(font: NovaFontPreset): NovaFontPreset {
+  const index = FONT_ORDER.indexOf(font);
+  return FONT_ORDER[(index + 1) % FONT_ORDER.length] ?? font;
+}
+
 export function App({
   api,
   tenantName = 'Hospital OS',
-  tenantModules,
-  userRoles,
+  tenantModules = NO_ENTITLEMENTS,
+  userRoles = NO_ENTITLEMENTS,
   initialModuleId,
   initialTabId,
-  fontPreset = 'googleSans',
+  font = 'googleSans',
+  onFontChange,
 }: AppProps) {
-  const [currentFont, setCurrentFont] = useState<NovaFontPreset>(fontPreset);
   const [status, setStatus] = useState<ApiStatus>({ kind: 'checking' });
 
   useEffect(() => {
@@ -103,30 +131,21 @@ export function App({
     };
   }, [api]);
 
-  const effectiveTenantModules = useMemo(
-    () => tenantModules ?? MODULE_REGISTRY.map((m) => m.id),
-    [tenantModules],
-  );
-  const effectiveUserRoles = useMemo(
-    () => userRoles ?? ['ROLE_SUPERADMIN'],
-    [userRoles],
-  );
-
   const entitledModules = useMemo(
-    () => getEntitledModules(effectiveTenantModules, effectiveUserRoles),
-    [effectiveTenantModules, effectiveUserRoles],
+    () => getEntitledModules([...tenantModules], [...userRoles]),
+    [tenantModules, userRoles],
   );
 
   const [selectedModuleId, setSelectedModuleId] = useState<string>(
-    initialModuleId ?? entitledModules[0]?.id ?? 'reception',
+    initialModuleId ?? entitledModules[0]?.id ?? '',
   );
 
-  const activeModule = useMemo(() => {
-    return (
+  const activeModule = useMemo(
+    () =>
       entitledModules.find((m) => m.id === selectedModuleId) ??
-      entitledModules[0]
-    );
-  }, [entitledModules, selectedModuleId]);
+      entitledModules[0],
+    [entitledModules, selectedModuleId],
+  );
 
   const activeModuleId = activeModule?.id ?? '';
 
@@ -159,17 +178,15 @@ export function App({
     setSelectedTabId(defTab);
   };
 
-  const handleSelectTab = (tabId: string) => {
-    setSelectedTabId(tabId);
-  };
-
-  const categoriesWithModules = useMemo(() => {
-    return CATEGORY_ORDER.map((category) => ({
-      category,
-      label: CATEGORY_LABELS[category],
-      modules: entitledModules.filter((m) => m.category === category),
-    })).filter((group) => group.modules.length > 0);
-  }, [entitledModules]);
+  const categoriesWithModules = useMemo(
+    () =>
+      CATEGORY_ORDER.map((category) => ({
+        category,
+        label: CATEGORY_LABELS[category],
+        modules: entitledModules.filter((m) => m.category === category),
+      })).filter((group) => group.modules.length > 0),
+    [entitledModules],
+  );
 
   const sidebar = (
     <Sidebar
@@ -195,95 +212,75 @@ export function App({
     </Sidebar>
   );
 
+  const fontName = FONT_NAMES[font];
+
   return (
     <AppShell sidebar={sidebar}>
-      <div
-        className="flex min-h-screen flex-col"
-        style={{
-          ['--nova-font-body' as string]:
-            currentFont && currentFont in NOVA_FONTS
-              ? NOVA_FONTS[currentFont]
-              : NOVA_FONTS.googleSans,
-        }}
-      >
-        <TopBar
-          role="banner"
-          actions={
-            <div className="flex items-center gap-s2">
-              <button
-                type="button"
-                onClick={() =>
-                  setCurrentFont((f) => {
-                    if (f === 'googleSans') return 'ibmPlexSans';
-                    if (f === 'ibmPlexSans') return 'inter';
-                    if (f === 'inter') return 'ibmPlexMono';
-                    return 'googleSans';
-                  })
-                }
-                className="rounded-control border border-white/20 bg-white/10 px-s2 py-s1 text-badge text-on-primary hover:bg-white/20"
-                title="Toggle UI Font Family"
-                aria-label={`Current font: ${currentFont}. Click to toggle.`}
+      <TopBar
+        role="banner"
+        actions={
+          <>
+            {onFontChange ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onFontChange(nextFont(font))}
+                aria-label={`Font: ${fontName}. Switch to ${FONT_NAMES[nextFont(font)]}.`}
+                title="Switch the interface font"
               >
-                Font:{' '}
-                {currentFont === 'inter'
-                  ? 'Inter'
-                  : currentFont === 'ibmPlexSans'
-                    ? 'IBM Plex'
-                    : currentFont === 'ibmPlexMono'
-                      ? 'Mono'
-                      : 'Google Sans'}
-              </button>
-              {api ? <StatusChip status={status} /> : null}
-            </div>
-          }
-        >
-          <div className="flex items-center gap-s3">
-            <span className="font-display text-subtitle font-bold text-on-primary">
-              {tenantName}
-            </span>
-            <span className="text-meta text-[color:var(--nova-chrome-ink-2)]">
-              /
-            </span>
-            <span className="text-body font-medium text-on-primary">
-              {activeModule ? `${activeModule.title} Workspace` : 'Workspace'}
-            </span>
-          </div>
-        </TopBar>
-
-        {activeModule ? (
-          <Tabs
-            value={activeTabId}
-            onValueChange={handleSelectTab}
-            className="flex flex-1 flex-col"
-          >
-            <div className="border-b border-border bg-surface px-s8 py-s3">
-              <TabList aria-label={`${activeModule.title} Tabs`}>
+                Font: {fontName}
+              </Button>
+            ) : null}
+            {api ? <StatusChip status={status} /> : null}
+          </>
+        }
+      />
+      {activeModule ? (
+        <Box padding="s8">
+          <Stack gap="s6">
+            {/* The page header, as the prototype puts it on the canvas below the top bar: the
+                module's name, with the hospital above it. */}
+            <Stack gap="s1">
+              <Text variant="label" tone="muted">
+                {tenantName}
+              </Text>
+              <Heading level="h1">{activeModule.title}</Heading>
+            </Stack>
+            <Tabs value={activeTabId} onValueChange={setSelectedTabId}>
+              <Stack gap="s6">
+                <TabList aria-label={`${activeModule.title} tabs`}>
+                  {activeModule.tabs.map((tab) => (
+                    <Tab key={tab.id} value={tab.id}>
+                      {tab.label}
+                      {tab.badge ? (
+                        <Tag variant="outline" tone="brand">
+                          {tab.badge}
+                        </Tag>
+                      ) : null}
+                    </Tab>
+                  ))}
+                </TabList>
                 {activeModule.tabs.map((tab) => (
-                  <Tab key={tab.id} value={tab.id}>
-                    <span>{tab.label}</span>
-                    {tab.badge ? (
-                      <span className="ml-s2 inline-flex items-center justify-center rounded-full bg-chrome-accent px-s1.5 py-0.5 text-badge font-semibold text-chrome-ring">
-                        {tab.badge}
-                      </span>
-                    ) : null}
-                  </Tab>
+                  <TabPanel key={tab.id} value={tab.id}>
+                    {getTabWidget(activeModule.id, tab.id)}
+                  </TabPanel>
                 ))}
-              </TabList>
-            </div>
-            <div className="flex-1 p-s8">
-              {activeModule.tabs.map((tab) => (
-                <TabPanel key={tab.id} value={tab.id}>
-                  {getTabWidget(activeModule.id, tab.id)}
-                </TabPanel>
-              ))}
-            </div>
-          </Tabs>
-        ) : (
-          <div className="p-s8 text-body text-ink-2">
-            No entitled modules available for current role.
-          </div>
-        )}
-      </div>
+              </Stack>
+            </Tabs>
+          </Stack>
+        </Box>
+      ) : (
+        <Box padding="s8">
+          <Stack gap="s1">
+            <Text variant="label" tone="muted">
+              {tenantName}
+            </Text>
+            <Text tone="muted">
+              No modules are available for this hospital and your role.
+            </Text>
+          </Stack>
+        </Box>
+      )}
     </AppShell>
   );
 }

@@ -5,8 +5,13 @@ import { TabHeader } from './tab-header';
 import { TabContent } from './tab-content';
 import { TabToolbar } from './tab-toolbar';
 import { TabKPIStrip } from './tab-kpi-strip';
+import { computed } from '../../test/token-css';
 
 afterEach(() => cleanup());
+
+// A resolved var() chain comes back bracketed: (#FFFFFF).
+const background = (element: Element) =>
+  computed(element, 'background-color').replace(/^\(+|\)+$/g, '');
 
 describe('TabPage and Tab Layout Templates', () => {
   it('renders TabPage with TabHeader and TabContent without raw HTML errors', () => {
@@ -68,6 +73,33 @@ describe('TabPage and Tab Layout Templates', () => {
     );
     expect(screen.getByRole('status')).toBeTruthy();
     expect(screen.queryByText('Should not be visible directly')).toBeNull();
+  });
+
+  // jsdom computes no stylesheet, so the colour is resolved from the compiled token layer
+  // (test/token-css.ts). An undefined colour class has no background and the panel draws nothing.
+  it('draws the toolbar panel on a real token colour (the prototype --panel-2)', () => {
+    const { container } = render(
+      <TabToolbar actions={<button type="button">Filter</button>} />,
+    );
+    const panel = container.firstElementChild as HTMLElement;
+    expect(background(panel)).toBe('#F8F7FD');
+  });
+
+  it('draws each loading placeholder block in a token colour that differs from the page', () => {
+    render(
+      <TabPage loading>
+        <div>Hidden</div>
+      </TabPage>,
+    );
+    const page = screen.getByRole('status');
+    const pageColour = background(page);
+    const blocks = [...page.querySelectorAll('.motion-safe\\:animate-pulse')];
+    expect(blocks).toHaveLength(2);
+    for (const block of blocks) {
+      const colour = background(block);
+      expect(colour).toMatch(/^#[0-9A-F]{6}$/);
+      expect(colour).not.toBe(pageColour);
+    }
   });
 
   it('renders error state with message when error is passed', () => {

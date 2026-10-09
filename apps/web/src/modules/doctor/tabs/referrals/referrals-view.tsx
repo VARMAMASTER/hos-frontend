@@ -17,7 +17,7 @@ export function ReferralsWidget({
         description="Curated workflow for Referrals Out."
       />
       <TabContent>
-        {/* Curated Doctor Workspace - Referrals Out workflow payload */}
+        {/* Curated Doctor module - Referrals Out workflow payload */}
       </TabContent>
     </TabPage>
   );

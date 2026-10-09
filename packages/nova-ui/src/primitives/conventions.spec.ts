@@ -9,7 +9,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { compile } from 'tailwindcss';
+import { __unstable__loadDesignSystem, compile } from 'tailwindcss';
 import { describe, expect, it } from 'vitest';
 import { FONT_WEIGHT_UTILITIES, SHADOW_UTILITIES } from '../tokens/scale';
 
@@ -387,8 +387,17 @@ describe('the weights', () => {
 // ---------------------------------------------------------------------------------------------------
 
 const srcDir = fileURLToPath(new URL('..', import.meta.url));
-// The Storybook preview frames every story, so it is held to the same rules.
-const TOKEN_SCOPES = ['components', 'stories', 'primitives', '../.storybook'];
+// The Storybook preview frames every story, so it is held to the same rules. So is the web app
+// (apps/web/src: the shell and every module), which compiles the same theme.css: a class that is
+// not a token draws nothing there either.
+const WEB_SCOPE = '../../../apps/web/src';
+const TOKEN_SCOPES = [
+  'components',
+  'stories',
+  'primitives',
+  '../.storybook',
+  WEB_SCOPE,
+];
 
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -409,13 +418,22 @@ const tokenFiles = TOKEN_SCOPES.flatMap((scope) => walk(join(srcDir, scope)))
 const themeCss = readFileSync(join(srcDir, 'styles/theme.css'), 'utf8');
 const requireFrom = createRequire(import.meta.url);
 const tailwindDir = dirname(requireFrom.resolve('tailwindcss/package.json'));
+const loadStylesheet = async (id: string, base: string) => {
+  const path = id === 'tailwindcss' ? join(tailwindDir, 'index.css') : id;
+  return { path, base, content: readFileSync(path, 'utf8') };
+};
 const tokenLayer = await compile(`@import 'tailwindcss';\n${themeCss}`, {
   base: srcDir,
-  loadStylesheet: async (id, base) => {
-    const path = id === 'tailwindcss' ? join(tailwindDir, 'index.css') : id;
-    return { path, base, content: readFileSync(path, 'utf8') };
-  },
+  loadStylesheet,
 });
+// The same layer as Tailwind's design system, which knows each utility's root (bg, px, from …), so
+// a word that is shaped like a class (bg-surface-inset, px-s1.5) can be told from one that is not
+// (from-node, inline-radio), and asked whether it compiles to anything. The API is marked unstable:
+// if a Tailwind upgrade moves it, this file fails to load, never passes quietly.
+const designSystem = await __unstable__loadDesignSystem(
+  `@import 'tailwindcss';\n${themeCss}`,
+  { base: srcDir, loadStylesheet },
+);
 
 // Which of these bare utilities the token layer defines.
 function existing(utilities: readonly string[]): Set<string> {
@@ -499,7 +517,36 @@ type Rule =
   | 'arbitrary'
   | 'raw-length'
   | 'style-number'
-  | 'radius-scale';
+  | 'radius-scale'
+  | 'unknown-colour'
+  | 'unknown-utility';
+
+// The colour utilities that are not already value roots above (text, border, ring, outline, stroke
+// and decoration are, so an unknown colour on them is not-a-token): a class on one of these roots
+// must name a colour theme.css's @theme blocks define (--color-*: initial clears the stock palette,
+// so bg-white, bg-surface-inset or from-sky-400 compile to nothing and the element paints nothing).
+const COLOUR_ROOTS =
+  /^-?(?:bg|fill|divide|from|via|to|placeholder|caret|accent)-/;
+
+// Words in a string literal that Tailwind would parse as a class but that name something else.
+const NOT_CLASSES: Record<string, string> = {
+  'inline-radio': "a Storybook control type (argTypes' control)",
+  'from-node': "Timeline's rail kind: the rail starts at the node",
+  'to-node': "Timeline's rail kind: the rail ends at the node",
+};
+
+// A word shaped like a utility: a class Tailwind would parse (it starts with a utility root it
+// knows) and that carries a value or a variant, so a plain English word ("to", "inset") is not one.
+function classShaped(cls: string, utility: string): boolean {
+  if (/[${}'"`\\]/.test(cls) || cls in NOT_CLASSES) return false;
+  if (!utility.includes('-') && utility === cls) return false;
+  if (PLACEMENT.test(utility.replace(/^-/, ''))) return false;
+  try {
+    return designSystem.parseCandidate(utility).length > 0;
+  } catch {
+    return false;
+  }
+}
 
 interface Offence {
   rule: Rule;
@@ -598,6 +645,7 @@ function classify(cls: string): ClassCheck | undefined {
 function tokenOffences(text: string): Offence[] {
   const source = code(text);
   const checks: Array<{ cls: string; check: ClassCheck }> = [];
+  const shaped: Array<{ cls: string; utility: string }> = [];
   const offences: Offence[] = [];
   for (const literal of source.match(STRING_LITERAL) ?? []) {
     for (const token of literal.slice(1, -1).split(/\s+/)) {
@@ -610,6 +658,9 @@ function tokenOffences(text: string): Offence[] {
         /\d(?:\.\d+)?(?:px|rem|em)\b/.test(token)
       ) {
         offences.push({ rule: 'raw-length', found: token });
+      } else if (check === undefined) {
+        const utility = bareUtility(token);
+        if (classShaped(token, utility)) shaped.push({ cls: token, utility });
       }
     }
   }
@@ -619,6 +670,17 @@ function tokenOffences(text: string): Offence[] {
       offences.push({ rule: 'not-a-token', found: cls });
     }
   }
+  // Every other class must exist: a colour theme.css defines, a utility Tailwind or theme.css has.
+  const compiled = designSystem.candidatesToCss(
+    shaped.map((entry) => entry.utility),
+  );
+  shaped.forEach(({ cls, utility }, index) => {
+    if (compiled[index]) return;
+    offences.push({
+      rule: COLOUR_ROOTS.test(utility) ? 'unknown-colour' : 'unknown-utility',
+      found: cls,
+    });
+  });
   // A bare number on a length property in a style object: React reads it as pixels.
   for (const style of source.match(/style=\{\{[\s\S]*?\}\}/g) ?? []) {
     for (const match of style.matchAll(
@@ -659,6 +721,80 @@ describe('tokens only: every design value is a named token', () => {
 
   it('polices the Storybook preview too', () => {
     expect(Object.keys(measured)).toContain('../.storybook/preview.tsx');
+  });
+
+  it('polices the web app too: the shell and every module', () => {
+    expect(Object.keys(measured)).toContain(`${WEB_SCOPE}/app/app.tsx`);
+    expect(Object.keys(measured)).toContain(`${WEB_SCOPE}/main.tsx`);
+    expect(Object.keys(measured)).toContain(
+      `${WEB_SCOPE}/modules/doctor/tabs/queue/queue-view.tsx`,
+    );
+  });
+
+  it.each([
+    'bg-surface-inset',
+    'bg-surface-sunken',
+    'bg-canvas',
+    'bg-white/10',
+    'hover:bg-white/20',
+    'md:bg-surface-subtle',
+    'bg-red-500',
+    'fill-bogus',
+    'from-sky-400',
+    'via-white',
+    'to-bogus',
+    'divide-bogus',
+    'placeholder:text-ink-2 placeholder-bogus',
+    'caret-white',
+    'accent-bogus',
+  ])('unknown-colour refuses %s', (cls) => {
+    expect(rules(cls)).toEqual(['unknown-colour']);
+  });
+
+  // An unknown colour on a value root (text, border, ring, outline, stroke) is not-a-token.
+  it.each([
+    'text-white/50',
+    'border-white/20',
+    'ring-bogus',
+    'outline-white',
+    'stroke-bogus',
+    'px-s1.5',
+  ])('not-a-token refuses the unknown %s', (cls) => {
+    expect(rules(cls)).toEqual(['not-a-token']);
+  });
+
+  it.each([
+    'grid-cols-bogus',
+    'animate-bogus',
+    'z-bogus',
+    'font-bogus',
+    'hover:opacity-bogus',
+  ])('unknown-utility refuses %s', (cls) => {
+    expect(rules(cls)).toEqual(['unknown-utility']);
+  });
+
+  it.each([
+    'bg-surface',
+    'bg-surface-2',
+    'bg-bg',
+    'bg-primary/80',
+    'hover:bg-primary-ghost',
+    'from-ai to-primary',
+    'fill-ai-bright',
+    'divide-border',
+    'caret-primary',
+    'animate-pulse',
+    'nova-card-head',
+    'sr-only',
+    'to node',
+    'from-node',
+    'inline-radio',
+    'bottom-right',
+    'Reception / OPD',
+    'well-known',
+    'aria-label',
+  ])('the existence check lets %s through', (cls) => {
+    expect(tokenOffences(`\`${cls}\``)).toEqual([]);
   });
 
   // The conversion is finished: nothing in theme.css keeps a stock name compiling.
@@ -942,5 +1078,100 @@ describe('tokens only: every design value is a named token', () => {
     'grid-cols-3',
   ])('lets %s through', (cls) => {
     expect(tokenOffences(`\`${cls}\``)).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------
+// theme.css: no raw value inside an @utility. A utility reaches every value through a token
+// (var(--nova-…)), so changing the token changes every surface built on it. The token definitions
+// themselves (:root, the scheme and material blocks, @theme) are where literals live, and are not
+// checked here.
+// ---------------------------------------------------------------------------------------------------
+
+// Pending owner decision (2026-10-09): the neon AI button look (AiButton, Button variant="ai", the
+// nova-ai-* neon, conic and aura utilities) waits on the owner, so its literals are left as they are.
+// Remove each entry once the decision lands and the utility reaches its values through tokens.
+const PENDING_OWNER_DECISION_UTILITIES: readonly string[] = [
+  'animate-ai-burst', // pending owner decision (2026-10-09)
+  'nova-ai-halo', // pending owner decision (2026-10-09)
+  'nova-ai-glow', // pending owner decision (2026-10-09)
+  'nova-ai-hero-fill', // pending owner decision (2026-10-09)
+  'nova-ai-hero-aura', // pending owner decision (2026-10-09)
+  'nova-ai-badge', // pending owner decision (2026-10-09)
+  'nova-ai-badge-pill', // pending owner decision (2026-10-09)
+  'nova-ai-conic-border', // pending owner decision (2026-10-09)
+  'nova-ai-static-border', // pending owner decision (2026-10-09)
+];
+
+// A hex colour, an rgb()/hsl() colour, or a px or rem length.
+const RAW_VALUE =
+  /#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?)\(|(?<![\w-])-?(?:\d+\.?\d*|\.\d+)(?:px|rem)\b/g;
+
+function utilityBodies(css: string): Array<{ name: string; body: string }> {
+  const text = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const found: Array<{ name: string; body: string }> = [];
+  for (const match of text.matchAll(/@utility\s+([\w-]+)\s*\{/g)) {
+    const open = (match.index ?? 0) + match[0].length - 1;
+    let depth = 0;
+    let close = open;
+    for (; close < text.length; close++) {
+      if (text[close] === '{') depth++;
+      else if (text[close] === '}' && --depth === 0) break;
+    }
+    found.push({ name: match[1] ?? '', body: text.slice(open + 1, close) });
+  }
+  return found;
+}
+
+const rawValues = (css: string) =>
+  utilityBodies(css)
+    .map(({ name, body }) => ({
+      name,
+      raw: [...new Set(body.match(RAW_VALUE) ?? [])],
+    }))
+    .filter((entry) => entry.raw.length > 0);
+
+describe('theme.css utilities take every value from a token', () => {
+  it('finds the utilities it polices', () => {
+    expect(utilityBodies(themeCss).length).toBeGreaterThan(40);
+  });
+
+  it('writes no raw hex, rgb() or px / rem length inside an @utility', () => {
+    expect(
+      rawValues(themeCss).filter(
+        (entry) => !PENDING_OWNER_DECISION_UTILITIES.includes(entry.name),
+      ),
+    ).toEqual([]);
+  });
+
+  it('keeps the pending allowlist honest: each entry still exists and still has a literal', () => {
+    const raw = rawValues(themeCss).map((entry) => entry.name);
+    for (const name of PENDING_OWNER_DECISION_UTILITIES) {
+      expect(raw, name).toContain(name);
+    }
+  });
+
+  it('refuses a planted hex, rgb(), px or rem, nested rules included, and lets tokens through', () => {
+    for (const bad of [
+      '@utility x { color: #fff; }',
+      '@utility x { box-shadow: inset 0 1px 0 rgba(255,255,255,.1); }',
+      '@utility x { --nova-focus-ring: rgb(255 255 255 / 0.9); }',
+      '@utility x { border-radius: 7px; }',
+      '@utility x { &::before { inset: -3px; } }',
+      '@utility x { width: 1.5rem; }',
+      '@utility x { background-size: .5rem .5rem; }',
+    ]) {
+      expect(rawValues(bad), bad).not.toEqual([]);
+    }
+    for (const good of [
+      '@utility x { color: var(--nova-color-ink); }',
+      '@utility x { padding: var(--nova-border-hairline); inset: 0; }',
+      '@utility x { width: 50%; transform: translateX(-120%) skewX(-18deg); }',
+      '@utility x { animation: a calc(var(--nova-duration-slow) * 3) linear; }',
+      ':root { --nova-x: #fff; --nova-y: 7px; }',
+      '@theme inline { --color-x: #fff; }',
+    ]) {
+      expect(rawValues(good), good).toEqual([]);
+    }
   });
 });

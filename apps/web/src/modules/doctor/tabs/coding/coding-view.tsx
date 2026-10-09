@@ -17,7 +17,7 @@ export function CodingWidget({
         description="Curated workflow for Coding & Claims."
       />
       <TabContent>
-        {/* Curated Doctor Workspace - Coding & Claims workflow payload */}
+        {/* Curated Doctor module - Coding & Claims workflow payload */}
       </TabContent>
     </TabPage>
   );

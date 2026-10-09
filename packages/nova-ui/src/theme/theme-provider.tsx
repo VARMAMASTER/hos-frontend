@@ -17,11 +17,23 @@ export interface NovaThemeProviderProps {
   // light, dark, or system (follows prefers-color-scheme). Independent of the theme and the material;
   // unset everywhere means the CSS default, light.
   scheme?: NovaScheme;
-  // The font preset for this subtree: googleSans, ibmPlexSans, or ibmPlexMono.
+  // The font preset for this subtree, one of NOVA_FONTS: googleSans (Google Sans Flex), ibmPlexSans,
+  // ibmPlexMono or inter. It sets both the body and the display face.
   font?: NovaFontPreset;
   style?: CSSProperties;
   className?: string;
   children: ReactNode;
+}
+
+// A colour or AI token is the theme's to set (through the allow-list), never the style prop's: the
+// style prop would otherwise reopen "a theme cannot recolour status or AI".
+const PROTECTED_STYLE_KEY = /^--nova-(?:color-|ai-|gradient-ai)/;
+
+function withoutProtectedKeys(style: CSSProperties | undefined): CSSProperties {
+  if (!style) return {};
+  return Object.fromEntries(
+    Object.entries(style).filter(([key]) => !PROTECTED_STYLE_KEY.test(key)),
+  ) as CSSProperties;
 }
 
 // Subtree-scoped. Dialog portals into the nearest themed root, so it keeps this theme; other content
@@ -51,12 +63,14 @@ export function NovaThemeProvider({
       data-nova-font={font}
       className={className}
       // Through the allow-list: a theme that skipped createNovaTheme still sets no status or AI token.
+      // The style prop goes first, stripped of colour and AI keys, so the provider's own variables
+      // (the theme and the font) always win over it.
       style={{
+        ...withoutProtectedKeys(style),
         ...(themeVariables(theme, {
           lightDark: supportsLightDark(),
         }) as CSSProperties),
         ...fontStyle,
-        ...style,
       }}
     >
       {children}

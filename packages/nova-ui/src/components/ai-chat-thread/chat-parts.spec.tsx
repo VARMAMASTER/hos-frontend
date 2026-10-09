@@ -5,6 +5,11 @@ import { ChatAnswer } from './chat-answer';
 import { ChatQuestion } from './chat-question';
 import { FollowupChips } from './followup-chips';
 
+import {
+  accessibleText,
+  deadScreenReaderText,
+  decorativeSpark,
+} from '../../test/accessible-text';
 afterEach(() => {
   cleanup();
   Reflect.deleteProperty(window, 'matchMedia');
@@ -38,8 +43,10 @@ describe('AiThinking', () => {
   it('says "Thinking…" in words, with the AI mark, and its dots hidden from assistive technology', () => {
     const { container } = render(<AiThinking />);
     const row = container.firstElementChild as HTMLElement;
-    expect(row.textContent).toContain('Thinking…');
-    expect(row.textContent).toContain('✦');
+    // What a screen reader gets: the words. The spark is decoration, hidden with nothing inside.
+    expect(accessibleText(row)).toContain('Thinking…');
+    expect(decorativeSpark(row)).not.toBeNull();
+    expect(deadScreenReaderText(row)).toEqual([]);
     expect(row.className).toContain('text-ai-deep');
     const dots = row.querySelectorAll('[data-dot]');
     expect(dots).toHaveLength(3);
@@ -119,7 +126,9 @@ describe('ChatQuestion', () => {
 describe('ChatAnswer', () => {
   it('is marked as AI by the spark and the words "HOS AI", with a hidden speaker label', () => {
     const { container } = render(<ChatAnswer text="HbA1c was **8.4%**." />);
-    expect(container.textContent).toContain('✦');
+    expect(decorativeSpark(container)).not.toBeNull();
+    expect(deadScreenReaderText(container)).toEqual([]);
+    expect(accessibleText(container)).toContain('HOS AI answered:');
     expect(screen.getByText('HOS AI')).toBeTruthy();
     expect(screen.getByText('HOS AI answered:').className).toContain('sr-only');
     expect(container.querySelector('strong')?.textContent).toBe('8.4%');

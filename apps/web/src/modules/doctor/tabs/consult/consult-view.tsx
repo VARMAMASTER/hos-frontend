@@ -17,7 +17,7 @@ export function ConsultWidget({
         description="Curated workflow for Consultation."
       />
       <TabContent>
-        {/* Curated Doctor Workspace - Consultation workflow payload */}
+        {/* Curated Doctor module - Consultation workflow payload */}
       </TabContent>
     </TabPage>
   );

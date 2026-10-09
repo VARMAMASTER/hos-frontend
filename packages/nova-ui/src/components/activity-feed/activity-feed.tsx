@@ -82,7 +82,6 @@ export function ActivityFeed({
             {tone === 'ai' ? (
               <span className="relative inline-flex items-center justify-center">
                 <SparkleCluster size="xs" className="text-ai-bright" />
-                <span className="sr-only">✦</span>
               </span>
             ) : null}
           </span>

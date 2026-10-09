@@ -17,7 +17,7 @@ export function DiscussWidget({
         description="Curated workflow for Case Discussion."
       />
       <TabContent>
-        {/* Curated Doctor Workspace - Case Discussion workflow payload */}
+        {/* Curated Doctor module - Case Discussion workflow payload */}
       </TabContent>
     </TabPage>
   );

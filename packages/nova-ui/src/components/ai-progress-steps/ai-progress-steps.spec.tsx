@@ -2,6 +2,11 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import { AiProgressSteps } from './ai-progress-steps';
 
+import {
+  accessibleText,
+  deadScreenReaderText,
+  decorativeSpark,
+} from '../../test/accessible-text';
 afterEach(() => cleanup());
 
 const STEPS = [
@@ -26,7 +31,9 @@ describe('AiProgressSteps', () => {
     );
     expect(list().tagName).toBe('OL');
     expect(items()).toHaveLength(4);
-    expect(container.textContent).toContain('✦');
+    expect(decorativeSpark(container)).not.toBeNull();
+    expect(deadScreenReaderText(container)).toEqual([]);
+    expect(accessibleText(container)).toContain('HOS AI progress');
     expect(screen.getByText('HOS AI progress')).toBeTruthy();
   });
 

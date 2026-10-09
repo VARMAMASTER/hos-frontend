@@ -58,7 +58,6 @@ export function AiThinking({
           size="xs"
           className="text-ai-bright motion-safe:animate-pulse"
         />
-        <span className="sr-only">✦</span>
       </span>
       {label}
       <span aria-hidden="true" className="inline-flex items-center">

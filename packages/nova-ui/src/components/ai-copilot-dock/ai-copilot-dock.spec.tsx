@@ -12,6 +12,11 @@ import { ChatQuestion } from '../ai-chat-thread/chat-question';
 import { AiCopilotDock } from './ai-copilot-dock';
 import { useCopilotShortcut } from './use-copilot-shortcut';
 
+import {
+  accessibleText,
+  deadScreenReaderText,
+  decorativeSpark,
+} from '../../test/accessible-text';
 afterEach(() => {
   cleanup();
   Reflect.deleteProperty(window, 'matchMedia');
@@ -59,8 +64,11 @@ describe('AiCopilotDock trigger', () => {
     expect(controls).toBeTruthy();
     expect(document.getElementById(controls ?? '')).not.toBeNull();
     expect(button.getAttribute('aria-keyshortcuts')).toBe('Control+K Meta+K');
-    // The orb carries the AI mark; the pill says it in words.
-    expect(button.textContent).toContain('✦');
+    // The orb carries the AI mark as decoration; the pill says it in words, and the words are what a
+    // screen reader gets. The shortcut is shown, and announced through aria-keyshortcuts.
+    expect(decorativeSpark(button)).not.toBeNull();
+    expect(deadScreenReaderText(button)).toEqual([]);
+    expect(accessibleText(button)).toContain('Ask HOS AI');
     expect(button.textContent).toContain('Ctrl K');
   });
 
@@ -129,8 +137,10 @@ describe('AiCopilotDock panel', () => {
     expect(panel().id).toBe(trigger().getAttribute('aria-controls'));
     expect(panel().getAttribute('aria-modal')).toBeNull();
     expect(document.activeElement).toBe(composer());
-    // Marked as AI in words and by the spark.
-    expect(panel().textContent).toContain('✦');
+    // Marked as AI in words and by the spark: the spark is decoration, the title is read.
+    expect(decorativeSpark(panel())).not.toBeNull();
+    expect(deadScreenReaderText(panel())).toEqual([]);
+    expect(accessibleText(panel())).toMatch(/HOS AI/);
   });
 
   it('takes its size, place and corner from tokens', () => {
