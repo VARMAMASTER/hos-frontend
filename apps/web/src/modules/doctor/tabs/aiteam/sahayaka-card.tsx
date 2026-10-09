@@ -142,11 +142,13 @@ export function SahayakaCard({
             {agent.name}
           </>
         }
-        description={<Bold text={agent.subtitle} />}
         actions={<AiClassChip tier="green" detail="drafts & formats" />}
       />
       <CardBody>
         <Stack gap="s6">
+          <Text size="sm" tone="muted">
+            <Bold text={agent.subtitle} />
+          </Text>
           <MetricStrip
             label="Sahayaka figures"
             metrics={metricsOf(agent)}

@@ -76,11 +76,13 @@ export function SandarbhaCard({
             {agent.name}
           </>
         }
-        description={<Bold text={agent.subtitle} />}
         actions={<AiClassChip tier="amber" detail="reference" />}
       />
       <CardBody>
         <Stack gap="s6">
+          <Text size="sm" tone="muted">
+            <Bold text={agent.subtitle} />
+          </Text>
           <Stack gap="s3">
             <Heading level="h3" size="caption" tone="muted">
               What this specialty actually orders here

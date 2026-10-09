@@ -81,34 +81,36 @@ export function ReferenceCheckCard({
           </>
         }
       />
-      <CardBody>
-        <Stack gap="s4">
-          <AiRunSteps
-            steps={consult.checkSteps}
-            run={run}
-            label="Reference check progress"
-          />
-          {run.phase === 'error' ? (
-            <Text tone="crit">
-              The check could not run. Nothing was changed.
-            </Text>
-          ) : null}
-          {check ? (
-            <>
-              {check.blocks.map((block) => (
-                <CheckBlockView
-                  key={block.id}
-                  block={block}
-                  doctorName={consult.doctorName}
-                  source={source}
-                  feedback={feedback}
-                />
-              ))}
-              <TierNote text={check.tierNote} />
-            </>
-          ) : null}
-        </Stack>
-      </CardBody>
+      {run.phase !== 'idle' ? (
+        <CardBody>
+          <Stack gap="s4">
+            <AiRunSteps
+              steps={consult.checkSteps}
+              run={run}
+              label="Reference check progress"
+            />
+            {run.phase === 'error' ? (
+              <Text tone="crit">
+                The check could not run. Nothing was changed.
+              </Text>
+            ) : null}
+            {check ? (
+              <>
+                {check.blocks.map((block) => (
+                  <CheckBlockView
+                    key={block.id}
+                    block={block}
+                    doctorName={consult.doctorName}
+                    source={source}
+                    feedback={feedback}
+                  />
+                ))}
+                <TierNote text={check.tierNote} />
+              </>
+            ) : null}
+          </Stack>
+        </CardBody>
+      ) : null}
     </Card>
   );
 }
