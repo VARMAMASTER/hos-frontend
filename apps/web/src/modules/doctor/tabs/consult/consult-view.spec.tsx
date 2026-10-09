@@ -77,7 +77,7 @@ describe('ConsultWidget: the reference and consistency check', () => {
       /3 · Contradictions between records we already hold/,
     ]) {
       const block = screen.getByRole('group', { name: title });
-      // Every block is an AI draft a person accepts or dismisses: the ✦ mark and the words.
+      // Every block is an AI draft a person accepts or dismisses: the AI mark and the words.
       expect(within(block).getByText('AI draft')).toBeTruthy();
       expect(within(block).getByText('Draft — awaiting approval')).toBeTruthy();
     }

@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import {
+  AiMark,
   AiClassChip,
   Box,
   Card,
@@ -128,7 +129,8 @@ export function NotesWidget({
             ) : openId === null ? (
               <Box border radius="card" padding="s4" surface="inset">
                 <Text size="sm" tone="muted">
-                  ✦ Choose Open the note on a patient above — the drafted SOAP
+                  <AiMark size="xs" className="mr-s1 align-text-bottom" />
+                  Choose Open the note on a patient above — the drafted SOAP
                   note appears here for you to read and sign. It is drafted from
                   the recorded encounter and from values already in the chart;
                   nothing in it is generated from anywhere else.

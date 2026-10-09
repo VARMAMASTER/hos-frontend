@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  AiMark,
   Banner,
   Button,
   Card,
@@ -27,7 +28,7 @@ interface NotesQueueProps {
 const awaiting = (row: NoteRow) =>
   row.state === 'ready' || row.state === 'blocked';
 
-// What the draft column says about a note: an AI draft (with ✦), a blocked one (with a warning
+// What the draft column says about a note: an AI draft (with the AI mark), a blocked one (with a warning
 // mark), or how the doctor settled it. Words and a mark, never colour alone.
 function DraftState({ row }: { row: NoteRow }) {
   if (row.state === 'filed') {
@@ -52,7 +53,7 @@ function DraftState({ row }: { row: NoteRow }) {
     );
   }
   return (
-    <Chip tone="ai" icon="✦">
+    <Chip tone="ai" icon={<AiMark />}>
       {row.draftLabel}
     </Chip>
   );

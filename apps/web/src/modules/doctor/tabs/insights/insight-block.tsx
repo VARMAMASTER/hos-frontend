@@ -1,4 +1,11 @@
-import { AiDraftBlock, BarChart, Button, Chip, Stack } from '@hos/nova-ui';
+import {
+  AiMark,
+  AiDraftBlock,
+  BarChart,
+  Button,
+  Chip,
+  Stack,
+} from '@hos/nova-ui';
 import type { DoctorDataSource, InsightCard } from '../../data';
 import { Prose, useDraftDecision, type Feedback } from '../../ui';
 
@@ -49,7 +56,11 @@ export function InsightBlock({
       approverName={doctorName}
       verb={insight.action.label}
       approvedVerb="Done"
-      badges={<Chip tone={insight.chipTone}>{insight.chip}</Chip>}
+      badges={
+        <Chip tone={insight.chipTone} icon={<AiMark />}>
+          {insight.chip}
+        </Chip>
+      }
       actions={
         insight.secondary ? (
           <Button variant="ghost" size="sm" onClick={() => void runSecondary()}>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  AiMark,
   AiSourceLine,
   Banner,
   Button,
@@ -145,7 +146,12 @@ function WhatsAppDesk({ overview, source, onChange }: WhatsAppDeskProps) {
       />
       <Banner
         tone="ai"
-        title={`✦ ${overview.banner}`}
+        title={
+          <>
+            <AiMark size="xs" className="mr-s1 align-text-bottom" />
+            {overview.banner}
+          </>
+        }
         action={
           <Button
             variant="ghost"
@@ -216,7 +222,7 @@ function ConversationPane({
         name={selected.patientName}
         subtitle={selected.phone}
         status={
-          <Chip tone="ai" icon="✦">
+          <Chip tone="ai" icon={<AiMark />}>
             AI Assistant
           </Chip>
         }

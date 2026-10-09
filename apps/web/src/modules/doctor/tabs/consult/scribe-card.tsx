@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+  AiMark,
   AmbientScribeRecorder,
   Box,
   Button,
@@ -127,7 +128,7 @@ export function ScribeSection({
         <Box border radius="card" padding="s4" surface="inset">
           <Stack direction="horizontal" align="center" gap="s3">
             <Text as="span" aria-hidden="true" tone="muted">
-              ✦
+              <AiMark />
             </Text>
             <Text size="sm" tone="muted">
               Record the consultation, then choose Stop &amp; draft — the AI

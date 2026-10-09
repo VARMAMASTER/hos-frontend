@@ -207,7 +207,7 @@ describe('AdmissionWidget', () => {
     renderTab(<AdmissionWidget />, source);
     const draft = await screen.findByRole('group', { name: DRAFT });
     expect(within(draft).getByText('AI draft')).toBeTruthy();
-    expect(within(draft).getAllByText('✦').length).toBeGreaterThan(0);
+    expect(draft.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(within(draft).getByText('Draft — awaiting approval')).toBeTruthy();
     expect(approve).not.toHaveBeenCalled();
 

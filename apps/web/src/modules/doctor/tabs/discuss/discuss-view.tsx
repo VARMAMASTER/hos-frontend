@@ -1,4 +1,5 @@
 import {
+  AiMark,
   AiClassChip,
   Card,
   CardBody,
@@ -50,10 +51,7 @@ export function DiscussWidget({
               <CardHeader
                 title={
                   <>
-                    <Text as="span" aria-hidden="true">
-                      ✦
-                    </Text>{' '}
-                    Ask the panel
+                    <AiMark /> Ask the panel
                   </>
                 }
                 description="Follow-up questions get evidence, with the record it came from named. They do not get advice — try asking for some."
@@ -69,7 +67,7 @@ export function DiscussWidget({
                   threadLabel="Conversation with the panel"
                   composerLabel="Ask the panel"
                   placeholder="Ask the panel… e.g. show me the label, the lipid order, the allergy contradiction"
-                  emptyHint="✦ The three lenses stay available after they report. Ask any of them for the evidence behind a line — or ask the panel what to do, and watch what happens."
+                  emptyHint="The three lenses stay available after they report. Ask any of them for the evidence behind a line — or ask the panel what to do, and watch what happens."
                   thinkLabel="Three lenses checking her record"
                   errorMessage="The panel could not answer that."
                 />

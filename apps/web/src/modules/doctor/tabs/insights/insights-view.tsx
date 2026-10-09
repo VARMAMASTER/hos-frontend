@@ -1,4 +1,5 @@
 import {
+  AiMark,
   AiButton,
   Card,
   CardBody,
@@ -70,10 +71,7 @@ function InsightsDesk({ overview, source, feedback }: InsightsDeskProps) {
         <CardHeader
           title={
             <>
-              <Text as="span" aria-hidden="true">
-                ✦
-              </Text>{' '}
-              Patterns across your consultations
+              <AiMark /> Patterns across your consultations
             </>
           }
           description={overview.intro}
@@ -130,6 +128,7 @@ function InsightsDesk({ overview, source, feedback }: InsightsDeskProps) {
                     />
                   ))}
                   <Text size="xs" tone="muted">
+                    <AiMark size="xs" className="mr-s1 align-text-bottom" />
                     {result.footnote}
                   </Text>
                 </>

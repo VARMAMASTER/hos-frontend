@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  AiMark,
   AiButton,
   AiClassChip,
   AiDraftBlock,
@@ -97,10 +98,7 @@ export function PanelCard({ discussion, source, feedback }: PanelCardProps) {
         <CardHeader
           title={
             <>
-              <Text as="span" aria-hidden="true">
-                ✦
-              </Text>{' '}
-              Convene the panel
+              <AiMark /> Convene the panel
             </>
           }
           description="Three lenses read her record separately and do not see each other's answers. Expect them to disagree — that is what you are here for."

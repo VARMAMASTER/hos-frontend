@@ -1,4 +1,5 @@
 import {
+  AiMark,
   AiButton,
   AiClassChip,
   AiDraftBlock,
@@ -50,10 +51,7 @@ export function ReferenceCheckCard({
       <CardHeader
         title={
           <>
-            <Text as="span" aria-hidden="true">
-              ✦
-            </Text>{' '}
-            Reference &amp; consistency check
+            <AiMark /> Reference &amp; consistency check
           </>
         }
         description={consult.checkIntro}

@@ -44,13 +44,13 @@ describe('AppointmentsWidget', () => {
     expect(within(risks).getByText('M. Sailoo')).toBeTruthy();
   });
 
-  it('marks every AI element with ✦ and words, and books nothing before approval', async () => {
+  it('marks every AI element with the AI mark and words, and books nothing before approval', async () => {
     const source = stubSource();
     const approveFollowUp = vi.spyOn(source, 'approveFollowUp');
     renderTab(<AppointmentsWidget />, source);
     const draft = await screen.findByRole('group', { name: FOLLOW_UP });
     expect(within(draft).getByText('AI draft')).toBeTruthy();
-    expect(within(draft).getAllByText('✦').length).toBeGreaterThan(0);
+    expect(draft.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(within(draft).getByText('Draft — awaiting approval')).toBeTruthy();
     expect(approveFollowUp).not.toHaveBeenCalled();
 

@@ -24,7 +24,7 @@ export function seedInsightsResult(): InsightsResult {
       {
         id: 'neuropathy',
         title: 'Clinical pattern — worth a screening habit',
-        chip: '✦ From 412 transcripts',
+        chip: 'From 412 transcripts',
         chipTone: 'ai',
         text: '**14 of your 62 T2DM patients mentioned foot tingling or numbness** in the last 30 days — but only 5 have a documented monofilament test. The other 9 are one line away from a missed neuropathy diagnosis. Your T2DM follow-up template doesn’t include the screen yet.',
         chart: {
@@ -51,7 +51,7 @@ export function seedInsightsResult(): InsightsResult {
       {
         id: 'tuesday',
         title: 'Schedule pattern — Tuesday clinic runs late',
-        chip: '✦ From consult timestamps',
+        chip: 'From consult timestamps',
         chipTone: 'ai',
         text: 'Your **Tuesday 11 AM–1 PM block runs 22 minutes late on average** — the only block where patients mention waiting in the transcripts (3× more than any other slot). Root cause looks structural: 5 slots booked against your average 14-minute Tuesday consults. One fewer slot would absorb it.',
         chart: {
@@ -76,7 +76,7 @@ export function seedInsightsResult(): InsightsResult {
       {
         id: 'working',
         title: "What's working — keep doing this",
-        chip: '✦ Positive signal',
+        chip: 'Positive signal',
         chipTone: 'good',
         text: 'You explain dosage in **Telugu 92% of the time** — and your patients make **18% fewer confused follow-up calls** about medicines than the hospital average. The WhatsApp assistant now mirrors your Telugu phrasing style in its reminders to your patients.',
         action: {
@@ -87,6 +87,6 @@ export function seedInsightsResult(): InsightsResult {
       },
     ],
     footnote:
-      '✦ Computed from your approved consultation transcripts only · visible to you, not to management · every insight is a suggestion you can act on or ignore.',
+      'Computed from your approved consultation transcripts only · visible to you, not to management · every insight is a suggestion you can act on or ignore.',
   };
 }

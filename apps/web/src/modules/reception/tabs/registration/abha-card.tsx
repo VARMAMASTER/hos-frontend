@@ -22,7 +22,7 @@ export interface AbhaCardProps {
 }
 
 // ABHA / ABDM linking (the prototype's #abhaBlock). Consent first: the opt-in is unticked until the
-// patient agrees, and without it nothing is fetched. It is not an AI feature, so it carries no ✦.
+// patient agrees, and without it nothing is fetched. It is not an AI feature, so it carries no AI mark.
 export function AbhaCard({
   consent,
   onConsentChange,

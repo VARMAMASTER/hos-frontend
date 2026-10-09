@@ -48,7 +48,7 @@ describe('AicallingWidget', () => {
     const banner = await screen.findByText(
       /The voice agent took 41 calls today/,
     );
-    expect(banner.textContent).toContain('✦');
+    expect(banner.querySelector('[data-ai-mark]')).not.toBeNull();
     const figures = screen.getByRole('region', { name: 'AI calling figures' });
     expect(within(figures).getByText('Handled without a human')).toBeTruthy();
     expect(within(figures).getByText('₹185')).toBeTruthy();
@@ -117,7 +117,7 @@ describe('AicallingWidget', () => {
     await playToEnd();
     const draft = screen.getByRole('group', { name: FOLLOW_UP });
     expect(within(draft).getByText('AI draft')).toBeTruthy();
-    expect(within(draft).getAllByText('✦').length).toBeGreaterThan(0);
+    expect(draft.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(within(draft).getByText('Draft — awaiting approval')).toBeTruthy();
     expect(send).not.toHaveBeenCalled();
 
@@ -163,7 +163,7 @@ describe('AicallingWidget', () => {
       name: 'Recall list ready to dial — 12 patients',
     });
     expect(within(draft).getByText('AI draft')).toBeTruthy();
-    expect(within(draft).getAllByText('✦').length).toBeGreaterThan(0);
+    expect(draft.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(within(draft).getByText('Draft — awaiting approval')).toBeTruthy();
     expect(approve).not.toHaveBeenCalled();
     fireEvent.click(

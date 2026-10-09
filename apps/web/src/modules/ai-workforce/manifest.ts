@@ -1,10 +1,12 @@
+import { AiMark } from '@hos/nova-ui';
+import { createElement } from 'react';
 import type { ModuleManifest } from '../types';
 
 export const aiWorkforceManifest: ModuleManifest = {
   id: 'ai-workforce',
   title: 'AI Workforce Fleet',
   category: 'intelligence',
-  icon: '✦',
+  icon: createElement(AiMark, { size: 'md' }),
   requiredRoles: ['ROLE_OWNER', 'ROLE_ADMIN'],
   defaultPath: '/ai-workforce/overview',
   description:

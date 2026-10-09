@@ -10,7 +10,7 @@ export function seedHistory(): HistoryOverview {
   return {
     patient: { token: 'T-12', name: 'Lakshmi Devi', ageSex: '58F' },
     indexedNote:
-      '✦ 4 years of Lakshmi Devi’s record indexed — 6 OPD visits, 1 admission, 9 lab reports, pharmacy refills. Tap a question or type your own.',
+      '4 years of Lakshmi Devi’s record indexed — 6 OPD visits, 1 admission, 9 lab reports, pharmacy refills. Tap a question or type your own.',
     suggestions: [
       'What is her kidney function?',
       'What does she pay each month?',

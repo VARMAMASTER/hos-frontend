@@ -1,4 +1,5 @@
 import {
+  AiMark,
   Card,
   CardBody,
   CardHeader,
@@ -91,7 +92,11 @@ export function HistoryWidget({
               <CardHeader
                 title={`AI Health Memory — ${history.patient.name}`}
                 description="Ask anything about this patient's history · answers cite the source visit"
-                actions={<Chip tone="ai">✦ AI memory</Chip>}
+                actions={
+                  <Chip tone="ai" icon={<AiMark />}>
+                    AI memory
+                  </Chip>
+                }
               />
               <CardBody>
                 <AskPanel

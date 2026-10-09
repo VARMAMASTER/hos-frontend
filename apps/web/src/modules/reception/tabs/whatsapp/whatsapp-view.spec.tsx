@@ -27,7 +27,7 @@ describe('WhatsappWidget', () => {
     const banner = await screen.findByText(
       /AI answered 23 chats today · 3 missed calls recovered/,
     );
-    expect(banner.textContent).toContain('✦');
+    expect(banner.querySelector('[data-ai-mark]')).not.toBeNull();
 
     const stats = screen.getByRole('list', { name: 'Bookings via WhatsApp' });
     expect(within(stats).getAllByRole('listitem')).toHaveLength(5);
@@ -58,13 +58,13 @@ describe('WhatsappWidget', () => {
     expect(screen.queryByRole('group', { name: IRFAN_DRAFT })).toBeNull();
   });
 
-  it('keeps the AI reply a draft, marked ✦ and in words, until a person approves it', async () => {
+  it('keeps the AI reply a draft, marked with the AI mark and in words, until a person approves it', async () => {
     const source = stubSource();
     const send = vi.spyOn(source, 'sendWhatsAppReply');
     renderTab(<WhatsappWidget />, source);
     const draft = await screen.findByRole('group', { name: IRFAN_DRAFT });
     expect(within(draft).getByText('AI draft')).toBeTruthy();
-    expect(within(draft).getAllByText('✦').length).toBeGreaterThan(0);
+    expect(draft.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(within(draft).getByText('Draft — awaiting approval')).toBeTruthy();
     expect(
       within(draft).getByText(

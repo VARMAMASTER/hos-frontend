@@ -406,7 +406,7 @@ export interface WhatsAppMessage {
   id: string;
   // in: the patient; out: the hospital.
   direction: 'in' | 'out';
-  // The hospital's AI assistant wrote it (marked ✦ and in words).
+  // The hospital's AI assistant wrote it (marked with the AI mark and in words).
   ai: boolean;
   text: string;
   lang?: PatientLanguage;

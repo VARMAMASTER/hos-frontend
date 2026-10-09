@@ -84,13 +84,13 @@ describe('ReferralsWidget', () => {
     expect(within(referralsTable()).getAllByText('Pending')).toHaveLength(2);
   });
 
-  it('keeps the AI reply a draft, marked ✦ and in words, until a person approves it', async () => {
+  it('keeps the AI reply a draft, marked with the AI mark and in words, until a person approves it', async () => {
     const source = stubSource();
     const send = vi.spyOn(source, 'sendReferralReply');
     renderTab(<ReferralsWidget />, source);
     const draft = await screen.findByRole('group', { name: DRAFT });
     expect(within(draft).getByText('AI draft')).toBeTruthy();
-    expect(within(draft).getAllByText('✦').length).toBeGreaterThan(0);
+    expect(draft.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(within(draft).getByText('Draft — awaiting approval')).toBeTruthy();
     expect(
       within(draft).getByText('Apollo Diagnostics, Kukatpally'),

@@ -259,7 +259,7 @@ export function SandarbhaCard({
               threadLabel="Conversation with Sandarbha"
               composerLabel="Ask Sandarbha a reference question"
               placeholder="Ask a reference question… labels, schedules, this hospital's own rates"
-              emptyHint="✦ It answers “what does the reference say” and “what does this hospital’s data show”. It will not answer “what is wrong with this patient”."
+              emptyHint="It answers “what does the reference say” and “what does this hospital’s data show”. It will not answer “what is wrong with this patient”."
               thinkLabel="Checking the references"
               errorMessage="Sandarbha could not answer that."
             />

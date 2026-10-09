@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  AiMark,
   AiClassChip,
   AiDraftBlock,
   Banner,
@@ -177,7 +178,10 @@ export function PrescriptionBlock({
         </Banner>
         {recheck ? (
           <Banner tone="ai" title="Checked again after your edit">
-            <Prose text={recheck} />
+            <Stack direction="horizontal" align="start" gap="s2">
+              <AiMark className="mt-s0 shrink-0" />
+              <Prose text={recheck} />
+            </Stack>
           </Banner>
         ) : null}
       </Stack>

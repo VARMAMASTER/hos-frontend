@@ -1,7 +1,7 @@
 # AI Workforce Fleet (`ai-workforce`)
 
 **Category:** `intelligence`  
-**Icon:** `✦`  
+**Icon:** the AI mark (`AiMark`)  
 **Default Path:** `/ai-workforce/overview`  
 **Required Roles:** `ROLE_OWNER, ROLE_ADMIN`
 

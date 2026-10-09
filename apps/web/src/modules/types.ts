@@ -22,7 +22,8 @@ export interface ModuleManifest {
   id: string;
   title: string;
   category: ModuleCategory;
-  icon: string;
+  // The module's tile: its initials, or a node (the AI Workforce's is the AI mark, AiMark).
+  icon: ReactNode;
   requiredRoles: string[];
   defaultPath: string;
   tabs: ModuleTab[];

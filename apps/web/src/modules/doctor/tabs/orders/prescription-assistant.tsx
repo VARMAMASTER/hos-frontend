@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  AiMark,
   AiClassChip,
   Banner,
   Box,
@@ -60,10 +61,7 @@ export function PrescriptionAssistant({
       <CardHeader
         title={
           <>
-            <Text as="span" aria-hidden="true">
-              ✦
-            </Text>{' '}
-            Prescription assistant — {orders.patient.name}
+            <AiMark /> Prescription assistant — {orders.patient.name}
           </>
         }
         description="Formulary, generics, her allergies, and Telugu printing. The prescribing is yours."
@@ -115,7 +113,12 @@ export function PrescriptionAssistant({
                         size="xs"
                         tone={row.tag.tone === 'ai' ? 'default' : 'muted'}
                       >
-                        {row.tag.tone === 'ai' ? '✦ ' : ''}
+                        {row.tag.tone === 'ai' ? (
+                          <AiMark
+                            size="xs"
+                            className="mr-s1 align-text-bottom"
+                          />
+                        ) : null}
                         {row.tag.text}
                       </Text>
                     </TableCell>

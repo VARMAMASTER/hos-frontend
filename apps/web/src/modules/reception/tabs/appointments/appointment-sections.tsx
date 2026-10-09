@@ -1,4 +1,5 @@
 import {
+  AiMark,
   AiBadge,
   Box,
   Button,
@@ -259,7 +260,7 @@ export function NoShowTable({
                   <TableCell>
                     <Chip
                       tone={ACTION_TONES[risk.action]}
-                      icon={ai ? '✦' : undefined}
+                      icon={ai ? <AiMark /> : undefined}
                     >
                       {risk.actionLabel}
                     </Chip>

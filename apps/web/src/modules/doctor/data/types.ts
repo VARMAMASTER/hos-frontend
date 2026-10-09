@@ -449,7 +449,7 @@ export interface InsightAction {
 export interface InsightCard {
   id: string;
   title: string;
-  // "✦ From 412 transcripts": where it came from, with the AI mark.
+  // "From 412 transcripts": where it came from; the insight block draws the AI mark beside it.
   chip: string;
   chipTone: 'ai' | 'good';
   text: string;

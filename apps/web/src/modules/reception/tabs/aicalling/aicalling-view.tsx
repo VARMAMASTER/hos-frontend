@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  AiMark,
   AiDraftBlock,
   AiSourceLine,
   Banner,
@@ -197,7 +198,12 @@ function CallingDesk({ overview, source, onChange }: CallingDeskProps) {
       />
       <Banner
         tone="ai"
-        title={`✦ ${overview.banner}`}
+        title={
+          <>
+            <AiMark size="xs" className="mr-s1 align-text-bottom" />
+            {overview.banner}
+          </>
+        }
         action={
           <Button
             variant="ghost"

@@ -42,7 +42,8 @@ describe('HistoryWidget', () => {
     expect(
       screen.getByRole('heading', { name: /AI Health Memory — Lakshmi Devi/ }),
     ).toBeTruthy();
-    expect(screen.getByText('✦ AI memory')).toBeTruthy();
+    const chip = screen.getByText('AI memory').closest('[data-tone="ai"]');
+    expect(chip?.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(
       screen.getByText(/4 years of Lakshmi Devi’s record indexed/),
     ).toBeTruthy();
@@ -88,7 +89,7 @@ describe('HistoryWidget', () => {
     ).toBeTruthy();
   });
 
-  it('marks every answer as AI, in words as well as the ✦', async () => {
+  it('marks every answer as AI, in words as well as the AI mark', async () => {
     renderTab(<HistoryWidget />);
     await memory();
     ask('Any admissions?');
@@ -105,6 +106,7 @@ describe('HistoryWidget', () => {
       within(turn).getAllByText('AI Health Memory').length,
     ).toBeGreaterThan(0);
     expect(within(turn).getByText(/Source:/)).toBeTruthy();
+    expect(turn.querySelector('[data-ai-mark]')).not.toBeNull();
   });
 
   it('offers follow-up questions, and answers one when it is chosen', async () => {

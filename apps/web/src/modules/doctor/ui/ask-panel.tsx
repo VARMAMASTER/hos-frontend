@@ -1,5 +1,6 @@
 import { Fragment, useCallback, useRef, useState, type ReactNode } from 'react';
 import {
+  AiMark,
   AiChatThread,
   AiClassChip,
   AiSourceLine,
@@ -38,7 +39,7 @@ const RED_REASON =
 
 // A conversation with an AI that reads the record, the way the prototype's chat boxes work
 // (HOS.aiChat): ask a question or choose one, watch it think, read an answer that cites where it came
-// from, and follow up. Every answer is marked ✦ with the AI's name. An answer is evidence, never
+// from, and follow up. Every answer is marked with the AI mark and the AI's name. An answer is evidence, never
 // advice: the one that would be advice is shown as the blocked RED tier. Nothing is stored or
 // logged: the thread lives on this screen only.
 export function AskPanel({
@@ -99,7 +100,12 @@ export function AskPanel({
       <AiChatThread
         label={threadLabel}
         busy={busy}
-        emptyHint={emptyHint}
+        emptyHint={
+          <>
+            <AiMark size="xs" className="mr-s1 align-text-bottom" />
+            {emptyHint}
+          </>
+        }
         suggestions={suggestions}
         onSuggestion={send}
         suggestionsDisabled={busy}

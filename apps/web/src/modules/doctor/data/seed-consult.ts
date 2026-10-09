@@ -184,4 +184,4 @@ export function seedConsultDraft(): ConsultDraft {
 }
 
 export const PRESCRIPTION_RECHECK =
-  '✦ **Re-checked after edit** — the new durations are still clear of the Penicillin and Sulfa allergies, and the labels show no interaction between the three lines. Nothing was added or removed: only the durations you typed.';
+  '**Re-checked after edit** — the new durations are still clear of the Penicillin and Sulfa allergies, and the labels show no interaction between the three lines. Nothing was added or removed: only the durations you typed.';

@@ -69,7 +69,10 @@ describe('InsightsWidget', () => {
     const first = await analyze();
     expect(within(first).getByText('AI draft')).toBeTruthy();
     expect(within(first).getByText('Draft — awaiting approval')).toBeTruthy();
-    expect(within(first).getByText('✦ From 412 transcripts')).toBeTruthy();
+    const chip = within(first)
+      .getByText('From 412 transcripts')
+      .closest('[data-tone="ai"]');
+    expect(chip?.querySelector('[data-ai-mark]')).not.toBeNull();
     expect(within(first).getByText(/14 of your 62 T2DM patients/)).toBeTruthy();
   });
 
