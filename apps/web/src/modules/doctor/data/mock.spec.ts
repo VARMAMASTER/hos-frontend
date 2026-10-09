@@ -106,3 +106,104 @@ describe('mock doctor source: queue', () => {
     );
   });
 });
+
+describe('mock doctor source: consultation', () => {
+  it('opens on Lakshmi Devi, the patient in the room, with her briefing', async () => {
+    const consult = await source.getConsultation();
+    expect(consult?.patient).toEqual({
+      token: 'T-12',
+      name: 'Lakshmi Devi',
+      ageSex: '58F',
+    });
+    expect(consult?.doctorName).toBe('Dr. K. Ramesh');
+    expect(consult?.briefing.allergies).toEqual(['Penicillin']);
+    expect(consult?.briefing.warnings).toContain('HbA1c overdue');
+    expect(consult?.scribe.steps).toHaveLength(4);
+  });
+
+  it('has no chart prepared once another patient is opened', async () => {
+    await source.startConsultation('T-14');
+    expect(await source.getConsultation()).toBeNull();
+  });
+
+  it('runs the reference check: three blocks of facts, none of them an instruction', async () => {
+    const check = await source.runReferenceCheck();
+    expect(check.blocks.map((block) => block.id)).toEqual([
+      'values',
+      'trajectory',
+      'contradictions',
+    ]);
+    for (const block of check.blocks) {
+      expect(block.actionLabel.length).toBeGreaterThan(0);
+      expect(block.sources.length).toBeGreaterThan(0);
+      expect(block.text).not.toMatch(
+        /\b(you should|I recommend|consider|prescribe|increase the dose)\b/i,
+      );
+    }
+    expect(check.blocks[2].chipTone).toBe('crit');
+  });
+
+  it('records attaching a block, and refuses a dismissal with no reason', async () => {
+    await expect(source.attachCheckBlock('values')).resolves.toBeUndefined();
+    await expect(source.attachCheckBlock('nope')).rejects.toThrow(
+      'That block is not part of this check.',
+    );
+    await expect(source.dismissCheckBlock('trajectory', '   ')).rejects.toThrow(
+      'Say why you are dismissing this block.',
+    );
+    await expect(
+      source.dismissCheckBlock('trajectory', 'Already reviewed'),
+    ).resolves.toBeUndefined();
+  });
+
+  it('drafts the note with S, O and A, and never a plan', async () => {
+    const draft = await source
+      .getConsultation()
+      .then(() => source.draftConsultNote());
+    expect(draft.subjective.lang).toBe('te');
+    expect(draft.subjective.gloss).toMatch(/fatigue/);
+    expect(draft.assessment.gloss).toMatch(/eGFR 44/);
+    expect(Object.keys(draft)).not.toContain('plan');
+    expect(draft.prescription.lines.map((line) => line.drug)).toEqual([
+      'Tab. Metformin 1000mg',
+      'Tab. Telmisartan 40mg',
+      'Cap. Pregabalin 75mg',
+    ]);
+    // A carry-forward: every line is already on her list, with the date she started it.
+    for (const line of draft.prescription.lines) {
+      expect(line.since).toMatch(/\d{4}/);
+    }
+    expect(draft.prescription.allergyNote).toMatch(/Penicillin and Sulfa/);
+  });
+
+  it('will not sign a note until the doctor has dictated a plan', async () => {
+    const note = {
+      subjective: 'Fatigue.',
+      objective: 'BP 148/92.',
+      assessment: 'T2DM.',
+      plan: '   ',
+    };
+    await expect(source.signNote(note)).rejects.toThrow(
+      'The note cannot be signed until you have dictated the plan.',
+    );
+    await expect(
+      source.signNote({ ...note, plan: 'Review in two weeks.' }),
+    ).resolves.toBeUndefined();
+  });
+
+  it('re-checks edited durations, and refuses a line with none', async () => {
+    const text = await source.checkPrescription([
+      { id: 'metformin', duration: '14 days' },
+    ]);
+    expect(text).toMatch(/Re-checked after edit/);
+    await expect(
+      source.checkPrescription([{ id: 'metformin', duration: ' ' }]),
+    ).rejects.toThrow('Enter a duration for every line.');
+    await expect(
+      source.approvePrescription([{ id: 'metformin', duration: '' }]),
+    ).rejects.toThrow('Enter a duration for every line.');
+    await expect(
+      source.approvePrescription([{ id: 'metformin', duration: '30 days' }]),
+    ).resolves.toBeUndefined();
+  });
+});

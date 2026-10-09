@@ -3,6 +3,8 @@ import { Banner } from '@hos/nova-ui';
 export interface ActionNotice {
   title: string;
   detail?: string;
+  // A confirmation (the default), or a pointer to the next step.
+  tone?: 'good' | 'info';
 }
 
 export interface ActionFeedbackProps {
@@ -36,7 +38,7 @@ export function ActionFeedback({
       ) : null}
       {notice ? (
         <Banner
-          tone="good"
+          tone={notice.tone ?? 'good'}
           title={notice.title}
           onDismiss={onDismissNotice}
           dismissLabel="Dismiss the confirmation"
