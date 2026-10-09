@@ -17,7 +17,7 @@ For each module:
 | --- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------- | ------ | ------ |
 | M1  | Reception / OPD: queue, registration, appointments, schedule, admission, referrals, WhatsApp, AI calling | `apps/web/src/modules/reception/**`      | `../os/public/02-reception.html`      | Claude | todo   |
 | M2  | Doctor                                                                                                   | `apps/web/src/modules/doctor/**`         | `../os/public/03-doctor.html`         | Claude | todo   |
-| M3  | Patient record                                                                                           | `apps/web/src/modules/patient-record/**` | `../os/public/04-patient-record.html` | Claude | todo   |
+| M3  | Patient record                                                                                           | `apps/web/src/modules/patient-record/**` | `../os/public/04-patient-record.html` | Claude | review |
 | M4  | IPD                                                                                                      | `apps/web/src/modules/ipd/**`            | `../os/public/05-ipd.html`            | Claude | todo   |
 | M5  | Nursing                                                                                                  | `apps/web/src/modules/nursing/**`        | `../os/public/14-nursing.html`        | Claude | todo   |
 | M6  | Billing                                                                                                  | `apps/web/src/modules/billing/**`        | `../os/public/06-billing.html`        | Claude | todo   |
