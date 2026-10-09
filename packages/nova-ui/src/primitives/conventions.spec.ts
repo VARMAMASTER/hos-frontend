@@ -407,7 +407,18 @@ function walk(dir: string): string[] {
   });
 }
 
+// The web app is policed where it draws: its .tsx files. A plain .ts file or a data folder holds
+// records (invented ids such as gap-retinal look like utility classes) and no styling.
+const slashed = (path: string) => path.split('\\').join('/');
+const webRoot = slashed(join(srcDir, WEB_SCOPE));
+const drawsUi = (path: string) => {
+  const file = slashed(path);
+  if (!file.startsWith(webRoot)) return true;
+  return file.endsWith('.tsx') && !file.includes('/data/');
+};
+
 const tokenFiles = TOKEN_SCOPES.flatMap((scope) => walk(join(srcDir, scope)))
+  .filter(drawsUi)
   .map((path) => ({
     path: relative(srcDir, path).replace(/\\/g, '/'),
     text: readFileSync(path, 'utf8'),
@@ -729,6 +740,16 @@ describe('tokens only: every design value is a named token', () => {
     expect(Object.keys(measured)).toContain(
       `${WEB_SCOPE}/modules/doctor/tabs/queue/queue-view.tsx`,
     );
+  });
+
+  // Data files hold no styling, only invented records whose ids (gap-retinal, pt-lakshmi-devi) are
+  // shaped like utility classes. The web scan covers the UI, which is .tsx, and never a data folder.
+  it('leaves the web data folders and plain .ts files out, since they hold records and no classes', () => {
+    const scanned = Object.keys(measured);
+    const web = scanned.filter((path) => path.startsWith(WEB_SCOPE));
+    expect(web.length).toBeGreaterThan(50);
+    expect(web.filter((path) => path.endsWith('.ts'))).toEqual([]);
+    expect(web.filter((path) => /\/data\//.test(path))).toEqual([]);
   });
 
   it.each([
