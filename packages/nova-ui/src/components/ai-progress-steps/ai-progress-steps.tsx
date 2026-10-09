@@ -161,7 +161,6 @@ export function AiProgressSteps({
         className="relative inline-flex items-center text-ai-bright"
       >
         <SparkleCluster size="xs" className="text-ai-bright" />
-        <span className="sr-only">✦</span>
       </span>
       {label}
     </p>

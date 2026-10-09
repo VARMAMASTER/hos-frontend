@@ -144,7 +144,6 @@ export function ChatAnswer({
     >
       <span aria-hidden="true" className="nova-ai-spark mt-s0">
         <SparkleCluster size="xs" className="text-on-primary" />
-        <span className="sr-only">✦</span>
       </span>
       <div className="flex min-w-0 max-w-(--nova-ai-bubble-max-w) flex-col items-start gap-s2">
         <span

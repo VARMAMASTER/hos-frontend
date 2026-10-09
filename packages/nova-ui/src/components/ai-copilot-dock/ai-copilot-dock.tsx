@@ -126,7 +126,6 @@ function Orb({ expanded }: { expanded: boolean }) {
       />
       <span className="relative flex items-center justify-center">
         <SparkleCluster size="md" className="text-ai-bright" />
-        <span className="sr-only">✦</span>
       </span>
     </span>
   );
@@ -286,7 +285,6 @@ export function AiCopilotDock({
           className="relative flex items-center justify-center text-body leading-none"
         >
           <SparkleCluster size="sm" className="text-ai-bright" />
-          <span className="sr-only">✦</span>
         </span>
         <span className={cx(retracted && 'sr-only')}>{label}</span>
         <kbd
@@ -372,7 +370,6 @@ export function AiCopilotDock({
       <div className="flex shrink-0 flex-wrap items-center gap-s3 border-b border-border bg-ai-ghost px-card py-card-bar">
         <span aria-hidden="true" className="nova-ai-spark">
           <SparkleCluster size="xs" className="text-on-primary" />
-          <span className="sr-only">✦</span>
         </span>
         <Heading
           id={titleId}

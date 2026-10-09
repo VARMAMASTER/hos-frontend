@@ -2,6 +2,12 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import { ActivityFeed, type ActivityFeedItem } from './activity-feed';
 
+import {
+  accessibleText,
+  deadScreenReaderText,
+  decorativeSpark,
+} from '../../test/accessible-text';
+
 afterEach(() => cleanup());
 
 const items: ActivityFeedItem[] = [
@@ -136,8 +142,13 @@ describe('ActivityFeed', () => {
     render(
       <ActivityFeed items={[{ id: 'a', time: 't', title: 'x', tone: 'ai' }]} />,
     );
-    const marker = markerOf(screen.getByRole('listitem'));
-    expect(marker.textContent).toBe('✦');
+    const row = screen.getByRole('listitem');
+    const marker = markerOf(row);
+    // The spark is decoration; the word beside the title is what a screen reader gets.
+    expect(marker.getAttribute('aria-hidden')).toBe('true');
+    expect(decorativeSpark(row)).not.toBeNull();
+    expect(accessibleText(row)).toContain('AI');
+    expect(deadScreenReaderText(row)).toEqual([]);
     expect(marker.className).not.toContain('rounded-full');
   });
 
