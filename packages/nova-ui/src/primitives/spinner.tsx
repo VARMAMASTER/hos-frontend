@@ -1,12 +1,16 @@
 import type { HTMLAttributes } from 'react';
 import { cx } from './cx';
+import type { ExtendedSize } from './types';
+
+// The shared extended sizes without xs: a spinner is never smaller than the small icon.
+export type SpinnerSize = Exclude<ExtendedSize, 'xs'>;
 
 export interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
-  size?: 'sm' | 'md' | 'lg';
+  size?: SpinnerSize;
   inline?: boolean;
 }
 
-const sizes = {
+const sizes: Record<SpinnerSize, string> = {
   sm: 'size-icon-xs',
   md: 'size-spinner',
   lg: 'size-icon-md',

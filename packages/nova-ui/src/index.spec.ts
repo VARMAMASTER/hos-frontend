@@ -10,6 +10,7 @@ import type {
   ComparisonBarChartProps,
   DepartmentHeatmapProps,
   DonutChartProps,
+  ExtendedSize,
   FunnelChartProps,
   HeroBandProps,
   KpiTileProps,
@@ -268,8 +269,10 @@ describe('@hos/nova-ui public API', () => {
   // The shared vocabulary every component's size and tone come from.
   it('exports the shared Size and Tone types (checked by tsc)', () => {
     const sizes: Size[] = ['sm', 'md'];
+    const extended: ExtendedSize[] = ['xs', ...sizes, 'lg'];
     const tones: Tone[] = ['good', 'warn', 'crit', 'info', 'neutral', 'ai'];
     expect([...sizes, ...tones]).toHaveLength(8);
+    expect(extended).toHaveLength(4);
   });
 
   it('exports the prop types of the shell components', () => {

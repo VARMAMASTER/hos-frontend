@@ -7,6 +7,7 @@ import {
   renderHook,
   screen,
 } from '@testing-library/react';
+import { SparkleCluster } from './ai-sparkle';
 import { cx } from './cx';
 import { focusRing } from './focus-ring';
 import { nextRovingIndex, RADIO_KEYS, ROW_KEYS } from './roving-index';
@@ -199,5 +200,33 @@ describe('nextRovingIndex', () => {
   it('names the row keys and the radio keys (a radio group also reads Up and Down)', () => {
     expect([...ROW_KEYS]).toEqual(['ArrowLeft', 'ArrowRight', 'Home', 'End']);
     expect([...RADIO_KEYS]).toEqual([...ROW_KEYS, 'ArrowUp', 'ArrowDown']);
+  });
+});
+
+describe('SparkleCluster', () => {
+  // The centre star is one closed eight-point outline: four tips and four waist points, each
+  // visited once. A repeated segment draws the lower-left edge twice, which shows as a darker seam
+  // under the 25% fill.
+  it('draws the centre star once round, with no repeated segment', () => {
+    const { container } = render(<SparkleCluster />);
+    const centre = container.querySelector('path')?.getAttribute('d') ?? '';
+    const points = [...centre.matchAll(/[ML]([\d.]+) ([\d.]+)/g)].map(
+      (match) => `${match[1]},${match[2]}`,
+    );
+    expect(points).toHaveLength(9);
+    expect(points[8]).toBe(points[0]);
+    expect(new Set(points.slice(0, 8)).size).toBe(8);
+    expect(centre.endsWith('Z')).toBe(true);
+  });
+
+  it('takes the shared extended size vocabulary', () => {
+    const sizes = ['xs', 'sm', 'md', 'lg'] as const;
+    for (const size of sizes) {
+      const { container } = render(<SparkleCluster size={size} />);
+      expect(container.querySelector('svg')?.getAttribute('class')).toContain(
+        `size-icon-${size}`,
+      );
+      cleanup();
+    }
   });
 });

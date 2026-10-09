@@ -613,12 +613,31 @@ const TONE_WORDS = [
   'brand',
 ];
 
+// The primitives (Spinner, SparkleCluster …) take their sizes and tones from the same vocabulary.
+// primitives/types.ts is where the unions are declared, so it is the one file not scanned.
+const primitivesDir = join(srcDir, 'primitives');
+const primitiveFiles = sources(primitivesDir)
+  .filter((path) => relative(primitivesDir, path) !== 'types.ts')
+  .map((path) => ({
+    path: `primitives/${relative(primitivesDir, path).replace(/\\/g, '/')}`,
+    text: stripComments(readFileSync(path, 'utf8')),
+  }));
+
 describe('the shared vocabulary (primitives/types.ts)', () => {
+  it('scans the primitives as well as the components', () => {
+    expect(primitiveFiles.map((file) => file.path)).toContain(
+      'primitives/spinner.tsx',
+    );
+    expect(primitiveFiles.map((file) => file.path)).toContain(
+      'primitives/ai-sparkle.tsx',
+    );
+  });
+
   // A union of string literals spelled out in a component: two or more tone words, or 'sm' | 'md',
   // is a copy of Tone or Size, which the component should narrow from the shared type instead.
   it('declares no local copy of the Size or Tone unions', () => {
     const copies: string[] = [];
-    for (const file of files) {
+    for (const file of [...files, ...primitiveFiles]) {
       for (const match of file.text.matchAll(/'\w+'(?:\s*\|\s*'\w+')+/g)) {
         // Narrowing the shared type is the point: Extract<Tone, 'good' | 'warn'>.
         const before = file.text.slice(
