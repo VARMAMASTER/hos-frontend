@@ -78,11 +78,11 @@ export function LinksSection({
             </Text>
           }
         >
-          <Stack gap="s5">
+          <Stack gap="s6">
             {links.length === 0 ? (
               <Text tone="muted">No family accounts linked yet.</Text>
             ) : (
-              <Stack as="ul" gap="s5">
+              <Stack as="ul" gap="s6">
                 {links.map((link) => (
                   <li key={link.id}>
                     <Stack direction="horizontal" align="start" gap="s4">

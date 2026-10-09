@@ -45,13 +45,13 @@ export function ConsentSection({
       title="Consent & privacy"
       actions={<Chip tone="neutral">Consent on record</Chip>}
     >
-      <Stack gap="s5">
+      <Stack gap="s6">
         <ActionFeedback
           notice={null}
           error={action.error}
           onDismissError={action.clearError}
         />
-        <Stack as="ul" gap="s5">
+        <Stack as="ul" gap="s6">
           {consents.map((consent) => (
             <li key={consent.id}>
               <Stack

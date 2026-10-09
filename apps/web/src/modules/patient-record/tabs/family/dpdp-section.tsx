@@ -57,7 +57,7 @@ export function DpdpSection({
       description="Patient rights"
       footnote="Patient-initiated requests are logged and fulfilled within 7 days."
     >
-      <Stack gap="s5">
+      <Stack gap="s6">
         <Text size="sm" tone="muted">
           {`Under the Digital Personal Data Protection Act, ${patientName} can request an export of her health records held by this hospital, or request a correction to inaccurate data.`}
         </Text>
