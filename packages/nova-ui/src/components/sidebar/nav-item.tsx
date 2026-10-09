@@ -37,7 +37,7 @@ export type NavItemProps = NavItemAnchorProps | NavItemButtonProps;
 // the icon, its padding and the sidebar's padding wide), the label fades out and is clipped by the
 // item's overflow, and it never wraps, so nothing jumps while the width animates.
 const base =
-  'relative flex w-full cursor-pointer items-center gap-nav-item overflow-hidden rounded-control px-nav-item py-nav-item text-left text-input font-medium transition-colors';
+  'relative flex w-full items-center gap-nav-item overflow-hidden rounded-control px-nav-item py-nav-item text-left text-input font-medium transition-colors';
 const resting =
   'text-[color:var(--nova-chrome-ink-2)] hover:bg-chrome-ink/5 hover:text-on-primary focus-visible:bg-chrome-ink/5 focus-visible:text-on-primary';
 const current =

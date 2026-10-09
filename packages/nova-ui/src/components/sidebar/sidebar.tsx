@@ -62,7 +62,7 @@ const drawerFrame =
   'fixed inset-y-0 left-0 z-70 h-dvh w-sidebar max-w-drawer overflow-y-auto overflow-x-hidden shadow-lg outline-none motion-safe:duration-base motion-safe:ease-standard';
 
 const toggleButton =
-  'inline-flex size-s9 shrink-0 cursor-pointer items-center justify-center rounded-control text-[color:var(--nova-chrome-ink-2)] transition-colors hover:bg-chrome-ink/5 hover:text-on-primary focus-visible:bg-chrome-ink/5 focus-visible:text-on-primary';
+  'inline-flex size-s9 shrink-0 items-center justify-center rounded-control text-[color:var(--nova-chrome-ink-2)] transition-colors hover:bg-chrome-ink/5 hover:text-on-primary focus-visible:bg-chrome-ink/5 focus-visible:text-on-primary';
 
 function ToggleIcon({
   collapsed,

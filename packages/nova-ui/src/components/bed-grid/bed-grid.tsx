@@ -141,7 +141,7 @@ export function BedGrid({
             <button
               type="button"
               className={cx(
-                'block min-h-bed w-full cursor-pointer nova-radius-inherit p-s3 text-left',
+                'block min-h-bed w-full nova-radius-inherit p-s3 text-left',
                 focusRing,
               )}
               onClick={() => onSelect(bed.id)}

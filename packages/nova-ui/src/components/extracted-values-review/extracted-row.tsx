@@ -122,7 +122,7 @@ interface ExtractedRowProps {
 }
 
 const sourceButton = cx(
-  'inline-flex min-h-(--nova-touch-sm) cursor-pointer items-center rounded-control text-caption font-semibold text-ai-deep underline underline-offset-tight',
+  'inline-flex min-h-(--nova-touch-sm) items-center rounded-control text-caption font-semibold text-ai-deep underline underline-offset-tight',
   focusRing,
 );
 
@@ -177,7 +177,7 @@ export function ExtractedRow({
           </span>
         ) : (
           // The whole cell is the tick's target, 44px square, so a gloved or hurried press lands.
-          <label className="-mx-s3 -my-s2 flex min-h-touch min-w-touch cursor-pointer items-center justify-center">
+          <label className="-mx-s3 -my-s2 flex min-h-touch min-w-touch items-center justify-center">
             <CheckboxBox
               checked={ticked}
               aria-label={words.include(value.test)}

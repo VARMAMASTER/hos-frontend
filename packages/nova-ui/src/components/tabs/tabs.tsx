@@ -160,7 +160,7 @@ export interface TabProps
 // The prototype's .tab: 13px semibold, 8px by 16px, 6px between its parts (its 10px radius is off the
 // --r-* scale, so sm).
 const tab =
-  'relative inline-flex cursor-pointer items-center gap-s2 whitespace-nowrap rounded-control px-control-md py-control-md text-control font-semibold transition-[color,background-color,box-shadow] duration-fast ease-standard motion-reduce:transition-none';
+  'relative inline-flex items-center gap-s2 whitespace-nowrap rounded-control px-control-md py-control-md text-control font-semibold transition-[color,background-color,box-shadow] duration-fast ease-standard motion-reduce:transition-none';
 
 export function Tab({
   value,

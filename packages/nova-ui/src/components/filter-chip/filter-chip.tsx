@@ -59,7 +59,7 @@ export const FilterChip = forwardRef<HTMLButtonElement, FilterChipProps>(
           // .fchip: 1px edge, the label role (12px) / 600, padding 6px 10px: a small control, so the
           // sm control tokens (min-h-control-sm, px-/py-control-sm), as a small Button. The tick takes
           // a 6px gap (--space-2), which its slot cancels while it is collapsed.
-          'inline-flex min-h-control-sm cursor-pointer items-center gap-s2 border px-control-sm py-control-sm text-label font-semibold',
+          'inline-flex min-h-control-sm items-center gap-s2 border px-control-sm py-control-sm text-label font-semibold',
           'motion-safe:transition-[color,background-color,border-color,border-radius,transform] motion-safe:duration-base motion-safe:ease-standard motion-safe:active:scale-95',
           isOn
             ? 'rounded-filter-on border-primary bg-primary text-on-primary'

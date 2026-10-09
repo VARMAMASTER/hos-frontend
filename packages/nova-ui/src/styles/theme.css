@@ -1394,6 +1394,33 @@
   }
 }
 
+/* Hovering anything clickable shows the pointer hand. Tailwind 4's preflight leaves buttons on the
+   default arrow, so this one rule gives every control the hand, with no component remembering
+   cursor-pointer. A disabled or aria-disabled control keeps the arrow, a label follows its control
+   (no hand over a label whose control is disabled), and a component can still pick its own cursor
+   with a utility (cursor-progress on a loading Button), since utilities sit above the base layer.
+   Pinned by styles/cursor.spec.ts. */
+@layer base {
+  button:not(:disabled):not([aria-disabled='true']),
+  [role='button']:not([aria-disabled='true']),
+  [role='tab']:not([aria-disabled='true']),
+  [role='menuitem']:not([aria-disabled='true']),
+  [role='menuitemradio']:not([aria-disabled='true']),
+  [role='menuitemcheckbox']:not([aria-disabled='true']),
+  [role='switch']:not([aria-disabled='true']),
+  [role='option']:not([aria-disabled='true']),
+  [role='radio']:not([aria-disabled='true']),
+  [role='checkbox']:not([aria-disabled='true']),
+  a[href]:not([aria-disabled='true']),
+  summary,
+  [type='checkbox']:not(:disabled),
+  [type='radio']:not(:disabled),
+  select:not(:disabled),
+  label:not(:has(:disabled)) {
+    cursor: pointer;
+  }
+}
+
 /* Everything built from the brand's colours: the named gradients, and the fills the surface utilities
    paint (MATERIAL_FILLS, tokens/material.ts), so components, stories and future work reuse one
    definition of each and every hospital theme gets its own with no extra work.

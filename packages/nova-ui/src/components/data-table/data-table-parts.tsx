@@ -151,7 +151,7 @@ export function SelectBox({
     if (ref.current) ref.current.indeterminate = indeterminate;
   }, [indeterminate]);
   return (
-    <label className="relative -m-s3 flex cursor-pointer items-center justify-center p-s3">
+    <label className="relative -m-s3 flex items-center justify-center p-s3">
       <span className="relative flex size-check">
         <input
           ref={ref}
@@ -160,7 +160,7 @@ export function SelectBox({
           checked={checked}
           onChange={onChange}
           className={cx(
-            'nova-field peer size-check cursor-pointer appearance-none rounded-control',
+            'nova-field peer size-check appearance-none rounded-control',
             'checked:bg-primary indeterminate:bg-primary indeterminate:[--nova-field-edge:var(--nova-color-primary)]',
             focusRing,
           )}

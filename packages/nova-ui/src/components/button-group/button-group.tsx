@@ -343,7 +343,7 @@ export function ButtonGroupItem({
       }}
       onKeyDown={handleKeyDown}
       className={cx(
-        'relative inline-flex cursor-pointer items-center justify-center gap-s2 whitespace-nowrap border font-semibold',
+        'relative inline-flex items-center justify-center gap-s2 whitespace-nowrap border font-semibold',
         loading && 'cursor-progress',
         iconOnly
           ? cx(sizes[group.size].iconOnly, '[&_svg]:size-icon-md')

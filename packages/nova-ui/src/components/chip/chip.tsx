@@ -175,7 +175,7 @@ export function Chip({
           className={cx(
             // A 24px target (WCAG 2.5.8: size-touch-sm), pulled into the chip's padding so the chip
             // stays compact.
-            '-my-s0 -mr-s1 inline-flex size-touch-sm shrink-0 cursor-pointer items-center justify-center rounded-full',
+            '-my-s0 -mr-s1 inline-flex size-touch-sm shrink-0 items-center justify-center rounded-full',
             'motion-safe:transition-colors hover:bg-ink/10',
             focusRing,
           )}

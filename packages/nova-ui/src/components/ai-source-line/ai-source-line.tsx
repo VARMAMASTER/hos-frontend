@@ -82,7 +82,7 @@ function ConfidenceIcon({ level }: { level: AiConfidence }) {
 }
 
 const eventLink = cx(
-  'cursor-pointer rounded-control font-semibold underline underline-offset-tight',
+  'rounded-control font-semibold underline underline-offset-tight',
   focusRing,
 );
 

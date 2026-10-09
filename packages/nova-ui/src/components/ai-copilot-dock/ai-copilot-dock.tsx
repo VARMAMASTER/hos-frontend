@@ -307,7 +307,7 @@ export function AiCopilotDock({
         <button
           {...triggerProps}
           className={cx(
-            'group flex cursor-pointer items-center gap-s3 rounded-full',
+            'group flex items-center gap-s3 rounded-full',
             focusRing,
           )}
         >
@@ -383,7 +383,7 @@ export function AiCopilotDock({
           aria-label={closeLabel}
           onClick={() => setOpen(false)}
           className={cx(
-            'inline-flex size-touch-sm shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-2 hover:bg-surface-2 hover:text-ink',
+            'inline-flex size-touch-sm shrink-0 items-center justify-center rounded-full text-ink-2 hover:bg-surface-2 hover:text-ink',
             focusRing,
           )}
         >

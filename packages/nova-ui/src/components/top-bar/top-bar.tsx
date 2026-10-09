@@ -25,7 +25,7 @@ const bar = 'sticky top-0 z-50 flex items-center gap-s6 px-s8 py-s5';
 // The top bar's icon square (.tb-ico, size-topbar-ico, the control corner), as NotificationBell's, in
 // the chrome's ink; hover lifts it with a faint white, as a nav item does.
 const menuButton =
-  'inline-flex size-topbar-ico shrink-0 cursor-pointer items-center justify-center rounded-control text-on-primary transition-colors hover:bg-chrome-ink/10 md:hidden';
+  'inline-flex size-topbar-ico shrink-0 items-center justify-center rounded-control text-on-primary transition-colors hover:bg-chrome-ink/10 md:hidden';
 
 export function TopBar({
   search,

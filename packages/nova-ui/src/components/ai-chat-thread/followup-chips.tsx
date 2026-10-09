@@ -45,7 +45,7 @@ export function FollowupChips({
           disabled={disabled}
           onClick={() => onSelect(question)}
           className={cx(
-            'inline-flex min-h-(--nova-touch-sm) cursor-pointer items-center rounded-chip border border-transparent bg-ai-soft px-chip py-chip text-left text-caption font-semibold text-ai-deep',
+            'inline-flex min-h-(--nova-touch-sm) items-center rounded-chip border border-transparent bg-ai-soft px-chip py-chip text-left text-caption font-semibold text-ai-deep',
             'hover:border-ai motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-standard',
             focusRing,
             disabledControl,
