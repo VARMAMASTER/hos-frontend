@@ -8,3 +8,4 @@ export * from './prose';
 export * from './allergy-chip';
 export * from './tier-note';
 export * from './metric-strip';
+export * from './ask-panel';

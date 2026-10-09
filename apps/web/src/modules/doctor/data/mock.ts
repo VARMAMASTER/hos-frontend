@@ -1,7 +1,9 @@
 import { consultMethods } from './mock-consult';
+import { historyMethods } from './mock-history';
 import { notesMethods } from './mock-notes';
 import { ordersMethods } from './mock-orders';
 import { queueMethods } from './mock-queue';
+import { referralsMethods } from './mock-referrals';
 import type { MockState } from './mock-util';
 import { OPEN_PATIENT_TOKEN } from './seed-queue';
 import type { DoctorDataSource } from './source';
@@ -19,5 +21,7 @@ export function createMockDoctorSource(): DoctorDataSource {
     ...consultMethods(state),
     ...notesMethods(state),
     ...ordersMethods(state),
+    ...historyMethods(state),
+    ...referralsMethods(state),
   };
 }

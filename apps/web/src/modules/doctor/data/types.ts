@@ -312,3 +312,92 @@ export interface TemplateRequest {
   specialty: string;
   itemIds: string[];
 }
+
+// --- Chat: patient history, the panel, the specialty reference ---------------------------------
+
+// An answer in a conversation with an AI that reads the record. It states what the record contains
+// and cites where; it never advises. A red answer is a refusal, shown as the blocked tier.
+export interface ChatReply {
+  text: string;
+  source?: string;
+  followups: string[];
+  tier?: 'amber' | 'red';
+}
+
+// --- Patient history ---------------------------------------------------------------------------
+
+export interface BpReading {
+  visit: string;
+  systolic: number;
+  diastolic: number;
+}
+
+export interface HistoryOverview {
+  patient: PatientRef;
+  // "4 years of her record indexed — 6 OPD visits, 1 admission, 9 lab reports, pharmacy refills."
+  indexedNote: string;
+  suggestions: string[];
+  bp: BpReading[];
+}
+
+// --- Referrals out -----------------------------------------------------------------------------
+
+export interface ReferralRecipient {
+  id: string;
+  specialty: string;
+  // Who it goes to and why them, with anything the doctor should know before sending.
+  note: string;
+}
+
+export interface ReferralOut {
+  id: string;
+  reply: { state: 'none' | 'received'; text: string };
+  patient: string;
+  // "T-21 today": when the patient is in today's queue.
+  patientNote?: string;
+  to: string;
+  sent: string;
+  reason: string;
+}
+
+export interface ReferralsOverview {
+  // The patient in the room, or null when no chart is open: then there is no letter to draft.
+  patient: PatientRef | null;
+  doctorName: string;
+  steps: string[];
+  recipients: ReferralRecipient[];
+  out: ReferralOut[];
+  outNote: string;
+}
+
+export interface LetterAttachment {
+  id: string;
+  label: string;
+  detail: string;
+  viaAbha?: boolean;
+  // Ticked by default. A gap in our own record is not: the doctor may not want to send it.
+  checked: boolean;
+  hint?: string;
+}
+
+export interface ReferralLetter {
+  id: string;
+  title: string;
+  hospital: string;
+  hospitalMeta: string;
+  to: string[];
+  re: string;
+  dear: string;
+  // Facts from the record, each already in it. The one sentence that is not a fact is the ask.
+  paragraphs: string[];
+  ask: string;
+  signature: string;
+  attachments: LetterAttachment[];
+  attachmentsTitle: string;
+  note: string;
+}
+
+export interface TeluguCopy {
+  text: string;
+  gloss: string;
+}

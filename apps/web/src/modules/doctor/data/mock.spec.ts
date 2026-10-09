@@ -357,3 +357,97 @@ describe('mock doctor source: orders and prescriptions', () => {
     await expect(source.prepareVoiceNote()).resolves.toBeUndefined();
   });
 });
+
+describe('mock doctor source: patient history', () => {
+  it('opens on her indexed record with the five questions the prototype suggests', async () => {
+    const history = await source.getHistory();
+    expect(history?.patient.name).toBe('Lakshmi Devi');
+    expect(history?.suggestions).toHaveLength(5);
+    expect(history?.bp.map((reading) => reading.visit)).toEqual([
+      'Jul 2024',
+      'Jan 2025',
+      'Jul 2025',
+      '21 Jun 2026',
+      'Today',
+    ]);
+  });
+
+  it('answers from her record with the source visit, and offers follow-ups', async () => {
+    const answer = await source.askHistory('What is her kidney function?');
+    expect(answer.text).toMatch(/eGFR 44/);
+    expect(answer.source).toMatch(/KFT Yashoda 14 Mar 2026/);
+    expect(answer.followups.length).toBeGreaterThan(0);
+  });
+
+  it('never tells the doctor what to do about a value: it quotes the value and says so', async () => {
+    const answer = await source.askHistory('What is her kidney function?');
+    expect(answer.text).toMatch(/I am not telling you what to do about them/);
+  });
+
+  it('says what it can answer when the question is not in her record', async () => {
+    const answer = await source.askHistory('What is the capital of Telangana?');
+    expect(answer.text).toMatch(/I hold \*\*4 years of Lakshmi Devi/);
+  });
+
+  it('refuses an empty question, and has no chart for another patient', async () => {
+    await expect(source.askHistory('   ')).rejects.toThrow(
+      'Ask a question first.',
+    );
+    await source.startConsultation('T-14');
+    expect(await source.getHistory()).toBeNull();
+  });
+});
+
+describe('mock doctor source: referrals', () => {
+  it('lists four recipients, none chosen, and last month’s referrals out', async () => {
+    const referrals = await source.getReferrals();
+    expect(referrals.recipients.map((recipient) => recipient.id)).toEqual([
+      'neph',
+      'ophth',
+      'endo',
+      'diet',
+    ]);
+    expect(referrals.out).toHaveLength(4);
+    expect(
+      referrals.out.filter((row) => row.reply.state === 'none'),
+    ).toHaveLength(2);
+  });
+
+  it('drafts a letter for the recipient chosen, with six attachments and the sixth unticked', async () => {
+    const letter = await source.draftReferralLetter('neph');
+    expect(letter.id).toBe('neph');
+    expect(letter.dear).toBe('Dear Dr. Sridevi,');
+    expect(letter.attachments).toHaveLength(6);
+    expect(letter.attachments.filter((item) => item.checked)).toHaveLength(5);
+    await expect(source.draftReferralLetter('nobody')).rejects.toThrow(
+      'That recipient is not on the list.',
+    );
+  });
+
+  it('signs a letter with its attachments and the ask the doctor wrote, and refuses an empty ask', async () => {
+    await expect(source.signReferral('neph', ['kft'], '  ')).rejects.toThrow(
+      'The letter needs the question you are asking.',
+    );
+    await expect(
+      source.signReferral('neph', ['kft'], 'Please see her this month.'),
+    ).resolves.toBeUndefined();
+    await expect(source.signReferral('nobody', [], 'x')).rejects.toThrow(
+      'That letter is not drafted.',
+    );
+  });
+
+  it('drafts the Telugu copy, and sends it only when approved', async () => {
+    const copy = await source.draftTeluguCopy('neph');
+    expect(copy.text.length).toBeGreaterThan(0);
+    expect(copy.gloss).toMatch(/specialist/);
+    await expect(source.approveTeluguCopy('neph')).resolves.toBeUndefined();
+  });
+
+  it('has no recipient list for the patient once another is opened', async () => {
+    await source.startConsultation('T-14');
+    const referrals = await source.getReferrals();
+    expect(referrals.patient).toBeNull();
+    expect(referrals.recipients).toEqual([]);
+    expect(referrals.out).toHaveLength(4);
+  });
+});

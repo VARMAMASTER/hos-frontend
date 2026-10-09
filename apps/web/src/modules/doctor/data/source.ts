@@ -1,5 +1,10 @@
 import type {
+  ChatReply,
   CheckBlock,
+  HistoryOverview,
+  ReferralLetter,
+  ReferralsOverview,
+  TeluguCopy,
   ConsultationOverview,
   ConsultDraft,
   NoteDraft,
@@ -69,4 +74,23 @@ export interface DoctorDataSource {
   // The Telugu instructions as audio, prepared as a draft that goes only with the prescription once
   // the doctor has approved it.
   prepareVoiceNote(): Promise<void>;
+
+  // Patient history: ask the AI Health Memory about the patient's record. null when no chart is open.
+  getHistory(): Promise<HistoryOverview | null>;
+  askHistory(question: string): Promise<ChatReply>;
+
+  // Referrals out. Without a chart open there is no recipient to pick, but the list still shows.
+  getReferrals(): Promise<ReferralsOverview>;
+  // Drafts a letter for the recipient, assembled from facts already in the record.
+  draftReferralLetter(recipientId: string): Promise<ReferralLetter>;
+  // The doctor signed the letter, with the attachments they ticked and the ask in their own words.
+  // Nothing leaves the hospital before.
+  signReferral(
+    letterId: string,
+    attachmentIds: string[],
+    ask: string,
+  ): Promise<void>;
+  // A separate one-page Telugu sheet the patient can read, drafted for the doctor to approve.
+  draftTeluguCopy(letterId: string): Promise<TeluguCopy>;
+  approveTeluguCopy(letterId: string): Promise<void>;
 }
