@@ -311,26 +311,20 @@ function CallingDesk({ overview, source, onChange }: CallingDeskProps) {
           />
         </CardBody>
       </Card>
+      <CampaignsTable
+        campaigns={overview.campaigns}
+        note={overview.campaignNote}
+        onToggle={(campaign, on) => void toggleCampaign(campaign, on)}
+      />
       <SplitLayout
-        ratio="3-2"
+        ratio="1-1"
         primary={
-          <CampaignsTable
-            campaigns={overview.campaigns}
-            note={overview.campaignNote}
-            onToggle={(campaign, on) => void toggleCampaign(campaign, on)}
-          />
-        }
-        secondary={
           <CallQueue
             queue={overview.queue}
             queuing={running}
             onCall={(entry) => void queueCall(entry)}
           />
         }
-      />
-      <SplitLayout
-        ratio="1-1"
-        primary={<LimitsCard limits={overview.limits} />}
         secondary={
           <ConsentCard
             consent={overview.consent}
@@ -339,6 +333,7 @@ function CallingDesk({ overview, source, onChange }: CallingDeskProps) {
           />
         }
       />
+      <LimitsCard limits={overview.limits} />
       <CallLog log={overview.log} />
     </Stack>
   );
