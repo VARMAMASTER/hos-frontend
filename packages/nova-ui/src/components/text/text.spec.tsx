@@ -14,7 +14,11 @@ describe('Text Component', () => {
   });
 
   it('renders requested polymorphic element and tone', () => {
-    render(<Text as="span" tone="muted" size="sm">Secondary note</Text>);
+    render(
+      <Text as="span" tone="muted" size="sm">
+        Secondary note
+      </Text>,
+    );
     const span = screen.getByText('Secondary note');
     expect(span.tagName).toBe('SPAN');
     expect(span.className).toContain('text-ink-2');
@@ -26,7 +30,11 @@ describe('Text Component', () => {
     const code = screen.getByText('MRN-1029');
     expect(code.className).toContain('font-mono');
 
-    render(<Text as="label" variant="label">Blood Pressure</Text>);
+    render(
+      <Text as="label" variant="label">
+        Blood Pressure
+      </Text>,
+    );
     const label = screen.getByText('Blood Pressure');
     expect(label.tagName).toBe('LABEL');
     expect(label.className).toContain('text-label');

@@ -1,6 +1,12 @@
 import type { ReactNode } from 'react';
 
-export type ModuleCategory = 'clinical' | 'financial' | 'intelligence' | 'governance' | 'settings' | 'platform';
+export type ModuleCategory =
+  | 'clinical'
+  | 'financial'
+  | 'intelligence'
+  | 'governance'
+  | 'settings'
+  | 'platform';
 
 export type ModuleRegistry = ModuleManifest[];
 

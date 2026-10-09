@@ -1,10 +1,5 @@
 import type { RouteObject } from '../types';
-import {
-  AskWidget,
-  RoiWidget,
-  CensusWidget,
-  RevenueWidget,
-} from './tabs';
+import { AskWidget, RoiWidget, CensusWidget, RevenueWidget } from './tabs';
 
 export const analyticsRoutes: RouteObject[] = [
   {

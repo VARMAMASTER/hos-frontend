@@ -203,9 +203,7 @@ function PreviewPage() {
               title="Discharge summary draft"
               footer={
                 <div className="flex gap-s3">
-                  <AiButton size="sm">
-                    Approve
-                  </AiButton>
+                  <AiButton size="sm">Approve</AiButton>
                   <Button variant="ghost" size="sm">
                     Edit
                   </Button>

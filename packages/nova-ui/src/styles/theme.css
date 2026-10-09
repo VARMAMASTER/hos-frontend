@@ -229,15 +229,18 @@
 }
 
 @utility animate-ai-conic-spin {
-  animation: nova-ai-conic-spin calc(var(--nova-duration-slow) * 16) linear infinite;
+  animation: nova-ai-conic-spin calc(var(--nova-duration-slow) * 16) linear
+    infinite;
 }
 
 @utility animate-ai-conic-spin-fast {
-  animation: nova-ai-conic-spin calc(var(--nova-duration-slow) * 6) linear infinite;
+  animation: nova-ai-conic-spin calc(var(--nova-duration-slow) * 6) linear
+    infinite;
 }
 
 @utility animate-ai-aura-pulse {
-  animation: nova-ai-aura-pulse calc(var(--nova-duration-slow) * 12) ease-in-out infinite;
+  animation: nova-ai-aura-pulse calc(var(--nova-duration-slow) * 12) ease-in-out
+    infinite;
 }
 
 @utility animate-ai-twinkle {
@@ -357,7 +360,6 @@
   background-color: color-mix(in srgb, var(--nova-color-ai-bright) 14%, var(--nova-color-surface));
   box-shadow: 0 0 10px color-mix(in srgb, var(--nova-color-ai-bright) 35%, transparent);
 }
-
 
 /* prettier-ignore */
 @utility nova-ai-conic-border {

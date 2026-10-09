@@ -84,4 +84,3 @@ export const LoadingSegment: Story = {
     </ButtonGroup>
   ),
 };
-

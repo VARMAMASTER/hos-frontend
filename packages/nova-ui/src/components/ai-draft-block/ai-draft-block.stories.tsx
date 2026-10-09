@@ -59,11 +59,7 @@ export const Blocked: Story = {
     status: 'blocked',
     blockedReason:
       'No plan dictated yet. The Scribe never writes a plan; the note cannot be signed until you dictate one.',
-    actions: (
-      <AiButton size="sm">
-        Dictate the plan
-      </AiButton>
-    ),
+    actions: <AiButton size="sm">Dictate the plan</AiButton>,
     source: undefined,
   },
 };

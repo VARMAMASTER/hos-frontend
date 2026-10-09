@@ -281,7 +281,10 @@ export function AiCopilotDock({
           className,
         )}
       >
-        <span aria-hidden="true" className="relative flex items-center justify-center text-body leading-none">
+        <span
+          aria-hidden="true"
+          className="relative flex items-center justify-center text-body leading-none"
+        >
           <SparkleCluster size="sm" className="text-ai-bright" />
           <span className="sr-only">✦</span>
         </span>

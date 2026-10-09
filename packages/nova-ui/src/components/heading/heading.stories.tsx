@@ -28,12 +28,24 @@ export const Levels: Story = {
 export const Tones: Story = {
   render: () => (
     <div className="flex flex-col gap-s2 p-s4">
-      <Heading level="h3" tone="default">Default Ink</Heading>
-      <Heading level="h3" tone="muted">Muted Tone</Heading>
-      <Heading level="h3" tone="accent">Accent Tone</Heading>
-      <Heading level="h3" tone="good">Operational / Good Tone</Heading>
-      <Heading level="h3" tone="warn">Warning Tone</Heading>
-      <Heading level="h3" tone="crit">Critical Tone</Heading>
+      <Heading level="h3" tone="default">
+        Default Ink
+      </Heading>
+      <Heading level="h3" tone="muted">
+        Muted Tone
+      </Heading>
+      <Heading level="h3" tone="accent">
+        Accent Tone
+      </Heading>
+      <Heading level="h3" tone="good">
+        Operational / Good Tone
+      </Heading>
+      <Heading level="h3" tone="warn">
+        Warning Tone
+      </Heading>
+      <Heading level="h3" tone="crit">
+        Critical Tone
+      </Heading>
     </div>
   ),
 };

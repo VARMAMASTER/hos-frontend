@@ -26,10 +26,7 @@ export function AiBadge({
       tone="ai"
       data-badge=""
       data-variant={variant !== 'default' ? variant : undefined}
-      className={cx(
-        variant === 'glow' && 'nova-ai-badge-pill',
-        className,
-      )}
+      className={cx(variant === 'glow' && 'nova-ai-badge-pill', className)}
       {...rest}
     >
       <span aria-hidden="true">✦</span>

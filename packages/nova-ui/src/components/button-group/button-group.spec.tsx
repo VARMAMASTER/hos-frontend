@@ -464,4 +464,3 @@ describe('ButtonGroupItem loading state', () => {
     expect(handleSelect).not.toHaveBeenCalled();
   });
 });
-

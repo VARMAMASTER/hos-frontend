@@ -6,7 +6,12 @@ afterEach(() => cleanup());
 
 describe('Stack Component', () => {
   it('renders vertical flex stack by default with gap', () => {
-    render(<Stack gap="s4"><span>1</span><span>2</span></Stack>);
+    render(
+      <Stack gap="s4">
+        <span>1</span>
+        <span>2</span>
+      </Stack>,
+    );
     const stack = screen.getByText('1').parentElement;
     expect(stack?.className).toContain('flex');
     expect(stack?.className).toContain('flex-col');

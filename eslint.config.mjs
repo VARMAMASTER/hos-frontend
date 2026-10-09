@@ -86,10 +86,7 @@ export default [
     },
   },
   {
-    files: [
-      'apps/web/src/modules/**/*.tsx',
-      'src/modules/**/*.tsx',
-    ],
+    files: ['apps/web/src/modules/**/*.tsx', 'src/modules/**/*.tsx'],
     plugins: {
       react: reactPlugin,
     },
@@ -98,15 +95,44 @@ export default [
         'error',
         {
           forbid: [
-            { element: 'div', message: 'Use <Box>, <Stack>, or <TabPage> from @hos/nova-ui instead of raw <div>.' },
-            { element: 'p', message: 'Use <Text> from @hos/nova-ui instead of raw <p>.' },
-            { element: 'span', message: 'Use <Text as="span"> from @hos/nova-ui instead of raw <span>.' },
-            { element: 'h1', message: 'Use <Heading level="h1"> from @hos/nova-ui.' },
-            { element: 'h2', message: 'Use <Heading level="h2"> from @hos/nova-ui.' },
-            { element: 'h3', message: 'Use <Heading level="h3"> from @hos/nova-ui.' },
-            { element: 'h4', message: 'Use <Heading level="h4"> from @hos/nova-ui.' },
-            { element: 'h5', message: 'Use <Heading level="h5"> from @hos/nova-ui.' },
-            { element: 'h6', message: 'Use <Heading level="h6"> from @hos/nova-ui.' },
+            {
+              element: 'div',
+              message:
+                'Use <Box>, <Stack>, or <TabPage> from @hos/nova-ui instead of raw <div>.',
+            },
+            {
+              element: 'p',
+              message: 'Use <Text> from @hos/nova-ui instead of raw <p>.',
+            },
+            {
+              element: 'span',
+              message:
+                'Use <Text as="span"> from @hos/nova-ui instead of raw <span>.',
+            },
+            {
+              element: 'h1',
+              message: 'Use <Heading level="h1"> from @hos/nova-ui.',
+            },
+            {
+              element: 'h2',
+              message: 'Use <Heading level="h2"> from @hos/nova-ui.',
+            },
+            {
+              element: 'h3',
+              message: 'Use <Heading level="h3"> from @hos/nova-ui.',
+            },
+            {
+              element: 'h4',
+              message: 'Use <Heading level="h4"> from @hos/nova-ui.',
+            },
+            {
+              element: 'h5',
+              message: 'Use <Heading level="h5"> from @hos/nova-ui.',
+            },
+            {
+              element: 'h6',
+              message: 'Use <Heading level="h6"> from @hos/nova-ui.',
+            },
           ],
         },
       ],

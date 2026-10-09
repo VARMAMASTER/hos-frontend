@@ -6,7 +6,11 @@ afterEach(() => cleanup());
 
 describe('Box Component', () => {
   it('renders div with token padding and surface', () => {
-    render(<Box padding="s4" surface="base">Content</Box>);
+    render(
+      <Box padding="s4" surface="base">
+        Content
+      </Box>,
+    );
     const box = screen.getByText('Content');
     expect(box.tagName).toBe('DIV');
     expect(box.className).toContain('p-s4');
@@ -14,7 +18,11 @@ describe('Box Component', () => {
   });
 
   it('renders requested polymorphic element with border and radius', () => {
-    render(<Box as="section" border="bottom" radius="card">Section</Box>);
+    render(
+      <Box as="section" border="bottom" radius="card">
+        Section
+      </Box>,
+    );
     const section = screen.getByText('Section');
     expect(section.tagName).toBe('SECTION');
     expect(section.className).toContain('border-b');
@@ -22,7 +30,11 @@ describe('Box Component', () => {
   });
 
   it('supports directional paddingX and paddingY', () => {
-    render(<Box paddingX="s6" paddingY="s2">Directional</Box>);
+    render(
+      <Box paddingX="s6" paddingY="s2">
+        Directional
+      </Box>,
+    );
     const el = screen.getByText('Directional');
     expect(el.className).toContain('px-s6');
     expect(el.className).toContain('py-s2');

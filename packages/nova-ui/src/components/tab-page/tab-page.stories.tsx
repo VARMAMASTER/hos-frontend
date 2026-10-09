@@ -39,13 +39,20 @@ export const FullModuleTab: Story = {
         <KpiTile label="Completed" value="84" />
       </TabKPIStrip>
       <TabToolbar
-        search={<SearchField label="Search patients" placeholder="Search by token or patient name…" />}
+        search={
+          <SearchField
+            label="Search patients"
+            placeholder="Search by token or patient name…"
+          />
+        }
         actions={<Button variant="ghost">Export CSV</Button>}
       />
       <TabContent>
         <Card>
           <CardBody>
-            <Text variant="body">Patient queue tables and interactive status actions mount here.</Text>
+            <Text variant="body">
+              Patient queue tables and interactive status actions mount here.
+            </Text>
           </CardBody>
         </Card>
       </TabContent>
@@ -56,7 +63,9 @@ export const FullModuleTab: Story = {
 export const LoadingState: Story = {
   render: () => (
     <TabPage loading>
-      <Box padding="s4"><Text>Content</Text></Box>
+      <Box padding="s4">
+        <Text>Content</Text>
+      </Box>
     </TabPage>
   ),
 };

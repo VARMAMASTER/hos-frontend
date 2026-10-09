@@ -59,17 +59,30 @@ export const AllLoadingVariants: Story = {
     <div className="flex flex-col gap-s5">
       <div className="flex flex-wrap items-center gap-s5">
         <Button loading>Primary</Button>
-        <Button variant="outline" loading>Outline</Button>
-        <Button variant="ghost" loading>Ghost</Button>
-        <Button variant="danger" loading>Danger</Button>
+        <Button variant="outline" loading>
+          Outline
+        </Button>
+        <Button variant="ghost" loading>
+          Ghost
+        </Button>
+        <Button variant="danger" loading>
+          Danger
+        </Button>
       </div>
       <div className="flex flex-wrap items-center gap-s5">
-        <Button loading loadingText="Saving…">Primary</Button>
-        <Button variant="outline" loading loadingText="Updating…">Outline</Button>
-        <Button variant="ghost" loading loadingText="Canceling…">Ghost</Button>
-        <Button variant="danger" loading loadingText="Deleting…">Danger</Button>
+        <Button loading loadingText="Saving…">
+          Primary
+        </Button>
+        <Button variant="outline" loading loadingText="Updating…">
+          Outline
+        </Button>
+        <Button variant="ghost" loading loadingText="Canceling…">
+          Ghost
+        </Button>
+        <Button variant="danger" loading loadingText="Deleting…">
+          Danger
+        </Button>
       </div>
     </div>
   ),
 };
-

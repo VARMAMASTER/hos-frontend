@@ -62,11 +62,7 @@ export const Drift: Story = {
     fleet: { approvedAsIs: 71.2 },
     driftMessage:
       'Concentrated in Orthopedics since the TKR package pathway was added on 09 Jul. Recommended: re-ground on the 12 post-09-Jul orthopedic discharges (about 4 min, no downtime).',
-    driftAction: (
-      <AiButton size="sm">
-        Approve re-grounding
-      </AiButton>
-    ),
+    driftAction: <AiButton size="sm">Approve re-grounding</AiButton>,
     corrections: [
       {
         id: 'c1',

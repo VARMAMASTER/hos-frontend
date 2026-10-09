@@ -45,7 +45,12 @@ export function TabHeader({
         ) : null}
       </Stack>
       {actions ? (
-        <Stack direction="horizontal" align="center" gap="s2" className="ml-auto shrink-0">
+        <Stack
+          direction="horizontal"
+          align="center"
+          gap="s2"
+          className="ml-auto shrink-0"
+        >
           {actions}
         </Stack>
       ) : null}

@@ -12,10 +12,7 @@ export function ProfileWidget({
       compactMode={compactMode}
       className={className}
     >
-      <TabHeader
-        title="Profile"
-        description="Curated workflow for Profile."
-      />
+      <TabHeader title="Profile" description="Curated workflow for Profile." />
       <TabContent>
         {/* Curated Patient Records - Profile workflow payload */}
       </TabContent>

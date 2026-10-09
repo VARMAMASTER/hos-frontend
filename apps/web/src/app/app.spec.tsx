@@ -7,7 +7,9 @@ afterEach(() => cleanup());
 describe('App Component with Modular Shell', () => {
   it('renders AppShell with navigation items from the module registry', () => {
     render(<App />);
-    expect(screen.getByRole('navigation', { name: /main navigation/i })).toBeTruthy();
+    expect(
+      screen.getByRole('navigation', { name: /main navigation/i }),
+    ).toBeTruthy();
     expect(screen.getByText('Reception / OPD')).toBeTruthy();
     expect(screen.getByText('Doctor Workspace')).toBeTruthy();
   });
@@ -50,12 +52,7 @@ describe('App Component with Modular Shell', () => {
   });
 
   it('filters navigation items based on user entitlements when specified', () => {
-    render(
-      <App
-        tenantModules={['doctor']}
-        userRoles={['ROLE_DOCTOR']}
-      />,
-    );
+    render(<App tenantModules={['doctor']} userRoles={['ROLE_DOCTOR']} />);
 
     expect(screen.getByText('Doctor Workspace')).toBeTruthy();
     expect(screen.queryByText('Reception / OPD')).toBeNull();

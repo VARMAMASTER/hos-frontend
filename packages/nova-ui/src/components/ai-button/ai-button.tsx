@@ -188,18 +188,10 @@ export const AiButton = forwardRef<HTMLButtonElement, AiButtonProps>(
               button never changes size between states. Only the live one is visible and in the
               accessible name. */}
           <span className="relative grid justify-items-center">
-            <Label
-              name="idle"
-              live={state === 'idle'}
-              twinkle={available}
-            >
+            <Label name="idle" live={state === 'idle'} twinkle={available}>
               {children}
             </Label>
-            <Label
-              name="thinking"
-              live={thinking}
-              twinkle={false}
-            >
+            <Label name="thinking" live={thinking} twinkle={false}>
               {thinkingLabel}
             </Label>
             <Label

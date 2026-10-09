@@ -156,7 +156,10 @@ export function AiProgressSteps({
       id={labelId}
       className="mb-s1 inline-flex items-center gap-s2 text-label font-semibold text-ai-deep"
     >
-      <span aria-hidden="true" className="relative inline-flex items-center text-ai-bright">
+      <span
+        aria-hidden="true"
+        className="relative inline-flex items-center text-ai-bright"
+      >
         <SparkleCluster size="xs" className="text-ai-bright" />
         <span className="sr-only">✦</span>
       </span>

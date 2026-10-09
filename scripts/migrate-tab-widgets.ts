@@ -51,4 +51,6 @@ export function ${widgetName}({
   }
 }
 
-console.log(`Successfully migrated ${migrated} tab widgets to Nova UI Tab Templates.`);
+console.log(
+  `Successfully migrated ${migrated} tab widgets to Nova UI Tab Templates.`,
+);

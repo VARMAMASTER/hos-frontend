@@ -34,8 +34,18 @@ export function TabPage({
         aria-busy={loading ? 'true' : undefined}
       >
         <Stack gap="s6">
-          <Box surface="inset" padding="s6" radius="card" className="motion-safe:animate-pulse" />
-          <Box surface="inset" padding="s8" radius="card" className="motion-safe:animate-pulse" />
+          <Box
+            surface="inset"
+            padding="s6"
+            radius="card"
+            className="motion-safe:animate-pulse"
+          />
+          <Box
+            surface="inset"
+            padding="s8"
+            radius="card"
+            className="motion-safe:animate-pulse"
+          />
         </Stack>
       </Box>
     );

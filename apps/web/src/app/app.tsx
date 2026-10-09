@@ -118,7 +118,7 @@ export function App({
   );
 
   const [selectedModuleId, setSelectedModuleId] = useState<string>(
-    initialModuleId ?? (entitledModules[0]?.id ?? 'reception'),
+    initialModuleId ?? entitledModules[0]?.id ?? 'reception',
   );
 
   const activeModule = useMemo(() => {
@@ -241,7 +241,9 @@ export function App({
             <span className="font-display text-subtitle font-bold text-on-primary">
               {tenantName}
             </span>
-            <span className="text-meta text-[color:var(--nova-chrome-ink-2)]">/</span>
+            <span className="text-meta text-[color:var(--nova-chrome-ink-2)]">
+              /
+            </span>
             <span className="text-body font-medium text-on-primary">
               {activeModule ? `${activeModule.title} Workspace` : 'Workspace'}
             </span>

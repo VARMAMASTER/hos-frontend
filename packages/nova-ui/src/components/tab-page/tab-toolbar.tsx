@@ -19,15 +19,37 @@ export function TabToolbar({
   children,
 }: TabToolbarProps) {
   return (
-    <Box surface="inset" padding="s3" radius="card" className={cx('min-w-0', className)}>
-      <Stack direction="horizontal" justify="between" align="center" wrap gap="s3">
-        <Stack direction="horizontal" align="center" wrap gap="s3" className="flex-1 min-w-0">
+    <Box
+      surface="inset"
+      padding="s3"
+      radius="card"
+      className={cx('min-w-0', className)}
+    >
+      <Stack
+        direction="horizontal"
+        justify="between"
+        align="center"
+        wrap
+        gap="s3"
+      >
+        <Stack
+          direction="horizontal"
+          align="center"
+          wrap
+          gap="s3"
+          className="flex-1 min-w-0"
+        >
           {search ? <Box className="w-full max-w-xs">{search}</Box> : null}
           {filters}
           {children}
         </Stack>
         {actions ? (
-          <Stack direction="horizontal" align="center" gap="s2" className="ml-auto shrink-0">
+          <Stack
+            direction="horizontal"
+            align="center"
+            gap="s2"
+            className="ml-auto shrink-0"
+          >
             {actions}
           </Stack>
         ) : null}

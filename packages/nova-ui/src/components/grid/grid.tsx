@@ -40,12 +40,7 @@ export function Grid({
 
   return (
     <Tag
-      className={cx(
-        'grid',
-        columnClasses[columns],
-        gapClasses[gap],
-        className,
-      )}
+      className={cx('grid', columnClasses[columns], gapClasses[gap], className)}
       {...rest}
     >
       {children}

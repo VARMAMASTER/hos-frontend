@@ -1,11 +1,7 @@
 import { TabPage, TabHeader, TabContent } from '@hos/nova-ui';
 import type { ArWidgetProps } from './types';
 
-export function ArWidget({
-  patientId,
-  compactMode,
-  className,
-}: ArWidgetProps) {
+export function ArWidget({ patientId, compactMode, className }: ArWidgetProps) {
   return (
     <TabPage
       patientId={patientId}

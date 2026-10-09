@@ -356,7 +356,12 @@ export function ButtonGroupItem({
       )}
     >
       {/* The content sits above the sliding indicator, which is a positioned sibling. */}
-      <span className={cx('relative z-10 inline-flex items-center gap-s2', loading && 'opacity-0')}>
+      <span
+        className={cx(
+          'relative z-10 inline-flex items-center gap-s2',
+          loading && 'opacity-0',
+        )}
+      >
         {group.multiple && !iconOnly ? (
           // A pressed multiple-select segment slides a tick in, so the state is never colour alone.
           <span

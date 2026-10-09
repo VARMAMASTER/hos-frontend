@@ -50,8 +50,14 @@ export function AiThinking({
       )}
       {...rest}
     >
-      <span aria-hidden="true" className="relative inline-flex items-center text-ai-bright">
-        <SparkleCluster size="xs" className="text-ai-bright motion-safe:animate-pulse" />
+      <span
+        aria-hidden="true"
+        className="relative inline-flex items-center text-ai-bright"
+      >
+        <SparkleCluster
+          size="xs"
+          className="text-ai-bright motion-safe:animate-pulse"
+        />
         <span className="sr-only">✦</span>
       </span>
       {label}

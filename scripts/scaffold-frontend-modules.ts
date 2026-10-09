@@ -36,7 +36,9 @@ function toCamelCase(str: string): string {
 
 const modulesRoot = path.resolve(process.cwd(), 'apps/web/src/modules');
 
-console.log(`Scaffolding ${MODULE_REGISTRY.length} modules in ${modulesRoot}...`);
+console.log(
+  `Scaffolding ${MODULE_REGISTRY.length} modules in ${modulesRoot}...`,
+);
 
 let fileCount = 0;
 
@@ -61,7 +63,8 @@ export const manifest = ${camelMod}Manifest;
 
   // 2. tabs/<tab-id>/...
   const tabExports: string[] = [];
-  const tabWidgetNames: { tabId: string; widgetName: string; label: string }[] = [];
+  const tabWidgetNames: { tabId: string; widgetName: string; label: string }[] =
+    [];
 
   for (const tab of module.tabs) {
     const tabDir = path.join(tabsDir, tab.id);
@@ -106,7 +109,11 @@ export function ${widgetName}({
   );
 }
 `;
-    fs.writeFileSync(path.join(tabDir, `${tab.id}-view.tsx`), viewContent, 'utf8');
+    fs.writeFileSync(
+      path.join(tabDir, `${tab.id}-view.tsx`),
+      viewContent,
+      'utf8',
+    );
     fileCount++;
 
     // tabs/<tab-id>/index.ts
@@ -124,7 +131,8 @@ export * from './${tab.id}-view';
 
   // 4. routes.tsx
   const tabImports = tabWidgetNames.map((t) => `  ${t.widgetName},`).join('\n');
-  const defaultTab = module.tabs.find((t) => t.path === module.defaultPath) || module.tabs[0];
+  const defaultTab =
+    module.tabs.find((t) => t.path === module.defaultPath) || module.tabs[0];
   const defaultWidgetName = `${toPascalCase(defaultTab.id)}Widget`;
 
   const routeChildren = tabWidgetNames
@@ -132,7 +140,7 @@ export * from './${tab.id}-view';
       (t) => `      {
         path: '${t.tabId}',
         element: <${t.widgetName} />,
-      },`
+      },`,
     )
     .join('\n');
 
@@ -171,7 +179,7 @@ export * from './tabs';
   const tabTableRows = module.tabs
     .map(
       (t) =>
-        `| \`${t.id}\` | ${t.label} | \`${t.path}\` | ${t.badge ? `\`${t.badge}\`` : '—'} | \`<${toPascalCase(t.id)}Widget />\` |`
+        `| \`${t.id}\` | ${t.label} | \`${t.path}\` | ${t.badge ? `\`${t.badge}\`` : '—'} | \`<${toPascalCase(t.id)}Widget />\` |`,
     )
     .join('\n');
 
@@ -208,4 +216,6 @@ All tabs within this module are organized under the tab-as-a-folder architecture
   fileCount++;
 }
 
-console.log(`Scaffolding complete: Created ${fileCount} files across ${MODULE_REGISTRY.length} modules.`);
+console.log(
+  `Scaffolding complete: Created ${fileCount} files across ${MODULE_REGISTRY.length} modules.`,
+);

@@ -15,9 +15,15 @@ type Story = StoryObj<typeof meta>;
 export const Variants: Story = {
   render: () => (
     <div className="flex flex-col gap-s2 p-s4">
-      <Text variant="body">Body text for clinical notes and general descriptions.</Text>
-      <Text variant="caption">Caption text for footnotes, hints, and subtle helpers.</Text>
-      <Text variant="meta">Metadata text for timestamps, audits, and table subtotals.</Text>
+      <Text variant="body">
+        Body text for clinical notes and general descriptions.
+      </Text>
+      <Text variant="caption">
+        Caption text for footnotes, hints, and subtle helpers.
+      </Text>
+      <Text variant="meta">
+        Metadata text for timestamps, audits, and table subtotals.
+      </Text>
       <Text variant="code">MRN-90214-X-EMERGENCY</Text>
       <Text variant="label">Form Field Label</Text>
     </div>

@@ -187,7 +187,8 @@ export const Interactive: Story = {
     <div className="flex flex-col items-center gap-s5 rounded-overlay bg-chrome-1 p-s10">
       <DraftSummary />
       <span className="text-label text-ink-2">
-        Press to test interactive flow: Idle &rarr; Thinking &rarr; Done &rarr; Idle
+        Press to test interactive flow: Idle &rarr; Thinking &rarr; Done &rarr;
+        Idle
       </span>
     </div>
   ),

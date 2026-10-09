@@ -12,10 +12,7 @@ export function TenantsWidget({
       compactMode={compactMode}
       className={className}
     >
-      <TabHeader
-        title="Tenants"
-        description="Curated workflow for Tenants."
-      />
+      <TabHeader title="Tenants" description="Curated workflow for Tenants." />
       <TabContent>
         {/* Curated HOS HQ Superadmin - Tenants workflow payload */}
       </TabContent>

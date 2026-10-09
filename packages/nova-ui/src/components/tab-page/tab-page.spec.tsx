@@ -23,12 +23,16 @@ describe('TabPage and Tab Layout Templates', () => {
       </TabPage>,
     );
 
-    expect(screen.getByRole('heading', { level: 2, name: 'Live Queue' })).toBeTruthy();
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Live Queue' }),
+    ).toBeTruthy();
     expect(screen.getByText('Real-time OPD triage.')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Action' })).toBeTruthy();
     expect(screen.getByText('Content Item')).toBeTruthy();
 
-    const root = screen.getByRole('heading', { level: 2 }).closest('[data-patient-id]');
+    const root = screen
+      .getByRole('heading', { level: 2 })
+      .closest('[data-patient-id]');
     expect(root?.getAttribute('data-patient-id')).toBe('PT-99');
   });
 
@@ -39,7 +43,9 @@ describe('TabPage and Tab Layout Templates', () => {
         actions={<button type="button">Filter</button>}
       />,
     );
-    expect(screen.getByRole('textbox', { name: 'Search patients' })).toBeTruthy();
+    expect(
+      screen.getByRole('textbox', { name: 'Search patients' }),
+    ).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Filter' })).toBeTruthy();
   });
 

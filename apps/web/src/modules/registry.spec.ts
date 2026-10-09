@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { MODULE_REGISTRY, getEntitledModules, getModuleManifest } from './registry';
+import {
+  MODULE_REGISTRY,
+  getEntitledModules,
+  getModuleManifest,
+} from './registry';
 import type { ModuleManifest } from './types';
 
 describe('Module Registry', () => {
@@ -25,7 +29,10 @@ describe('Module Registry', () => {
   });
 
   it('filters entitled modules based on tenant subscription and user roles', () => {
-    const entitled = getEntitledModules(['billing', 'reception'], ['ROLE_BILLING']);
+    const entitled = getEntitledModules(
+      ['billing', 'reception'],
+      ['ROLE_BILLING'],
+    );
     expect(entitled.map((m: ModuleManifest) => m.id)).toEqual(['billing']);
   });
 

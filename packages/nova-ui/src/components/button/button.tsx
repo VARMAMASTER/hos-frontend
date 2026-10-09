@@ -53,8 +53,10 @@ const variants: Record<DrawnVariant, string> = {
     'rounded-control border-transparent bg-primary text-on-primary hover:bg-primary-hover',
   outline:
     'rounded-control border-primary bg-surface text-primary-strong hover:bg-primary hover:text-on-primary',
-  ghost: 'rounded-control border-border-strong bg-surface text-ink hover:bg-surface-2',
-  danger: 'rounded-control border-border-strong bg-surface text-crit-deep hover:bg-surface-2',
+  ghost:
+    'rounded-control border-border-strong bg-surface text-ink hover:bg-surface-2',
+  danger:
+    'rounded-control border-border-strong bg-surface text-crit-deep hover:bg-surface-2',
   ai: 'rounded-full border-transparent nova-ai-hero-fill text-on-primary hover:bg-ai-hover hover:nova-ai-glow focus-visible:nova-ai-glow motion-safe:active:scale-95',
 };
 

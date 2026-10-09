@@ -192,9 +192,7 @@ export const CoreControls: StoryObj = {
           <Button size="sm" variant="danger">
             Discharge
           </Button>
-          <AiButton size="sm">
-            Draft
-          </AiButton>
+          <AiButton size="sm">Draft</AiButton>
         </Row>
         <Row label="States: loading (keeps its width), disabled, unavailable but focusable">
           <Button loading>Saving record</Button>

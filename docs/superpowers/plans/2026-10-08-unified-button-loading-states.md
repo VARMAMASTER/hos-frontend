@@ -5,6 +5,7 @@
 **Goal:** Unify button components across Nova UI, provide first-class loading states across all button variants and button-like controls, and club duplicate spinner and button implementations into single canonical primitives following design consistency.
 
 **Architecture:**
+
 1. Create a shared `Spinner` primitive in `primitives/spinner.tsx` for consistent, accessible, motion-safe loading indication across all components.
 2. Upgrade `Button` in `components/button/button.tsx` to support `loading` with `loadingText?: string` across all variants (`primary`, `outline`, `ghost`, `danger`, `ai`), keeping full backwards compatibility and test compliance.
 3. Add `loading?: boolean` to `ButtonGroupItem` in `components/button-group/button-group.tsx`.
@@ -17,6 +18,7 @@
 ### Task 1: Create Canonical `Spinner` Primitive
 
 **Files:**
+
 - Create: `hos-frontend/packages/nova-ui/src/primitives/spinner.tsx`
 - Modify: `hos-frontend/packages/nova-ui/src/primitives/conventions.spec.ts` (if needed)
 
@@ -28,6 +30,7 @@
 ### Task 2: Elevate `Button` with Canonical Spinner & `loadingText`
 
 **Files:**
+
 - Modify: `hos-frontend/packages/nova-ui/src/components/button/button.tsx`
 - Modify: `hos-frontend/packages/nova-ui/src/components/button/button.stories.tsx`
 - Test: `hos-frontend/packages/nova-ui/src/components/button/button.spec.tsx`
@@ -41,6 +44,7 @@
 ### Task 3: Add `loading` State to `ButtonGroupItem`
 
 **Files:**
+
 - Modify: `hos-frontend/packages/nova-ui/src/components/button-group/button-group.tsx`
 - Modify: `hos-frontend/packages/nova-ui/src/components/button-group/button-group.stories.tsx`
 - Test: `hos-frontend/packages/nova-ui/src/components/button-group/button-group.spec.tsx`
@@ -54,6 +58,7 @@
 ### Task 4: Connect Loading States in Workflow Components
 
 **Files:**
+
 - Modify: `hos-frontend/packages/nova-ui/src/components/approval-bar/approval-bar.tsx`
 - Modify: `hos-frontend/packages/nova-ui/src/components/ai-chat-thread/chat-composer.tsx`
 - Modify: `hos-frontend/packages/nova-ui/src/components/ambient-scribe-recorder/ambient-scribe-recorder.tsx`
