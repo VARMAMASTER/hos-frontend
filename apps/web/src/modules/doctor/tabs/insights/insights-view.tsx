@@ -17,7 +17,7 @@ export function InsightsWidget({
         description="Curated workflow for AI Insights."
       />
       <TabContent>
-        {/* Curated Doctor Workspace - AI Insights workflow payload */}
+        {/* Curated Doctor module - AI Insights workflow payload */}
       </TabContent>
     </TabPage>
   );

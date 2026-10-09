@@ -17,7 +17,7 @@ export function HistoryWidget({
         description="Curated workflow for Patient History."
       />
       <TabContent>
-        {/* Curated Doctor Workspace - Patient History workflow payload */}
+        {/* Curated Doctor module - Patient History workflow payload */}
       </TabContent>
     </TabPage>
   );

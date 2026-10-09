@@ -1,4 +1,4 @@
-# Doctor Workspace (`doctor`)
+# Doctor (`doctor`)
 
 **Category:** `clinical`  
 **Icon:** `Dr`  
