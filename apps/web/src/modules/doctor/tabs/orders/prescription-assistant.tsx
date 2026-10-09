@@ -2,11 +2,11 @@ import { useState } from 'react';
 import {
   AiClassChip,
   Banner,
+  Box,
   Button,
   Card,
   CardBody,
   CardHeader,
-  Dialog,
   Heading,
   Stack,
   StatusDot,
@@ -21,7 +21,7 @@ import {
   TextField,
 } from '@hos/nova-ui';
 import type { Feedback } from '../../ui';
-import { Prose, TierNote } from '../../ui';
+import { LabelDialog, Prose, TierNote } from '../../ui';
 import type { DoctorDataSource, OrdersOverview } from '../../data';
 
 interface PrescriptionAssistantProps {
@@ -136,9 +136,9 @@ export function PrescriptionAssistant({
                     </Text>
                   </TableCell>
                   <TableCell colSpan={4}>
-                    <Text size="xs" tone="muted">
+                    <Box className="text-caption text-ink-2">
                       <Prose text={orders.formularyTotal.note} />
-                    </Text>
+                    </Box>
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -263,32 +263,11 @@ export function PrescriptionAssistant({
         </Stack>
       </CardBody>
 
-      <Dialog
+      <LabelDialog
         open={labelOpen}
         onClose={() => setLabelOpen(false)}
-        title={dose.label.title}
-      >
-        <Stack gap="s4">
-          <Text size="sm" weight="semibold">
-            Metformin hydrochloride — renal impairment, from the licensed
-            prescribing information:
-          </Text>
-          <Stack as="ul" gap="s2" className="list-disc pl-s7">
-            {dose.label.bands.map((band) => (
-              <li key={band.range}>
-                <Text as="span" weight="semibold">
-                  {band.range}
-                </Text>{' '}
-                <Text as="span">{band.text}</Text>
-              </li>
-            ))}
-          </Stack>
-          <Text size="sm">{dose.label.patientNote}</Text>
-          <Text size="xs" tone="muted">
-            {dose.label.disclaimer}
-          </Text>
-        </Stack>
-      </Dialog>
+        label={dose.label}
+      />
     </Card>
   );
 }

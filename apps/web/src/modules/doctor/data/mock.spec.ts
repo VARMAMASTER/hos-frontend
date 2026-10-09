@@ -558,3 +558,157 @@ describe('mock doctor source: AI insights', () => {
     ).resolves.toBeUndefined();
   });
 });
+
+describe('mock doctor source: case discussion', () => {
+  it('lists nine facts with the value now first, and the two that came through ABHA', async () => {
+    const discussion = await source.getDiscussion();
+    expect(discussion?.facts).toHaveLength(9);
+    expect(discussion?.facts.filter((fact) => fact.viaAbha)).toHaveLength(2);
+    expect(discussion?.counts).toBe('9 facts · 4 sources · 2 hospitals');
+    expect(discussion?.suggestions).toHaveLength(4);
+  });
+
+  it('has no case open for another patient', async () => {
+    await source.startConsultation('T-14');
+    expect(await source.getDiscussion()).toBeNull();
+  });
+
+  it('convenes three lenses that disagree and recommend nothing', async () => {
+    const panel = await source.convenePanel();
+    expect(panel.lenses.map((lens) => [lens.id, lens.tier])).toEqual([
+      ['safety', 'amber'],
+      ['cost', 'green'],
+      ['gaps', 'amber'],
+    ]);
+    expect(panel.disagreements).toHaveLength(3);
+    expect(panel.noRecommendation).toMatch(/No lens recommended an action/);
+    for (const lens of panel.lenses) {
+      expect(lens.questions.length).toBeGreaterThanOrEqual(3);
+      expect(lens.paragraphs.join(' ')).not.toMatch(
+        /\b(you should|I recommend|consider (reducing|stopping|increasing))\b/i,
+      );
+    }
+  });
+
+  it('writes only a note that the review happened, with no plan in it', async () => {
+    const panel = await source.convenePanel();
+    expect(panel.chartNote.text).toMatch(/No change to therapy recorded/);
+    await expect(source.approveReviewNote()).resolves.toBeUndefined();
+  });
+
+  it('runs a check as a read-out and prepares a draft for approval, and sends nothing itself', async () => {
+    const check = await source.runLensAction('safety', 'recheck');
+    expect(check.title).toBe(
+      'Interaction check re-run against all three lines',
+    );
+    expect(check.draft).toBeUndefined();
+    const chase = await source.runLensAction('gaps', 'chase');
+    expect(chase.draft?.title).toBe(
+      'Draft: chase the lab on the 21 Jun lipid order',
+    );
+    await expect(source.runLensAction('gaps', 'nope')).rejects.toThrow(
+      'That action is not on this lens.',
+    );
+    await expect(
+      source.approveLensDraft('gaps', 'chase'),
+    ).resolves.toBeUndefined();
+    await expect(source.approveLensDraft('safety', 'recheck')).rejects.toThrow(
+      'That action has no draft to approve.',
+    );
+  });
+
+  it('answers a follow-up with evidence, and refuses to say what to do', async () => {
+    const evidence = await source.askPanel(
+      'Why do you call the eGFR unconfirmed?',
+    );
+    expect(evidence.tier).toBe('amber');
+    expect(evidence.text).toMatch(/Because of three dates and nothing else/);
+    const refusal = await source.askPanel(
+      'What should I do about the Metformin?',
+    );
+    expect(refusal.tier).toBe('red');
+    expect(refusal.text).toMatch(/I am not going to answer that/);
+    expect(refusal.text).toMatch(/The decision is yours/);
+    // It hands over the facts instead of an instruction.
+    expect(refusal.text).toMatch(/eGFR 44/);
+  });
+});
+
+describe('mock doctor source: my AI team', () => {
+  it('shows six of the nine learned preferences, two of them off', async () => {
+    const team = await source.getAiTeam();
+    expect(team.sahayaka.preferences).toHaveLength(6);
+    expect(
+      team.sahayaka.preferences.filter((preference) => !preference.enabled),
+    ).toHaveLength(2);
+    expect(team.sahayaka.hiddenRunning + team.sahayaka.hiddenOff).toBe(3);
+    expect(team.sandarbha.templates).toHaveLength(4);
+  });
+
+  it('switches a preference and keeps it switched, for an id it knows', async () => {
+    await source.setPreference('telugu', false);
+    let team = await source.getAiTeam();
+    expect(
+      team.sahayaka.preferences.find((preference) => preference.id === 'telugu')
+        ?.enabled,
+    ).toBe(false);
+    await source.setPreference('telugu', true);
+    team = await source.getAiTeam();
+    expect(
+      team.sahayaka.preferences.find((preference) => preference.id === 'telugu')
+        ?.enabled,
+    ).toBe(true);
+    await expect(source.setPreference('nope', true)).rejects.toThrow(
+      'That preference is not on your list.',
+    );
+  });
+
+  it('records a correction only when the doctor wrote one', async () => {
+    await expect(source.correctPreference('renal', '  ')).rejects.toThrow(
+      'Say what it should do instead.',
+    );
+    await expect(
+      source.correctPreference('renal', 'Name the hospital'),
+    ).resolves.toBeUndefined();
+  });
+
+  it('forgets everything it learned, hidden preferences included', async () => {
+    await source.forgetAllPreferences();
+    const team = await source.getAiTeam();
+    expect(
+      team.sahayaka.preferences.every((preference) => !preference.enabled),
+    ).toBe(true);
+    expect(team.sahayaka.hiddenRunning).toBe(0);
+    expect(team.sahayaka.hiddenOff).toBe(3);
+  });
+
+  it('drafts the TB recall without sending it, and sends it only on approval', async () => {
+    const draft = await source.draftTbRecall();
+    expect(draft.title).toBe('WhatsApp recall — 4 TB patients');
+    await expect(source.approveTbRecall()).resolves.toBeUndefined();
+  });
+
+  it('answers a reference question, and refuses a diagnosis', async () => {
+    const reference = await source.askSpecialty(
+      'What does the metformin label say about renal function?',
+    );
+    expect(reference.tier).toBe('amber');
+    expect(reference.source).toMatch(/licensed prescribing information/);
+    const refusal = await source.askSpecialty(
+      'Does Lakshmi Devi have kidney disease?',
+    );
+    expect(refusal.tier).toBe('red');
+    expect(refusal.text).toMatch(/What I will not do is put those together/);
+  });
+
+  it('records the phrasebook, the template and the report, and rejects an unknown template', async () => {
+    await expect(source.addToPhrasebook()).resolves.toBeUndefined();
+    await expect(source.reportOverstep()).resolves.toBeUndefined();
+    await expect(
+      source.loadSpecialtyTemplate('t2dm-egfr'),
+    ).resolves.toBeUndefined();
+    await expect(source.loadSpecialtyTemplate('nope')).rejects.toThrow(
+      'That template is not in the library.',
+    );
+  });
+});

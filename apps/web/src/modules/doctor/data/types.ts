@@ -469,3 +469,154 @@ export interface InsightsResult {
   insights: InsightCard[];
   footnote: string;
 }
+
+// --- Case discussion ---------------------------------------------------------------------------
+
+// One fact of the record, with where it came from. The decisive value comes first.
+export interface FactRow {
+  id: string;
+  value: string;
+  before: string;
+  who: string;
+  // The fact reached this record through the patient's ABHA consent, not an order of ours.
+  viaAbha?: boolean;
+  when: string;
+}
+
+export interface DiscussOverview {
+  patient: PatientRef;
+  doctorName: string;
+  headline: string;
+  summary: string;
+  counts: string;
+  facts: FactRow[];
+  conveneIntro: string;
+  steps: string[];
+  suggestions: string[];
+}
+
+// What a lens's button does. A check re-reads the record and reports; a draft prepares something for
+// the doctor to approve before it goes anywhere; a label opens the label's own text.
+export interface LensAction {
+  id: string;
+  label: string;
+  kind: 'check' | 'draft' | 'label';
+}
+
+// One of the three lenses. Each may do exactly three things: state a value that is in the record,
+// quote a constraint published somewhere citable, or ask the doctor a question. None may advise.
+export interface Lens {
+  id: 'safety' | 'cost' | 'gaps';
+  title: string;
+  tier: DoctorAiTier;
+  paragraphs: string[];
+  questions: string[];
+  actions: LensAction[];
+  sources: string;
+}
+
+export interface Disagreement {
+  id: 'safety' | 'gaps' | 'cost';
+  label: string;
+  text: string;
+}
+
+export interface PanelResult {
+  lenses: Lens[];
+  disagreements: Disagreement[];
+  noRecommendation: string;
+  yours: { title: string; paragraphs: string[] };
+  // The one thing the panel writes: that the review happened. Documents, does not decide.
+  chartNote: { title: string; text: string; tierNote: string };
+  label: DoseReference['label'];
+}
+
+export interface LensActionResult {
+  title: string;
+  detail: string;
+  // A draft the doctor approves before it is sent; absent for a check, which only reports.
+  draft?: {
+    title: string;
+    body: string;
+    approveLabel: string;
+    approvedVerb: string;
+  };
+}
+
+// --- My AI Team --------------------------------------------------------------------------------
+
+// A behaviour Sahayaka learned from the doctor's own edits. Every one has an off switch in the same
+// row as the sentence it governs.
+export interface LearnedPreference {
+  id: string;
+  learned: string;
+  why: string;
+  does: string;
+  // What the row says once it is off.
+  whenOff?: string;
+  enabled: boolean;
+}
+
+export interface PersonalAgent {
+  name: string;
+  initials: string;
+  subtitle: string;
+  preferences: LearnedPreference[];
+  // Learned behaviours not shown here (the six with the biggest effect are), and whether they run.
+  hiddenRunning: number;
+  hiddenOff: number;
+  correctionsStopped: number;
+  neverDo: string;
+  learnsFrom: string;
+}
+
+export interface OrderRate {
+  item: string;
+  yourRate: string;
+  hospitalRate: string;
+  visits: string;
+  // "least ordered": flagged in words, never colour alone.
+  flag?: string;
+}
+
+export interface Phrase {
+  id: string;
+  key: string;
+  local: string;
+  en: string;
+}
+
+export interface SpecialtyTemplate {
+  id: string;
+  name: string;
+  meta: string;
+  uses: number;
+  loaded: { title: string; detail: string };
+}
+
+export interface SpecialtyAgent {
+  name: string;
+  initials: string;
+  subtitle: string;
+  orders: OrderRate[];
+  ordersNote: string;
+  season: string[];
+  bulletin: { title: string; lines: string[]; note: string };
+  phrases: Phrase[];
+  phrasesNote: string;
+  templates: SpecialtyTemplate[];
+  suggestions: string[];
+  citations: string;
+}
+
+export interface AiTeamOverview {
+  doctorName: string;
+  intro: string;
+  sahayaka: PersonalAgent;
+  sandarbha: SpecialtyAgent;
+}
+
+export interface RecallDraft {
+  title: string;
+  body: string;
+}

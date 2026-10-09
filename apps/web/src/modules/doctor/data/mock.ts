@@ -1,5 +1,7 @@
+import { aiTeamMethods } from './mock-aiteam';
 import { codingMethods } from './mock-coding';
 import { consultMethods } from './mock-consult';
+import { discussMethods } from './mock-discuss';
 import { historyMethods } from './mock-history';
 import { insightsMethods } from './mock-insights';
 import { notesMethods } from './mock-notes';
@@ -27,5 +29,7 @@ export function createMockDoctorSource(): DoctorDataSource {
     ...referralsMethods(state),
     ...codingMethods(state),
     ...insightsMethods(),
+    ...discussMethods(state),
+    ...aiTeamMethods(),
   };
 }

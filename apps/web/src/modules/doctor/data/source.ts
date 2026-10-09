@@ -1,12 +1,17 @@
 import type {
+  AiTeamOverview,
   ChatReply,
   CheckBlock,
   CodingOverview,
+  DiscussOverview,
   HistoryOverview,
   IcdProposal,
   InsightsOverview,
   InsightsResult,
+  LensActionResult,
   ManualCode,
+  PanelResult,
+  RecallDraft,
   ReferralLetter,
   ReferralsOverview,
   TeluguCopy,
@@ -113,4 +118,36 @@ export interface DoctorDataSource {
   actOnInsight(insightId: string, actionId: string): Promise<void>;
   // The doctor dismissed an insight, with a reason.
   dismissInsight(insightId: string, reason: string): Promise<void>;
+
+  // Case discussion. null when no chart is open.
+  getDiscussion(): Promise<DiscussOverview | null>;
+  // Convenes the three lenses. They read the record separately, disagree, and recommend nothing.
+  convenePanel(): Promise<PanelResult>;
+  // A lens's button: a check reports; a draft is prepared for the doctor to approve.
+  runLensAction(lensId: string, actionId: string): Promise<LensActionResult>;
+  // The doctor approved the draft a lens prepared (a lab chase, a cost sheet).
+  approveLensDraft(lensId: string, actionId: string): Promise<void>;
+  // The doctor approved the note that records that the review happened. It records no plan.
+  approveReviewNote(): Promise<void>;
+  // Follow-up questions to the panel: evidence with the record it came from, never advice. A request
+  // for advice is refused (a red answer) and the facts are handed over instead.
+  askPanel(question: string): Promise<ChatReply>;
+
+  // My AI Team.
+  getAiTeam(): Promise<AiTeamOverview>;
+  // The doctor switched a learned preference on or off. Off stays off, and is not re-learned.
+  setPreference(preferenceId: string, enabled: boolean): Promise<void>;
+  // The doctor corrected what Sahayaka learned, in their own words.
+  correctPreference(preferenceId: string, correction: string): Promise<void>;
+  // Resets everything Sahayaka learned. Notes and transcripts are untouched.
+  forgetAllPreferences(): Promise<void>;
+  // The doctor reports the agent stepping over the line (choosing a drug, a dose, an assessment).
+  reportOverstep(): Promise<void>;
+  // Sandarbha drafts the recall for the four TB patients due their month-5 smear. A draft: nothing
+  // is sent until the doctor approves it.
+  draftTbRecall(): Promise<RecallDraft>;
+  approveTbRecall(): Promise<void>;
+  addToPhrasebook(): Promise<void>;
+  loadSpecialtyTemplate(templateId: string): Promise<void>;
+  askSpecialty(question: string): Promise<ChatReply>;
 }

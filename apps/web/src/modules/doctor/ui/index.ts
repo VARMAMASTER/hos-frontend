@@ -9,3 +9,5 @@ export * from './allergy-chip';
 export * from './tier-note';
 export * from './metric-strip';
 export * from './ask-panel';
+export * from './inline-bold';
+export * from './label-dialog';
