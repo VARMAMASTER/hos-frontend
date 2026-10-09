@@ -2,10 +2,17 @@ import type {
   CheckBlock,
   ConsultationOverview,
   ConsultDraft,
+  NoteDraft,
+  OrderReceipt,
+  OrderRequest,
+  OrdersOverview,
+  OrderTemplate,
+  NotesOverview,
   NoteText,
   QueueOverview,
   ReferenceCheck,
   RxLine,
+  TemplateRequest,
 } from './types';
 
 // Everything the Doctor module reads and writes. The tabs depend on this interface only (through
@@ -39,4 +46,27 @@ export interface DoctorDataSource {
   checkPrescription(lines: Pick<RxLine, 'id' | 'duration'>[]): Promise<string>;
   // The doctor approved the prescription: it goes to the patient's WhatsApp.
   approvePrescription(lines: Pick<RxLine, 'id' | 'duration'>[]): Promise<void>;
+
+  // Progress notes.
+  getNotes(): Promise<NotesOverview>;
+  // Assembles a ready note from the recorded encounter, for the doctor to read and sign.
+  openNote(noteId: string): Promise<NoteDraft>;
+  // The doctor signed the note (as drafted or as edited): it is filed. Nothing is filed before.
+  fileNote(noteId: string, note: NoteText): Promise<void>;
+  // The doctor rejected the draft, with the reason: the strongest signal the assistant gets.
+  rejectNote(noteId: string, reason: string): Promise<void>;
+
+  // Orders & prescriptions. null when no chart is open.
+  getOrders(): Promise<OrdersOverview | null>;
+  // The doctor sent the order they chose. Nothing is ordered for them: an AI suggestion never
+  // auto-orders, and the ticked boxes are the doctor's.
+  sendOrder(request: OrderRequest): Promise<OrderReceipt>;
+  saveTemplate(request: TemplateRequest): Promise<OrderTemplate>;
+  // The doctor typed a dose for the patient in front of them: it is recorded as theirs.
+  recordDose(drug: string, dose: string): Promise<void>;
+  // The print sheet (Telugu + English) is queued; nothing is sent to the patient.
+  queuePrint(): Promise<void>;
+  // The Telugu instructions as audio, prepared as a draft that goes only with the prescription once
+  // the doctor has approved it.
+  prepareVoiceNote(): Promise<void>;
 }

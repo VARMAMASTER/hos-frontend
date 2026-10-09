@@ -175,3 +175,140 @@ export interface NoteText {
   assessment: string;
   plan: string;
 }
+
+// --- Progress notes ----------------------------------------------------------------------------
+
+export type NoteState = 'ready' | 'blocked' | 'filed' | 'rejected';
+
+export interface NoteRow {
+  id: string;
+  patient: PatientRef;
+  // "in room": where the patient is, when that matters.
+  where?: string;
+  // What the scribe has drafted: "S · O · A ready", or "S · O · A ready · P empty".
+  draftLabel: string;
+  seenFor: string;
+  // What the doctor usually changes in these drafts (what the assistant has learned).
+  usuallyChange: string;
+  state: NoteState;
+}
+
+export interface NotesOverview {
+  // The signed-in doctor: approvals are recorded against their name.
+  doctorName: string;
+  drafted: { withDraft: number; completed: number };
+  metrics: DoctorMetric[];
+  // What the product will not claim: no bare percentage, the published figure beside ours.
+  honestNote: string;
+  rows: NoteRow[];
+}
+
+// A drafted note, opened for the doctor to read and sign. The plan is the doctor's own words,
+// transcribed verbatim: the scribe does not compose one.
+export interface NoteDraft {
+  noteId: string;
+  title: string;
+  subjective: SoapLine;
+  objective: SoapLine;
+  assessment: SoapLine;
+  plan: SoapLine;
+  sourceLine: string;
+}
+
+// --- Orders & prescriptions --------------------------------------------------------------------
+
+export type FactTone = 'good' | 'warn' | 'crit' | 'neutral';
+
+// A fact the record holds about an orderable item (last done, never done): a statement of record,
+// never a recommendation. Surfacing a care gap is AMBER; ticking the box is the doctor's.
+export interface OrderFact {
+  text: string;
+  tone: FactTone;
+}
+
+export interface OrderItem {
+  id: string;
+  group: 'lab' | 'imaging';
+  name: string;
+  fact?: OrderFact;
+  // The doctor already ordered it: the only reason a box starts ticked.
+  ordered: boolean;
+}
+
+export interface OrderTemplate {
+  id: string;
+  name: string;
+  labs: string;
+  rx: string;
+  // Rx dose fields are blank in a template: a dose is typed for the patient in front of you.
+  doseNote?: string;
+  uses: number;
+  specialty: string;
+  itemIds: string[];
+}
+
+export interface FormularyRow {
+  id: string;
+  cost: string;
+  costNote: string;
+  drug: string;
+  tag: { text: string; tone: 'neutral' | 'ai' };
+  brand: string;
+  generic: string;
+  stock: { text: string; tone: 'good' | 'warn' };
+}
+
+export interface RenalBand {
+  range: string;
+  text: string;
+}
+
+// The label's own dose bands, as reference. The dose for this patient is a field that stays empty.
+export interface DoseReference {
+  drug: string;
+  defaults: string;
+  bands: string;
+  note: string;
+  label: {
+    title: string;
+    bands: RenalBand[];
+    patientNote: string;
+    disclaimer: string;
+  };
+}
+
+export interface PrintPhrase {
+  id: string;
+  local: string;
+  en: string;
+}
+
+export interface OrdersOverview {
+  patient: PatientRef;
+  items: OrderItem[];
+  templates: OrderTemplate[];
+  // Allergies surfaced before the pen moves, as words.
+  allergyBanner: string;
+  formulary: FormularyRow[];
+  formularyTotal: { cost: string; costNote: string; note: string };
+  dose: DoseReference;
+  printing: { teluguShare: string; phrases: PrintPhrase[] };
+  sourcesNote: string;
+}
+
+export interface OrderRequest {
+  itemIds: string[];
+  // The doctor flagged an admission: a bed request is queued to IPD.
+  admit: boolean;
+}
+
+export interface OrderReceipt {
+  summary: string;
+  admitFlagged: boolean;
+}
+
+export interface TemplateRequest {
+  name: string;
+  specialty: string;
+  itemIds: string[];
+}

@@ -1,4 +1,6 @@
 import { consultMethods } from './mock-consult';
+import { notesMethods } from './mock-notes';
+import { ordersMethods } from './mock-orders';
 import { queueMethods } from './mock-queue';
 import type { MockState } from './mock-util';
 import { OPEN_PATIENT_TOKEN } from './seed-queue';
@@ -15,5 +17,7 @@ export function createMockDoctorSource(): DoctorDataSource {
   return {
     ...queueMethods(state),
     ...consultMethods(state),
+    ...notesMethods(state),
+    ...ordersMethods(state),
   };
 }

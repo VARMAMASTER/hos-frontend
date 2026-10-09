@@ -207,3 +207,153 @@ describe('mock doctor source: consultation', () => {
     ).resolves.toBeUndefined();
   });
 });
+
+describe('mock doctor source: progress notes', () => {
+  it('lists the four notes the prototype awaits, with Lakshmi Devi blocked', async () => {
+    const notes = await source.getNotes();
+    expect(notes.rows.map((row) => [row.id, row.state])).toEqual([
+      ['naidu', 'ready'],
+      ['sarojini', 'ready'],
+      ['ghouse', 'ready'],
+      ['lakshmi', 'blocked'],
+    ]);
+    expect(notes.metrics.map((metric) => metric.value)).toEqual([
+      '2 min 10 s',
+      '30 min',
+      '0',
+      '16.0 min',
+    ]);
+  });
+
+  it('opens a ready note with the plan the doctor spoke, and refuses a blocked one', async () => {
+    const draft = await source.openNote('naidu');
+    expect(draft.plan.gloss).toMatch(/Continue the same medicine/);
+    await expect(source.openNote('lakshmi')).rejects.toThrow(
+      'That note is not ready to open.',
+    );
+  });
+
+  it('files a note once, and the row says so', async () => {
+    const draft = await source.openNote('naidu');
+    const note = {
+      subjective: draft.subjective.text,
+      objective: draft.objective.text,
+      assessment: draft.assessment.text,
+      plan: draft.plan.text,
+    };
+    await source.fileNote('naidu', note);
+    const rows = (await source.getNotes()).rows;
+    expect(rows.find((row) => row.id === 'naidu')?.state).toBe('filed');
+    await expect(source.fileNote('naidu', note)).rejects.toThrow(
+      'That note is not ready to file.',
+    );
+  });
+
+  it('will not file a note whose plan is empty', async () => {
+    await expect(
+      source.fileNote('naidu', {
+        subjective: 's',
+        objective: 'o',
+        assessment: 'a',
+        plan: '  ',
+      }),
+    ).rejects.toThrow('The note cannot be filed until it has a plan.');
+  });
+
+  it('rejects a draft only with a reason', async () => {
+    await expect(source.rejectNote('ghouse', ' ')).rejects.toThrow(
+      'Say why you are rejecting this draft.',
+    );
+    await source.rejectNote('ghouse', 'Wrong patient');
+    const rows = (await source.getNotes()).rows;
+    expect(rows.find((row) => row.id === 'ghouse')?.state).toBe('rejected');
+  });
+
+  it('shows the consultation note as filed once the doctor signs it in the Consultation tab', async () => {
+    await source.signNote({
+      subjective: 's',
+      objective: 'o',
+      assessment: 'a',
+      plan: 'Review in two weeks.',
+    });
+    const rows = (await source.getNotes()).rows;
+    expect(rows.find((row) => row.id === 'lakshmi')?.state).toBe('filed');
+  });
+});
+
+describe('mock doctor source: orders and prescriptions', () => {
+  it('opens on the new order with only what the doctor already ordered ticked', async () => {
+    const orders = await source.getOrders();
+    expect(orders?.patient.name).toBe('Lakshmi Devi');
+    expect(
+      orders?.items.filter((item) => item.ordered).map((item) => item.id),
+    ).toEqual(['hba1c', 'lipid']);
+    expect(orders?.templates).toHaveLength(3);
+    expect(orders?.dose.drug).toBe('Metformin');
+  });
+
+  it('never carries a dose for this patient: the dose is a field the doctor types', async () => {
+    const orders = await source.getOrders();
+    expect(JSON.stringify(orders)).not.toMatch(/"dose(Value|Suggestion)"/);
+    expect(orders?.dose.note).toMatch(/does not put a number in the box/i);
+  });
+
+  it('has no chart for another patient', async () => {
+    await source.startConsultation('T-14');
+    expect(await source.getOrders()).toBeNull();
+  });
+
+  it('sends an order the doctor chose, and refuses an empty or unknown one', async () => {
+    const receipt = await source.sendOrder({
+      itemIds: ['hba1c', 'lipid'],
+      admit: false,
+    });
+    expect(receipt.summary).toBe('HbA1c + Lipid profile');
+    expect(receipt.admitFlagged).toBe(false);
+    await expect(
+      source.sendOrder({ itemIds: [], admit: false }),
+    ).rejects.toThrow('Choose at least one item to order.');
+    await expect(
+      source.sendOrder({ itemIds: ['nope'], admit: false }),
+    ).rejects.toThrow('One of those items is not on the order list.');
+  });
+
+  it('flags an admission with the order', async () => {
+    const receipt = await source.sendOrder({ itemIds: ['kft'], admit: true });
+    expect(receipt.admitFlagged).toBe(true);
+  });
+
+  it('saves a template, which then appears in the library, and needs a name', async () => {
+    await expect(
+      source.saveTemplate({
+        name: ' ',
+        specialty: 'General Medicine',
+        itemIds: [],
+      }),
+    ).rejects.toThrow('Give the template a name.');
+    const saved = await source.saveTemplate({
+      name: 'Anaemia work-up',
+      specialty: 'General Medicine',
+      itemIds: ['b12'],
+    });
+    expect(saved.name).toBe('Anaemia work-up');
+    const orders = await source.getOrders();
+    expect(orders?.templates.map((template) => template.name)).toContain(
+      'Anaemia work-up',
+    );
+  });
+
+  it('records a dose only when the doctor typed one', async () => {
+    await expect(source.recordDose('Metformin', '  ')).rejects.toThrow(
+      'Type the dose yourself — HOS does not fill it.',
+    );
+    await expect(
+      source.recordDose('Metformin', '500mg BD'),
+    ).resolves.toBeUndefined();
+  });
+
+  it('queues the print sheet and prepares the voice note, and sends neither on its own', async () => {
+    await expect(source.queuePrint()).resolves.toBeUndefined();
+    await expect(source.prepareVoiceNote()).resolves.toBeUndefined();
+  });
+});

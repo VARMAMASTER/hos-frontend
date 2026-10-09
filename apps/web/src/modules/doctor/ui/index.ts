@@ -7,3 +7,4 @@ export * from './ai-run-steps';
 export * from './prose';
 export * from './allergy-chip';
 export * from './tier-note';
+export * from './metric-strip';
