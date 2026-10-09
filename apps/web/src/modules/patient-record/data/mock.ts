@@ -30,6 +30,7 @@ import { seedTimelineEvents, summariseYears } from './seed-timeline';
 // Errors say what failed, never whose record it was. Each call to the factory starts fresh.
 
 const OPEN_YEAR = 2026;
+const FILED_DOCUMENT_ID = 'doc-yashoda-kft';
 const TODAY = '19 Jul 2026';
 const REQUEST_DAY = '18 Jul 2026';
 const DUE_DAY = '25 Jul 2026';
@@ -73,17 +74,20 @@ export function createMockPatientRecordSource(): PatientRecordDataSource {
   const family = seedFamily();
   const briefs = new Set<string>();
   const memoryDrafts = new Set<string>();
+  const approved = new Set<string>();
   const readings = new Map<string, { filed: boolean }>();
   let answerSeq = 0;
   let dpdpSeq = 447;
   let inviteSeq = 0;
 
   function approval(draftId: string, approver: string) {
-    return {
+    const record = {
       draftId,
       approver: requireApprover(approver),
       approvedAt: new Date().toISOString(),
     };
+    approved.add(draftId);
+    return record;
   }
 
   function attach(
@@ -120,6 +124,12 @@ export function createMockPatientRecordSource(): PatientRecordDataSource {
       if (!briefs.has(briefId))
         throw new Error('That draft could not be found.');
       return approval(briefId, approver);
+    },
+
+    async withdrawApproval(draftId) {
+      if (!approved.delete(draftId)) {
+        throw new Error('That draft was not approved.');
+      }
     },
 
     async actOnCareGap(gapId, patientId): Promise<CareGap> {
@@ -248,7 +258,7 @@ export function createMockPatientRecordSource(): PatientRecordDataSource {
       const count = request.values.length;
       return attach(
         {
-          id: 'doc-yashoda-kft',
+          id: FILED_DOCUMENT_ID,
           name: reading.fileName,
           format: 'JPG',
           category: 'Outside report',
@@ -280,7 +290,7 @@ export function createMockPatientRecordSource(): PatientRecordDataSource {
       const reading = seedReading();
       return attach(
         {
-          id: 'doc-yashoda-kft',
+          id: FILED_DOCUMENT_ID,
           name: reading.fileName,
           format: 'JPG',
           category: 'Outside report',
@@ -299,6 +309,14 @@ export function createMockPatientRecordSource(): PatientRecordDataSource {
         readingId,
         0,
       );
+    },
+
+    async withdrawFiling(readingId) {
+      const state = readings.get(readingId);
+      if (!state?.filed) throw new Error('That report was not filed.');
+      const at = documents.files.findIndex((f) => f.id === FILED_DOCUMENT_ID);
+      if (at !== -1) documents.files.splice(at, 1);
+      readings.set(readingId, { filed: false });
     },
 
     async getFamily(patientId) {

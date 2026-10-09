@@ -109,6 +109,17 @@ describe('mock patient record source: snapshot', () => {
     expect(Number.isNaN(Date.parse(approval.approvedAt))).toBe(false);
   });
 
+  it('takes an approval back on Undo, once, and only if it was given', async () => {
+    const source = fresh();
+    const brief = await source.generateBrief();
+    await expect(source.withdrawApproval(brief.id)).rejects.toThrow(
+      'That draft was not approved.',
+    );
+    await source.approveBrief(brief.id, 'Dr. K. Ramesh');
+    await source.withdrawApproval(brief.id);
+    await expect(source.withdrawApproval(brief.id)).rejects.toThrow();
+  });
+
   it('refuses to approve a draft nobody wrote, or without a name', async () => {
     const source = fresh();
     await expect(
@@ -403,6 +414,25 @@ describe('mock patient record source: documents', () => {
       'That report was already filed.',
     );
     expect((await source.getDocuments()).files).toHaveLength(5);
+  });
+
+  it('takes a filing back on Undo: the photo leaves the record and the report can be filed again', async () => {
+    const source = fresh();
+    const reading = await source.readOutsideReport();
+    const request = {
+      readingId: reading.id,
+      approver: 'Dr. K. Ramesh',
+      values: [{ id: 'creatinine', value: '1.4' }],
+    };
+    await expect(source.withdrawFiling(reading.id)).rejects.toThrow(
+      'That report was not filed.',
+    );
+    await source.fileExtractedValues(request);
+    expect((await source.getDocuments()).files).toHaveLength(5);
+    await source.withdrawFiling(reading.id);
+    expect((await source.getDocuments()).files).toHaveLength(4);
+    const again = await source.fileExtractedValues(request);
+    expect(again.filedCount).toBe(1);
   });
 
   it('keeps a report as a document only, charting nothing', async () => {

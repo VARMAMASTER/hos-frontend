@@ -36,6 +36,8 @@ export interface PatientRecordDataSource {
   // Drafts the pre-consult briefing. It is a draft until approveBrief.
   generateBrief(patientId?: string): Promise<BriefDraft>;
   approveBrief(briefId: string, approver: string): Promise<DraftApproval>;
+  // A person took their approval back (Undo): the draft is a draft again.
+  withdrawApproval(draftId: string): Promise<void>;
   // Acts on a care gap (orders it, adds it to today's visit, chases the lab).
   actOnCareGap(gapId: string, patientId?: string): Promise<CareGap>;
 
@@ -58,6 +60,9 @@ export interface PatientRecordDataSource {
   fileExtractedValues(request: FilingRequest): Promise<FilingReceipt>;
   // Keeps the report as a document only: no value is charted.
   keepReportAsDocument(readingId: string): Promise<FilingReceipt>;
+  // A person took their approval back (Undo): the values leave the chart and the report can be
+  // read and filed again.
+  withdrawFiling(readingId: string): Promise<void>;
 
   // Family and consent.
   getFamily(patientId?: string): Promise<FamilyOverview>;
