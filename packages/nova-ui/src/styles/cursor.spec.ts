@@ -71,6 +71,12 @@ describe('the pointer cursor', () => {
       // A summary cannot be disabled, and a label follows its control (the next test).
       if (part === 'summary' || part.startsWith('label')) continue;
       expect(part, part).toMatch(/:not\(:disabled\)|:not\(\[aria-disabled/);
+      // A role can sit on a real <button disabled> (a ButtonGroup segment is <button role="radio">),
+      // so a role selector must exclude the disabled attribute as well as aria-disabled.
+      if (part.startsWith('[role=')) {
+        expect(part, part).toContain(':not(:disabled)');
+        expect(part, part).toContain(":not([aria-disabled='true'])");
+      }
     }
     expect(selector).toContain("[aria-disabled='true']");
   });
