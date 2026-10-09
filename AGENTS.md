@@ -28,6 +28,6 @@
 7. **AI output always needs a person's approval.**
    - Use Nova's AI components (`AiDraftBlock`, `ApprovalBar`, `AiSourceLine`, and so on).
    - Anything AI-made is shown as a draft until approved.
-   - AI is marked with ✦ plus a text label, never colour alone.
+   - AI is marked with the AI mark (`AiMark` from `@hos/nova-ui`, the Care spark) plus a text label, never colour alone. One glyph, bare or in the tile: never a literal `✦` or any other star or sparkle character, and no svg of your own (a guard fails the build, in `apps/web/src` too, data files included).
 8. **Test first.** Every tab gets a spec that renders it, checks its key content, and checks its accessibility (roles, labels, keyboard).
 9. **Commits:** small and descriptive (`feat(reception): live queue tab from the prototype`). End each message with the `Co-Authored-By` trailer for the model that wrote it.

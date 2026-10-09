@@ -51,6 +51,7 @@ In `x.spec.tsx`:
 - keyboard: Tab order, Enter and Space, arrows and Escape where the pattern has them, focus return;
 - the focus ring comes from `focusRing`;
 - status and selection are never colour-only (a word, a glyph or a shape);
+- an AI element uses `AiMark` (bare, or `tile`), never a literal glyph, and always has a text label: one glyph, bare or in the tile, always with a text label (`src/primitives/ai-mark-guard.spec.ts` enforces it, in Nova and in `apps/web/src`);
 - targets: 24px at least (`size-touch-sm`), 44px for primary touch targets (`min-h-touch`);
 - motion only under `motion-safe` (and `playMotion`, which honours `prefers-reduced-motion`);
 - a probe value that is a patient name uses "Ramesh".
